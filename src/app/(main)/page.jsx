@@ -1,9 +1,8 @@
-'use client'
-import { useSession } from "next-auth/react";
+import { auth } from "@/lib/auth";
+import { Header } from "@/components/header";
 
-
-export default function Home() {
-  const session = useSession();
+export default async function Home() {
+  const session = await auth();
 
   return (
     <>

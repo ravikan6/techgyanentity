@@ -1,5 +1,5 @@
 import { blue, purple, blueGrey } from '@mui/material/colors';
-import { extendTheme } from '@mui/material/styles';
+import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
 const mui = extendTheme({
   cssVarPrefix: 'rb',

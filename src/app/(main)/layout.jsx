@@ -2,8 +2,8 @@ import '@/styles/globals.css'
 import { Providers } from '@/components/providers';
 import CssBaseline from '@mui/material/CssBaseline';
 import { auth } from '@/lib/auth';
-// import MainLayout from '@/components/mainlayout';
-// import { Header } from '@/components/Header';
+import MainLayout from '@/components/mainlayout';
+import { Header } from '@/components/header';
 
 export async function generateMetadata() {
   return {
@@ -21,13 +21,13 @@ export default async function RootLayout({ children, models }) {
       <body className=' bg-white text-black !p-0 dark:text-white dark:bg-dark'>
         <Providers>
           <CssBaseline enableColorScheme />
-          {/* <MainLayout session={session} >
-            <Header lang='en' /> */}
-          <main className="mt-[54px]">
-            {children}
-          </main>
-          {/* {models} */}
-          {/* </MainLayout> */}
+          <MainLayout session={session} >
+            <Header lang='en' />
+            <main className="mt-[54px]">
+              {children}
+            </main>
+            {/* {models} */}
+          </MainLayout>
         </Providers>
       </body>
     </html>

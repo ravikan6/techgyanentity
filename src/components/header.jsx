@@ -1,0 +1,92 @@
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { CreateBtn, DrawerBtn, NotificationBtn, SgBtn } from '@/components/Buttons';
+import { SearchBar } from "./Home/head";
+// import { get_SECTION_logo } from '@/lib/fetchers';
+import { Skeleton } from '@mui/material';
+import { UserProfileModel } from './Home/_profile-model';
+import { auth } from '@/lib/auth';
+
+const ManinLogo = async ({ className }) => {
+    // const data = await get_SECTION_logo();
+    // const sectionData = data?.data?.uiBrand;
+
+    return (
+        <Link className={`${className}`} href={'/'}>
+            <span className="fill-accentLight dark:fill-accentDark/60 hidden" />
+            <span className="fill-black dark:fill-gray-100 hidden" />
+            TECHGYAN ENTITY
+            {/* {(!sectionData?.logoSvg) ? (
+                sectionData?.brandLogo && <Image
+                    alt={sectionData?.title}
+                    src={process.env.MEDIA_URL_V2 + sectionData?.brandLogo}
+                    width={120}
+                    height={40}
+                />
+            ) : (
+                <div dangerouslySetInnerHTML={{ __html: sectionData?.logoSvg }}></div>
+            )} */}
+        </Link>
+    )
+}
+
+/**
+ * Renders the header component with logo, navigation, search bar, and user profile information.
+ * @async
+ * @function
+ * @param {Object} props - The props object.
+ * @returns {JSX.Element} - The JSX element of the header component.
+ */
+const Header = async () => {
+    const session = await auth();
+    const token = await session?.user?.jwt;
+
+    return (
+        <>
+            <header className='w-full fixed z-[999] max-w-full top-0 left-0 px-5'>
+                <div className="min-h-[54px] max-h-[54px] overflow-hidden">
+                    <div id="header" className='bg-white/90 dark:bg-dark/90 bg-opacity-0 backdrop-blur-3xl border-b-slate-200 dark:border-b-slate-700 '>
+                        <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
+                            <div className='flex justify-start items-center logo'>
+                                <DrawerBtn />
+                                <ManinLogo className='ml-4' />
+                            </div>
+                            <div className='flex justify-center items-center'>
+                                <SearchBar />
+                            </div>
+                            <div className='flex space-x-6 justify-end items-center'>
+                                {!session?.user ? (
+                                    <>
+                                        <div className='mr-4'>
+                                            {/* <NavMenu /> */}
+                                        </div>
+                                        <SgBtn />
+                                    </>
+                                ) : (
+                                    session?.user?.id ? (
+                                        <>
+                                            <div className="">
+                                                <CreateBtn />
+                                            </div>
+                                            <div className="">
+                                                <NotificationBtn />
+                                            </div>
+                                            <div className="">
+                                                <UserProfileModel data={{ user: session?.user }} />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <Skeleton variant="circular" width={35} height={35} animation='wave' />
+                                    )
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header >
+        </>
+    );
+}
+
+export { Header, ManinLogo, ManinLogo as MainLogo };

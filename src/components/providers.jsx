@@ -1,11 +1,12 @@
 'use client'
-import { CssVarsProvider, getInitColorSchemeScript } from '@mui/material/styles';
+import { Experimental_CssVarsProvider as CssVarsProvider, getInitColorSchemeScript } from '@mui/material/styles';
 import { ThemeProvider as NextTheme } from 'next-themes'
 import { SessionProvider } from "next-auth/react"
-// import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 // import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import CssBaseline from '@mui/material/CssBaseline';
 import mui from '@/styles/mui';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
 export function Providers({ session, children }) {
 
@@ -83,18 +84,20 @@ export function Providers({ session, children }) {
   // `;
 
   return (
-    <SessionProvider session={session}>
+    // <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} >
       <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
         {getInitColorSchemeScript({
           defaultMode: 'system'
         })}
         <CssBaseline />
         <NextTheme disableTransitionOnChange attribute="class">
-          {children}
-          {/* <ProgressBar style={styles} options={{ showSpinner: false }} /> */}
-          {/* <ToastContainer toastClassName={'rb_toast'} icon={false} limit={2} position='bottom-left' draggable autoClose={4000} /> */}
+          <SessionProvider session={session}>
+            {children}
+            {/* <ProgressBar style={styles} options={{ showSpinner: false }} /> */}
+            <ToastContainer toastClassName={'rb_toast'} icon={false} limit={2} position='bottom-center' draggable autoClose={4000} />
+          </SessionProvider>
         </NextTheme>
       </CssVarsProvider>
-    </SessionProvider>
+    // </AppRouterCacheProvider>
   );
 }
