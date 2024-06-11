@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MainLogo } from '@/lib/client';
+import { CgMenuLeft } from 'react-icons/cg';
 
 
 const drawerWidth = 240;
@@ -98,7 +99,7 @@ const MainLayout = ({ children, session }) => {
                             aria-label="open drawer"
                             onClick={handleDrawerOpen}
                             edge="start"
-                        > <MenuIcon /> </IconButton>
+                        > <CgMenuLeft /> </IconButton>
                         <MainLogo className={'ml-4'} />
                     </div></>}
                     <MainSidebar session={session} variant={variant} open={open} />

@@ -22,7 +22,7 @@ const RuiMenu = styled(React.forwardRef((props, ref) => (
         borderRadius: '24px',
         marginTop: theme.spacing(1),
         color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[200],
-        backgroundColor: theme.palette.mode === 'light' ? '#F3F6FC' : '#282A2C',
+        backgroundColor: theme.palette.modelBg,
         py: 20,
     },
 }));
@@ -75,11 +75,12 @@ const RuiToolTip = styled(({ className, ...props }) =>
     '& .MuiTooltip-tooltip': {
         borderRadius: 12,
         backgroundColor: theme.palette.bgSP.main,
-        color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[200],
+        color: theme.palette.grey[100],
         fontFamily: 'rb-cheltenham',
         fontWeight: 'bold',
         fontSize: '0.6rem',
         px: '10px',
+        letterSpacing: '0.02em',
         boxShadow: theme.shadows[1],
     },
     [`& .${tooltipClasses.arrow}`]: {

@@ -2,7 +2,7 @@
 'use client'
 import Link from 'next/link';
 import React, { useState, useContext } from 'react';
-import { CgLink } from 'react-icons/cg';
+import { CgLink, CgMenuLeft } from 'react-icons/cg';
 import { IoMdPeople } from 'react-icons/io';
 import { PiDotsThreeOutline, PiShareFat } from 'react-icons/pi';
 import { TbHeartHandshake, TbLockCheck } from 'react-icons/tb';
@@ -36,7 +36,7 @@ export const DrawerBtn = (props) => {
       sx={{ minWidth: '2rem', minHeight: '2rem', borderRadius: '100rem', p: 0 }}
       disabled={props.disabled ? props.disabled : false}
     >
-      <MenuIcon />
+      <CgMenuLeft className='w-5 h-5' />
     </Button>
   )
 }
@@ -231,34 +231,34 @@ const BtnWithMenu = (props) => {
   );
 };
 
-const CreateBtn = (props) => {
+const CreateBtn = ({ classes, iconColor, sx }) => {
   return (
-    <Link href="#" className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 bg-lightButton dark:bg-darkButton`}>
-      <Btn size='small' >
-        <DrawOutlined className='text-gray-900 dark:text-gray-100' />
-      </Btn>
+    <Link href="#" className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
+      <IconButton size='small' sx={{ ...sx }} >
+        <DrawOutlined htmlColor={iconColor} />
+      </IconButton>
     </Link>
   )
 }
 
-const NotificationBtn = (props) => {
+const NotificationBtn = ({ classes, iconColor, sx }) => {
   return (
-    <Btn size='small' sx={{ ...btnSx }} onClick={() => { }}>
-      <NotificationsOutlined />
-    </Btn>
+    <IconButton size='small' sx={{ ...sx }} onClick={() => { }} className={`${classes}`} >
+      <NotificationsOutlined htmlColor={iconColor} />
+    </IconButton>
   )
 }
 
 const RouterBackBtn = (props) => {
   const router = useRouter();
   return (
-    <Btn size='small' className="bg-white dark:bg-dark" sx={{ ...btnSx }} onClick={() => {
+    <IconButton size='small' className="bg-white dark:bg-dark" sx={{ ...btnSx }} onClick={() => {
       setTimeout(() => {
         router.back()
       }, 300);
     }}>
       <AiOutlineClose />
-    </Btn>
+    </IconButton>
   )
 }
 

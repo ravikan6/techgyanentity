@@ -84,20 +84,20 @@ export function Providers({ session, children }) {
   // `;
 
   return (
-    // <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} >
-      <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
-        {getInitColorSchemeScript({
-          defaultMode: 'system'
-        })}
-        <CssBaseline />
-        <NextTheme disableTransitionOnChange attribute="class">
-          <SessionProvider session={session}>
-            {children}
-            {/* <ProgressBar style={styles} options={{ showSpinner: false }} /> */}
-            <ToastContainer toastClassName={'rb_toast'} icon={false} limit={2} position='bottom-center' draggable autoClose={4000} />
-          </SessionProvider>
-        </NextTheme>
-      </CssVarsProvider>
-    // </AppRouterCacheProvider>
+    <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
+      {getInitColorSchemeScript({
+        defaultMode: 'system'
+      })}
+      <CssBaseline />
+      {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
+      <NextTheme disableTransitionOnChange attribute="class">
+        <SessionProvider session={session}>
+          {children}
+          {/* <ProgressBar style={styles} options={{ showSpinner: false }} /> */}
+          <ToastContainer toastClassName={'rb_toast'} icon={false} limit={2} position='bottom-center' draggable autoClose={4000} />
+        </SessionProvider>
+      </NextTheme>
+      {/* </AppRouterCacheProvider> */}
+    </CssVarsProvider>
   );
 }

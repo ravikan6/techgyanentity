@@ -25,18 +25,21 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
-        dark: '#202124', // Website background color (dark mode)
-        accentLight: '#264653', //'#004c98',
-        accentDark: '#F4A261', // #32d2d8
-        accent: '#2A9D8F',
-        accentDarker: '#E9C46A', // #008080
-        button: '#E76F51',
-        darkHead: '#1B1B1B',
-        darkButton: '#272E23',
-        lightButton: '#F3F6FC',
-        bgSP: '#F3F6FC',
-        bgSpDark: '#282A2C',
-        lightHead: '#f0f0f0', // ModelBg in mui theme
+        dark: 'rgb(26, 45, 76)', // Big Stone -- Website background color (dark mode)
+        accentLight: 'rgb(213, 118, 108)', // Japonica
+        accentDark: 'rgb(57, 101, 137)', // Ming
+        accent: 'rgb(213, 118, 108)', // Japonica
+        accentDarker: 'rgb(57, 101, 137)', // Ming
+        button: 'rgb(230, 184, 178)', // Rose fog
+        darkHead: 'rgb(11, 31, 60)', // Blue Zodiac
+        darkButton: 'rgb(75, 90, 129)', // Blue Bayoux
+        lightButton: 'rgb(243, 196, 185)', // Mandys Pink
+        bgSP: 'rgb(221, 146, 136)', // Petite Orchid
+        bgSpDark: 'rgb(89, 44, 59)', // Livid Brown
+        lightHead: 'rgb(249, 222, 210)', // Givry
+        secondary: 'rgb(241, 162, 162)', // Wewak
+        secondaryDark: 'rgb(182, 184, 190)', // Bombay
+        light: 'rgb(253, 236, 236)', // Wisp Pink
       },
     },
   },

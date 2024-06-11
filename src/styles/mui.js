@@ -9,8 +9,11 @@ const mui = extendTheme({
         primary: {
           main: '#121212'
         },
+        secondary: {
+          main: 'rgb(241, 162, 162)', // Wewak
+        },
         accent: {
-          main: '#264653',
+          main: 'rgb(213, 118, 108)', // Japonica
         },
         icon: {
           main: blueGrey[900]
@@ -19,15 +22,25 @@ const mui = extendTheme({
           main: blueGrey[200]
         },
         lightGray: {
-          main: '#e5e6f0'
+          main: '#fd586a'
         },
         ld: {
           main: '#fafafa'
         },
-        bgSP: { main: '#F3F6FC' },
-        button: { main: '#E76F51' },
-        modelBG: { main: '#f0f0f0' },
-        switch: { main: '#000', contrastText: '#fff', accent: '#264653'},
+        bgSP: {
+          main: 'rgb(141, 155, 180)', // Bali Hai
+        },
+        button: {
+          main: 'rgb(243, 196, 185)', // Mandys Pink
+        },
+        modelBG: {
+          main: 'rgb(253, 236, 236)', // Wisp Pink
+        },
+        switch: { main: '#000', contrastText: '#fff', accent: '#176766' },
+        background: {
+          main: '#1e1a28',
+          paper: 'rgb(253, 236, 236)', // Wisp Pink
+        },
       }
     },
     dark: {
@@ -35,8 +48,11 @@ const mui = extendTheme({
         primary: {
           main: '#fafafa'
         },
+        secondary: {
+          main: 'rgb(182, 184, 190)', // Bombay
+        },
         accent: {
-          main: '#F4A261', // #32d2d8
+          main: 'rgb(57, 101, 137)', // Ming
         },
         icon: {
           main: '#fafafa'
@@ -48,15 +64,22 @@ const mui = extendTheme({
           main: blueGrey[800]
         },
         ld: {
-          main: '#212121'
+          main: '#1e1a28'
         },
         background: {
-          main: '#202124'
+          main: '#1e1a28',
+          paper: 'rgb(26, 45, 76)', // Big Stone
         },
-        button: { main: '#E76F51' },
-        modelBG: { main: '#1B1B1B' },
-        bgSP: { main: '#282A2C' },
-        switch: { main: '#fff', contrastText: '#000', accent: '#F4A261'},
+        button: {
+          main: 'rgb(75, 90, 129)', // Blue Bayoux
+        },
+        modelBg: {
+          main: 'rgb(26, 45, 76)', // Big Stone
+        },
+        bgSP: {
+          main: 'rgb(89, 44, 59)' // Livid Brown
+        },
+        switch: { main: '#fff', contrastText: '#000', accent: '#bb6eff' },
       }
     }
   },

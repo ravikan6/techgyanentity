@@ -13,10 +13,10 @@ const ManinLogo = async ({ className }) => {
     // const sectionData = data?.data?.uiBrand;
 
     return (
-        <Link className={`${className}`} href={'/'}>
+        <Link className={`${className} font-extrabold cheltenham-small capitalize italic text-accent dark:text-secondaryDark `} href={'/'}>
             <span className="fill-accentLight dark:fill-accentDark/60 hidden" />
             <span className="fill-black dark:fill-gray-100 hidden" />
-            TECHGYAN ENTITY
+            Techgyan Entity
             {/* {(!sectionData?.logoSvg) ? (
                 sectionData?.brandLogo && <Image
                     alt={sectionData?.title}
@@ -46,16 +46,16 @@ const Header = async () => {
         <>
             <header className='w-full fixed z-[999] max-w-full top-0 left-0 px-5'>
                 <div className="min-h-[54px] max-h-[54px] overflow-hidden">
-                    <div id="header" className='bg-white/90 dark:bg-dark/90 bg-opacity-0 backdrop-blur-3xl border-b-slate-200 dark:border-b-slate-700 '>
+                    <div id="header" className='bg-light/5 dark:bg-dark/5 backdrop-blur-lg border-b-slate-200 dark:border-b-slate-700 '>
                         <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
-                            <div className='flex justify-start items-center logo'>
+                            <div className='flex justify-start items-center logo w-3/12'>
                                 <DrawerBtn />
+                                {/* <SearchBar /> */}
+                            </div>
+                            <div className='flex justify-center items-center w-3/12'>
                                 <ManinLogo className='ml-4' />
                             </div>
-                            <div className='flex justify-center items-center'>
-                                <SearchBar />
-                            </div>
-                            <div className='flex space-x-6 justify-end items-center'>
+                            <div className='flex space-x-6 justify-end items-center w-3/12'>
                                 {!session?.user ? (
                                     <>
                                         <div className='mr-4'>
@@ -67,10 +67,10 @@ const Header = async () => {
                                     session?.user?.id ? (
                                         <>
                                             <div className="">
-                                                <CreateBtn />
+                                                <CreateBtn classes={'bg-accent dark:bg-accentDarker'} iconColor='#fff' />
                                             </div>
                                             <div className="">
-                                                <NotificationBtn />
+                                                <NotificationBtn classes={'border border-solid border-secondary dark:border-secondaryDark'}  />
                                             </div>
                                             <div className="">
                                                 <UserProfileModel data={{ user: session?.user }} />
