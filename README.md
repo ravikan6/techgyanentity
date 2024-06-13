@@ -38,3 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 sudo vncserver -SecurityTypes None -xstartup "openbox" -rfbport 5900
 
 sudo noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 6080
+
+
+
+DATABASE_URL="mongodb://<username>:<password>@<host>:<27017|port>/techgyan?retryWrites=true&w=majority&authSource=admin&<in&replicaSet=rs0&directConnection=true"
