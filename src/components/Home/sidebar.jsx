@@ -132,7 +132,7 @@ const MainSidebar = (props) => {
                     <div className='mb-3 w-full cheltenham text-sm'>
                         <h3 className='truncate text-gray-800 dark:text-gray-100 '>Your Channels</h3>
                     </div>
-                    <rb-channel-list class='block mb-2 relative w-full rounded-xl py-2 bg-slate-100 dark:bg-darkHead'>
+                    <rb-channel-list class='block mb-2 relative w-full rounded-xl py-2 bg-lightHead dark:bg-darkHead'>
                         {Channels ?
                             <>
                                 {Channels?.length > 0 ? <div className="relative w-full">
@@ -207,7 +207,7 @@ const MainSidebar = (props) => {
                     <div className='mb-3 w-full cheltenham text-sm'>
                         <h3 className='truncate text-gray-800 dark:text-gray-100 '>Your Communities</h3>
                     </div>
-                    <rb-community-list class='block relative mb-2 w-full rounded-lg py-2 bg-slate-100 dark:bg-darkHead'>
+                    <rb-community-list class='block relative mb-2 w-full rounded-lg py-2 bg-lightHead dark:bg-darkHead'>
                         {Communities ?
                             <> {Communities?.length > 0 ? <div className="relative w-full">
                                 {Communities.map((item, index) => {
@@ -400,7 +400,7 @@ const MenuItem = ({ menu, path, isSmall }) => {
                 <Link href={menu.link} >
                     <Button fullWidth={isSmall ? false : true} >
                         <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
-                            {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-white text-black h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                            {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-white text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
                             <span className={`text-base ${isSmall && 'w-0'} dark:text-gray-100 text-gray-800 font-semibold truncate`}>{menu.name}</span>
                         </div>
                     </Button>

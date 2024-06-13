@@ -44,9 +44,9 @@ const Header = async () => {
 
     return (
         <>
-            <header className='w-full fixed z-[999] max-w-full top-0 left-0 px-5'>
-                <div className="min-h-[54px] max-h-[54px] overflow-hidden">
-                    <div id="header" className='bg-light/5 dark:bg-dark/5 backdrop-blur-lg border-b-slate-200 dark:border-b-slate-700 '>
+            <header className='w-full fixed z-[999] max-w-full top-0 left-0 '>
+                <div className="min-h-[54px] max-h-[54px] overflow-hidden bg-light/55 dark:bg-dark/55 backdrop-blur-lg border-b-slate-200 dark:border-b-slate-700 ">
+                    <div id="header" className='px-5'>
                         <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
                             <div className='flex justify-start items-center logo w-3/12'>
                                 <DrawerBtn />
@@ -70,7 +70,7 @@ const Header = async () => {
                                                 <CreateBtn classes={'bg-accent dark:bg-accentDarker'} iconColor='#fff' />
                                             </div>
                                             <div className="">
-                                                <NotificationBtn classes={'border border-solid border-secondary dark:border-secondaryDark'}  />
+                                                <NotificationBtn classes={'border border-solid border-secondary dark:border-secondaryDark'} />
                                             </div>
                                             <div className="">
                                                 <UserProfileModel data={{ user: session?.user }} />

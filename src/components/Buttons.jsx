@@ -36,7 +36,7 @@ export const DrawerBtn = (props) => {
       sx={{ minWidth: '2rem', minHeight: '2rem', borderRadius: '100rem', p: 0 }}
       disabled={props.disabled ? props.disabled : false}
     >
-      <CgMenuLeft className='w-5 h-5' />
+      <CgMenuLeft className='w-5 h-5 ' />
     </Button>
   )
 }
