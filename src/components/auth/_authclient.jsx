@@ -10,6 +10,7 @@ import { AiFillGithub, AiFillGoogleCircle } from "react-icons/ai";
 import React, { useSearchParams, useRouter } from "next/navigation";
 import { Button, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { MdOutlineFacebook, MdMailLock, MdChevronLeft, MdOutlineAccountCircle } from "react-icons/md";
+import { createUser } from "@/lib/actions/user";
 
 const AuthFooter = () => {
     return (
@@ -138,7 +139,7 @@ const Auth_Login_options = () => {
                         <Button
                             variant="outlined"
                             className={`${btn_style2}`}
-                            onClick={() => router.push("/auth/v1/signup")}
+                            onClick={() => router.push("/auth/v2/signup")}
                             role="button"
                         > <MdMailLock className="mr-4 w-5 h-5" />
                             Create Account
@@ -438,4 +439,49 @@ const Auth_Login_Form = ({ params, query }) => {
 }
 
 
-export { AuthFooter, CopyrightBox, Auth_Login_options, Auth_Login_Form }
+const CreateAccount = () => {
+    const [data, setData] = useState({});
+    const router = useRouter();
+
+    const handleChange = (e) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    }
+
+    const onSubmit = async () => {
+        if (data.email && data.name) {
+            let st = await createUser(data);
+            if (st && st.status === 200 && st.data) {
+                toast.success("Account Created Successfully", { toastId: "createAccount" });
+                router.push("/auth/v2/login/identifier");
+            } else {
+                toast.error("Account Creation Failed", { toastId: "createAccount" });
+            }
+        }
+    }
+
+    return (
+        <>
+            <div className="z-[1000]">
+                <h1>Create Account</h1>
+                <div className="w-full max-w-3xl mx-auto px-10 flex flex-col ">
+                    <div className="mb-10">
+                        <TextField fullWidth={true} onChange={(e) => handleChange(e)} variant="standard" name="name" label="Name" />
+                    </div>
+                    <div>
+                        <TextField fullWidth={true} onChange={(e) => handleChange(e)} variant="standard" name="email" label="Email" />
+                    </div>
+                    <div>
+                        <TextField fullWidth={true} onChange={(e) => handleChange(e)} variant="standard" name="username" label="Username" />
+                    </div>
+
+                    <div className="mt-10">
+                        <Button onClick={onSubmit} className="btn">Sign Up</Button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+
+export { AuthFooter, CopyrightBox, Auth_Login_options, Auth_Login_Form, CreateAccount }

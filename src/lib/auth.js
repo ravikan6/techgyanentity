@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
+import { prisma } from "./db";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -21,52 +22,22 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                return Promise.resolve(credentials)
-                // try {
-                //   const mutation_query = `mutation {
-                //     UserAuthentication(
-                //       identifier: "${credentials.identifier}"
-                //       password: "${credentials.password}"
-                //     ) {
-                //       jwt
-                //       user {
-                //         email
-                //         id
-                //         username
-                //         dateJoined
-                //         name
-                //         lastLogin
-                //         isActive
-                //         name
-                //         image
-                //       }
-                //     }
-                //   }`;
-                //   const options = { Authorization: `${process.env.API_TOKEN_V2}` }
-                //   const response = await ApiGql_V2(mutation_query, options);
-
-                //   if (response?.data && response?.data?.UserAuthentication) {
-                //     const data = response.data.UserAuthentication;
-                //     console.log(data, '-- data from backend login');
-                //     return {
-                //       id: data.user.id,
-                //       username: data.user.username,
-                //       email: data.user.email,
-                //       last_login: data.user?.lastLogin,
-                //       joined: data.user.dateJoined,
-                //       name: data.user?.name,
-                //       is_active: data.user.isActive,
-                //       picture: data.user?.image,
-                //       image: data.user?.image,
-                //       jwt: data.jwt
-                //     };
-                //   } else {
-                //     return null;
-                //   }
-                // } catch (error) {
-                //   console.error(error); //TODO: Will be removed in production
-                //   return null;
-                // }
+                try {
+                    const response = await prisma.user.findUnique({
+                        where: {
+                            email: credentials.identifier,
+                        },
+                    });
+                    if (response) {
+                        return { ...response, password: undefined };
+                    } else {
+                        return null;
+                    }
+                } catch (error) {
+                    console.error(error); //TODO: Will be removed in production
+                    return null;
+                }
+                // return Promise.resolve(credentials)
             }
         }),
     ],
@@ -141,8 +112,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         },
     },
 
-    // pages: {
-    //     signIn: `/auth/v2/login`,
-    // },
+    pages: {
+        signIn: `/auth/v2/login`,
+    },
     secret: process.env.NEXTAUTH_SECRET
 });

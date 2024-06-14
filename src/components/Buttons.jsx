@@ -233,7 +233,7 @@ const BtnWithMenu = (props) => {
 
 const CreateBtn = ({ classes, iconColor, sx }) => {
   return (
-    <Link href="#" className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
+    <Link href="/create" className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
       <IconButton size='small' sx={{ ...sx }} >
         <DrawOutlined htmlColor={iconColor} />
       </IconButton>
