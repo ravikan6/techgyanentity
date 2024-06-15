@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { BsPatchQuestion } from 'react-icons/bs';
-import { Dialog, InputLabel, DialogContent, DialogContentText, DialogActions, TextField, Button, FormControl, Tooltip, RadioGroup, FormControlLabel, Radio, Select, MenuItem } from '@mui/material';
+import { Button, Tooltip, MenuItem, Dialog, TextField, } from '@/components/rui';
+import { InputLabel, DialogContent, DialogContentText, DialogActions, FormControl, RadioGroup, FormControlLabel, Radio, Select, } from '@mui/material';
 
 
 const ArticleReportModal = (props) => {
@@ -75,12 +76,12 @@ const ArticleReportModal = (props) => {
 
             try {
 
-                if (false /* response */) {
-                    setStep(3)
-                    setSuccess(true);
-                } else {
-                    setError(true);
-                }
+                // if (false /* response */) {
+                setStep(3)
+                setSuccess(true);
+                // } else {
+                //     setError(true);
+                // }
             } catch (error) {
                 setError(true);
             } finally {
@@ -132,9 +133,9 @@ const ArticleReportModal = (props) => {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <div className='h-[90vh] overflow-hidden bg-gray-100 dark:bg-gray-800 w-96'>
+                <div className='h-[90vh] overflow-hidden bg-light dark:bg-dark w-96'>
                     <h3 className='karnak text-base px-6 py-3 font-semibold text-black dark:text-white'>{step === 3 ? 'Thank you for Reporting' : "Report this post"}</h3>
-                    <div className='h-[calc(100%-100px)] overflow-y-auto rb-scrollbar border-y dark:border-gray-700 border-gray-300'>
+                    <div className='h-[calc(100%-100px)] overflow-y-auto rb-scrollbar border-y border-lightHead dark:border-darkHead'>
                         <DialogContent sx={{ width: 370, py: 0 }}>
                             {step === 1 &&
                                 <DialogContentText id="alert-dialog-description">

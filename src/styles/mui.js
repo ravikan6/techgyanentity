@@ -41,6 +41,9 @@ const mui = extendTheme({
           main: '#1e1a28',
           paper: 'rgb(253, 236, 236)', // Wisp Pink
         },
+        Avatar: {
+          defaultBg: 'rgb(241, 162, 162)', // Wewak
+        }
       }
     },
     dark: {
@@ -80,6 +83,9 @@ const mui = extendTheme({
           main: 'rgb(89, 44, 59)' // Livid Brown
         },
         switch: { main: '#fff', contrastText: '#000', accent: '#bb6eff' },
+        Avatar: {
+          defaultBg: 'rgb(182, 184, 190)', // Bombay
+        }
       }
     }
   },

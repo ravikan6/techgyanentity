@@ -1,59 +1,12 @@
-import { ApiGql_V2 } from "./connect";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 
-const encrypt = (data, key) => {
-    return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
-}
+// const encrypt = (data, key) => {
+//     return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
+// }
 
-const decrypt = (data, key) => {
-    return JSON.parse(CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8));
-}
-
-const getUserChannels = async (id) => {
-    let query = `query {
-        UserChannels(user: "${id}") {
-          id
-          isActive
-        }
-      }`
-
-    let headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `${process.env.API_TOKEN_V2}`
-    }
-
-    try {
-        let res = await ApiGql_V2(query, headers);
-        res = await res?.data?.UserChannels[0];
-        return res;
-    } catch (error) {
-        console.error(error);
-        return {};
-    }
-}
-
-const getUserCommunities = async (id) => {
-    let query = `query {
-        UserCommunities(user: "${id}") {
-          isActive
-          id
-        }
-      }`
-
-    let headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `${process.env.API_TOKEN_V2}`
-    }
-
-    try {
-        let res = await ApiGql_V2(query, headers);
-        res = await res?.data?.UserCommunities[0];
-        return res;
-    } catch (error) {
-        console.error(error);
-        return {};
-    }
-}
+// const decrypt = (data, key) => {
+//     return JSON.parse(CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8));
+// }
 
 function generateDisplayNameOptions(name, nickname) {
     const options = [];
@@ -64,11 +17,10 @@ function generateDisplayNameOptions(name, nickname) {
     options.push(`${name} ${nickname}`);
     return options;
 }
+
 export {
-    getUserChannels,
-    getUserCommunities,
-    encrypt,
-    decrypt,
+    // encrypt,
+    // decrypt,
     generateDisplayNameOptions,
 }
 
@@ -158,69 +110,7 @@ function readTime(content, wordsPerMinute = 300) {
     }
 }
 
-/**
- * Returns the URL and metadata for a given image format.
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * @param {Object} imageData - The image data object.
- * @param {string} format - The desired format of the image.
- * @returns {Object} - The URL and metadata for the image in the desired format.
- */
-function getMediaFormatURL(imageData, format) {
-    if (!imageData) {
-        return null;
-    }
 
-    if (!imageData.formats) {
-        return {
-            url: getMedia(imageData.url),
-            width: imageData.width,
-            height: imageData.height,
-            ext: imageData.ext,
-            mime: imageData.mime,
-            name: imageData.name,
-            alt: imageData.alternativeText ? imageData.alternativeText : imageData.name,
-            caption: imageData.caption,
-            subname: imageData.hash,
-        };
-    }
-
-    const formatMap = {
-        L: 'large',
-        S: 'small',
-        M: 'medium',
-        T: 'thumbnail',
-    };
-
-    while (formatMap[format]) {
-        if (imageData.formats[formatMap[format]]) {
-            const formatData = imageData.formats[formatMap[format]];
-            return {
-                url: getMedia(formatData.url),
-                width: formatData.width,
-                height: formatData.height,
-                ext: formatData.ext,
-                subname: formatData.name,
-                mime: formatData.mime,
-                name: imageData.name,
-                alt: imageData.alternativeText ? imageData.alternativeText : imageData.name,
-                caption: imageData.caption,
-            };
-        }
-        format = format === 'T' ? 'D' : String.fromCharCode(format.charCodeAt(0) + 1);
-    }
-
-    return {
-        url: getMedia(imageData.url),
-        width: imageData.width,
-        height: imageData.height,
-        ext: imageData.ext,
-        mime: imageData.mime,
-        name: imageData.name,
-        subname: imageData.hash,
-        alt: imageData.alternativeText ? imageData.alternativeText : imageData.name,
-        caption: imageData.caption,
-    };
-}
 
 /**
  * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
@@ -280,226 +170,6 @@ function uiAvtar(name, size) {
         name: name,
     });
     return `${baseUrl}?${params.toString()}`;
-}
-
-/**
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * Returns user data object with formatted properties
- * @param {Object} userData - User data object
- * @param {number} size - Avatar image size
- * @returns {Object} - Formatted user data object
- */
-function getUserData(userData, size) {
-    return {
-        id: userData?.id,
-        username: userData?.username,
-        name: userData?.name,
-        email: userData?.email,
-        avatar: userData?.avatar ? getMediaFormatURL(userData.avatar, 'S') : { url: uiAvtar(userData?.name, size), alt: userData?.name },
-        provider: userData?.provider,
-        confirmed: userData?.confirmed,
-        blocked: userData?.blocked,
-        createdAt: new Date(userData?.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        updatedAt: new Date(userData?.updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        slug: userData?.slug,
-        bookmarks: userData?.bookmarks || [],
-    };
-}
-
-/**
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * Returns channel data object with formatted properties.
- *
- * @param {Object} cData - Channel data object.
- * @param {string} CoverFormate - Cover format string.
- * @returns {Object} - Formatted channel data object.
- */
-function getChannelData(cData, CoverFormate) {
-    let channel_logo = cData.attributes.logo?.data?.attributes
-        ? getMediaFormatURL(cData.attributes.logo.data.attributes, 'S')
-        : getMediaFormatURL(cData.attributes.logo, 'S');
-
-    if (!channel_logo?.url) {
-        channel_logo = { url: uiAvtar(cData.attributes.name), alt: cData.attributes.name };
-    }
-
-    const cover = cData.attributes.banner?.data?.attributes
-        ? getMediaFormatURL(cData.attributes.banner.data.attributes, CoverFormate)
-        : getMediaFormatURL(cData.attributes.banner, CoverFormate);
-    const sociallinks = cData?.attributes.social || [];
-    const socialLinkObj = sociallinks[0];
-    if (socialLinkObj) {
-        socialLinkObj.links = sociallinks.length - 1;
-    }
-    const sociallinksData = socialLinkObj;
-
-    const folloWers = cData?.attributes?.followers?.data?.length || 0;
-
-    const folloWings = {
-        total: cData?.attributes?.followings?.data?.length,
-        data: cData?.attributes?.followings?.data?.map((item) => {
-            const nData = item.attributes.follower.data[0];
-            let nchannel_logo = nData.attributes.logo?.data?.attributes
-                ? getMediaFormatURL(nData.attributes.logo.data.attributes, 'S')
-                : getMediaFormatURL(nData.attributes.logo, 'S');
-
-            if (!channel_logo?.url) {
-                nchannel_logo = { url: uiAvtar(nData.attributes.name), alt: nData.attributes.name };
-            }
-            return {
-                id: item.id,
-                c_id: nData.id,
-                name: nData.attributes.name,
-                handle: nData.attributes.handle,
-                logo: nchannel_logo,
-            };
-        }) || [],
-    };
-
-
-    return {
-        id: cData.id,
-        handle: cData.attributes.handle,
-        name: cData.attributes.name,
-        channleId: cData.attributes.cid,
-        enquiryEmail: cData.attributes.enquiry_email,
-        followers: folloWers,
-        followings: folloWings,
-        description: cData.attributes.description,
-        articles: cData.attributes.articles?.data || [],
-        logo: channel_logo,
-        confirmed: cData.attributes.confirmed,
-        blocked: cData.attributes.blocked,
-        createdAt: new Date(cData.attributes.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        updatedAt: new Date(cData.attributes.updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        banner: cover || null,
-        sociallinks: sociallinks || [],
-        mainSociallink: sociallinksData || null,
-    };
-}
-
-/**
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * @param {*} data 
- * @returns 
- */
-function getPostData(data) {
-    const user = data.attributes?.user?.data;
-    let user_avatar = user?.attributes?.avatar?.data && getMediaFormatURL(user?.attributes?.avatar?.data?.attributes, 'S');
-    if (!user_avatar?.url) {
-        user_avatar = { url: uiAvtar(user?.attributes?.username), alt: user?.attributes?.username };
-    };
-    let media = null;
-    if (data.attributes?.media?.data) {
-        media = data.attributes?.media?.data.map((item) => {
-            return getMediaFormatURL(item.attributes, 'M');
-        });
-    }
-
-    return {
-        id: data.id,
-        title: data.attributes?.title,
-        type: data.attributes?.type,
-        text: data.attributes?.text,
-        slug: data.attributes?.slug,
-        media: media,
-        user: {
-            id: user?.id,
-            username: user?.attributes?.username,
-            name: user?.attributes?.name,
-            avatar: user_avatar,
-        },
-        createdAt: formatDate(data.attributes?.createdAt),
-        // createdAt: new Date(data.attributes.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        updatedAt: new Date(data.attributes?.updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-    };
-}
-
-/**
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * Returns an array of channel data objects with formatted properties.
- *
- * @param {Array} cDataArray - An array of channel data objects.
- * @param {string} CoverFormate - The format of the channel banner image.
- * @returns {Array} An array of formatted channel data objects.
- */
-function getChannelsData(cDataArray, CoverFormate) {
-    return cDataArray.map(cData => {
-        let channel_logo = cData.attributes.logo?.data?.attributes
-            ? getMediaFormatURL(cData.attributes.logo.data.attributes, 'S')
-            : getMediaFormatURL(cData.attributes.logo, 'S');
-
-        if (!channel_logo?.url) {
-            channel_logo = { url: uiAvtar(cData.attributes.name), alt: cData.attributes.name };
-        }
-
-        const cover = cData.attributes.banner?.data?.attributes
-            ? getMediaFormatURL(cData.attributes.banner.data.attributes, CoverFormate)
-            : getMediaFormatURL(cData.attributes.banner, CoverFormate);
-        const sociallinks = cData?.attributes.social || [];
-        const socialLinkObj = sociallinks[0];
-        if (socialLinkObj) {
-            socialLinkObj.links = (sociallinks.length - 1);
-        }
-        const sociallinksData = socialLinkObj;
-
-        const folloWers = cData?.attributes?.followers?.data?.length || 0;
-
-        return {
-            id: cData.id,
-            handle: cData.attributes.handle,
-            name: cData.attributes.name,
-            channleId: cData.attributes.cid,
-            enquiryEmail: cData.attributes.enquiry_email,
-            followers: folloWers,
-            description: cData.attributes.description,
-            articles: cData.attributes.articles?.data || [],
-            logo: channel_logo,
-            confirmed: cData.attributes.confirmed,
-            blocked: cData.attributes.blocked,
-            createdAt: new Date(cData.attributes.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-            updatedAt: new Date(cData.attributes.updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-            banner: cover || null,
-            sociallinks: sociallinks || [],
-            mainSociallink: sociallinksData || null,
-        };
-    });
-}
-
-/**
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * Returns channel information object.
- *
- * @param {Object} cData - Channel data object.
- * @param {string} CoverFormate - Cover format string.
- * @returns {Object} - Channel information object.
- */
-function getChannelInfo(cData, CoverFormate) {
-    let channel_logo = cData.logo?.data?.attributes
-        ? getMediaFormatURL(cData.logo.data.attributes, 'S')
-        : getMediaFormatURL(cData.logo, 'S');
-
-    if (!channel_logo.url) {
-        channel_logo = { url: uiAvtar(cData.name), alt: cData.name };
-    }
-
-    // const cover = cData.attributes.banner?.data?.attributes
-    //     ? getMediaFormatURL(cData.attributes.banner.data.attributes, CoverFormate)
-    //     : getMediaFormatURL(cData.attributes.banner, CoverFormate);
-
-    return {
-        handle: cData.handle,
-        name: cData.name,
-        channleId: cData.cid,
-        // enquiryEmail: cData.attributes.enquiry_email,
-        // description: cData.attributes.description,
-        logo: channel_logo,
-        confirmed: cData.confirmed,
-        blocked: cData.blocked,
-        createdAt: new Date(cData.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        updatedAt: new Date(cData.updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-        // banner: cover || null,
-    };
 }
 
 
@@ -616,14 +286,8 @@ export {
     formatDate,
     pLink,
     uiAvtar,
-    getMediaFormatURL,
-    getChannelData,
     getDate,
-    getUserData,
     getFevicon,
-    getChannelInfo,
     generateListId,
-    getChannelsData,
-    getPostData,
     AnimalMain,
 };

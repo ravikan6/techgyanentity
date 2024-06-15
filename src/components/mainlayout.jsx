@@ -78,7 +78,7 @@ const MainLayout = ({ children, session }) => {
 
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(open, variant),
-                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette.modelBG.main : 'transparent',
+                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette?.modelBG?.main : 'transparent',
                             mt: variant === 'persistent' ? 0 : 0, // '54px'
                             pt: variant === 'persistent' ? 0 : '54px',
                             border: 'none',
