@@ -1,3 +1,4 @@
+import { ArticleWrapper } from '@/components/post/_client';
 import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
@@ -32,7 +33,9 @@ const DynamicPages = async ({ params, searchParams }) => {
         });
         if (post)
             return (
-                <PostView article={post} />
+                <ArticleWrapper>
+                    <PostView article={post} />
+                </ArticleWrapper>
             );
         else return <>THe post Not Found </>
     }

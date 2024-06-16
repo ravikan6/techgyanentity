@@ -64,7 +64,7 @@ const MainLayout = ({ children, session }) => {
     }, [q]);
 
     return (
-        <DrawerContext.Provider value={{ open, setOpen }}>
+        <DrawerContext.Provider value={{ open, setOpen, setVariant }}>
             <Box sx={{ display: 'flex' }}>
                 <Drawer
                     sx={{

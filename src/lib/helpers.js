@@ -13,7 +13,37 @@ function formatLocalDate(inputDate) {
     return formattedDate;
 }
 
+async function hashPassword(password) {
+    const saltRounds = 10;
+    const passwordPepper = process.env.PASSWORD_PEPPER;
+
+    try {
+        const combinedPassword = password + passwordPepper;
+        const hash = await bcrypt.hash(combinedPassword, saltRounds);
+        console.log('Hashed password:', hash);
+        return hash;
+    } catch (err) {
+        console.error('Error hashing password:', err);
+    }
+}
+
+async function verifyPassword(password, hash) {
+    const passwordPepper = process.env.PASSWORD_PEPPER;
+
+    try {
+        const combinedPassword = password + passwordPepper;
+        const match = await bcrypt.compare(combinedPassword, hash);
+        console.log('Password match:', match);
+        return match;
+    } catch (err) {
+        console.error('Error verifying password:', err);
+    }
+}
+
+
 
 export {
-    formatLocalDate
+    formatLocalDate,
+    hashPassword,
+    verifyPassword
 }

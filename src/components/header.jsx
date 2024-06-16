@@ -5,7 +5,7 @@ import { CreateBtn, DrawerBtn, NotificationBtn, SgBtn } from '@/components/Butto
 import { SearchBar } from "./Home/head";
 // import { get_SECTION_logo } from '@/lib/fetchers';
 import { Skeleton } from '@mui/material';
-import { UserProfileModel } from './Home/_profile-model';
+import { NavMenu, UserProfileModel } from './Home/_profile-model';
 import { auth } from '@/lib/auth';
 
 const ManinLogo = async ({ className }) => {
@@ -59,7 +59,7 @@ const Header = async () => {
                                 {!session?.user ? (
                                     <>
                                         <div className='mr-4'>
-                                            {/* <NavMenu /> */}
+                                            <NavMenu />
                                         </div>
                                         <SgBtn />
                                     </>

@@ -250,7 +250,7 @@ export const NavMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 className="rb_SideBar_ScrollBar overflow-y-auto"
             >
-                <Box elevation={0} className="bg-white dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: 1, boxShadow: null }}>
+                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: 1, boxShadow: null }}>
 
 
                     <ListItemRdX link={{
@@ -309,11 +309,11 @@ export const NavMenu = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <Box className="dark:bg-darkHead bg-gray-200" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
+                <Box className="dark:bg-accentDark bg-accent" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
                     <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">
-                        <NavigateBefore fontSize="small" />
+                        <NavigateBefore htmlColor='#fff' fontSize="small" />
                     </IconButton>
-                    <Typography variant="inherit">{insiderData?.title}</Typography>
+                    <h3 className='font-semibold text-white' variant="inherit">{insiderData?.title}</h3>
                 </Box>
                 <p className='text-sm px-4 py-2 text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
                 {(insiderData?.component) ? insiderData?.component

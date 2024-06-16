@@ -20,7 +20,7 @@ export const PostView = async ({ article }) => {
             const updatedAt = getDate(article?.updatedAt);
 
             return (
-                <main className="container ">
+                <main className="">
                     <section className="flex space-x-14 px-3 md:px-0 mx-auto w-fit">
                         {/* <Script src={`${process.env.NEXTAUTH_URL}/code-prettier.js`} strategy="lazyOnload" /> */}
                         <div className="max-w-[680px] min-w-[500px] py-6">
@@ -34,7 +34,6 @@ export const PostView = async ({ article }) => {
                                 </figcaption> */}
                                 </figure>}
                             </div>
-                            <h1 className="text-4xl leading-10 karnak font-bold pb-3 mb-10">{article.title}</h1>
                             <div className="pb-7">
                                 {article?.content && <div id="articleContent" dangerouslySetInnerHTML={{ __html: article?.content }} />}
                             </div>
@@ -44,10 +43,16 @@ export const PostView = async ({ article }) => {
                                 }
                             </div>
                         </div>
-                        <div className="max-w-[300px] min-w-[300px] h-screen relative">
-                            <div className="fixed h-screen max-w-[300px] pt-[54px] min-w-[300px] top-0 bottom-0 ">
-                                <div className="border dark:border-slate-600 border-gray-300 mt-10 rounded-xl min-h-72 ">
-                                    <h4 className="text-xl font-medium leading-6 dark:text-slate-400 text-gray-700 stymie pb-5">{article.description}</h4>
+                        <div className="max-w-[400px] min-w-[350px] h-screen relative">
+                            <div className="fixed h-[calc(100%-68px)] rounded-xl p-4 border dark:border-slate-600 border-gray-300 max-w-[400px] mt-[64px] min-w-[350px] top-0 bottom-0 ">
+                                <div className="hover:bg-lightHead mb-4 rounded-xl py-1 px-2">
+                                    <h1 className="text-xl karnak mb-2 font-bold">{article.title}</h1>
+                                    <h4 className="text-sm font-medium dark:text-slate-400 text-gray-700">{article.description}</h4>
+
+                                </div>
+                                
+                                <div className=" min-h-44 ">
+
                                     <div className="mb-8">
                                         <div className="flex justify-between items-center mb-5 border-y-slate-500">
                                             <div className="flex items-center px-3 py-1">

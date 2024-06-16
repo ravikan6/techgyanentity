@@ -6,14 +6,11 @@ import { prisma } from "./db";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET
-        }),
+        Google,
         Auth0({
-            clientId: process.env.AUTH0_CLIENT_ID,
-            clientSecret: process.env.AUTH0_CLIENT_SECRET,
-            issuer: process.env.AUTH0_DOMAIN
+            clientId: process.env.AUTH_AUTH0_ID,
+            clientSecret: process.env.AUTH_AUTH0_SECRET,
+            issuer: process.env.AUTH_AUTH0_DOMAIN
         }),
         Credentials({
             name: "Credentials",
