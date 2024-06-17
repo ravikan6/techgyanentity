@@ -1,7 +1,5 @@
-import { Avatar } from "@mui/material";
-import { ArticleImage } from "./_client";
-import { getDate, formatDate } from "@/lib/utils";
-import { PostActions } from "./postActions";
+import { ArticleImage, ArticleSidebar } from "./_client";
+
 
 export const PostView = async ({ article }) => {
     if (article?.id) {
@@ -16,14 +14,12 @@ export const PostView = async ({ article }) => {
                 </main>
             );
         } else if (article?.privacy === 'PUBLIC' || article?.privacy === 'UNLISTED') {
-            const publishedAt = getDate(article?.createdAt);
-            const updatedAt = getDate(article?.updatedAt);
-
+            const css = `min-[1017px]:max-w-[calc(100%-370px)] min-[1055px]:max-w-[calc(100%-424px)] min-[1101px]:max-w-[calc(100%-460px)] min-[1195px]:max-w-[calc(100%-500px)] min-[1256px]:max-w-[calc(100%-525px)] min-[1300px]:max-w-[calc(100%-485px)]`;
             return (
-                <main className="">
-                    <section className="flex space-x-14 px-3 md:px-0 mx-auto w-fit">
+                <main className="overflow-clip ">
+                    <section className="flex space-x-14 px-3 justify-center md:px-0 mx-auto">
                         {/* <Script src={`${process.env.NEXTAUTH_URL}/code-prettier.js`} strategy="lazyOnload" /> */}
-                        <div className="max-w-[680px] min-w-[500px] py-6">
+                        <div className={`${css} py-6`}>
                             <div className='mb-2'>
                                 {article?.image && <figure
                                     key={article?.url}
@@ -43,41 +39,7 @@ export const PostView = async ({ article }) => {
                                 }
                             </div>
                         </div>
-                        <div className="max-w-[400px] min-w-[350px] h-screen relative">
-                            <div className="fixed h-[calc(100%-68px)] rounded-xl p-4 border dark:border-slate-600 border-gray-300 max-w-[400px] mt-[64px] min-w-[350px] top-0 bottom-0 ">
-                                <div className="hover:bg-lightHead mb-4 rounded-xl py-1 px-2">
-                                    <h1 className="text-xl karnak mb-2 font-bold">{article.title}</h1>
-                                    <h4 className="text-sm font-medium dark:text-slate-400 text-gray-700">{article.description}</h4>
-
-                                </div>
-                                
-                                <div className=" min-h-44 ">
-
-                                    <div className="mb-8">
-                                        <div className="flex justify-between items-center mb-5 border-y-slate-500">
-                                            <div className="flex items-center px-3 py-1">
-                                                <div className="flex-shrink-0">
-                                                    <Avatar sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.id} />
-                                                </div>
-                                                <div className="flex flex-col justify-around ml-3">
-                                                    <p className="text-sm karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
-                                                        {article?.author?.id}
-                                                    </p>
-                                                    <div className="flex space-x-1 text-sm text-gray-600 dark:text-gray-300">
-                                                        <div>
-                                                            {'2 min'} read
-                                                        </div>
-                                                        <div area-hidden="true"> · </div>
-                                                        <PostDate date={publishedAt} publishedAt={publishedAt} updatedAt={updatedAt} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <PostActions id={article.id} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <ArticleSidebar article={article} />
                     </section>
                 </main>
             );
@@ -88,53 +50,3 @@ export const PostView = async ({ article }) => {
     }
 }
 
-
-export const PostDate = (props) => {
-    const publishedAt = props.publishedAt;
-    const updatedAt = props.updatedAt;
-
-    return (
-        <>
-            <div className="group relative transition-all duration-500">
-                <time dateTime={props.date}>{publishedAt.date}</time>
-                <div className="hidden opacity-0 transition-all duration-500 group-hover:opacity-100 p-5 group-hover:block absolute -right-4 top-8 border rounded-xl shadow-dark/20 z-[2] dark:border-darkHead dark:shadow-light/20 shadow-md border-t-2 dark:bg-dark border-t-accentLight dark:border-t-accentDark bg-light">
-                    <table className="table-auto">
-                        <thead className="text-slate-800 dark:text-gray-200">
-                            <tr>
-                                <th className="px-4 py-2">Type</th>
-                                <th className="px-4 py-2">Published At</th>
-                                <th className="px-4 py-2">Updated At</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-gray-800 dark:text-gray-300">
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">Date</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.date}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.date}</td>
-                            </tr>
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">time</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.time}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.time}</td>
-                            </tr>
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">ISO</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.ISO}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.ISO}</td>
-                            </tr>
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">Day</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.dayOfWeek}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.dayOfWeek}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div className="text-sm text-center text-gray-500 mt-2">
-                        {publishedAt.diff}
-                    </div>
-                </div>
-            </div>
-
-        </>
-    );
-}  

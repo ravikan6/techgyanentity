@@ -38,34 +38,34 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             }
         }),
     ],
-    cookies: {
-        sessionToken: {
-            name: `__Secure-RSSID`,
-            options: {
-                httpOnly: true,
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-        callbackUrl: {
-            name: `__Secure-RSCBURL`,
-            options: {
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-        csrfToken: {
-            name: `__Host-RHCSRF`,
-            options: {
-                httpOnly: true,
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-    },
+    // cookies: {
+    //     sessionToken: {
+    //         name: `__Secure-RSSID`,
+    //         options: {
+    //             httpOnly: true,
+    //             sameSite: 'lax',
+    //             path: '/',
+    //             secure: true
+    //         }
+    //     },
+    //     callbackUrl: {
+    //         name: `__Secure-RSCBURL`,
+    //         options: {
+    //             sameSite: 'lax',
+    //             path: '/',
+    //             secure: true
+    //         }
+    //     },
+    //     csrfToken: {
+    //         name: `__Host-RHCSRF`,
+    //         options: {
+    //             httpOnly: true,
+    //             sameSite: 'lax',
+    //             path: '/',
+    //             secure: true
+    //         }
+    //     },
+    // },
     session: { strategy: "jwt" },
     callbacks: {
         async jwt({ token, user, account }) {

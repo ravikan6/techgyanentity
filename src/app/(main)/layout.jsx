@@ -18,7 +18,7 @@ export default async function RootLayout({ children, models }) {
   console.log('RootLayout', session);
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className=' bg-light text-black !p-0 dark:text-white dark:bg-dark'>
+      <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
         <Providers>
           <CssBaseline enableColorScheme />
           <MainLayout session={session} >

@@ -92,7 +92,7 @@ const MainLayout = ({ children, session }) => {
                     variant={variant}
                     anchor="left"
                     open={open}
-                    className={variant === 'permanent' ? '!hidden min-[600px]:!block' : ''}
+                    className={(variant === 'permanent' ? '!hidden min-[600px]:!block' : '') + ' rb_SideBar_ScrollBar' }
                 >
                     {variant === 'persistent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
                         <IconButton

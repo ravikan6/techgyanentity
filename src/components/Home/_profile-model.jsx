@@ -49,7 +49,7 @@ export const UserProfileModel = ({ data }) => {
 
     return (
         <Fragment>
-            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', pr: '2px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center',  }}>
                 <Tooltip title="Account settings">
                     <IconButton
                         onClick={(e) => { handleClick(e); setAnchorEl(e.currentTarget) }}
@@ -73,7 +73,7 @@ export const UserProfileModel = ({ data }) => {
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                className="rb_SideBar_ScrollBar overflow-y-auto"
+                className="rb_sss overflow-y-auto"
             >
                 <Box className="h-[80px] max-h-[80px] w-full flex flex-col justify-center overflow-hidden">
                     <MenuItem>
@@ -82,7 +82,7 @@ export const UserProfileModel = ({ data }) => {
                     </MenuItem>
                 </Box>
                 {/* <Divider /> */}
-                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: 1, boxShadow: null }}>
+                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, ml: 1.5, boxShadow: null }}>
                     <ListItemRdX link={{
                         name: 'Your Profile',
                         url: `/@${data?.user?.username}`,
@@ -157,6 +157,7 @@ export const UserProfileModel = ({ data }) => {
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                className="rb_sss"
             >
                 <Box className="dark:bg-accentDark bg-accent" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
                     <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">
@@ -248,9 +249,9 @@ export const NavMenu = () => {
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                className="rb_SideBar_ScrollBar overflow-y-auto"
+                className="rb_sss overflow-y-auto"
             >
-                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: 1, boxShadow: null }}>
+                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, ml: 1.5, boxShadow: null }}>
 
 
                     <ListItemRdX link={{
@@ -308,6 +309,7 @@ export const NavMenu = () => {
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                className="rb_sss"
             >
                 <Box className="dark:bg-accentDark bg-accent" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
                     <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">

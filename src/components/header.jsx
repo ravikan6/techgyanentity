@@ -50,10 +50,10 @@ const Header = async () => {
                         <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
                             <div className='flex justify-start items-center logo w-3/12'>
                                 <DrawerBtn />
-                                {/* <SearchBar /> */}
+                                <ManinLogo className='ml-4' />
                             </div>
                             <div className='flex justify-center items-center w-3/12'>
-                                <ManinLogo className='ml-4' />
+                                <SearchBar />
                             </div>
                             <div className='flex space-x-6 justify-end items-center w-3/12'>
                                 {!session?.user ? (

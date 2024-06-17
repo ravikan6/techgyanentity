@@ -61,7 +61,7 @@ function media_URL_v2 (url) {
 
 function image_URL_v2 (url, query = null) {
     if (typeof url !== 'string' || url == null) {
-        return 'o';
+        return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYThRPnGjAvcFS19x-5vXINgIe3g2aP4Cp5A&s';
     }
     // if (url?.startsWith('http') || url?.startsWith('//')) {
     //     return `${url}?${QueryString.stringify(query)}`;

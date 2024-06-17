@@ -16,33 +16,75 @@
 }
 
 *::-webkit-scrollbar {
-  @apply w-3 bg-transparent;
+  @apply w-4;
 }
 
 *::-webkit-scrollbar-track {
-  @apply w-3 bg-transparent;
+  @apply mt-0.5 mb-0.5 border-0 bg-transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-  @apply w-3 border-4 border-solid border-white dark:border-dark hover:border-[3px] rounded-full bg-gray-300 dark:bg-zinc-700 hover:bg-accentLight dark:hover:bg-accentDark;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  box-shadow: none;
+  min-height: 50px;
+  @apply bg-secondary/50 dark:bg-secondaryDark/50 hover:bg-secondary dark:hover:bg-secondaryDark;
 }
 
 .scrollbar-m::-webkit-scrollbar {
   @apply w-4;
 }
 
-.rb_SideBar_ScrollBar::-webkit-scrollbar-thumb {
-  height: 56px;
-  border-radius: 50px;
-  border: 1px solid transparent;
-  background-clip: content-box;
-  transition: border 0.2s ease, background-color 0.2s ease-in-out;
-  @apply bg-transparent group-hover:bg-gray-400 hover:!bg-gray-700 hover:border-0 dark:group-hover:bg-stone-500 dark:hover:!bg-stone-300 dark:bg-transparent;
+.rb_SideBar_ScrollBar:hover .MuiDrawer-paper::-webkit-scrollbar-thumb {
+ @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
+ @apply transition-all duration-500 opacity-100;
 }
 
-.rb_SideBar_ScrollBar::-webkit-scrollbar {
-  @apply w-1.5;
+.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  box-shadow: none;
+  min-height: 50px;
+  transition: background-color 0.2s ease-in-out;
+  @apply bg-transparent dark:bg-transparent opacity-0;
 }
+
+.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar {
+  @apply w-3.5;
+}
+
+.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-track {
+  @apply mt-[60px] mb-2 border-0 bg-transparent;
+}
+
+/* ******************************************* */
+
+.rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {
+  @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
+  @apply transition-all duration-500;
+ }
+ 
+ .rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {
+   background-clip: padding-box;
+   border: 4px solid transparent;
+   border-radius: 8px;
+   box-shadow: none;
+   min-height: 50px;
+   transition: background-color 0.2s ease-in-out;
+ }
+ 
+ .rb_sss .MuiPaper-root::-webkit-scrollbar {
+   @apply w-3.5;
+ }
+ 
+ .rb_sss .MuiPaper-root::-webkit-scrollbar-track {
+   @apply mt-10 mb-10 border-0 bg-transparent;
+ }
+
+
+ /************************************************************/
 
 .rb-scrollbar::-webkit-scrollbar {
   @apply w-2 bg-white dark:bg-slate-800;
@@ -304,3 +346,65 @@ svg {
   animation: slidein 0.7s ease-in;
 }
 
+
+
+
+
+
+
+
+/* Css for post container  */
+
+.rb-post-grid {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+
+.rb-post-main {
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
+}
+
+.rb-post-sidebar {
+  flex: 0 0 var(--sidebar-width);
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  display: none;
+}
+
+@media (min-width: 1017px) {
+  .rb-post-sidebar {
+    display: block;
+  }
+}
+
+@media (max-width: 1016px) {
+  .rb-post-grid {
+    flex-direction: column;
+  }
+
+  .rb-post-main,
+  .rb-post-sidebar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .rb-post-main,
+  .rb-post-sidebar {
+    padding: 10px;
+  }
+}
+
+:root {
+  --sidebar-width: 300px;
+}
+
+@media (max-width: 1016px) {
+  :root {
+    --sidebar-width: 100%;
+  }
+}

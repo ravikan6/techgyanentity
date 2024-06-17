@@ -1,75 +1,52 @@
 import { auth } from "@/lib/auth";
 import { ImageBlock, TheImageBlock } from "@/components/Home/HomeBlocks";
+import { prisma } from "@/lib/db";
+import Link from "next/link";
+import { ArticleImage } from "@/components/post/_client";
 
 export default async function Home() {
   const session = await auth();
+  const blogPosts = await prisma.post.findMany({
+    where: {
+      published: true,
+    },
+    select: {
+      title: true,
+      slug: true,
+      image: true,
+      author: {
+        select: {
+          id: true,
+          handle: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Blog Post 1",
-      content: "This is the content of Blog Post 1",
-      author: "John Doe",
-      date: "2022-01-01",
-    },
-    {
-      id: 2,
-      title: "Blog Post 2",
-      content: "This is the content of Blog Post 2",
-      author: "Jane Smith",
-      date: "2022-01-02",
-    },
-    {
-      id: 3,
-      title: "Blog Post 3",
-      content: "This is the content of Blog Post 3",
-      author: "Alex Johnson",
-      date: "2022-01-03",
-    },
-  ];
+  console.log(blogPosts, 'blogPosts');
 
   return (
     <>
-      <ImageBlock />
-      <TheImageBlock />
-
-
-      {/* <div className="container mx-auto">
-        <h1 className="text-3xl font-bold mt-8">Welcome to the Blog</h1>
-        <div className="grid grid-cols-3 gap-4 mt-8">
+      {/* <ImageBlock />
+      <TheImageBlock /> */}
+      <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        <h1 className="text-6xl font-bold">Welcome to Next.js!</h1>
+        <p className="mt-3 text-2xl">Get started by editing{' '}
+          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">pages/index.js</code>
+        </p>
+        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
           {blogPosts.map((post) => (
-            <div key={post.id} className="bg-white p-4 shadow">
-              <h2 className="text-xl font-bold">{post.title}</h2>
-              <p className="text-gray-500 mt-2">
-                By {post.author} on {post.date}
-              </p>
-              <p className="mt-4">{post.content}</p>
+            <div key={post.slug} className="p-6 mt-6 text-left border w-96 rounded-xl">
+              <ArticleImage image={post.image} />
+              <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
+              <Link href={`/${post.author.handle}/${post.slug}`} className="mt-4 text-sm font-bold text-blue-600">Read More</Link>
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-8">
-          {blogPosts.map((post) => (
-            <div key={post.id} className="bg-white p-4 shadow">
-              <h2 className="text-xl font-bold">{post.title}</h2>
-              <p className="text-gray-500 mt-2">
-                By {post.author} on {post.date}
-              </p>
-              <p className="mt-4">{post.content}</p>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-3 gap-4 mt-8">
-          {blogPosts.map((post) => (
-            <div key={post.id} className="bg-white p-4 shadow">
-              <h2 className="text-xl font-bold">{post.title}</h2>
-              <p className="text-gray-500 mt-2">
-                By {post.author} on {post.date}
-              </p>
-              <p className="mt-4">{post.content}</p>
-            </div>
-          ))}
-        </div>
-      </div> */}
+      </div>
     </>
   );
 }
