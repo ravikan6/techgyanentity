@@ -18,6 +18,7 @@ export default async function Home() {
         select: {
           id: true,
           handle: true,
+          name: true,
         },
       },
     },
@@ -28,23 +29,34 @@ export default async function Home() {
 
   console.log(blogPosts, 'blogPosts');
 
+  const arr = [0]
+
   return (
     <>
       {/* <ImageBlock />
       <TheImageBlock /> */}
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        <h1 className="text-6xl font-bold">Welcome to Next.js!</h1>
-        <p className="mt-3 text-2xl">Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">pages/index.js</code>
-        </p>
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          {blogPosts.map((post) => (
-            <div key={post.slug} className="p-6 mt-6 text-left border w-96 rounded-xl">
-              <ArticleImage image={post.image} />
-              <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
-              <Link href={`/${post.author.handle}/${post.slug}`} className="mt-4 text-sm font-bold text-blue-600">Read More</Link>
-            </div>
-          ))}
+      <div className="py-2">
+        <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 max-w-5xl mx-auto gap-6 sm:w-full">
+          {
+            arr.map(() => {
+              return (blogPosts.map((post) => (
+                <Link href={`/${post.author.handle}/${post.slug}`} key={post.slug} className="text-left">
+                  <ArticleImage classes={'rounded-lg'} image={post.image} />
+                  <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
+                  <div className="flex ">
+                    <Link className="flex mt-2 space-x-3 items-center" href={`/@${post?.author?.handle}`}>
+                      <div className="w-10 h-10 rounded-3xl bg-black/20 dark:bg-white/20 animate-pulse"></div>
+                      <p className="text-base flex flex-col font-semibold">
+                        {post?.author?.name}
+                        <span className="text-sm -mt-1.5 font-medium">{post?.author?.handle}</span>
+                      </p>
+                    </Link>
+                  </div>
+                </Link>)
+              ))
+            })
+          }
+
         </div>
       </div>
     </>

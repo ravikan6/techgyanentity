@@ -4,7 +4,7 @@ const nextConfig = {
     {
         APP_URL: 'https://www.raviblog.tech',
         APP_NAME: 'Techgyan Entity',
-        NEXTAUTH_URL: 'http://localhost:3000',
+        // NEXTAUTH_URL: 'http://localhost:3000',
         NEXTAUTH_SECRET: '3X4b7KUq8vUMo6WzXVOkeJeuqLCanZTnhnyM8cCRL6o=',
         COOKIE_SECRET: 'Fo1cKMrsO3GHyq/fUsGROUoJ3pQMeXe1pEcTYeZBrIOFm7GJSQy2QH0K9UwysE3AjtU3Q0wDN7+ZNeeaYvw98txGPV73tdvaQcMaULJWuxIH3z2avWae2qjdC8GqRUJ28ByBGUq/cMBkJsn4ducJbH4Wq//w+fHD1ATJYrC8x7JBf7Muzl908NpHYALH5iomL07ATxYUIaE4qAWc6UEno5wyFTZKMXk6IvIDBwrI8PEZZNU=',
         NEXT_PUBLIC_COOKIE_SECRET: 'Fo1cKMrsO3GHyq/fUsGROUoJ3pQMeXe1pEcTYeZBrIOFm7GJSQy2QH0K9UwysE3AjtU3Q0wDN7+ZNeeaYvw98txGPV73tdvaQcMaULJWuxIH3z2avWae2qjdC8GqRUJ28ByBGUq/cMBkJsn4ducJbH4Wq//w+fHD1ATJYrC8x7JBf7Muzl908NpHYALH5iomL07ATxYUIaE4qAWc6UEno5wyFTZKMXk6IvIDBwrI8PEZZNU=',

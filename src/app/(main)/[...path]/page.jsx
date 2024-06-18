@@ -2,16 +2,42 @@ import { ArticleWrapper } from '@/components/post/_client';
 import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { getCldOgImageUrl } from 'next-cloudinary';
 
 export async function generateMetadata({ params, searchParams }) {
     const route = params.path;
     const path = params.path[0];
     const query = searchParams;
+    if (route?.length === 1) {
+        return {
+            title: 'The Dynamic Page',
+        }
+    } else if (route?.length === 2) {
+        const article = await getArticle(route[1], route[0])
+        const url = getCldOgImageUrl({ src: article?.image?.url })
+        return {
+            title: article?.title,
+            description: article?.description,
+            openGraph: {
+                title: article?.title,
+                description: article?.description,
+                siteName: process.env.APP_NAME,
+                images: [
+                    {
+                        url,
+                        width: 800,
+                        height: 600,
+                    },
+                ],
+                locale: 'en_US',
+                type: 'article',
+                publishedTime: article?.publishedAt,
+                authors: [article?.author?.name]
+            }
+        }
 
-    return (
-        <>
-        </>
-    );
+    } else return { title: 'Page Not Found.' }
+
 }
 
 const getArticle = async (slug, handle) => {

@@ -7,7 +7,10 @@ import { Header } from '@/components/header';
 
 export async function generateMetadata() {
   return {
-    title: process.env.APP_NAME,
+    title: {
+      template: `%s | ${process.env.APP_NAME}`,
+      default: process.env.APP_NAME,
+    },
     description: 'RadoxStream is a streaming platform for the RadoxRadio community.',
   }
 };

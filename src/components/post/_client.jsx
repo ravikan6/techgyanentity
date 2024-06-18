@@ -7,15 +7,17 @@ import { PostActions } from "./postActions";
 import { Avatar } from "@mui/material";
 
 
-export const ArticleImage = ({ image }) => {
+export const ArticleImage = ({ image, classes }) => {
     return <CldImage
         src={image?.url}
         alt={image.alt}
         width={720}
         height={480}
         sizes="100vw"
-        loading='eager'
-        className="rounded-2xl w-full h-auto"
+        loading='lazy'
+        enhance
+        sanitize
+        className={`rounded-2xl w-full h-auto ${classes}`}
     />
 }
 
