@@ -1,0 +1,70 @@
+import React from 'react'
+import Image from 'next/image';
+import { InfoItem } from './_client';
+import { formatLocalDate } from '@/lib/helpers';
+import { Avatar, Skeleton } from '@mui/material';
+import { Button } from '@/components/rui/_components';
+
+const Account = ({ session }) => {
+  return (
+    <div>
+      <PersonalInfo session={session} user={session?.user} />
+    </div>
+  )
+}
+
+const PersonalInfo = ({ session, user }) => {
+
+  return (
+    <>
+      <profile-info className=" content-center">
+        <div className="flex flex-col space-y-2 mb-20">
+          <h2 className="text-2xl cheltenham text-center font-semibold">Personal Information</h2>
+          <p className="text-gray-600 dark:text-gray-400 text-center">Update your personal information and manage your account settings.</p>
+        </div>
+        <div className='mb-10' >
+          <div className='flex' >
+            <div className="flex w-7/12 flex-col space-y-2">
+              <h3 className="text-xl stymie text-slate-800 dark:text-slate-200 font-medium">Profile Information in {process.env.APP_NAME} services</h3>
+              <p className="text-gray-600 dark:text-gray-400">Take control of your personal details and tailor your preferences. Opt to share specific information, such as contact details, for seamless communication with others. You can also get an overview of your profiles.</p>
+            </div>
+            <div className='flex items-center justify-center'>
+              <Image width={360} height={128} src="https://www.gstatic.com/identity/boq/accountsettingsmobile/profile_scene_visible_360x128_18500c161aac04e9279fbb234b7de818.png" alt="Profile Picture" />
+            </div>
+          </div>
+        </div>
+
+        <InfoBox title="Basic Info" description={`Edit your name, email, and phone number. This information will be visible to other users on ${process.env.APP_NAME} services.`}>
+          <div className='flex flex-col mt-4 space-y-4' >
+            <div className='flex cursor-pointer w-full transition-all duration-500 group/infoItem text-gray-700 dark:text-gray-300 bg-light dark:bg-dark hover:bg-accentLight dark:hover:bg-accentDark hover:text-gray-200 dark:hover:text-gray-100 px-8 items-center py-3 rounded-xl justify-between' >
+              <p className='text-sm ' >Profile Picture</p>
+              <p>A profile picture helps personalise your account</p>
+              <Avatar width={32} height={32} className='w-8 h-8 rounded-full overflow-hidden' src={user?.image} alt={session?.user?.name} />
+            </div>
+            <InfoItem title="Name" value={user?.name} url={'/account/edit?d=name'} />
+            <InfoItem title="Username" value={user?.username} url={'/account/edit?d=username'} />
+            <InfoItem title="Gender" value={user?.profile?.gender} url={'/account/edit?d=gender'} />
+            <InfoItem title="Birthday" value={formatLocalDate(user?.birthday?.date)} url={'/account/edit?d=birthday'} />
+          </div>
+        </InfoBox>
+
+      </profile-info>
+    </>
+  )
+};
+
+const InfoBox = ({ title, description, children }) => {
+  return (
+    <div className='rounded-xl bg-lightHead dark:bg-darkHead mt-5 px-8 py-5' >
+      <h3 className="text-lg stymie text-slate-800 dark:text-slate-200 font-medium">{title}</h3>
+      <p className="text-gray-600 text-xs dark:text-gray-400">{description}</p>
+      <div className="mt-8">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export { PersonalInfo };
+
+export default Account;

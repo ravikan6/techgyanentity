@@ -24,7 +24,7 @@ const CreateAuthor = () => {
             <h1>Create Author</h1>
             <div className="w-full max-w-3xl mx-auto px-10 flex flex-col ">
                 <div>
-                    <TextField onChange={(e)=> setBio(e.target.value)} ullWidth={true} variant="standard" label="Bio" />
+                    <TextField onChange={(e)=> setBio(e.target.value)} fullWidth={true} variant="standard" label="Bio" />
                 </div>
 
                 <div className="mt-10">

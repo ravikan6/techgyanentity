@@ -37,7 +37,7 @@
 }
 
 .rb_SideBar_ScrollBar .MuiDrawer-paper {
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable !important;
 }
 
 .rb_SideBar_ScrollBar:hover .MuiDrawer-paper::-webkit-scrollbar-thumb {
@@ -66,7 +66,7 @@
 /* ******************************************* */
 
 .rb_sss .MuiPaper-root {
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable !important;
 }
 
 .rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {

@@ -12,6 +12,7 @@ import {
     FormControlLabel,
     Switch,
 } from '@mui/material';
+import Editor from "../create/editor";
 
 const CreatePost = ({ onSubmit = () => { } }) => {
     const [post, setPost] = useState({
@@ -42,7 +43,7 @@ const CreatePost = ({ onSubmit = () => { } }) => {
         }));
     };
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(post, '_______________________post by setPost!')
         await createPostAction(post)
@@ -52,6 +53,11 @@ const CreatePost = ({ onSubmit = () => { } }) => {
 
     return (
         <>
+            <div className="my-10">
+                <Editor />
+            </div>
+
+
             <Box
                 component="form"
                 onSubmit={handleSubmit}

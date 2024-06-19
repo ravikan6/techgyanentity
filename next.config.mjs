@@ -25,6 +25,9 @@ const nextConfig = {
     experimental: {
         instrumentationHook: true,
     },
+    images: {
+        domains: ['res.cloudinary.com', 'www.raviblog.tech', 'www.gstatic.com', 'www.google.com'],
+    },
 };
 
 export default nextConfig;

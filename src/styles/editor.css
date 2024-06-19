@@ -1,0 +1,8 @@
+:root {
+    --bn-colors-editor-text: var(--rb-palette-background-paper) !important;
+    --bn-colors-editor-background: var(--rb-palette-background-paper) !important;
+    --bn-colors-menu-text: #3f3f3f;
+    --bn-colors-menu-background: var(--rb-palette-background-paper) !important;
+    --bn-colors-tooltip-text: #3f3f3f;
+    --bn-colors-tooltip-background: #efefef;
+}

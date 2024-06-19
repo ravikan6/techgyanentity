@@ -1,5 +1,11 @@
 function formatLocalDate(inputDate) {
+    if (inputDate == null || inputDate === '') {
+        return null;
+    }
     const dateParts = inputDate?.split('-');
+    if (dateParts.length < 3) {
+        return null;
+    }
     const year = parseInt(dateParts[0]);
     const month = parseInt(dateParts[1]) - 1;
     const day = parseInt(dateParts[2]);

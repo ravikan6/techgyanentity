@@ -14,7 +14,7 @@ export async function generateMetadata({ params, searchParams }) {
         }
     } else if (route?.length === 2) {
         const article = await getArticle(route[1], route[0])
-        const url = getCldOgImageUrl({ src: article?.image?.url })
+        const url = article?.image?.url ? getCldOgImageUrl({ src: article?.image?.url }) : null
         return {
             title: article?.title,
             description: article?.description,
@@ -22,13 +22,15 @@ export async function generateMetadata({ params, searchParams }) {
                 title: article?.title,
                 description: article?.description,
                 siteName: process.env.APP_NAME,
-                images: [
-                    {
-                        url,
-                        width: 800,
-                        height: 600,
-                    },
-                ],
+                ...url && {
+                    images: [
+                        {
+                            url,
+                            width: 800,
+                            height: 600,
+                        },
+                    ]
+                },
                 locale: 'en_US',
                 type: 'article',
                 publishedTime: article?.publishedAt,
