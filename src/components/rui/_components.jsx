@@ -22,7 +22,7 @@ const RuiMenu = styled(React.forwardRef((props, ref) => (
         borderRadius: '24px',
         marginTop: theme.spacing(1),
         color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[200],
-        backgroundColor: theme.palette.modelBg,
+        backgroundColor: theme.palette.modelBg.main,
         py: 20,
     },
 }));
@@ -61,7 +61,7 @@ const RuiButton = styled(Button)(({ theme }) => ({
     '& .MuiButton-contained': {
         boxShadow: theme.shadows[2],
         backgroundColor: `${theme.palette.accent.main} !important`,
-    },
+    }
 }));
 
 const RuiToolTip = styled(({ className, ...props }) =>

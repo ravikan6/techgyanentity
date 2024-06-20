@@ -24,6 +24,13 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         where: {
                             email: credentials.identifier,
                         },
+                        include: {
+                            Author: {
+                                select: {
+                                    id: true,
+                                }
+                            }
+                        }
                     });
                     if (response) {
                         return { ...response, password: undefined };

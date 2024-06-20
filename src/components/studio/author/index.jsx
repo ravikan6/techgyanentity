@@ -1,8 +1,8 @@
-import { ChannelEditLayoutFunc, ChannelBrandFunc, ChannelInfoFunc, ChannelEditLayout } from "./_edit-funcs";
+import { ChannelEditLayoutFunc, ChannelBrandFunc, AuthorInfoUpdate, ChannelEditLayout } from "./_edit-funcs";
 
 export {
     ChannelEditLayoutFunc as ChannelEditSections,
     ChannelBrandFunc as ChannelEditBranding,
-    ChannelInfoFunc as ChannelEditInfo,
+    AuthorInfoUpdate as AuthorInfoUpdate,
     ChannelEditLayout as ChannelEditLayoutWrapper
 }

@@ -1,7 +1,9 @@
 "use server"
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 // import { getCookie, setCookie } from "cookies-next";
 import { decrypt, encrypt } from "../utils";
+import { prisma } from '../db';
+import { getCldImageUrl } from 'next-cloudinary';
 
 const DecryptChannelStudioCookie = async () => {
     let cookieData = cookies().get('__Secure-RSUCHD');
@@ -18,8 +20,26 @@ const DecryptCommunityStudioCookie = async () => {
 const DecryptAuthorStudioCookie = async () => {
     let cookieData = cookies().get('__Secure-RSUAUD');
     cookieData = await decrypt(cookieData?.value, process.env.COOKIE_SECRET);
-    console.log(cookieData?.value, 'cookieData');
-    return cookieData;
+    if (cookieData) {
+        let author = await prisma.author.findUnique({
+            where: {
+                id: cookieData,
+            }
+        });
+        if (author) {
+            if (author?.image?.url) {
+                if (author?.image?.provider === 'cloudinary') {
+                    author.image = await getCldImageUrl(author?.image?.url, { width: 100, height: 100, crop: 'fill' });
+                }
+            }
+            console.log(author,'author_______________________________asyncAction');
+            return author;
+        }
+        else {
+            return null;
+        }
+    }
+    return null;
 }
 
 const SetChannelStudioCookie = async (data) => {

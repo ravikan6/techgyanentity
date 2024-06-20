@@ -1,4 +1,4 @@
-import { ChannelEditBranding, ChannelEditInfo, ChannelEditSections } from '@/components/studio/channel';
+import { ChannelEditBranding, AuthorInfoUpdate, ChannelEditSections } from '@/components/studio/author';
 import { DecryptChannelStudioCookie, DecryptAuthorStudioCookie } from '@/lib/actions/studio';
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -44,17 +44,16 @@ async function getChannelBrand(id) {
 const ChannelEditPage = async ({ searchParams }) => {
     let page = searchParams?.t || '';
     let data = {}
-    let channelInfo = await DecryptAuthorStudioCookie();
-    // if (!channelInfo) {
-    //     redirect('/studio/channel');
-    // }
+    let authorInfo = await DecryptAuthorStudioCookie();
+    if (!authorInfo) {
+        redirect(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
+    }
     if (page === 'sections') {
     } else if (page === 'branding') {
-        data = await getChannelBrand(channelInfo?.id);
+        data = authorInfo;
     } else if (page === 'info') {
-        data = await getChannelInfo(channelInfo?.id);
+        data = authorInfo;
     }
-    data = data && await data.data?.channel;
 
     console.log(data)
 
@@ -73,7 +72,7 @@ const ChannelEditPage = async ({ searchParams }) => {
     } else if (page === 'info') {
         return (
             <channel-edit-page>
-                <ChannelEditInfo data={data} />
+                <AuthorInfoUpdate data={data} />
             </channel-edit-page>
         )
     }

@@ -114,7 +114,9 @@ export const StudioServiceSelecterMenu = ({ session }) => {
                             <Avatar alt='Avatar' className="w-20 h-20 rounded-full" src={currentData?.image}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                             <span className="mt-2 text-xl max-w-60 truncate font-medium cheltenham">Hi, {currentData?.name}</span>
                         </div>
-                        <Button variant="outlined" color='accent' fullWidth >Manage your {process.env.APP_NAME} Account</Button>
+                        <Link href={'/account'}>
+                            <Button variant="outlined" color='secondary' fullWidth >Manage your Account</Button>
+                        </Link>
                     </Box>
 
 
@@ -252,7 +254,7 @@ const SwitchAccount = ({ state, context }) => {
 
     const updateContextCookie = (data) => {
         try {
-            SetAuthorStudioCookie(data).then((res) => {
+            SetAuthorStudioCookie(data?.id).then((res) => {
                 if (res) {
                     context.setData({ ...context.data, data: data });
                     state.handleInsiderClose();

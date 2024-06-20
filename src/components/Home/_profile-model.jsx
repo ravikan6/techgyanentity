@@ -73,7 +73,7 @@ export const UserProfileModel = ({ data }) => {
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                className="rb_sss overflow-y-auto"
+                className="rb_sss rb_ss overflow-y-auto"
             >
                 <Box className="h-[80px] max-h-[80px] w-full flex flex-col justify-center overflow-hidden">
                     <MenuItem>
@@ -249,7 +249,7 @@ export const NavMenu = () => {
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                className="rb_sss overflow-y-auto"
+                className="rb_sss rb_ss overflow-y-auto"
             >
                 <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, ml: 1.5, boxShadow: null }}>
 

@@ -73,7 +73,7 @@ const StudioLayout = ({ children, session }) => {
                         }),
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(),
-                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette.modelBG.main : 'transparent',
+                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette.head.main : 'transparent',
                             mt: variant === 'persistent' ? 0 : '54px',
                             border: 'none',
                             transition: (theme) => theme.transitions.create('width', {

@@ -58,6 +58,7 @@ model Author {
   bio          String?
   Post         Post[]
   image        Avatar?
+  banner       Banner?
 }
 
 type Image {
@@ -73,8 +74,13 @@ type Avatar {
   provider String? @default("cloudinary")
 }
 
+type Banner {
+  url      String
+  provider String? @default("cloudinary")
+}
+
 type Link {
-  index Int?
+  id Int?
   url   String
   title String
 }

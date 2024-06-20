@@ -18,7 +18,6 @@ export async function generateMetadata() {
 export default async function RootLayout({ children, models }) {
   const session = await auth();
 
-  console.log('RootLayout', session);
   return (
     <html lang='en' suppressHydrationWarning>
       <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
@@ -29,7 +28,7 @@ export default async function RootLayout({ children, models }) {
             <main className="mt-[54px]">
               {children}
             </main>
-            {/* {models} */}
+            {models}
           </MainLayout>
         </Providers>
       </body>

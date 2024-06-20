@@ -12,6 +12,7 @@ import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { RiDraggable } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { default as NextImage } from 'next/image';
+import { updateAuthorAction } from "@/lib/actions/author";
 
 const ChannelEditContext = React.createContext();
 
@@ -32,7 +33,7 @@ const ChannelBrandFunc = ({ data }) => {
     const [files, setFiles] = useState({ logo: null, banner: null, rml: false, rmb: false });
     const [error, setError] = useState({ error: false, message: { logo: null, banner: null } });
 
-    let channelID = context?.data?.data?.id;
+    let authorId = context?.data?.data?.id;
 
     useMemo(() => {
         if (JSON.stringify(bData) !== JSON.stringify(data)) {
@@ -189,13 +190,13 @@ const ChannelBrandFunc = ({ data }) => {
     };
 
     useMemo(() => {
-        if (channelID != data?.id) {
+        if (authorId != data?.id) {
             !context?.loading && context?.setLoading(true);
             context?.data?.data?.id && setState({ ...state, data: { isRunnable: false } });
         } else {
             context?.loading && context.setLoading(false);
         }
-    }, [context?.loading, data?.id, channelID]);
+    }, [context?.loading, data?.id, authorId]);
 
     return (
         <>
@@ -249,24 +250,25 @@ const ChannelBrandFunc = ({ data }) => {
     );
 }
 
-const ChannelInfoFunc = ({ data }) => {
+const AuthorInfoUpdate = ({ data }) => {
+
     const context = useContext(StudioContext);
     const [allDisabled, setAllDisabled] = useState(false);
     const [name, setName] = useState({ value: '', error: false, errorText: null });
     const [handle, setHandle] = useState({ value: '', error: false });
     const [description, setDescription] = useState({ value: '', error: false });
     const [email, setEmail] = useState({ value: '', error: false });
-    const [links, setLinks] = useState(data?.links || []);
+    const [links, setLinks] = useState(data?.social || []);
     const { state, setState } = useContext(ChannelEditContext);
 
-    let channelID = context?.data?.data?.id;
+    const authorId = context?.data?.data?.id;
 
     function setDataFromData() {
         setName({ value: data?.name, error: false, errorText: null });
         setHandle({ value: data?.handle, error: false });
-        setDescription({ value: data?.description, error: false });
+        setDescription({ value: data?.bio, error: false });
         setEmail({ value: data?.contactEmail, error: false });
-        setLinks(data?.links);
+        setLinks(data?.social);
     }
 
     useMemo(() => {
@@ -275,7 +277,7 @@ const ChannelInfoFunc = ({ data }) => {
     }, [data]);
 
     useEffect(() => {
-        if (!(name?.value === data?.name) || !(handle?.value === data?.handle) || !(description?.value === data?.description) || !(email?.value === data?.contactEmail) || (JSON.stringify(links) !== JSON.stringify(data?.links))) {
+        if (!(name?.value === data?.name) || !(handle?.value === data?.handle) || !(description?.value === data?.bio) || !(email?.value === data?.contactEmail) || (JSON.stringify(links) !== JSON.stringify(data?.social))) {
             if (name.error || handle.error || description.error || email.error) {
                 setState({ ...state, data: { aCancle: true } });
             } else {
@@ -290,18 +292,18 @@ const ChannelInfoFunc = ({ data }) => {
     useMemo(async () => {
         if (state?.run) {
             try {
-                let newData = await updateChannelInfoAction({ name: name.value, handle: handle.value, description: JSON.stringify(description?.value), id: data?.id, links, ct_email: email?.value });
+                let newData = await updateAuthorAction(data?.id, { name: name.value, handle: handle.value, description: JSON.stringify(description?.value), social: links, contactEmail: email?.value });
                 if (newData?.data) {
                     context?.setData({ ...context?.data, data: newData?.data });
                     context.loading && context.setLoading(false);
                     // setAllDisabled(true);
                     setState({ ...state, data: { isRunnable: false }, run: false });
-                    toast.success('Your channel info has been published successfully');
+                    toast.success('Your have successfully updated your profile.')
                 } else {
-                    throw new Error('Failed to update channel');
+                    throw new Error(newData?.errors[0]?.message || 'Something went wrong, Please try again later.');
                 }
             } catch (e) {
-                toast.error('An error occurred while updating channel info. Please try again later.');
+                toast.error(e.message)
                 setState({ data: { ...state, isRunnable: true }, run: false });
                 // setAllDisabled(false);
                 context.loading && context.setLoading(false);
@@ -354,36 +356,36 @@ const ChannelInfoFunc = ({ data }) => {
     };
 
     useMemo(() => {
-        if (channelID != data?.id) {
+        if (authorId != data?.id) {
             !context?.loading && context?.setLoading(true);
             context?.data?.data?.id && setState({ ...state, data: { isRunnable: false } });
         } else {
             context?.loading && context.setLoading(false);
         }
-    }, [context?.loading, data?.id, channelID]);
+    }, [context?.loading, data?.id, authorId]);
 
     return (
         <div className="mt-10 max-w-[900px]">
             <div className="flex flex-col space-y-8 mb-5">
                 <div className="flex flex-col space-y-3">
-                    <InputHeader label={'Name'} desc={'Develop a professional and memorable channel name that accurately represents your content and resonates with your target audience (You can change it twice within 14 days).'} tip={'Name cannot contain angle brackets < >'} />
+                    <InputHeader label={'Name'} desc={'Your Author name is the name that will be displayed on your profile. It should be easy to remember and relevant to your content. You can change it twice within a month.'} tip={'Name cannot contain angle brackets < >'} />
                     <TextField disabled={allDisabled} size="small" required error={name?.error} helperText={name?.error && name?.errorText} counter inputProps={{ maxLength: 50 }} className="" label="Name" value={name.value} onChange={(e) => handleChangeName(e)} />
                 </div>
                 <div className="flex flex-col space-y-3">
-                    <InputHeader label={'Handle'} desc={'Your channel handle is a unique identifier that appears in your channel URL. It should be easy to remember and relevant to your content. you can change it twice within a month. '} />
+                    <InputHeader label={'Handle'} desc={'Your handle is a unique identifier for your profile. It will be used in your profile URL and can be changed only once within a month.'} tip={'Handle can only contain letters, numbers, and underscores'} />
                     <TextField disabled={allDisabled} required error={handle?.error} helperText={(handle?.error && handle?.errorText) || handle?.url} counter InputProps={{ startAdornment: <InputAdornment position="start"><div className="ml-1 -mr-4 font-semibold text-gray-600 dark:text-gray-400 stymie">@</div></InputAdornment> }} inputProps={{ maxLength: 30, }} size="small" className="" label="Handle" value={handle?.value} onChange={(e) => handleChangeHandle(e)} />
                 </div>
                 <div className="flex flex-col space-y-3">
-                    <InputHeader label={'Description'} desc={'Write a brief description of your channel to help viewers understand what your channel is about. This will also help your channel appear in search results.'} />
+                    <InputHeader label={'Bio'} desc={'Tell viewers about yourself and your content. You can include information about your channel, your interests, and the type of content you create.'} tip={'Bio cannot contain angle brackets < >'} />
                     <TextField disabled={allDisabled} required error={description?.error} helperText={description?.error && description?.errorText} size="large" multiline counter minRows={4} inputProps={{ maxLength: 1000 }} className="" value={description.value || ''} onChange={(e) => handleChangeDescription(e)} />
                 </div>
                 <div className="flex flex-col space-y-3">
-                    <InputHeader label={'Links'} desc={'Add links to your social media profiles, websites, or other channels to help viewers find more of your content.'} tip={'You can add up to 5 links'} />
+                    <InputHeader label={'Links'} desc={'Add links to your social media profiles, websites, or any other. You can add up to 5 links.'} />
                     <ChannelLinkDragEdit set={{ links, setLinks }} state={{ state, setState }} disabled={allDisabled} />
                 </div>
                 <div className="flex flex-col space-y-3">
-                    <InputHeader label={'Contact Email'} desc={'Add an email address where viewers can contact you for business inquiries or collaborations.'} />
-                    <TextField disabled={allDisabled} required error={email?.error} helperText={email?.error && email?.errorText} size="small" className="" label="Email" value={email.value} onChange={(e) => handleChangeEmail(e)} />
+                    <InputHeader label={'Contact Email'} desc={'Add an email address where viewers & readers can contact you for business inquiries or collaborations.'} />
+                    <TextField disabled={allDisabled} error={email?.error} helperText={email?.error && email?.errorText} size="small" className="" label="Email" value={email.value} onChange={(e) => handleChangeEmail(e)} />
                 </div>
             </div>
         </div>
@@ -519,7 +521,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
         if (JSON.stringify(set.links) === JSON.stringify(items)) {
             state.setState({ ...state, data: { isRunnable: false } });
         } else {
-            if (items?.map(item => item.error).includes('T') || items?.map(item => item.error).includes('U'))
+            if (items?.map(item => item.error).includes('T') || items?.map(item => item.error).includes('U') || items?.map(item => item.title.trim()).includes('') || items?.map(item => item.url.trim()).includes(''))
                 state.setState({ ...state, data: { isRunnable: false } });
             else
                 state.setState({ ...state, data: { isRunnable: true } });
@@ -533,7 +535,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     };
 
     useMemo(() => {
-        let s = items.map((item, index) => {
+        let s = items?.map((item, index) => {
             let { error, T, U, ...rest } = item;
             return { ...rest };
         });
@@ -557,7 +559,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                 <Droppable droppableId="droppable">
                     {(provided) => (
                         <Grid container spacing={2} {...provided.droppableProps} className="transition-all duration-500" ref={provided.innerRef}>
-                            {items.map((item, index) => (
+                            {items?.map((item, index) => (
                                 <Draggable key={item.id} draggableId={item.id} index={index}>
                                     {(provided, snapshot) => (
                                         <Grid item xs={12} key={item.id} >
@@ -626,4 +628,4 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     );
 };
 
-export { ChannelEditLayoutFunc, ChannelBrandFunc, ChannelInfoFunc, ChannelEditLayout };
+export { ChannelEditLayoutFunc, ChannelBrandFunc, AuthorInfoUpdate, ChannelEditLayout };

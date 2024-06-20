@@ -33,7 +33,7 @@ const mui = extendTheme({
         button: {
           main: 'rgb(243, 196, 185)', // Mandys Pink
         },
-        modelBG: {
+        modelBg: {
           main: 'rgb(253, 236, 236)', // Wisp Pink
         },
         switch: { main: '#000', contrastText: '#fff', accent: '#176766' },
@@ -43,7 +43,10 @@ const mui = extendTheme({
         },
         Avatar: {
           defaultBg: 'rgb(241, 162, 162)', // Wewak
-        }
+        },
+        head: {
+          main: 'rgb(249, 222, 210)', // Givry
+        },
       }
     },
     dark: {
@@ -85,7 +88,10 @@ const mui = extendTheme({
         switch: { main: '#fff', contrastText: '#000', accent: '#bb6eff' },
         Avatar: {
           defaultBg: 'rgb(182, 184, 190)', // Bombay
-        }
+        },
+        head: {
+          main: 'rgb(11, 31, 60)', // Blue Zodiac
+        },
       }
     }
   },

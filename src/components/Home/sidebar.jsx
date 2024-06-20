@@ -40,6 +40,12 @@ const userMenu = [
         icon: AiOutlineLike,
         icon2: AiTwotoneLike,
         link: '/list?list=liked'
+    },
+    {
+        name: 'Create Author',
+        icon: AiOutlineLike,
+        icon2: AiTwotoneLike,
+        link: '/setup/author'
     }
 ];
 

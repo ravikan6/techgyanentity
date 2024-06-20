@@ -22,10 +22,21 @@ const StudioSidebar = (props) => {
     const open = props?.open;
     const context = useContext(StudioContext);
     const page = context?.data?.page;
-    let cc = page === 'expended' && { name: session?.user?.name, image: session?.user?.picture, handle: session?.user?.username, url: `/@${session?.user?.username}` }
-    const [currentData, setCurrentData] = useState({ ...cc });
+    // let cc = page === 'expended' && { name: '', image: session?.user?.picture, handle: session?.user?.username, url: `/@${session?.user?.username}` }
+    const [currentData, setCurrentData] = useState();
 
+    
+    useMemo(() => {
+        setCurrentData({ ...currentData, ...context?.data?.data, url: `/author/@${context?.data?.data?.handle}` });
+    }, [context]);
+    
     const staticMenu = [
+        {
+            name: 'Dashboard',
+            icon: MdOutlineDashboardCustomize,
+            icon2: MdDashboardCustomize,
+            link: `/${process.env.STUDIO_URL_PREFIX}/dashboard`
+        },
         {
             name: 'Content',
             icon: MdOutlineVideoLibrary,
@@ -52,16 +63,6 @@ const StudioSidebar = (props) => {
         },
     ];
 
-    useMemo(() => {
-        setCurrentData({ ...currentData, ...context?.data?.data, url: `/author/@${context?.data?.data?.handle}` });
-    }, [context]); 
-
-    const userMenu = [
-        { name: 'Studio Home', link: `/studio/@${session?.user?.username}` },
-        { name: 'Channel Studio', link: '/studio/channel' },
-        { name: 'Community Studio', link: '/studio/community' }
-    ];
-
     const UserBox = () => {
         return (
             <>
@@ -69,9 +70,7 @@ const StudioSidebar = (props) => {
                     <Link href={currentData?.url} className={`${open ? 'w-[100px] h-[100px]' : 'w-8 h-8'} mx-auto rounded-full`}>
                         <Tooltip title='View' placement='bottom'>
                             <div className='flex flex-col group justify-center items-center'>
-                                <Avatar draggable={false} className={`${open ? '!w-[100px] !h-[100px]' : '!w-8 !h-8'} font-semibold rounded-full`} src={currentData?.image} alt={currentData?.name} >
-                                    {currentData?.name?.slice(0, 1)?.toUpperCase()}
-                                </Avatar>
+                                <Avatar draggable={false} className={`${open ? '!w-[100px] !h-[100px] text-2xl' : '!w-8 !h-8 text-base'} font-semibold rounded-full`} alt={currentData?.name || 'A'} src={currentData?.image} >{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                                 <div className={`hidden ${open ? 'w-[100px] h-[100px]' : 'w-8 h-8'} rounded-full justify-center items-center group-hover:flex absolute bg-dark/50`}>
                                     <TbExternalLinkOff className={`${open ? 'w-6 h-6' : 'w-2 h-2'}`} />
                                 </div>
@@ -86,12 +85,6 @@ const StudioSidebar = (props) => {
                     </div>}
                 </div>
             </>
-        )
-    }
-
-    const NavBorder = () => {
-        return (
-            <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
         )
     }
 
@@ -113,11 +106,6 @@ const StudioSidebar = (props) => {
             link: '#'
         },
     ];
-    const [dashMore, setDashMore] = useState(false);
-
-    const handleDashMore = (e) => {
-        setDashMore(!dashMore);
-    }
 
     return (
         <>
@@ -129,19 +117,6 @@ const StudioSidebar = (props) => {
 
                     <div className={`${open ? 'h-[calc(100vh-256px)]' : 'h-[calc(100vh-200px)]'} w-full px-1.5 overflow-hidden hover:overflow-y-auto`}>
                         <div className={`dark:bg-dark bg-light py-1 rounded-xl ${open ? 'w-full px-1.5' : 'flex flex-col items-center'} h-full overflow-hidden hover:overflow-y-auto`}>
-                            <div>
-                                <div className={`${MenuBtnStyle('')} ${dashMore && 'bg-lightButton dark:bg-darkButton'}`} >
-                                    <Link href={`/${process.env.STUDIO_URL_PREFIX}`}>
-                                        <Button fullWidth={open} >
-                                            <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
-                                                {dashMore ? <MdDashboardCustomize className="w-5 dark:text-white text-black h-5" /> : <MdOutlineDashboardCustomize className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                                {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">Dahboard</span>}
-                                            </div>
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
-
                             {staticMenu.map((menu, index) => (
                                 <div key={index} className={MenuBtnStyle(menu.link)} >
                                     <Link href={menu.link} >
