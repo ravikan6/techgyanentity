@@ -1,11 +1,10 @@
 "use server";
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { ApiGql_V2 } from '@/lib/connect';
+
+import { auth } from '@/lib/auth';import { ApiGql_V2 } from '@/lib/connect';
 
 const createCommunityAction = async (name, privacy) => {
     let res = { data: null, status: 500, errors: null };
-    const session = await getServerSession(authOptions);
+    const session = await auth();;
     if (!session && !session.user) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
@@ -43,7 +42,7 @@ const createCommunityAction = async (name, privacy) => {
 const updateCoverAppereanceAction = async (data, files) => {
     try {
         let res = { data: null, status: 500, errors: null };
-        const session = await getServerSession(authOptions);
+        const session = await auth();;
         if (!session || !session.user) {
             res = { ...res, errors: [{ message: 'Unauthorized' }] };
             return res;
@@ -142,7 +141,7 @@ const updateCoverAppereanceAction = async (data, files) => {
 
 const updateCommunityInfoAction = async (data = {}) => {
     let res = { data: null, status: 500, errors: null };
-    const session = await getServerSession(authOptions);
+    const session = await auth();;
     if (!session && !session.user) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;

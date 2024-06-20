@@ -21,6 +21,7 @@ const nextConfig = {
         AUTH_AUTH0_ID: 'HcJaMefXTZpxEi5Q8pE3pZQFTtVr7WVr',
         AUTH_AUTH0_SECRET: 'gkuosCn7qCl3GOWW61R3ArtizF_OSqve7M-8El_snSodJWl2M3a7AhzVogfuorj2',
         AUTH_AUTH0_DOMAIN: 'https://raviblog.us.auth0.com',
+        STUDIO_URL_PREFIX: 'studio',
     },
     experimental: {
         instrumentationHook: true,

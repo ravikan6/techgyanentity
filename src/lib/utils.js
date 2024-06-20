@@ -1,12 +1,22 @@
-// import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 
-// const encrypt = (data, key) => {
-//     return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
-// }
+const encrypt = (data, key) => {
+    try {
+        return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
 
-// const decrypt = (data, key) => {
-//     return JSON.parse(CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8));
-// }
+const decrypt = (data, key) => {
+    try {
+        return JSON.parse(CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8));
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
 
 function generateDisplayNameOptions(name, nickname) {
     const options = [];
@@ -19,8 +29,8 @@ function generateDisplayNameOptions(name, nickname) {
 }
 
 export {
-    // encrypt,
-    // decrypt,
+    encrypt,
+    decrypt,
     generateDisplayNameOptions,
 }
 

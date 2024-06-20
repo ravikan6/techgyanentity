@@ -99,4 +99,19 @@ const createAuthor = async (data) => {
   }
 }
 
-export { createUser, getUser, createAuthor };
+const getUserAuthors = async () => {
+  let res = { data: null, status: 500, errors: null };
+  const session = await auth();
+  const id = session?.user?.id;
+  let authors = await prisma.author.findMany({
+    where: {
+      userId: id
+    }
+  });
+
+  res = { ...res, data: authors };
+  console.log(res, 'res from getUserAuthors');
+  return res;
+}
+
+export { createUser, getUser, createAuthor, getUserAuthors };

@@ -1,12 +1,11 @@
 "use server";
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { ApiGql_V2 } from '@/lib/connect';
+
+import { auth } from '@/lib/auth';
 import { SetChannelStudioCookie } from './studio';
 
 const createChannelAction = async (name) => {
     let res = { data: null, status: 500, errors: null };
-    const session = await getServerSession(authOptions);
+    const session = await auth();;
     if (!session && !session.user) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
@@ -37,7 +36,7 @@ const createChannelAction = async (name) => {
 
 const currentChannelGetInfoAction = async (id) => {
     let res = { data: null, status: 500, errors: null };
-    const session = await getServerSession(authOptions);
+    const session = await auth();;
     if (!session && !session.user) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
@@ -63,7 +62,7 @@ const currentChannelGetInfoAction = async (id) => {
 
 const updateChannelInfoAction = async (data = {}) => {
     let res = { data: null, status: 500, errors: null };
-    const session = await getServerSession(authOptions);
+    const session = await auth();;
     if (!session && !session.user) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
@@ -90,7 +89,7 @@ const updateChannelInfoAction = async (data = {}) => {
 const updateChannelBrandAction = async (data, files) => {
     try {
         let res = { data: null, status: 500, errors: null };
-        const session = await getServerSession(authOptions);
+        const session = await auth();;
         if (!session || !session.user) {
             res = { ...res, errors: [{ message: 'Unauthorized' }] };
             return res;

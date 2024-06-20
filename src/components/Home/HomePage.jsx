@@ -71,7 +71,7 @@ const section_GET_Trending = async () => {
 }
 
 const HomePage = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await auth();;
   const getSectionData = null //await section_GET_Started();
   const sectionDataJson = null //await getSectionData?.data?.home_section;
   const sectionNonLogin = {
