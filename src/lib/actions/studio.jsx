@@ -1,5 +1,5 @@
 "use server"
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 // import { getCookie, setCookie } from "cookies-next";
 import { decrypt, encrypt } from "../utils";
 import { prisma } from '../db';
@@ -29,10 +29,15 @@ const DecryptAuthorStudioCookie = async () => {
         if (author) {
             if (author?.image?.url) {
                 if (author?.image?.provider === 'cloudinary') {
-                    author.image = await getCldImageUrl(author?.image?.url, { width: 100, height: 100, crop: 'fill' });
+                    author.image = await getCldImageUrl({ src: author?.image?.url, width: 100, height: 100, crop: 'fill' });
                 }
             }
-            console.log(author,'author_______________________________asyncAction');
+            if (author?.banner?.url) {
+                if (author?.banner?.provider === 'cloudinary') {
+                    author.banner = await getCldImageUrl({ src: author?.banner?.url, width: 1300, height: 620, crop: 'auto', quality: 100 });
+                }
+            }
+            console.log(author, 'author_______________________________asyncAction');
             return author;
         }
         else {

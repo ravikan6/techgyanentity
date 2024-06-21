@@ -33,8 +33,6 @@ export default async function Home() {
 
   return (
     <>
-      {/* <ImageBlock />
-      <TheImageBlock /> */}
       <div className="py-2">
         <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 max-w-5xl mx-auto gap-6 sm:w-full">
           {

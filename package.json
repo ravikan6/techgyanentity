@@ -18,7 +18,7 @@
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
     "@mui/material-nextjs": "latest",
-    "@prisma/client": "^5.15.0",
+    "@prisma/client": "^5.15.1",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.2.0",
     "crypto-js": "^4.2.0",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "postcss": "^8",
-    "prisma": "^5.15.0",
+    "prisma": "^5.15.1",
     "tailwindcss": "^3.4.1"
   }
 }

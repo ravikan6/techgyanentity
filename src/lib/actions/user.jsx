@@ -2,6 +2,9 @@
 import { prisma } from "../db";
 import { auth } from "../auth";
 import { hashPassword } from "../helpers";
+import { getCldImageUrl } from "next-cloudinary";
+import { deleteCloudinaryImage, uploadImage } from "./upload";
+import { cloudinaryProvider } from "./author";
 
 const createUser = async (data) => {
   let res = { data: null, status: 500, errors: null };
@@ -105,8 +108,15 @@ const getUserAuthors = async () => {
   const id = session?.user?.id;
   let authors = await prisma.author.findMany({
     where: {
-      userId: id
-    }
+      userId: id,
+    },
+  });
+
+  authors = authors.map((author) => {
+    return {
+      ...author,
+      image: author?.image?.url && getCldImageUrl({ src: author?.image?.url }),
+    };
   });
 
   res = { ...res, data: authors };
@@ -114,4 +124,83 @@ const getUserAuthors = async () => {
   return res;
 }
 
-export { createUser, getUser, createAuthor, getUserAuthors };
+const userImage = async (files) => {
+  let res = { data: null, status: 500, errors: [] };
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      res = { ...res, errors: [{ message: 'Unauthorized' }] };
+      return res;
+    }
+
+    let user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id
+      },
+      select: {
+        image: true
+      }
+    });
+
+    let logo = files.get('image')
+    logo = logo == 'undefined' ? null : logo == 'null' ? null : logo;
+
+    let rmLogo = files.get('rm') ? files.get('rm') : 'false';
+
+    let imageData = null;
+
+    if (!!logo && (rmLogo == 'false')) {
+      try {
+        let logoData = await uploadImage(logo);
+        if (logoData?.success) {
+          imageData = await cloudinaryProvider(logoData.data);
+          console.log('imageData_________________________:', imageData)
+        } else {
+          throw new Error(logoData?.message);
+        }
+      } catch (error) {
+        console.log('Error in user Image upload:', error);
+        res.errors.push({ message: 'An error occurred while uploading Image. Please try again later.' });
+        imageData = null;
+      }
+    } else {
+      if (user?.image?.url && rmLogo == 'true') {
+        try {
+          let logoData = await deleteCloudinaryImage(user?.image?.url);
+          if (logoData?.success) {
+            imageData = 'rm';
+          } else {
+            throw new Error(logoData?.message);
+          }
+        } catch (error) {
+          console.log({ message: 'An error occurred while removeing image. Please try again later.' });
+          imageData = null;
+        }
+      }
+    }
+
+    console.log('imageData:', imageData)
+
+    if (imageData) {
+      user = await prisma.user.update({
+        where: {
+          id: session.user.id
+        },
+        data: {
+          ...imageData ? (imageData == 'rm' ? { image: null } : { image: { set: imageData } }) : null,
+        }
+      });
+
+      user.image = user?.image?.url && getCldImageUrl({ src: user?.image?.url });
+      res = { ...res, data: user, status: 200 };
+    }
+    return res;
+  } catch (error) {
+    console.error('Error in updateAuthorImagesAction:', error);
+    res.errors.push({ message: 'An error occurred while updating profile picture. Please try again later.' });
+    return res;
+  }
+
+}
+
+export { createUser, getUser, createAuthor, getUserAuthors, userImage };

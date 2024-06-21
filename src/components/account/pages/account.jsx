@@ -1,9 +1,11 @@
-import React from 'react'
+'use client';
+import React, { useState } from 'react'
 import Image from 'next/image';
 import { InfoItem } from './_client';
 import { formatLocalDate } from '@/lib/helpers';
 import { Avatar, Skeleton } from '@mui/material';
 import { Button } from '@/components/rui/_components';
+import { UserProfileImageHandler } from '../_profile_image';
 
 const Account = ({ session }) => {
   return (
@@ -14,6 +16,9 @@ const Account = ({ session }) => {
 }
 
 const PersonalInfo = ({ session, user }) => {
+  const [open, setOpen] = useState(false);
+
+  const profileModelHandler = () => setOpen(!open);
 
   return (
     <>
@@ -36,7 +41,7 @@ const PersonalInfo = ({ session, user }) => {
 
         <InfoBox title="Basic Info" description={`Edit your name, email, and phone number. This information will be visible to other users on ${process.env.APP_NAME} services.`}>
           <div className='flex flex-col mt-4 space-y-4' >
-            <div className='flex cursor-pointer w-full transition-all duration-500 group/infoItem text-gray-700 dark:text-gray-300 bg-light dark:bg-dark hover:bg-accentLight dark:hover:bg-accentDark hover:text-gray-200 dark:hover:text-gray-100 px-8 items-center py-3 rounded-xl justify-between' >
+            <div onClick={profileModelHandler} className='flex cursor-pointer w-full transition-all duration-500 group/infoItem text-gray-700 dark:text-gray-300 bg-light dark:bg-dark hover:bg-accentLight dark:hover:bg-accentDark hover:text-gray-200 dark:hover:text-gray-100 px-8 items-center py-3 rounded-xl justify-between' >
               <p className='text-sm ' >Profile Picture</p>
               <p>A profile picture helps personalise your account</p>
               <Avatar width={32} height={32} className='w-8 h-8 rounded-full overflow-hidden' src={user?.image} alt={session?.user?.name} />
@@ -49,6 +54,7 @@ const PersonalInfo = ({ session, user }) => {
         </InfoBox>
 
       </profile-info>
+      <UserProfileImageHandler open={open} setOpen={setOpen} />
     </>
   )
 };

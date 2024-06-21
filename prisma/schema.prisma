@@ -53,7 +53,7 @@ model Author {
   userId       String  @db.ObjectId
   name         String
   handle       String  @unique
-  social       Link[]
+  social       LinkType[]
   contactEmail String?
   bio          String?
   Post         Post[]
@@ -79,8 +79,8 @@ type Banner {
   provider String? @default("cloudinary")
 }
 
-type Link {
-  id Int?
+type LinkType {
+  id    String?
   url   String
   title String
 }

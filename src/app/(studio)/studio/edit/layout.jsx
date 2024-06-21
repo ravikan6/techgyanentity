@@ -1,11 +1,11 @@
 import React from 'react'
-import { ChannelEditLayoutWrapper } from '@/components/studio/author';
+import { AuthorEditLayoutWrapper } from '@/components/studio/author';
 
 const ChannelEditLayout = async ({ children }) => {
     return (
-        <ChannelEditLayoutWrapper >
+        <AuthorEditLayoutWrapper >
             {children}
-        </ChannelEditLayoutWrapper>
+        </AuthorEditLayoutWrapper>
     )
 }
 

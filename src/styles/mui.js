@@ -31,7 +31,7 @@ const mui = extendTheme({
           main: 'rgb(141, 155, 180)', // Bali Hai
         },
         button: {
-          main: 'rgb(243, 196, 185)', // Mandys Pink
+          main: 'rgb(213, 118, 108)', // Japonica
         },
         modelBg: {
           main: 'rgb(253, 236, 236)', // Wisp Pink
@@ -47,6 +47,9 @@ const mui = extendTheme({
         head: {
           main: 'rgb(249, 222, 210)', // Givry
         },
+        button2: {
+          main: 'rgb(243, 196, 185)', // Mandys Pink
+        }
       }
     },
     dark: {
@@ -77,7 +80,7 @@ const mui = extendTheme({
           paper: 'rgb(26, 45, 76)', // Big Stone
         },
         button: {
-          main: 'rgb(75, 90, 129)', // Blue Bayoux
+          main: 'rgb(198, 215, 240)', // Spindle
         },
         modelBg: {
           main: 'rgb(26, 45, 76)', // Big Stone
@@ -92,6 +95,9 @@ const mui = extendTheme({
         head: {
           main: 'rgb(11, 31, 60)', // Blue Zodiac
         },
+        button2: {
+          main: 'rgb(75, 90, 129)', // Blue Bayoux
+        }
       }
     }
   },

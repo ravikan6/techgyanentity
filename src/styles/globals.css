@@ -76,7 +76,7 @@
 
 .rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {
   background-clip: padding-box;
-  border: 4px solid transparent;
+  border: 2px solid transparent;
   border-radius: 8px;
   box-shadow: none;
   min-height: 50px;
@@ -84,11 +84,11 @@
 }
 
 .rb_sss .MuiPaper-root::-webkit-scrollbar {
-  @apply w-3.5;
+  @apply w-3;
 }
 
 .rb_sss .MuiPaper-root::-webkit-scrollbar-track {
-  @apply mt-10 mb-10 border-0 bg-transparent;
+  @apply mt-2 mb-2 border-0 bg-transparent;
 }
 
 

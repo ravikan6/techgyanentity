@@ -42,8 +42,6 @@ export const TheImageBlock = () => {
     const [file, setFile] = useState(null);
 
     const handler = async() => {
-        const b = await getBlogs()
-        console.log(b)
     }
 
     return (

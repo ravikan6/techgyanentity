@@ -37,7 +37,6 @@ export const UserProfileModel = ({ data }) => {
 
     const insiderRun = (value) => {
         setInsiderData({ ...insiderData, selected: value });
-
     }
 
     const state = {
@@ -49,7 +48,7 @@ export const UserProfileModel = ({ data }) => {
 
     return (
         <Fragment>
-            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center',  }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', }}>
                 <Tooltip title="Account settings">
                     <IconButton
                         onClick={(e) => { handleClick(e); setAnchorEl(e.currentTarget) }}
@@ -82,7 +81,7 @@ export const UserProfileModel = ({ data }) => {
                     </MenuItem>
                 </Box>
                 {/* <Divider /> */}
-                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, ml: 1.5, boxShadow: null }}>
+                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
                     <ListItemRdX link={{
                         name: 'Your Profile',
                         url: `/@${data?.user?.username}`,
@@ -149,24 +148,39 @@ export const UserProfileModel = ({ data }) => {
                     paper: {
                         sx: {
                             borderRadius: '12px',
-                            width: '260px',
-                            mt: 1.5,
+                            width: insiderData?.width || '256px',
                             pt: '0 !important',
                         }
                     }
                 }}
+                sx={{
+                    mt: 1.5,
+                }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                className="rb_sss"
             >
-                <Box className="dark:bg-accentDark bg-accent" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
-                    <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">
-                        <NavigateBefore htmlColor='#fff' fontSize="small" />
-                    </IconButton>
-                    <h3 className='font-semibold text-white' variant="inherit">{insiderData?.title}</h3>
-                </Box>
-                {/* <Divider /> */}
-                <p className='text-sm px-4 py-2 text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
+                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} />
+
+            </Menu>
+
+        </Fragment>
+    );
+}
+
+export const SecondaryMenu = ({ insiderData, insiderRun, handleBack, modern = true }) => {
+
+    return (
+        <>
+            <Box className={`${modern ? 'dark:bg-accentDark bg-accent' : "bg-lightHead dark:bg-darkHead"} absolute w-full`} sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
+                <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">
+                    <NavigateBefore className={` dark:text-white ${modern ? 'text-white' : 'text-black'}`} fontSize="small" />
+                </IconButton>
+                {modern ? <h3 className='font-semibold text-white' variant="inherit">{insiderData?.title}</h3>
+                    : <Typography variant="inherit">{insiderData?.title}</Typography>
+                }
+            </Box>
+            <div className='w-full rb_sss mt-10'>
+                <p className='text-sm py-2 px-4 text-wrap mx-auto text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
                 {(insiderData?.component) ? insiderData?.component
                     : insiderData?.options.map((option, index) => (
                         <MenuItem onClick={() => insiderRun(option.value)} key={index} >
@@ -177,10 +191,9 @@ export const UserProfileModel = ({ data }) => {
                         </MenuItem>
                     ))
                 }
-            </Menu>
-
-        </Fragment>
-    );
+            </div>
+        </>
+    )
 }
 
 export const NavMenu = () => {
@@ -212,7 +225,6 @@ export const NavMenu = () => {
 
     const insiderRun = (value) => {
         setInsiderData({ ...insiderData, selected: value });
-
     }
 
     const state = {
@@ -251,7 +263,7 @@ export const NavMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 className="rb_sss rb_ss overflow-y-auto"
             >
-                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, ml: 1.5, boxShadow: null }}>
+                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
 
 
                     <ListItemRdX link={{
@@ -311,23 +323,7 @@ export const NavMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 className="rb_sss"
             >
-                <Box className="dark:bg-accentDark bg-accent" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
-                    <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">
-                        <NavigateBefore htmlColor='#fff' fontSize="small" />
-                    </IconButton>
-                    <h3 className='font-semibold text-white' variant="inherit">{insiderData?.title}</h3>
-                </Box>
-                <p className='text-sm px-4 py-2 text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
-                {(insiderData?.component) ? insiderData?.component
-                    : insiderData?.options.map((option, index) => (
-                        <MenuItem onClick={() => insiderRun(option.value)} key={index} >
-                            <ListItemIcon>
-                                {option.value === insiderData?.selected ? <Check fontSize="small" /> : null}
-                            </ListItemIcon>
-                            {option.name}
-                        </MenuItem>
-                    ))
-                }
+                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} />
             </Menu>
 
         </Fragment>

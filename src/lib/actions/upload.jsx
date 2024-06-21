@@ -1,13 +1,9 @@
-// app/server-actions/uploadImage.js
 'use server';
 
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
-export async function uploadImage(request) {
-  const formData = await request.formData;
-  const file = formData.get('file');
-
+export async function uploadImage(file, folder) {
   if (!file) {
     return { status: 400, message: 'No file uploaded' };
   }
@@ -18,7 +14,7 @@ export async function uploadImage(request) {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: 'TechGyan',
+          folder: folder || 'TechGyan',
           use_filename: true,
           unique_filename: true,
           overwrite: true,
@@ -43,9 +39,21 @@ export async function uploadImage(request) {
   try {
     const result = await streamUpload(buffer);
     console.log('File uploaded successfully:', result);
-    return { status: 200, message: 'File uploaded successfully', url: result.secure_url };
+    return { success: true, message: 'File uploaded successfully', data: result };
   } catch (error) {
     console.error('Upload to Cloudinary failed:', error);
-    return { status: 500, message: 'Upload to Cloudinary failed', error: error.message };
+    return { success: false, message: 'Upload to Cloudinary failed', error: error.message };
+  }
+}
+
+
+export async function deleteCloudinaryImage(public_id) {
+  try {
+    const result = await cloudinary.uploader.destroy(public_id);
+    console.log('File deleted successfully:', result);
+    return { success: true, message: 'File deleted successfully', data: result };
+  } catch (error) {
+    console.error('Delete from Cloudinary failed:', error);
+    return { success: false, message: 'Delete from Cloudinary failed', error: error.message };
   }
 }

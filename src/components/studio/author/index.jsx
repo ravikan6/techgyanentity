@@ -2,7 +2,7 @@ import { ChannelEditLayoutFunc, ChannelBrandFunc, AuthorInfoUpdate, ChannelEditL
 
 export {
     ChannelEditLayoutFunc as ChannelEditSections,
-    ChannelBrandFunc as ChannelEditBranding,
+    ChannelBrandFunc as AuthorEditBranding,
     AuthorInfoUpdate as AuthorInfoUpdate,
-    ChannelEditLayout as ChannelEditLayoutWrapper
+    ChannelEditLayout as AuthorEditLayoutWrapper
 }

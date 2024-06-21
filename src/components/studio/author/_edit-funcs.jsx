@@ -12,7 +12,7 @@ import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { RiDraggable } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { default as NextImage } from 'next/image';
-import { updateAuthorAction } from "@/lib/actions/author";
+import { updateAuthorAction, updateAuthorImagesAction } from "@/lib/actions/author";
 
 const ChannelEditContext = React.createContext();
 
@@ -49,19 +49,20 @@ const ChannelBrandFunc = ({ data }) => {
                 formData.append('banner', files?.banner);
                 formData.append('rmLogo', files?.rml);
                 formData.append('rmBanner', files?.rmb);
-                let dt = await updateChannelBrandAction(bData, formData);
+                let dt = await updateAuthorImagesAction(bData, formData);
 
                 if (dt?.data) {
                     setBData({ ...bData, ...dt?.data });
                     context?.setData({ ...context?.data, data: { ...context?.data?.data, image: dt?.data?.logo, logo: dt?.data?.logo } });
                     context.loading && context.setLoading(false);
                     setState({ ...state, data: { isRunnable: false }, run: false });
-                    toast.success('Your have successfully updated your channel branding.');
-                } else {
-                    throw new Error(dt?.errors[0]?.message || 'Something went wrong, Please try again later.');
+                    toast.success('Your have successfully updated your profile branding.');
                 }
+                dt?.errors && dt?.errors.map((e) => {
+                    toast.error(e.message);
+                });
             } catch (e) {
-                toast.error(e.message);
+                toast.error(e.message)
                 setState({ data: { ...state, isRunnable: true }, run: false });
                 context.loading && context.setLoading(false);
             } finally {
@@ -139,8 +140,8 @@ const ChannelBrandFunc = ({ data }) => {
 
     const handleBannerUpload = () => {
         const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
-        const MIN_WIDTH = 500 // 2048;
-        const MIN_HEIGHT = 300 // 1152;
+        const MIN_WIDTH = 100 // 2048;
+        const MIN_HEIGHT = 100 // 1152;
 
         const input = document.createElement('input');
         input.type = 'file';
@@ -167,7 +168,7 @@ const ChannelBrandFunc = ({ data }) => {
                             return;
                         }
                         if (width < MIN_WIDTH || height < MIN_HEIGHT) {
-                            setError({ error: true, message: { banner: 'Minimum width and height should be 2048x1152px' } });
+                            setError({ error: true, message: { banner: `Minimum width and height should be ${MIN_WIDTH}px * ${MIN_HEIGHT}px` } });
                             return;
                         }
                         setError({ error: error?.message?.logo, message: { banner: null } });
@@ -179,6 +180,7 @@ const ChannelBrandFunc = ({ data }) => {
         };
         input.click();
     };
+
     const handleLogoRemove = () => {
         setBData({ ...bData, logo: null });
         setFiles({ ...files, logo: null, rml: true });
@@ -203,43 +205,45 @@ const ChannelBrandFunc = ({ data }) => {
             <div className="mt-10 max-w-[900px]">
                 <div className="flex flex-col space-y-8 mb-5">
                     <div className="flex flex-col space-y-3">
-                        <InputHeader label={'Logo'} desc={'Upload a square image that represents your channel. This image will be displayed on your channel page and in search results.'} tip={'Recommended size: 800x800 pixels'} />
+                        <InputHeader label={'Profile Picture'} desc={'Upload a profile picture that represents you as an author. This image will be displayed on your author page and in search results.'} tip={'Recommended size: 800x800 pixels'} />
                         <div className="flex flex-wrap lg:flex-nowrap justify-center lg:justify-start items-center lg:space-x-8 space-y-4 lg:space-y-0">
-                            <div className="w-60 h-32 rounded-xl bg-lightHead flex items-center justify-center dark:bg-darkHead">
-                                <Avatar width={96} height={96} draggable={false} src={bData?.logo} className="!w-24 !h-24 object-cover rounded-xl" alt={context?.data?.data?.name} ></Avatar>
+                            <div className="w-60 h-32 rounded-xl overflow-hidden bg-lightHead dark:bg-darkHead" {...bData?.logo && { style: { backgroundImage: `url(${bData?.logo})` } }}>
+                                <div className={`w-full bg-transparent h-full flex items-center justify-center ${bData?.logo ? 'backdrop-blur-md' : ''}`}>
+                                    <Avatar sx={{ boxShadow: 2 }} width={96} height={96} draggable={false} src={bData?.logo} className="!w-24 !h-24 object-cover rounded-xl" alt={context?.data?.data?.name} ></Avatar>
+                                </div>
                             </div>
                             <div className="lg:w-[calc(100%-250px)]">
                                 {
                                     (error?.error && error?.message?.logo) && <p className="text-red-500 text-sm">{error?.message?.logo}</p>
                                 }
                                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                                    A logo is a graphic mark, emblem, symbol, or stylized name used to identify a company, organization, product, or brand.
-                                    you can upload a square image which is under 4MB and at least 98 x 98 px in PNG, JPEG, or GIF format. No animated logos are allowed.
+                                    A profile picture is an image that represents you as an author. It helps readers identify you and can be used to promote your brand.
+                                    You can upload a square image which is under 4MB and at least 98 x 98 px in PNG, JPEG, or GIF format. No animated profile pictures are allowed.
                                 </p>
                                 <div className="mt-3 flex space-x-5">
-                                    <Button variant="outlined" color="accent" size="small" sx={{ px: 2 }} className="" onClick={handleLogoUpload}> {files?.logo ? 'Change' : 'Upload'} </Button>
-                                    <Button variant="text" disabled={!(bData?.logo) || error.message?.logo} color="accent" size="small" sx={{ px: 2 }} className="" onClick={handleLogoRemove}>Remove</Button>
+                                    <Button variant="outlined" color="button" size="small" sx={{ px: 2 }} className="" onClick={handleLogoUpload}> {files?.logo ? 'Change' : 'Upload'} </Button>
+                                    <Button variant="text" disabled={!(bData?.logo) || error.message?.logo} color="button" size="small" sx={{ px: 2 }} className="" onClick={handleLogoRemove}>Remove</Button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="flex flex-col space-y-3">
-                        <InputHeader label={'Banner'} desc={'Upload a banner image that represents your channel. This image will be displayed on your channel page and in search results.'} tip={'Recommended size: 2560x1440 pixels'} />
+                        <InputHeader label={'Cover Photo'} desc={'Upload a cover photo that represents you as an author. This image will be displayed on your author page and in search results.'} tip={'Recommended size: 2560x1440 pixels'} />
                         <div className="flex flex-wrap lg:flex-nowrap justify-center lg:justify-start items-center lg:space-x-8 space-y-4 lg:space-y-0">
                             <div className="w-60 h-32 rounded-xl bg-lightHead flex items-center justify-center dark:bg-darkHead">
-                                <NextImage width={96} height={96} src={bData?.banner || 'y'} alt="banner" className="w-24 h-24 object-cover rounded-xl" />
+                                <NextImage width={240} draggable={false} height={128} src={bData?.banner || '/static/images/no_banner.png'} alt="banner" className="w-60 h-32 shadow-sm object-cover rounded-xl" />
                             </div>
                             <div className="lg:w-[calc(100%-250px)]">
                                 {
                                     (error?.error && error?.message?.banner) && <p className="text-red-500 text-sm">{error?.message?.banner}</p>
                                 }
                                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                                    A banner is a graphic image that spans the width of a channel page. It helps viewers understand what your channel is about and can be used to promote your brand.
-                                    you can upload an image which is under 6MB and at least 2048 x 1152 px in PNG, JPEG, or GIF format. No animated banners are allowed.
+                                    A cover photo is a large image that spans the width of your author page. It helps readers understand your brand and can be used to showcase your work.
+                                    You can upload an image which is under 6MB and at least 2048 x 1152 px in PNG, JPEG, or GIF format. No animated cover photos are allowed.
                                 </p>
                                 <div className="mt-3 flex space-x-5">
-                                    <Button variant="outlined" color="accent" size="small" sx={{ px: 2 }} className="" onClick={handleBannerUpload}>Upload</Button>
-                                    <Button variant="text" color="accent" disabled={!(bData?.banner) || error.message?.banner} size="small" sx={{ px: 2 }} className="" onClick={handleBannerRemove}>Remove</Button>
+                                    <Button variant="outlined" color="button" size="small" sx={{ px: 2 }} className="" onClick={handleBannerUpload}>Upload</Button>
+                                    <Button variant="text" color="button" disabled={!(bData?.banner) || error.message?.banner} size="small" sx={{ px: 2 }} className="" onClick={handleBannerRemove}>Remove</Button>
                                 </div>
                             </div>
                         </div>
@@ -251,7 +255,6 @@ const ChannelBrandFunc = ({ data }) => {
 }
 
 const AuthorInfoUpdate = ({ data }) => {
-
     const context = useContext(StudioContext);
     const [allDisabled, setAllDisabled] = useState(false);
     const [name, setName] = useState({ value: '', error: false, errorText: null });
@@ -292,7 +295,7 @@ const AuthorInfoUpdate = ({ data }) => {
     useMemo(async () => {
         if (state?.run) {
             try {
-                let newData = await updateAuthorAction(data?.id, { name: name.value, handle: handle.value, description: JSON.stringify(description?.value), social: links, contactEmail: email?.value });
+                let newData = await updateAuthorAction({ id: data?.id, data: { name: name.value, handle: handle.value, bio: description?.value, social: links, contactEmail: email?.value } });
                 if (newData?.data) {
                     context?.setData({ ...context?.data, data: newData?.data });
                     context.loading && context.setLoading(false);
@@ -339,7 +342,10 @@ const AuthorInfoUpdate = ({ data }) => {
         let value = e.target.value;
         let regex = /^[a-zA-Z0-9_]*$/;
         let isValid = regex.test(value);
-        setHandle({ value, error: !isValid, errorText: !isValid && 'Handle can only contain letters, numbers, and underscores', url: `${process.env.APP_URL}/channel/@${e.target?.value}` });
+        if (window && window.location && window.location.origin) {
+            setHandle({ value, error: !isValid, errorText: !isValid && 'Handle can only contain letters, numbers, and underscores', url: `${window.location.origin}/@${e.target?.value}` });
+        } else
+            setHandle({ value, error: !isValid, errorText: !isValid && 'Handle can only contain letters, numbers, and underscores', url: `${process.env.APP_URL}/@${e.target?.value}` });
     };
 
     const handleChangeDescription = (e) => {
@@ -385,7 +391,7 @@ const AuthorInfoUpdate = ({ data }) => {
                 </div>
                 <div className="flex flex-col space-y-3">
                     <InputHeader label={'Contact Email'} desc={'Add an email address where viewers & readers can contact you for business inquiries or collaborations.'} />
-                    <TextField disabled={allDisabled} error={email?.error} helperText={email?.error && email?.errorText} size="small" className="" label="Email" value={email.value} onChange={(e) => handleChangeEmail(e)} />
+                    <TextField disabled={allDisabled} error={email?.error} helperText={email?.error && email?.errorText} size="small" className="" label="Email" value={email.value || ''} onChange={(e) => handleChangeEmail(e)} />
                 </div>
             </div>
         </div>
@@ -441,15 +447,12 @@ const ChannelEditLayout = ({ children }) => {
         <>
             <ChannelEditContext.Provider value={{ state, setState }}>
                 <div className="relative w-full">
-                    <h3 className="text-lg mb-3 font-semibold">
-                        Channel Customization
-                    </h3>
                     <div className="flex overflow-x-auto flex-wrap justify-between px-4 items-center py-2 rounded-xl bg-lightHead dark:bg-darkHead sm:space-x-1">
                         <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                             {
                                 [{ name: 'Sections', value: 'sections' }, { name: 'Branding', value: 'branding' }, { name: 'Basic Info', value: 'info' }].map((item, index) => {
                                     return (
-                                        <Button disabled={context?.data?.loading} key={index} onClick={() => router.push(`/${process.env.STUDIO_URL_PREFIX}/edit?t=${item.value}`)} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${q === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-slate-900' : '!bg-white dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
+                                        <Button disabled={context?.data?.loading} key={index} onClick={() => router.push(`/${process.env.STUDIO_URL_PREFIX}/edit?t=${item.value}`)} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${q === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
                                             {item.name}
                                         </Button>
                                     );
@@ -458,8 +461,8 @@ const ChannelEditLayout = ({ children }) => {
                         </div>
 
                         <div ref={ref} className="flex justify-between mb-1 mt-1 sm:justify-end w-full sm:w-auto transition-all duration-500 items-center space-x-2 md:space-x-3">
-                            <Button disabled={state?.data?.isRunnable ? context?.data?.loading : (state?.data?.aCancle ? context?.data?.loading : true)} onClick={handleCancle} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-white dark:!bg-dark" color="primary" size="small" > Cancel </Button>
-                            <Button disabled={state?.data?.isRunnable ? context?.data?.loading : true} onClick={() => handlePublish()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-white dark:!bg-dark" color="accent" size="small" > Publish </Button>
+                            <Button disabled={state?.data?.isRunnable ? context?.data?.loading : (state?.data?.aCancle ? context?.data?.loading : true)} onClick={handleCancle} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="primary" size="small" > Cancel </Button>
+                            <Button disabled={state?.data?.isRunnable ? context?.data?.loading : true} onClick={() => handlePublish()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Publish </Button>
                         </div>
                     </div>
                 </div>
@@ -475,8 +478,12 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     const [items, setItems] = useState(set.links);
     const titleRef = useRef(null);
 
-    useMemo(() => {
-        if (JSON.stringify(items) !== JSON.stringify(set.links)) {
+    useEffect(() => {
+        let s = items?.map((item, index) => {
+            let { error, T, U, ...rest } = item;
+            return { ...rest };
+        });
+        if (JSON.stringify(s) !== JSON.stringify(set.links)) {
             setItems(set.links);
         }
     }, [set.links]);
@@ -518,14 +525,24 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     };
 
     useEffect(() => {
-        if (JSON.stringify(set.links) === JSON.stringify(items)) {
-            state.setState({ ...state, data: { isRunnable: false } });
-        } else {
-            if (items?.map(item => item.error).includes('T') || items?.map(item => item.error).includes('U') || items?.map(item => item.title.trim()).includes('') || items?.map(item => item.url.trim()).includes(''))
+        setTimeout(() => {
+            if (JSON.stringify(set.links) === JSON.stringify(items)) {
                 state.setState({ ...state, data: { isRunnable: false } });
-            else
-                state.setState({ ...state, data: { isRunnable: true } });
-        }
+            } else {
+                if (items?.map(item => item.error).includes('T') || items?.map(item => item.error).includes('U') || items?.map(item => item.title.trim()).includes('') || items?.map(item => item.url.trim()).includes('')) state.setState({ ...state, data: { isRunnable: false } });
+                else {
+                    let s = items?.map((item, index) => {
+                        let { error, T, U, ...rest } = item;
+                        return { ...rest };
+                    });
+                    console.log((JSON.stringify(s) !== JSON.stringify(set.links)), 'from ____ nowhere')
+                    if (JSON.stringify(s) !== JSON.stringify(set.links)) {
+                        state.setState({ ...state, data: { isRunnable: true } });
+                        set.setLinks(s);
+                    }
+                }
+            }
+        }, 200);
     }, [items]);
 
     const handleDelete = (index) => {
@@ -534,18 +551,8 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
         setItems(updatedItems);
     };
 
-    useMemo(() => {
-        let s = items?.map((item, index) => {
-            let { error, T, U, ...rest } = item;
-            return { ...rest };
-        });
-        if (JSON.stringify(s) !== JSON.stringify(set.links)) {
-            set.setLinks(s);
-        }
-    }, [items]);
-
     const handleAddLink = () => {
-        setItems([...items, { id: String(items.length + 1), title: '', url: '' }]);
+        setItems([...items, { id: String(items.length + 1), title: '', url: '', error: 'T', T: 'Title is required', U: '' }]);
         setTimeout(() => {
             if (titleRef.current) {
                 titleRef.current.focus();
@@ -568,11 +575,11 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                                                 {...provided.draggableProps}
                                                 className={`px-1 rounded-md ${snapshot.isDragging ? 'bg-gray-100/10 dark:bg-darkHead/10' : ''}`}
                                             >
-                                                <Grid container spacing={2} className={`group/d`} alignItems="center">
+                                                <Grid container spacing={2} className={`group/d`} >
                                                     <Grid item xs={1}>
-                                                        <div {...provided.dragHandleProps}>
+                                                        <div className="mt-1.5" {...provided.dragHandleProps}>
                                                             <IconButton color="primary" className="!cursor-grab" aria-label="drag">
-                                                                <RiDraggable />
+                                                                <RiDraggable className="w-4 h-4" />
                                                             </IconButton>
                                                         </div>
                                                     </Grid>
@@ -584,7 +591,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                                                             size="small"
                                                             error={item.error === 'T'}
                                                             required
-                                                            helperText={item.error === 'T' && item.T}
+                                                            helperText={item.error === 'T' ? item.T : ' '}
                                                             value={item.title}
                                                             inputRef={titleRef}
                                                             disabled={disabled}
@@ -600,14 +607,14 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                                                             size="small"
                                                             required
                                                             disabled={disabled}
-                                                            helperText={item.error === 'U' && item.U}
+                                                            helperText={item.error === 'U' ? item.U : ' '}
                                                             value={item.url}
                                                             onChange={(e) => handleChange(index, 'url', e.target.value)}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={1}>
-                                                        <IconButton className="transition-all duration-500 !hidden group-hover/d:!flex hover:!flex" color="primary" aria-label="delete" onClick={() => handleDelete(index)}>
-                                                            <MdOutlineDeleteOutline className="w-5 h-5" />
+                                                        <IconButton className="transition-all duration-500 !hidden group-hover/d:!flex mt-1.5 hover:!flex" color="error" aria-label="delete" onClick={() => handleDelete(index)}>
+                                                            <MdOutlineDeleteOutline className="w-4 h-4" />
                                                         </IconButton>
                                                     </Grid>
                                                 </Grid>
@@ -621,7 +628,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                     )}
                 </Droppable>
             </DragDropContext>
-            <Button variant="outlined" className="mt-2" color="accent" startIcon={<IoIosAdd />} onClick={handleAddLink}>
+            <Button variant="outlined" className="mt-2 transition-all group/add_link !h-8 duration-300 text-[0px] hover:text-sm" color="button" startIcon={<IoIosAdd className="-mr-2 group-hover/add_link:mr-0" />} onClick={handleAddLink}>
                 Add Link
             </Button>
         </div>

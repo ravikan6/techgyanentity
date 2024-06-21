@@ -27,7 +27,28 @@ const nextConfig = {
         instrumentationHook: true,
     },
     images: {
-        domains: ['res.cloudinary.com', 'www.raviblog.tech', 'www.gstatic.com', 'www.google.com'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+                pathname: '**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.raviblog.tech',
+                pathname: '**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.gstatic.com',
+                pathname: '**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.google.com',
+                pathname: '**',
+            },
+        ],
     },
 };
 

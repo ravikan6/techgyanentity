@@ -6,7 +6,7 @@ import React, { Fragment, useContext, useEffect, useMemo, useState } from 'react
 import { Box, Avatar, ListItemIcon, Typography, List, Divider, Skeleton } from '@mui/material';
 import { NavigateBefore, Check, HelpOutlineOutlined, DashboardCustomizeOutlined, SettingsOutlined, Person4Outlined, AdminPanelSettingsOutlined, NightsStayOutlined, WbSunnyOutlined, SettingsBrightness, Logout, FeedbackOutlined, KeyboardArrowRightOutlined, TranslateOutlined, MoreVert } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip, Button } from '@/components/rui';
-import { ListItemRdX, ListInsideModel, ThemeSelect } from '@/components/Home/_profile-model';
+import { ListItemRdX, ListInsideModel, ThemeSelect, SecondaryMenu } from '@/components/Home/_profile-model';
 import { StudioContext } from '@/lib/context';
 import { SetAuthorStudioCookie } from '@/lib/actions/studio';
 import { toast } from 'react-toastify';
@@ -179,24 +179,7 @@ export const StudioServiceSelecterMenu = ({ session }) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <Box className="bg-lightHead dark:bg-darkHead absolute w-full" sx={{ display: 'flex', alignItems: 'center', px: 1, pb: 1, mt: -3, pt: 3 }}>
-                    <IconButton sx={{ mr: 2 }} onClick={handleBack} size="small">
-                        <NavigateBefore fontSize="small" />
-                    </IconButton>
-                    <Typography variant="inherit">{insiderData?.title}</Typography>
-                </Box>
-                {/* <Divider /> */}
-                <p className='text-sm px-4 mt-10 py-2 text-wrap mx-auto text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
-                {(insiderData?.component) ? insiderData?.component
-                    : insiderData?.options.map((option, index) => (
-                        <MenuItem onClick={() => insiderRun(option.value)} key={index} >
-                            <ListItemIcon>
-                                {option.value === insiderData?.selected ? <Check fontSize="small" /> : null}
-                            </ListItemIcon>
-                            {option.name}
-                        </MenuItem>
-                    ))
-                }
+                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} modern={false} />
             </Menu>
 
         </Fragment>
@@ -287,21 +270,21 @@ const SwitchAccount = ({ state, context }) => {
                 <Divider />
                 <List className='mx-1 max-w-[320px]'>
                     {thisData ? thisData?.map((item, index) => {
-                        item = { ...item, image: item?.logo || item?.avatar };
+                        item = { ...item, image: item?.image || item?.logo };
                         return (
                             <Fragment key={index} >
                                 <MenuItem onClick={() => { !(context?.data?.data?.id === item?.id) && updateContextCookie(item) }}>
                                     <Tooltip title={`${item?.name} (${item?.handle})`}>
                                         <div className="flex items-center space-x-2 justify-between w-full">
                                             <ListItemIcon>
-                                                <Avatar src={item?.image} className='uppercase font-semibold' sx={{ width: 32, height: 32 }}>{item?.name?.slice(0, 1)}</Avatar>
+                                                <Avatar src={item?.image} className='uppercase font-semibold' sx={{ width: 40, height: 40 }}>{item?.name?.slice(0, 1)}</Avatar>
                                             </ListItemIcon>
-                                            <div className="flex-1 flex-col ml-5 w-[calc(100%-80px)]">
+                                            <div className="flex-1 flex-col ml-6 w-[calc(100%-80px)]">
                                                 <h3 className='truncate text-base ml-0.5 font-semibold'>{item?.name}</h3>
                                                 <p className='truncate text-sm' >@{item?.handle}</p>
                                             </div>
                                             <div className='w-5 flex justify-center items-center'>
-                                                {context?.data?.data?.id === item?.id ? <Check fontSize="small" /> : null}
+                                                {context?.data?.data?.id === item?.id ? <Check className='text-accentLight dark:text-accentDark' fontSize="small" /> : null}
                                             </div>
                                         </div>
                                     </Tooltip>
