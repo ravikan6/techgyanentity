@@ -3,8 +3,9 @@ import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
-import { getCImageUrl } from "./helpers";
+// import { getCImageUrl } from "./helpers";
 import { headers } from "next/headers";
+// import { getCldImageUrl } from "next-cloudinary";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -31,14 +32,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                                 select: {
                                     id: true,
                                 }
-                            }
+                            },
+                            image: false,
+                            password: false,
                         }
                     });
                     if (response) {
-                        if (response.image.url) {
-                            response.image = await getCImageUrl(response.image.url)
-                        }
-                        return { ...response, password: undefined };
+                        // if (response.image.url) {
+                        //     response.image = await getCldImageUrl({ src: response.image.url })
+                        // }
+                        return { ...response };
                     } else {
                         return null;
                     }

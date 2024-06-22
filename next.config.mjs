@@ -1,12 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    runtime: 'edge', 
-    unstable_allowDynamic: [
-        './src/lib/helpers.js',
-       './src/lib/auth.js',
-        './src/middleware.js',
-        '/node_modules/next-cloudinary/**',
-    ],
     env:
     {
         APP_URL: 'http://localhost:3000',
