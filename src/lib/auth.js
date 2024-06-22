@@ -105,9 +105,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                             'Accept': 'application/json',
                         },
                         body: fdata,
-                        // next: {
-                        //     revalidate: 0,
-                        // }
+                        next: {
+                            revalidate: 10,
+                        }
                     });
                     const response = await res.json();
                     token = { ...token, ...response?.data };

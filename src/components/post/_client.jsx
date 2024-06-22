@@ -5,8 +5,9 @@ import { useContext, useEffect, useState, createContext } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions } from "./postActions";
 import { Avatar } from "@mui/material";
-import { Button, IconButton } from "../rui";
+import { Button, IconButton, Tooltip } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
+import { formatLocalDate } from "@/lib/helpers";
 
 
 export const ArticleImage = ({ image, classes }) => {
@@ -46,8 +47,10 @@ export const ArticleSidebar = ({ article }) => {
         <>
             <SidebarContext.Provider value={{ setComponent }}>
                 <div className={`overflow-hidden z-[999] w-96 hidden min-[1017px]:block h-screen relative ${css}`}>
-                    <div className={`fixed h-[calc(100%-68px)] bg-lightHead z-[998] dark:bg-darkHead rounded-xl p-4 border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0 ${css}`}>
-                        {component}
+                    <div className={`fixed h-[calc(100%-68px)] overflow-hidden bg-lightHead z-[998] dark:bg-darkHead rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0 ${css}`}>
+                        <section className="relative h-[calc(100%-1px)] overflow-hidden">
+                            {component}
+                        </section>
                     </div>
                 </div>
             </SidebarContext.Provider>
@@ -67,43 +70,45 @@ const SidebarContent = ({ article }) => {
 
     return (
         <>
-            <div onClick={handleDescription} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer duration-500 mb-4 rounded-xl py-1 px-2">
-                <h1 className="text-xl karnak mb-1.5 font-bold">{article.title}</h1>
-                <div className="flex space-x-1 items-center justify-between font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
-                    <div>233 views</div>
-                    {/* <div area-hidden="true"> · </div> */}
-                    <div>
-                        {'2 min'} read
+            <div className="p-4">
+                <div onClick={handleDescription} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer duration-500 mb-4 rounded-xl py-1 px-2">
+                    <h1 className="text-xl karnak mb-1.5 font-bold">{article.title}</h1>
+                    <div className="flex space-x-1 items-center justify-between font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
+                        <div>233 views</div>
+                        {/* <div area-hidden="true"> · </div> */}
+                        <div>
+                            {'2 min'} read
+                        </div>
+                        {/* <div area-hidden="true"> · </div> */}
+                        <PostDate date={article?.createdAt} publishedAt={publishedAt} updatedAt={updatedAt} />
                     </div>
-                    {/* <div area-hidden="true"> · </div> */}
-                    <PostDate date={article?.createdAt} publishedAt={publishedAt} updatedAt={updatedAt} />
+                    <h4 className="text-sm font-medium dark:text-gray-300 text-gray-700">{article.description?.slice(0, 100) + ((article.description?.length > 50) && '...')}<span className="font-bold">more</span></h4>
                 </div>
-                <h4 className="text-sm font-medium dark:text-gray-300 text-gray-700">{article.description?.slice(0, 100) + ((article.description?.length > 50) && '...')}<span className="font-bold">more</span></h4>
-            </div>
-            <div className=" min-h-44 ">
-                <div className="mb-8">
-                    <div className="flex justify-between space-x-2 items-center mb-5 border-y-slate-500">
-                        <div className="flex items-center py-1">
-                            <div className="flex-shrink-0">
-                                <Avatar src={article?.author?.image?.url} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
+                <div className="min-h-44">
+                    <div className="mb-8">
+                        <div className="flex justify-between space-x-2 items-center mb-5 border-y-slate-500">
+                            <div className="flex items-center py-1">
+                                <div className="flex-shrink-0">
+                                    <Avatar src={article?.author?.image?.url} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
+                                </div>
+                                <div className="flex flex-col justify-around ml-3">
+                                    <p className="text-sm karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
+                                        {article?.author?.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-300">
+                                        2k followers
+                                    </p>
+                                </div>
                             </div>
-                            <div className="flex flex-col justify-around ml-3">
-                                <p className="text-sm karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
-                                    {article?.author?.name}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-300">
-                                    2k followers
-                                </p>
+                            <div className="flex items-center space-x-4">
+                                <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
+                                    <EmailRounded className="w-4 h-4" />
+                                </IconButton>
+                                <Button variant="contained" color="primary" size="small" >Follow</Button>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-4">
-                            <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
-                                <EmailRounded className="w-4 h-4" />
-                            </IconButton>
-                            <Button variant="contained" color="primary" size="small" >Follow</Button>
-                        </div>
+                        <PostActions id={article.id} />
                     </div>
-                    <PostActions id={article.id} />
                 </div>
             </div>
         </>
@@ -118,28 +123,53 @@ const Description = ({ article, publishedAt, updatedAt }) => {
     }
     return (
         <>
-            <div className="mb-8">
+            <div className="bg-lightHead px-4 shadow-sm dark:bg-darkHead absolute flex items-center justify-between top-0 left-0 w-full h-14">
+                <h2 className="text-base font-bold ">
+                    About
+                </h2>
+                <div className="cursor-pointer" onClick={onClose}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+            <div className="h-[calc(100%-62px)] p-4 overflow-x-hidden mt-14 pb-14">
+                <div>
+                    <h1 className="text-xl karnak mb-1.5 font-bold">{article.title}</h1>
+                    <div className="flex space-x-1 items-center justify-between font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
+                        <div>233 views</div>
+                        <div>
+                            {'2 min'} read
+                        </div>
+                        <PostDatePublished date={article?.createdAt} />
+                        {/* <PostDate date={article?.createdAt} publishedAt={publishedAt} updatedAt={updatedAt} /> */}
+                    </div>
+                </div>
+                <div className="my-4">
+                    <h4 className="text-sm mx-1 bg-light dark:bg-dark p-3 rounded-md font-medium dark:text-gray-300 text-gray-700">{article.description}</h4>
+                </div>
                 <div className="flex justify-between items-center mb-5 border-y-slate-500">
                     <div className="flex items-center px-3 py-1">
                         <div className="flex-shrink-0">
-                            <Avatar sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
+                            <Avatar src={article?.author?.image?.url} sx={{ width: 50, height: 50, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
                         </div>
-                        <div className="flex flex-col justify-around ml-3">
-                            <p className="text-sm karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
+                        <div className="flex flex-col justify-around ml-5">
+                            <p className="text-base karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
                                 {article?.author?.name}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-300">
+                            <p className="text-sm text-gray-500 dark:text-gray-300">
                                 2k followers
                             </p>
                         </div>
                     </div>
-                    <div className="cursor-pointer" onClick={onClose}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </div>
                 </div>
-                <PostActions id={article.id} />
+                <div className="flex items-center mt-2 space-x-4">
+                    <Button variant="contained" color="secondary" size="small" >About</Button>
+                    <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
+                        <EmailRounded className="w-4 h-4" />
+                    </IconButton>
+                    <Button variant="contained" color="primary" size="small" >Follow</Button>
+                </div>
             </div>
         </>
     );
@@ -193,4 +223,16 @@ export const PostDate = (props) => {
 
         </>
     );
-}  
+}
+
+
+const PostDatePublished = ({ date, }) => {
+
+    return (
+        <>
+            <Tooltip title={<>{new Date(date).toLocaleString()}</>} placement="top" arrow>
+                <time dateTime={date}>{formatDate(date)}</time>
+            </Tooltip>
+        </>
+    )
+}
