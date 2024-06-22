@@ -33,8 +33,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                                     id: true,
                                 }
                             },
-                            image: false,
-                            password: false,
                         }
                     });
                     if (response) {
