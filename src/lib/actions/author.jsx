@@ -2,7 +2,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { deleteCloudinaryImage, uploadImage } from "./upload";
-import { getCldImageUrl } from "next-cloudinary";
+import { getCImageUrl } from "../helpers";
 
 
 const updateAuthorAction = async (obj) => {
@@ -20,7 +20,10 @@ const updateAuthorAction = async (obj) => {
                 ...obj.data,
             },
         });
-        console.log(res, '______________res____________from______________updateAuthorAction')
+
+        author.image = author?.image?.url ? await getCImageUrl(author?.image?.url) : null;
+        author.banner = author?.banner?.url ? await getCImageUrl(author?.banner?.url) : null;
+
         res = { ...res, data: author }
     } catch (error) {
         console.log(error, '______________error____________from______________updateAuthorAction')
@@ -58,6 +61,12 @@ const updateAuthorImagesAction = async (data, files) => {
                 let logoData = await uploadImage(logo);
                 if (logoData?.success) {
                     lgData = await cloudinaryProvider(logoData?.data);
+                    if (author?.image?.url) {
+                        let rmData = await deleteCloudinaryImage(author?.image?.url);
+                        if (!rmData?.success) {
+                            throw new Error(rmData?.message);
+                        }
+                    }
                 } else {
                     throw new Error(logoData?.message);
                 }
@@ -87,6 +96,12 @@ const updateAuthorImagesAction = async (data, files) => {
                 let bannerData = await uploadImage(banner);
                 if (bannerData?.success) {
                     bnData = await cloudinaryProvider(bannerData?.data);
+                    if (author?.banner?.url) {
+                        let rmData = await deleteCloudinaryImage(author?.banner?.url);
+                        if (!rmData?.success) {
+                            throw new Error(rmData?.message);
+                        }
+                    }
                 } else {
                     throw new Error(bannerData?.message);
                 }
@@ -120,8 +135,8 @@ const updateAuthorImagesAction = async (data, files) => {
                 }
             });
 
-            author.logo = author?.image?.url && getCldImageUrl({ src: author?.image?.url });
-            author.banner = author?.banner?.url && getCldImageUrl({ src: author?.banner?.url });
+            author.logo = author?.image?.url ? await getCImageUrl(author?.image?.url, { quality: 100 }) : null;
+            author.banner = author?.banner?.url ? await getCImageUrl(author?.banner?.url, { quality: 100 }) : null;
             res = { ...res, data: author, status: 200 };
         }
         return res;
@@ -131,8 +146,6 @@ const updateAuthorImagesAction = async (data, files) => {
         return res;
     }
 };
-
-
 
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';

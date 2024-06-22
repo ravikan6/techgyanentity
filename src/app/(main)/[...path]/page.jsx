@@ -2,6 +2,7 @@ import { ArticleWrapper } from '@/components/post/_client';
 import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { getCImageUrl } from '@/lib/helpers';
 import { getCldOgImageUrl } from 'next-cloudinary';
 
 export async function generateMetadata({ params, searchParams }) {
@@ -59,6 +60,8 @@ const getArticle = async (slug, handle) => {
                     author: true  // Including the related author information
                 }
             });
+            if (post?.author?.image?.url)
+                post.author.image.url = await getCImageUrl(post?.author?.image?.url);
             return post
         }
         throw Error("No matching author found!")

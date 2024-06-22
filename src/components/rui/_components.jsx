@@ -102,8 +102,8 @@ const RuiDialog = styled(Dialog)(({ theme }) => ({
         borderRadius: '24px',
     },
     '& .MuiBackdrop-root': {
-        backgroundColor: theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.6)',
-        backdropFilter: theme.palette.mode === 'light' ? 'blur(4px)' : 'blur(4px)',
+        backgroundColor: theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.3)',
+        backdropFilter: process.env.MODAL_BLUR === 'true' ? 'blur(4px)' : 'none',
     },
 }));
 

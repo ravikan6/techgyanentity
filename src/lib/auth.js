@@ -3,6 +3,8 @@ import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
+import { getCImageUrl } from "./helpers";
+import { headers } from "next/headers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -33,6 +35,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         }
                     });
                     if (response) {
+                        if (response.image.url) {
+                            response.image = await getCImageUrl(response.image.url)
+                        }
                         return { ...response, password: undefined };
                     } else {
                         return null;
@@ -88,26 +93,27 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     // TODO: Add other providers (Google, Auth0, etc. {Using V2 API})
                 }
             }
-            //   if (token.id) {
-            //     let query = `query userSessionData {
-            //       User(id: "${token.id}") {
-            //         isActive
-            //         username
-            //         name
-            //         image
-            //       }
-            //     }`
-
-            //     let data = await ApiGql_V2(query, { 'Authorization': `${process.env.API_TOKEN_V2}` })
-            //     let userData = await data?.data?.User || null;
-            //     if (userData) {
-            //       token = {
-            //         ...token,
-            //         name: userData?.fullName,
-            //         ...userData
-            //       }
-            //     }
-            //   }
+            if (token.id) {
+                try {
+                    const url = headers().get('origin') || process.env.APP_URL;
+                    let fdata = new FormData();
+                    fdata.append('id', token.id);
+                    const res = await fetch(`${url}/api/user`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                        },
+                        body: fdata,
+                        // next: {
+                        //     revalidate: 0,
+                        // }
+                    });
+                    const response = await res.json();
+                    token = { ...token, ...response?.data };
+                } catch (error) {
+                    console.error("Server Error:", error?.message) //TODO: Will be removed in production
+                }
+            }
             return Promise.resolve(token)
         },
         async session({ session, token }) {
@@ -121,3 +127,4 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     secret: process.env.NEXTAUTH_SECRET
 });
+

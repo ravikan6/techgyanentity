@@ -1,6 +1,5 @@
 'use client';
 import { Button, TextField, Tooltip, IconButton } from "@/components/rui";
-import { updateChannelBrandAction, updateChannelInfoAction } from "@/lib/actions/channel";
 import { StudioContext } from "@/lib/context";
 import { InputAdornment, Grid, Avatar } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -66,6 +65,7 @@ const ChannelBrandFunc = ({ data }) => {
                 setState({ data: { ...state, isRunnable: true }, run: false });
                 context.loading && context.setLoading(false);
             } finally {
+                setFiles({ ...files, rml: false, rmb: false });
                 context.loading && context.setLoading(false);
             }
         }

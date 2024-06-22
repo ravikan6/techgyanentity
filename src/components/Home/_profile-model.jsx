@@ -1,18 +1,27 @@
 'use client';
 import Link from 'next/link';
 import { ThemeSwitch } from '../theme';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { image_URL_v2 } from '@/lib/resolver';
 import { Fragment, useEffect, useState } from 'react'
 import { Box, Avatar, ListItemIcon, Typography, List, Divider } from '@mui/material';
 import { NavigateBefore, Check, HelpOutlineOutlined, DashboardCustomizeOutlined, SettingsOutlined, Person4Outlined, AdminPanelSettingsOutlined, NightsStayOutlined, WbSunnyOutlined, SettingsBrightness, Logout, FeedbackOutlined, KeyboardArrowRightOutlined, TranslateOutlined, MoreVert } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip, Button } from '@/components/rui';
 
-export const UserProfileModel = ({ data }) => {
+export const UserProfileModel = ({ user }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [insiderOpen, setInsiderOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [insiderData, setInsiderData] = useState(null);
+    const [data, setData] = useState(user);
+
+    const session = useSession();
+
+    useEffect(() => {
+        if (session.data?.user) {
+            setData(session.data);
+        }
+    }, [session.data]);
 
     const handleClick = (event) => {
         setMenuOpen(event.currentTarget);
@@ -57,7 +66,7 @@ export const UserProfileModel = ({ data }) => {
                         aria-haspopup="true"
                         aria-expanded={menuOpen ? 'true' : undefined}
                     >
-                        <Avatar className='uppercase' src={image_URL_v2(data?.user?.picture)} sx={{ width: 32, height: 32 }}>{data?.user?.username?.slice(0, 1)}</Avatar>
+                        <Avatar className='uppercase' src={data?.user?.image} sx={{ width: 32, height: 32 }}>{data?.user?.username?.slice(0, 1)}</Avatar>
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -74,22 +83,24 @@ export const UserProfileModel = ({ data }) => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 className="rb_sss rb_ss overflow-y-auto"
             >
-                <Box className="h-[80px] max-h-[80px] w-full flex flex-col justify-center overflow-hidden">
+                <Box className="h-[60px] max-h-[60px] w-full overflow-hidden">
                     <MenuItem>
-                        <Avatar src={image_URL_v2(data?.user?.picture, { rounded: true, width: 40 })}>{data?.user?.username?.slice(0, 1)}</Avatar>
-                        <Typography sx={{ ml: 2 }} variant="inherit">{data?.user?.username}</Typography>
+                        <Avatar src={data?.user?.image}>{data?.user?.username?.slice(0, 1)}</Avatar>
+                        <div className='ml-5 flex flex-col justify-center items-start'>
+                            <h3 className='font-bold'>{data?.user?.name}</h3>
+                            <p className='stymie -mt-1'>{data?.user?.username}</p>
+                        </div>
                     </MenuItem>
                 </Box>
-                {/* <Divider /> */}
                 <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
                     <ListItemRdX link={{
-                        name: 'Your Profile',
-                        url: `/@${data?.user?.username}`,
+                        name: 'Manage Account',
+                        url: `/account/@${data?.user?.username}`,
                         icon: Person4Outlined,
                     }} />
                     <ListItemRdX link={{
                         name: `${process.env.NEXT_PUBLIC_STUDIO_NAME}`,
-                        url: `/studio/${data?.user?.username}/dashboard`,
+                        url: `/${process.env.STUDIO_URL_PREFIX}/dashboard`,
                         icon: DashboardCustomizeOutlined,
                     }} />
                     <MenuItem onClick={() => signOut()}>

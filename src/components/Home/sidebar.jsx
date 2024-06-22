@@ -279,7 +279,7 @@ const MainSidebar = (props) => {
                     {session?.user ? <Link href={userData ? `/@${session?.user?.username}` : '#'} className={MenuBtnStyle(`/@${session?.user?.username}`)}>
                         <Button fullWidth >
                             <div className="flex py-0.5 px-2 w-full justify-start space-x-7 items-center">
-                                <>{session?.user?.picture ? <Image className='rounded' src={`${session?.user?.picture}`} alt={session?.user?.username} width={20} height={20} /> : false ? <BiSolidUserRectangle className="w-5 text-black dark:text-white h-5" /> : <LuUserSquare2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                                <>{session?.user?.image ? <Image className='rounded' src={`${session?.user?.image}`} alt={session?.user?.username} width={20} height={20} /> : false ? <BiSolidUserRectangle className="w-5 text-black dark:text-white h-5" /> : <LuUserSquare2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
                                     <span className="text-base line-clamp-1 truncate dark:text-gray-100 text-gray-800 font-semibold">@{session?.user?.username}</span></>
                             </div>
                         </Button>

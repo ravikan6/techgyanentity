@@ -2,7 +2,7 @@
 const nextConfig = {
     env:
     {
-        APP_URL: 'https://www.raviblog.tech',
+        APP_URL: 'http://localhost:3000',
         APP_NAME: 'Techgyan Entity',
         // NEXTAUTH_URL: 'http://localhost:3000',
         NEXTAUTH_SECRET: '3X4b7KUq8vUMo6WzXVOkeJeuqLCanZTnhnyM8cCRL6o=',
@@ -22,6 +22,8 @@ const nextConfig = {
         AUTH_AUTH0_SECRET: 'gkuosCn7qCl3GOWW61R3ArtizF_OSqve7M-8El_snSodJWl2M3a7AhzVogfuorj2',
         AUTH_AUTH0_DOMAIN: 'https://raviblog.us.auth0.com',
         STUDIO_URL_PREFIX: 'studio',
+        NEXT_PUBLIC_STUDIO_NAME: 'Content Studio',
+        MODAL_BLUR: 'false',
     },
     experimental: {
         instrumentationHook: true,
@@ -50,6 +52,7 @@ const nextConfig = {
             },
         ],
     },
+    reactStrictMode: false,
 };
 
 export default nextConfig;

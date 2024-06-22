@@ -154,7 +154,12 @@ const userImage = async (files) => {
         let logoData = await uploadImage(logo);
         if (logoData?.success) {
           imageData = await cloudinaryProvider(logoData.data);
-          console.log('imageData_________________________:', imageData)
+          if (user?.image?.url) {
+            let rmData = await deleteCloudinaryImage(user?.image?.url);
+            if (!rmData?.success) {
+              throw new Error(rmData?.message);
+            }
+          }
         } else {
           throw new Error(logoData?.message);
         }
@@ -179,8 +184,6 @@ const userImage = async (files) => {
       }
     }
 
-    console.log('imageData:', imageData)
-
     if (imageData) {
       user = await prisma.user.update({
         where: {
@@ -203,4 +206,40 @@ const userImage = async (files) => {
 
 }
 
-export { createUser, getUser, createAuthor, getUserAuthors, userImage };
+const updateUserBasic = async (data) => {
+  let res = { data: null, status: 500, errors: [] };
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      res = { ...res, errors: [{ message: 'Unauthorized' }] };
+      return res;
+    }
+
+    let user = await prisma.user.update({
+      where: {
+        id: session.user.id
+      },
+      data: {
+        name: data?.name,
+        username: data?.username,
+        dob: data?.dob,
+        sex: data?.sex
+      }, select: {
+        id: true,
+        name: true,
+        username: true,
+        dob: true,
+        sex: true
+      }
+    });
+
+    res = { ...res, data: user, status: 200 };
+    return res;
+  } catch (error) {
+    console.error('Error in updateUserBasic:', error);
+    res.errors.push({ message: 'An error occurred while updating profile. Please try again later.' });
+    return res;
+  }
+}
+
+export { createUser, getUser, createAuthor, getUserAuthors, userImage, updateUserBasic };

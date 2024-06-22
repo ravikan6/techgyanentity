@@ -5,6 +5,8 @@ import { useContext, useEffect, useState, createContext } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions } from "./postActions";
 import { Avatar } from "@mui/material";
+import { Button, IconButton } from "../rui";
+import { EmailRounded } from "@mui/icons-material";
 
 
 export const ArticleImage = ({ image, classes }) => {
@@ -80,10 +82,10 @@ const SidebarContent = ({ article }) => {
             </div>
             <div className=" min-h-44 ">
                 <div className="mb-8">
-                    <div className="flex justify-between items-center mb-5 border-y-slate-500">
-                        <div className="flex items-center px-3 py-1">
+                    <div className="flex justify-between space-x-2 items-center mb-5 border-y-slate-500">
+                        <div className="flex items-center py-1">
                             <div className="flex-shrink-0">
-                                <Avatar sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
+                                <Avatar src={article?.author?.image?.url} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
                             </div>
                             <div className="flex flex-col justify-around ml-3">
                                 <p className="text-sm karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
@@ -93,6 +95,12 @@ const SidebarContent = ({ article }) => {
                                     2k followers
                                 </p>
                             </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
+                                <EmailRounded className="w-4 h-4" />
+                            </IconButton>
+                            <Button variant="contained" color="primary" size="small" >Follow</Button>
                         </div>
                     </div>
                     <PostActions id={article.id} />

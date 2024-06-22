@@ -71,11 +71,9 @@ const CloseBtn = (props) => {
     <div className={`${props.class}`}>
       <IconButton
         onClick={props.onClick}
-        // color='icon'
-        className='bg-white/40 dark:bg-dark/40 dark:text-gray-100 text-gray-900 '
-        sx={{ bgcolor: (theme) => alpha(theme.palette.primary.main, 0.9), p: 1 }}
+        disabled={props.disabled ? props.disabled : false}
       >
-        <AiOutlineClose />
+        <AiOutlineClose className='w-5 h-5' />
       </IconButton>
     </div>
   )

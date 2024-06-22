@@ -1,3 +1,5 @@
+import { getCldImageUrl } from "next-cloudinary";
+
 function formatLocalDate(inputDate) {
     if (inputDate == null || inputDate === '') {
         return null;
@@ -46,10 +48,21 @@ async function verifyPassword(password, hash) {
     }
 }
 
+async function getCImageUrl(id, options) {
+    try {
+        const url = await getCldImageUrl({ src: id, quality: 100, ...options });
+        return url;
+    } catch (error) {
+        return null;
+        console.error('Error getting image url:', error);
+    }
+}
+
 
 
 export {
     formatLocalDate,
     hashPassword,
-    verifyPassword
+    verifyPassword,
+    getCImageUrl
 }

@@ -73,7 +73,7 @@ const Header = async () => {
                                                 <NotificationBtn classes={'border border-solid border-secondary dark:border-secondaryDark'} />
                                             </div>
                                             <div className="">
-                                                <UserProfileModel data={{ user: session?.user }} />
+                                                <UserProfileModel user={{ user: session?.user }} />
                                             </div>
                                         </>
                                     ) : (
