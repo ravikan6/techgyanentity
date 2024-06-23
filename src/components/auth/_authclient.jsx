@@ -281,7 +281,7 @@ const Auth_Login_Form = ({ params, query }) => {
                 router.push(`/auth/v2/login/redirect?_state=${query._state}&_callbackUrl=${query._callbackUrl}`)
             } else {
                 setLoginError(true);
-                toast.warn("Invalid email or password", { toastId: "Elogin" });
+                toast.error(`${res.code} _ ${res.url} _ ${res.ok} _ ${res.status}_${res.error}`, { toastId: "Elogin" });
             }
         } catch (error) {
             setLoading(false)

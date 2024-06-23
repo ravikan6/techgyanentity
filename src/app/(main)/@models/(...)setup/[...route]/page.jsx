@@ -2,18 +2,26 @@
 import React from 'react'
 import { useContext, memo } from 'react'
 import { progressContext } from '../../layout';
-// import { CreateChannel } from '@/components/setup/models';
+import { notFound } from 'next/navigation';
+import CreateAuthor from '@/components/author/create';
 
-const InterceptSetupChannel = ({ params }) => {
+const InterceptSetupPage = ({ params }) => {
   let progress = useContext(progressContext);
-  const path = params.route.join('/');
+  const route = params?.route;
+  let path = route && route[0];
 
-  return (
-    <>
-      {/* <CreateChannel context={progress} /> */}
-      {path}
-    </>
-  )
+  progress.setTitle('Create Author');
+
+  if (path === 'author') {
+    return (
+      <>
+        <div className='max-w-96'>
+          <CreateAuthor modern={false} context={progress} />
+        </div>
+      </>
+    )
+  } else notFound();
+
 }
 
-export default memo(InterceptSetupChannel);
+export default memo(InterceptSetupPage);

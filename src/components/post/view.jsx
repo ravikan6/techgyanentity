@@ -14,7 +14,7 @@ export const PostView = async ({ article }) => {
                 </main>
             );
         } else if (article?.privacy === 'PUBLIC' || article?.privacy === 'UNLISTED') {
-            const css = `min-[1017px]:max-w-[calc(100%-370px)] min-[1055px]:max-w-[calc(100%-424px)] min-[1101px]:max-w-[calc(100%-460px)] min-[1195px]:max-w-[calc(100%-500px)] min-[1256px]:max-w-[calc(100%-525px)] min-[1300px]:max-w-[calc(100%-485px)]`;
+            const css = `min-[1017px]:max-w-[calc(100%-370px)] w-full min-[1055px]:max-w-[calc(100%-424px)] min-[1101px]:max-w-[calc(100%-460px)] min-[1195px]:max-w-[calc(100%-500px)] min-[1256px]:max-w-[calc(100%-525px)] min-[1300px]:max-w-[calc(100%-485px)]`;
             return (
                 <main className="overflow-clip ">
                     <section className="flex space-x-14 px-3 justify-center md:px-0 mx-auto">

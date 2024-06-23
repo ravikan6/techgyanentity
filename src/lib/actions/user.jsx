@@ -71,33 +71,54 @@ const createAuthor = async (data) => {
     return res
   }
 
-  if (!data.name || !data.handle) {
+  if (!data?.name) {
     res = { ...res, errors: "Missing required fields", status: 400 };
     return res;
   }
+
+  let handle = data.handle ? data.handle : data.name.toLowerCase().replace(/\s/g, '-') + Math.random().toString(36).substring(2, 7);
+
+  const handleGen = async (handle) => {
+    while (true) {
+      let author = await prisma.author.findUnique({
+        where: {
+          handle: handle
+        },
+        select: {
+          id: true
+        }
+      });
+      if (!author) {
+        return handle;
+      }
+      handle = data.name.toLowerCase().replace(/\s/g, '-') + Math.random().toString(36).substring(2, 7);
+    }
+  }
+
+  handle = await handleGen(handle);
 
   try {
     let author = await prisma.author.create({
       data: {
         name: data.name,
-        handle: data.handle,
-        bio: data.bio,
-        contactEmail: data.contactEmail,
+        handle: handle,
         user: {
           connect: {
             id: session.user.id
           }
         },
-        ...data.links && { social: { set: data.links } }
+      },
+      select: {
+        handle: true,
+        id: true,
+        name: true,
       }
     });
 
     res = { ...res, data: author, status: 200 };
-    console.log(res);
     return res;
   } catch (e) {
     res = { ...res, errors: e.messaage, status: 400 };
-    console.log(res);
     return res;
   }
 }

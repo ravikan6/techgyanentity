@@ -1,50 +1,72 @@
 import Link from 'next/link';
 import React from 'react'
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
+import { SetDynmicAuthor } from '@/components/studio/author/_edit-funcs';
 
-const page = ({ params, }) => {
+const page = async ({ params, }) => {
   const { path } = params;
-  const croute = path[0];
+  const croute = encodeURIComponent(path[0]);
+  const session = await auth();
 
-  switch (croute) {
-    case 'dashboard':
-      return (
-        <>
-          <div>dashboard</div>
-        </>
-      );
-    case 'content':
-      return (
-        <>
-          <div>content</div>
-        </>
-      );
-    case 'analytics':
-      return (
-        <>
-          <div>analytics</div>
-        </>
-      );
-    case 'monetization':
-      return (
-        <>
-          <div>monetization</div>
-        </>
-      );
-    case 'personalization':
-      return (
-        <>
-          <div>personalization</div>
-        </>
-      );
-    case 'settings':
-      return (
-        <>
-          <div>settings</div>
-        </>
-      );
-    default:
+  if (croute === 'dashboard') {
+    if (path.length === 2) {
+      const subroute = decodeURIComponent(path[1]);
+      if (subroute.startsWith('@')) {
+        let author = subroute.slice(1);
+        author = await prisma.author.findUnique({
+          where: {
+            handle: author,
+            userId: session?.user?.id
+          }
+        });
+        if (!author && author?.id) {
+          return redirect(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
+        }
+        return (
+          <SetDynmicAuthor author={author} />
+        )
+      }
       return redirect(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
+    }
+    return (
+      <>
+        <div>dashboard</div>
+      </>
+    );
+  } else if (croute === 'content') {
+    return (
+      <>
+        <div>content</div>
+      </>
+    );
+  } else if (croute === 'analytics') {
+    return (
+      <>
+        <div>analytics</div>
+      </>
+    );
+  } else if (croute === 'monetization') {
+    return (
+      <>
+        <div>monetization</div>
+      </>
+    );
+  } else if (croute === 'personalization') {
+    return (
+      <>
+        <div>personalization</div>
+      </>
+    );
+  } else if (croute === 'settings') {
+    return (
+      <>
+        <div>settings</div>
+      </>
+    );
+  } else {
+    return redirect(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
   }
 }
 

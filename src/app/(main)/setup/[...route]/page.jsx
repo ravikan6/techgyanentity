@@ -1,14 +1,19 @@
+import CreateAuthor from '@/components/author/create';
+import { notFound } from 'next/navigation';
 import React from 'react'
 
 const page = ({ params }) => {
-  const path = params.route.join('/');
+  const route = params?.route;
+  let path = route && route[0];
 
-  return (
-    <div>
-      THis is steup/...route/page/
-      {path}
-    </div>
-  )
+  if (path === 'author') {
+    return (
+      <>
+        <CreateAuthor />
+      </>
+    )
+  } else notFound();
+
 }
 
 export default page

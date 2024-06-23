@@ -2,11 +2,14 @@
 import Link from 'next/link';
 import { ThemeSwitch } from '../theme';
 import { signOut, useSession } from 'next-auth/react';
-import { image_URL_v2 } from '@/lib/resolver';
 import { Fragment, useEffect, useState } from 'react'
 import { Box, Avatar, ListItemIcon, Typography, List, Divider } from '@mui/material';
 import { NavigateBefore, Check, HelpOutlineOutlined, DashboardCustomizeOutlined, SettingsOutlined, Person4Outlined, AdminPanelSettingsOutlined, NightsStayOutlined, WbSunnyOutlined, SettingsBrightness, Logout, FeedbackOutlined, KeyboardArrowRightOutlined, TranslateOutlined, MoreVert } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip, Button } from '@/components/rui';
+import { TbUserPlus } from 'react-icons/tb';
+import { DecryptAuthorStudioCookie } from '@/lib/actions/studio';
+import { getUserAuthors } from '@/lib/actions/user';
+import { CgChevronUp } from 'react-icons/cg';
 
 export const UserProfileModel = ({ user }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -14,6 +17,8 @@ export const UserProfileModel = ({ user }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [insiderData, setInsiderData] = useState(null);
     const [data, setData] = useState(user);
+    const [authors, setAuthors] = useState('loading');
+    const [showAuthors, setShowAuthors] = useState(true);
 
     const session = useSession();
 
@@ -22,6 +27,14 @@ export const UserProfileModel = ({ user }) => {
             setData(session.data);
         }
     }, [session.data]);
+
+    useEffect(() => {
+        if (data?.user?.Author?.length > 0) {
+            getUserAuthors().then((author) => {
+                setAuthors(author);
+            });
+        }
+    }, [data?.user?.Author]);
 
     const handleClick = (event) => {
         setMenuOpen(event.currentTarget);
@@ -85,24 +98,44 @@ export const UserProfileModel = ({ user }) => {
             >
                 <Box className="h-[60px] max-h-[60px] w-full overflow-hidden">
                     <MenuItem>
+                        {/* {author ? <>
+                            <Avatar src={author?.image}>{author?.handle?.slice(0, 1)}</Avatar>
+                            <div className='ml-5 flex flex-col justify-center items-start'>
+                                <h3 className='font-bold'>{author?.name}</h3>
+                                <p className='stymie -mt-1'>{author?.handle}</p>
+                            </div>
+                        </> : <> */}
                         <Avatar src={data?.user?.image}>{data?.user?.username?.slice(0, 1)}</Avatar>
                         <div className='ml-5 flex flex-col justify-center items-start'>
                             <h3 className='font-bold'>{data?.user?.name}</h3>
                             <p className='stymie -mt-1'>{data?.user?.username}</p>
                         </div>
+                        {/* </>} */}
                     </MenuItem>
                 </Box>
-                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
+
+                {(data?.user?.Author?.length === 0) && <Box className="bg-lightHead dark:bg-darkHead overflow-hidden" sx={{ borderRadius: '14px', py: 2, px: 1, mx: '4px', boxShadow: null, mb: 2, mt: 1 }}>
+                    <div className='flex flex-col max-w-[230px] mx-auto items-center'>
+                        <p className='text-sm mb-2 text-slate-600 text-center dark:text-slate-300'>Become an author and start publishing your articles.</p>
+                        <Link href='/setup/author'>
+                            <Button variant='outlined' size='small' sx={{ minWidth: '80px' }} startIcon={<TbUserPlus />}>Become Author</Button>
+                        </Link>
+                    </div>
+                </Box>}
+
+                <Box elevation={0} className="bg-lightHead group/menu_box dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
                     <ListItemRdX link={{
                         name: 'Manage Account',
                         url: `/account/@${data?.user?.username}`,
                         icon: Person4Outlined,
                     }} />
-                    <ListItemRdX link={{
+
+                    {(data?.user?.Author?.length > 0) && <ListItemRdX link={{
                         name: `${process.env.NEXT_PUBLIC_STUDIO_NAME}`,
                         url: `/${process.env.STUDIO_URL_PREFIX}/dashboard`,
                         icon: DashboardCustomizeOutlined,
-                    }} />
+                    }} />}
+
                     <MenuItem onClick={() => signOut()}>
                         <ListItemIcon>
                             <Logout fontSize="small" />
@@ -111,6 +144,34 @@ export const UserProfileModel = ({ user }) => {
                     </MenuItem>
 
                     <Divider />
+
+                    {(authors != 'loading' && data?.user) &&
+                        <>
+                            <IconButton onClick={() => setShowAuthors(!showAuthors)} className='absolute w-5 h-5 z-[999] -mt-[18px] transition-all duration-300 group-hover/menu_box:flex justify-center items-center bg-light/90 dark:bg-dark/90 hidden rounded-full right-3'>
+                                <CgChevronUp className={`${showAuthors ? '' : 'rotate-180'} w-4 h-4 transition-all duration-300`} />
+                            </IconButton>
+                            <div className={`${showAuthors ? 'h-auto opacity-100' : 'opacity-0 h-0'} overflow-hidden transition-all duration-300`} >
+                                {(authors?.data?.length > 0) ? <>
+                                    {authors?.data?.map((author, index) => {
+                                        const Img = () => <Avatar className='w-5 h-5 text-xs uppercase font-semibold' src={author?.image}>{author?.handle?.slice(0, 1)}</Avatar>;
+                                        return <ListItemRdX key={index} link={{
+                                            name: author?.name,
+                                            url: `/@${author?.handle}`,
+                                            icon: Img,
+                                        }} />
+                                    })}
+                                    <Divider />
+                                </> : <><div className='flex flex-col max-w-[230px] pb-3 mx-auto items-center'>
+                                    <p className='text-sm mb-2 text-slate-600 text-center dark:text-slate-300'>Become an author and start publishing your articles.</p>
+                                    <Link href='/setup/author'>
+                                        <Button variant='outlined' size='small' sx={{ minWidth: '80px' }} startIcon={<TbUserPlus />}>Become Author</Button>
+                                    </Link>
+                                </div>
+                                    <Divider />
+                                </>}
+                            </div>
+                        </>
+                    }
 
                     <ListItemRdX link={{
                         name: 'Your data & privacy',

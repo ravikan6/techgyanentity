@@ -3,9 +3,7 @@ import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
-// import { getCImageUrl } from "./helpers";
 import { headers } from "next/headers";
-// import { getCldImageUrl } from "next-cloudinary";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -33,7 +31,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                                     id: true,
                                 }
                             },
-                        }
+                        },
                     });
                     if (response) {
                         // if (response.image.url) {
@@ -44,7 +42,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         return null;
                     }
                 } catch (error) {
-                    console.error(error); //TODO: Will be removed in production
+                    console.log(error?.message, '_________________________error_from_auth_creditainls'); //TODO: Will be removed in production
                     return null;
                 }
                 // return Promise.resolve(credentials)
@@ -112,7 +110,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     const response = await res.json();
                     token = { ...token, ...response?.data };
                 } catch (error) {
-                    console.error("Server Error:", error?.message) //TODO: Will be removed in production
+                    console.log("Server Error:", error?.message) //TODO: Will be removed in production
                 }
             }
             return Promise.resolve(token)

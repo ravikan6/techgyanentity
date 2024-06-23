@@ -12,6 +12,7 @@ import { RiDraggable } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { default as NextImage } from 'next/image';
 import { updateAuthorAction, updateAuthorImagesAction } from "@/lib/actions/author";
+import { SetAuthorStudioCookie } from "@/lib/actions/studio";
 
 const ChannelEditContext = React.createContext();
 
@@ -634,5 +635,26 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
         </div>
     );
 };
+
+export const SetDynmicAuthor = ({ author }) => {
+    const router = useRouter();
+    useEffect(() => {
+        SetAuthorStudioCookie(author?.id).then((res) => {
+            if (res)
+                router.push(`/${process.env.STUDIO_URL_PREFIX}/edit?t=info`);
+            else {
+                router.push(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
+            }
+        }).catch((e) => {
+            router.push(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
+        });
+    }, []);
+
+    return (
+        <>
+            
+        </>
+    )
+}
 
 export { ChannelEditLayoutFunc, ChannelBrandFunc, AuthorInfoUpdate, ChannelEditLayout };

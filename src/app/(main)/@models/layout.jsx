@@ -10,6 +10,7 @@ export const progressContext = React.createContext();
 
 const ModelsLayout = ({ children }) => {
   const [inProgress, setInProgress] = useState(false);
+  const [title, setTitle] = useState('Setup');
 
   return (
     <Dialog
@@ -21,10 +22,11 @@ const ModelsLayout = ({ children }) => {
       aria-describedby="setup-modal-description"
       aria-labelledby="setup-modal-title"
     >
-      <progressContext.Provider value={{ inProgress, setInProgress }}>
+      <progressContext.Provider value={{ inProgress, setInProgress, setTitle }}>
         <div className='absolute top-0 left-0 w-full' >{inProgress && <LinearProgress color="accent" />}</div>
         <div className={`flex items-center bg-lightHead dark:bg-darkHead h-16 shadow-sm justify-between px-5 py-2`}>
-          <MainLogo />
+          {/* <MainLogo /> */}
+          <h2 id="setup-modal-title" className='text-lg font-bold'>{title}</h2>
           <RouterBackBtn />
         </div>
         <DialogContent className='min-h-96 min-w-96'>

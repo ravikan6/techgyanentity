@@ -1,35 +1,78 @@
-"use client";
+'use client';
+import { Button, TextField } from '@/components/rui';
+import React, { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
 import { createAuthor } from "@/lib/actions/user";
-import { TextField, Button } from "../rui";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
-const CreateAuthor = () => {
-    const [bio, setBio] = useState("");
+const CreateAuthor = ({ context, modern = true }) => {
+    const [name, setName] = useState('');
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const { data: session, status: status } = useSession();
 
-    const createAuthorx = async () => {
-        let st = await createAuthor({ bio: bio });
-        console.log(st);
-        if (st.errors) {
-            return toast.error("An error occurred");
-        }
-        if (st.status === 500) {
-            return toast.error("An error occurred");
-        }
-        toast.success("Author created successfully");
+    const handleLoading = (s) => {
+        context?.setInProgress(s);
+        setIsLoading(s);
     }
+
+    useEffect(() => {
+        if (status == 'loading') {
+            handleLoading(true);
+        } else {
+            handleLoading(false);
+        }
+    }, [session]);
+
+    const createAuthorx = () => {
+        handleLoading(true);
+        try {
+            createAuthor({ name: name }).then((res) => {
+                handleLoading(false);
+                if (res?.status === 200 && res?.data) {
+                    toast.success('Author created successfully');
+                    window.location.href = `/${process.env.STUDIO_URL_PREFIX}/dashboard/@${res?.data?.handle}`;
+                } else {
+                    for (let i in res?.errors) {
+                        toast.error(res?.errors[i]?.message);
+                    }
+                }
+            });
+        } catch (error) {
+            handleLoading(false);
+            toast.error('Something went wrong. Please try again.');
+        }
+    };
 
     return (
         <>
-            <h1>Create Author</h1>
-            <div className="w-full max-w-3xl mx-auto px-10 flex flex-col ">
-                <div>
-                    <TextField onChange={(e)=> setBio(e.target.value)} fullWidth={true} variant="standard" label="Bio" />
-                </div>
-
-                <div className="mt-10">
-                    <Button onClick={createAuthorx} className="btn">Create Author</Button>
-                </div>
+            <div className="block max-w-xl mx-auto relative">
+                <author-create-page className="block">
+                    <div className={`${modern && 'bg-lightHead dark:bg-darkHead'} px-6 py-4 rounded-xl`}>
+                        <div className='text-center text-xl font-bold mb-1 cheltenham'>
+                            Become an Author
+                        </div>
+                        <div className='text-xs mb-4 text-gray-700 dark:text-gray-300' >
+                            Create an author account to start writing your own stories. authors can write stories, publish them and earn money.
+                        </div>
+                        <div className='text-sm mb-2' >
+                            <TextField
+                                onChange={(e) => setName(e.target.value)}
+                                value={name}
+                                fullWidth
+                                disabled={isLoading}
+                                counter
+                                color='button'
+                                label="Name"
+                                inputProps={{ maxLength: 100 }}
+                                size="medium"
+                            />
+                        </div>
+                        <div className='mt-8'>
+                            <Button onClick={() => createAuthorx()} disabled={name?.length < 3 || isLoading} sx={{ px: '16px', py: '4px' }} color='button' variant='outlined'>Create</Button>
+                        </div>
+                    </div>
+                </author-create-page>
             </div>
         </>
     );

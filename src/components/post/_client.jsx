@@ -8,6 +8,8 @@ import { Avatar } from "@mui/material";
 import { Button, IconButton, Tooltip } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
 import { formatLocalDate } from "@/lib/helpers";
+import { CloseBtn } from "../Buttons";
+import { LuUser } from "react-icons/lu";
 
 
 export const ArticleImage = ({ image, classes }) => {
@@ -70,7 +72,7 @@ const SidebarContent = ({ article }) => {
 
     return (
         <>
-            <div className="p-4">
+            <div className="h-[calc(100%-0px)] p-4 overflow-x-hidden">
                 <div onClick={handleDescription} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer duration-500 mb-4 rounded-xl py-1 px-2">
                     <h1 className="text-xl karnak mb-1.5 font-bold">{article.title}</h1>
                     <div className="flex space-x-1 items-center justify-between font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
@@ -79,8 +81,7 @@ const SidebarContent = ({ article }) => {
                         <div>
                             {'2 min'} read
                         </div>
-                        {/* <div area-hidden="true"> · </div> */}
-                        <PostDate date={article?.createdAt} publishedAt={publishedAt} updatedAt={updatedAt} />
+                        <PostDatePublished date={article?.createdAt} />
                     </div>
                     <h4 className="text-sm font-medium dark:text-gray-300 text-gray-700">{article.description?.slice(0, 100) + ((article.description?.length > 50) && '...')}<span className="font-bold">more</span></h4>
                 </div>
@@ -127,29 +128,30 @@ const Description = ({ article, publishedAt, updatedAt }) => {
                 <h2 className="text-base font-bold ">
                     About
                 </h2>
-                <div className="cursor-pointer" onClick={onClose}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </div>
+                <CloseBtn onClick={onClose} />
             </div>
             <div className="h-[calc(100%-62px)] p-4 overflow-x-hidden mt-14 pb-14">
-                <div>
-                    <h1 className="text-xl karnak mb-1.5 font-bold">{article.title}</h1>
+                <div className="">
+                    <h1 className="text-base cheltenham mb-3 font-bold">{article.title}</h1>
                     <div className="flex space-x-1 items-center justify-between font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
-                        <div>233 views</div>
-                        <div>
-                            {'2 min'} read
+                        <div className={`flex flex-col items-center justify-center`}>
+                            <span className="mb-0.5 cheltenham">233</span>
+                            <span>views</span>
                         </div>
-                        <PostDatePublished date={article?.createdAt} />
-                        {/* <PostDate date={article?.createdAt} publishedAt={publishedAt} updatedAt={updatedAt} /> */}
+                        <Tooltip title="average read time" placement="top" arrow>
+                            <div className={`flex flex-col items-center justify-center`}>
+                                <span className="mb-0.5 cheltenham">{'2 min'}</span>
+                                <span>read</span>
+                            </div>
+                        </Tooltip>
+                        <PostDatePublished date={article?.createdAt} expanded />
                     </div>
                 </div>
                 <div className="my-4">
                     <h4 className="text-sm mx-1 bg-light dark:bg-dark p-3 rounded-md font-medium dark:text-gray-300 text-gray-700">{article.description}</h4>
                 </div>
                 <div className="flex justify-between items-center mb-5 border-y-slate-500">
-                    <div className="flex items-center px-3 py-1">
+                    <div className="flex items-center py-1">
                         <div className="flex-shrink-0">
                             <Avatar src={article?.author?.image?.url} sx={{ width: 50, height: 50, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
                         </div>
@@ -164,10 +166,8 @@ const Description = ({ article, publishedAt, updatedAt }) => {
                     </div>
                 </div>
                 <div className="flex items-center mt-2 space-x-4">
-                    <Button variant="contained" color="secondary" size="small" >About</Button>
-                    <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
-                        <EmailRounded className="w-4 h-4" />
-                    </IconButton>
+                    <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >About</Button>
+                    <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<EmailRounded className="w-4 h-4 mr-1" />} size="small" >Contact</Button>
                     <Button variant="contained" color="primary" size="small" >Follow</Button>
                 </div>
             </div>
@@ -226,12 +226,15 @@ export const PostDate = (props) => {
 }
 
 
-const PostDatePublished = ({ date, }) => {
+const PostDatePublished = ({ date, expanded }) => {
 
     return (
         <>
             <Tooltip title={<>{new Date(date).toLocaleString()}</>} placement="top" arrow>
-                <time dateTime={date}>{formatDate(date)}</time>
+                <div className={`flex flex-col items-center justify-center`}>
+                    {expanded && <span className="mb-0.5 cheltenham">{new Date(date).getFullYear()}</span>}
+                    <time dateTime={date}>{formatDate(date)}</time>
+                </div>
             </Tooltip>
         </>
     )

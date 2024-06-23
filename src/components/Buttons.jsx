@@ -156,9 +156,9 @@ const BookmarkBtn = (props) => {
   const clasS = props.class ? props.class : '';
   const cliCk = props.onClick ? props.onClick : () => { };
   return (
-    <div className={`${btnClass} ${clasS} w-8`}>
-      <Button size='small' sx={{ ...btnSx, minWidth: '32px' }} onClick={cliCk}>
-        {bookMarked ? <MdBookmarkAdded className='text-gray-800 dark:text-gray-200 text-xl' /> : <MdBookmarkAdd className='text-gray-800 dark:text-gray-200 text-xl' />}
+    <div className={` ${clasS}`}>
+      <Button size='small' variant='outlined' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={cliCk}>
+        {bookMarked ? <MdBookmarkAdded className='text-gray-800 dark:text-gray-200 w-4 h-4' /> : <MdBookmarkAdd className='text-gray-800 dark:text-gray-200 w-4 h-4' />}
       </Button>
     </div>
   )
@@ -187,9 +187,9 @@ const BtnWithMenu = (props) => {
 
   return (
     <>
-      <div className={`${btnClass} w-8`}>
-        <Button size='small' sx={{ ...btnSx, minWidth: 32 }} onClick={handleClick}>
-          <PiDotsThreeOutline className="w-5 h-5" />
+      <div className={` w-8`}>
+        <Button variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={handleClick}>
+          <PiDotsThreeOutline className="w-4 h-4" />
         </Button>
       </div>
       <div className='absolute z-[999]'>
@@ -202,25 +202,23 @@ const BtnWithMenu = (props) => {
             'aria-labelledby': 'basic-button',
           }}
           sx={{ zIndex: '999' }} >
-          <MenuList>
-            <div className='py-0.5 w-36'>
-              <MenuItem>
-                <ListItemIcon />
-                <span className='stymie text-base'>Report</span>
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon >
-                  <TbHeartHandshake className='w-6 h-6' />
-                </ListItemIcon>
-                <span className='stymie text-base'>Send Love</span>
-              </MenuItem>
-              <MenuItem onClick={handleReportClick} >
-                <ListItemIcon >
-                  <MdOutlineReport className='w-6 h-6' />
-                </ListItemIcon>
-                <span className='stymie text-base'>Report</span>
-              </MenuItem>
-            </div>
+          <MenuList className='min-w-48'>
+            {/* <MenuItem>
+              <ListItemIcon />
+              <span className='stymie text-base'>Follow</span>
+            </MenuItem> */}
+            <MenuItem>
+              <ListItemIcon >
+                <TbHeartHandshake className='w-6 h-6' />
+              </ListItemIcon>
+              <span className='stymie text-base'>Say Thanks</span>
+            </MenuItem>
+            <MenuItem onClick={handleReportClick} >
+              <ListItemIcon >
+                <MdOutlineReport className='w-6 h-6' />
+              </ListItemIcon>
+              <span className='stymie text-base'>Report</span>
+            </MenuItem>
           </MenuList>
         </Menu>
       </div>

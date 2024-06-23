@@ -36,10 +36,6 @@
   @apply w-4;
 }
 
-.rb_SideBar_ScrollBar .MuiDrawer-paper {
-  scrollbar-gutter: stable both-edges !important;
-}
-
 .rb_SideBar_ScrollBar:hover .MuiDrawer-paper::-webkit-scrollbar-thumb {
   @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
   @apply transition-all duration-500 opacity-100;
