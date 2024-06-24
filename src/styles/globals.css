@@ -61,10 +61,6 @@
 
 /* ******************************************* */
 
-.rb_ss .MuiPaper-root {
-  scrollbar-gutter: stable both-edges !important;
-}
-
 .rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {
   @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
   @apply transition-all duration-500;
