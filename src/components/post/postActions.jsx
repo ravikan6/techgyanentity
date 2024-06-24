@@ -16,17 +16,20 @@ import { Button } from '../rui';
  * @param {Object} props - The props object containing the post ID.
  * @returns {JSX.Element} - The JSX element representing the post buttons.
  */
-export const PostActions = (props) => {
+export const PostActions = ({ id, className, modern }) => {
 
     return (
         <>
-            <div className="flex my-2 h-8 overflow-hidden justify-start space-x-6 items-center flex-row">
-                <ClapPost />
-                {/* <AiOutlineComment className="h-6 w-6 ml-6 dark:text-gray-200 text-slate-500" />
+            <div className={`flex my-2 h-8 overflow-hidden ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
+                <div className={`justify-start flex items-center space-x-6`}>
+                    <ClapPost />
+                    {/* <AiOutlineComment className="h-6 w-6 ml-6 dark:text-gray-200 text-slate-500" />
                     <div className="ml-1 text-gray-500">2K</div> */}
-
-                <Bookmark id={props.id} />
-                <BtnWithMenu id={props.id} />
+                </div>
+                <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
+                    <Bookmark id={id} />
+                    <BtnWithMenu id={id} />
+                </div>
             </div>
         </>
     );

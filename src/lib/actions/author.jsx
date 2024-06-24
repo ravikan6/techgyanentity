@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { deleteCloudinaryImage, uploadImage } from "./upload";
 import { getCImageUrl } from "../helpers";
+import { followAuthor } from "../resolver";
 
 
 const updateAuthorAction = async (obj) => {
@@ -147,9 +148,45 @@ const updateAuthorImagesAction = async (data, files) => {
     }
 };
 
+const followAuthorAction = async (authorId) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+    let follow = await followAuthor(authorId);
+    if (follow?.status) {
+        res = { ...res, data: follow, status: 200 };
+    } else {
+        res = { ...res, errors: [{ message: 'An error occurred while following author. Please try again later.' }] };
+    }
+}
+
+const checkAuthorFollowAction = async (authorId) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+    let follow = await prisma.follower.findFirst({
+        where: {
+            authorId: authorId,
+            followerId: session.user.id,
+        },
+    });
+    if (follow) {
+        res = { ...res, data: { status: 'followed' }, status: 200 };
+    } else {
+        res = { ...res, data: { status: 'unfollowed' }, status: 200 };
+    }
+    return res;
+}
+
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction }
+export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction }

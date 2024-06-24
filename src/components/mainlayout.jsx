@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MainLogo } from '@/lib/client';
 import { CgMenuLeft } from 'react-icons/cg';
-
+import useQuery from "@/hooks/useMediaQuery";
 
 const drawerWidth = 240;
 const drawerWidthClose = 80;
@@ -53,6 +53,7 @@ const MainLayout = ({ children, session }) => {
     let o = q ? false : true;
     const [open, setOpen] = React.useState(o);
     const [variant, setVariant] = React.useState(v);
+    const yy = useQuery('(max-width:768px)');
 
     const handleDrawerOpen = () => {
         setOpen(!open);
@@ -66,6 +67,7 @@ const MainLayout = ({ children, session }) => {
     return (
         <DrawerContext.Provider value={{ open, setOpen, setVariant }}>
             <Box sx={{ display: 'flex' }}>
+
                 <Drawer
                     sx={{
                         width: drawerWidth_get(open, variant),
@@ -92,7 +94,7 @@ const MainLayout = ({ children, session }) => {
                     variant={variant}
                     anchor="left"
                     open={open}
-                    className={(variant === 'permanent' ? '!hidden min-[600px]:!block' : '') + ' rb_SideBar_ScrollBar' }
+                    className={(variant === 'permanent' ? '!hidden min-[600px]:!block' : '') + ' rb_SideBar_ScrollBar rb_tt'}
                 >
                     {variant === 'persistent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
                         <IconButton

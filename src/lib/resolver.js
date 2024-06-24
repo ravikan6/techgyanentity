@@ -1,11 +1,50 @@
-// import QueryString from "qs";
+import { auth } from "./auth";
+import { prisma } from "./db";
 
-function get_Article_url_by_id(id) {
-    return `/view?s=${id}`
+const followAuthor = async (authorId) => {
+    const session = await auth();
+    try {
+        if (!session && !session?.user && !session?.user?.id && !authorId) return throwError("Unauthorized or Invalid Request");
+
+        const isFollowing = await prisma.follower.findFirst({
+            where: {
+                authorId: authorId,
+                followerId: session.user.id,
+            },
+        });
+
+        if (isFollowing) {
+            await prisma.follower.delete({
+                where: {
+                    id: isFollowing.id,
+                },
+            });
+            return { status: "unfollowed" };
+        } else {
+            await prisma.follower.create({
+                data: {
+                    author: { connect: { id: authorId } },
+                    follower: { connect: { id: session.user.id } },
+                },
+            });
+            return { status: "followed" };
+        }
+    } catch (error) {
+        return { status: "error" };
+    }
 }
-function genrate_Article_url(id, slug) {
-    return `/view?s=${id}`
-}
+
+export { followAuthor };
+
+
+
+
+
+
+
+
+
+
 
 function get_Article_image(data) {
     const image_data = { sizes: {} }
@@ -48,7 +87,7 @@ function get_Article_image(data) {
  * @param {string} url - The URL of the media.
  * @returns {string|null} - The media URL or null if the URL is invalid.
  */
-function media_URL_v2 (url) {
+function media_URL_v2(url) {
     if (typeof url !== 'string' || url == null) {
         return null;
     }
@@ -59,7 +98,7 @@ function media_URL_v2 (url) {
     return `${process.env.MEDIA_URL}/${url}`;
 }
 
-function image_URL_v2 (url, query = null) {
+function image_URL_v2(url, query = null) {
     if (typeof url !== 'string' || url == null) {
         return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYThRPnGjAvcFS19x-5vXINgIe3g2aP4Cp5A&s';
     }
@@ -72,4 +111,4 @@ function image_URL_v2 (url, query = null) {
     return `${process.env.IMAGE_URL}/${url}`;
 }
 
-export { get_Article_url_by_id, get_Article_image, genrate_Article_url, media_URL_v2, image_URL_v2  };
+export { get_Article_image, media_URL_v2, image_URL_v2 };

@@ -14,22 +14,27 @@ datasource db {
 }
 
 model Post {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  slug        String    @unique
-  title       String
-  description String?
-  content     String
-  author      Author    @relation(fields: [authorId], references: [id])
-  authorId    String    @db.ObjectId
-  published   Boolean   @default(false)
-  privacy     String    @default("PUBLIC")
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
-  deletedAt   DateTime?
-  isDeleted   Boolean   @default(false)
-  tags        String[]
-  image       Image?
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug            String    @unique
+  title           String
+  description     String?
+  content         String
+  author          Author    @relation(fields: [authorId], references: [id])
+  authorId        String    @db.ObjectId
+  published       Boolean   @default(false)
+  privacy         String    @default("PUBLIC")
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
+  deletedAt       DateTime?
+  isDeleted       Boolean   @default(false)
+  tags            String[]
+  image           Image?
+  comments        Comment[]
+  claps           User[]    @relation("clapsByUsertoPost", fields: [clapsIds], references: [id])
+  clapsIds        String[]  @db.ObjectId
+  bookmarkUsers   User[]    @relation(fields: [bookmarkUserIds], references: [id])
+  bookmarkUserIds String[]  @db.ObjectId
 }
 
 model User {
@@ -47,6 +52,15 @@ model User {
   image     Avatar?
   sex       String?
   dob       DateTime?
+
+  following      Follower[]
+  comments       Comment[]
+  commentClaps   Comment[]  @relation("clapsByUsertoComment", fields: [commentClapIds], references: [id])
+  commentClapIds String[]   @db.ObjectId
+  postClaps      Post[]     @relation("clapsByUsertoPost", fields: [postClapIds], references: [id])
+  postClapIds    String[]   @db.ObjectId
+  bookmarks      Post[]     @relation(fields: [bookmarkIds], references: [id])
+  bookmarkIds    String[]   @db.ObjectId
 }
 
 model Author {
@@ -61,6 +75,34 @@ model Author {
   Post         Post[]
   image        Avatar?
   banner       Banner?
+  followers    Follower[]
+}
+
+model Follower {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  author     Author   @relation(fields: [authorId], references: [id])
+  authorId   String   @db.ObjectId
+  follower   User     @relation(fields: [followerId], references: [id])
+  followerId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+}
+
+model Comment {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    String    @db.ObjectId
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean   @default(false)
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String    @db.ObjectId
+  replies   Comment[] @relation("CommentToComment")
+  comment   Comment?  @relation("CommentToComment", fields: [commentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  commentId String?   @db.ObjectId
+  claps     User[]    @relation("clapsByUsertoComment", fields: [clapsIds], references: [id])
+  clapsIds  String[]  @db.ObjectId
 }
 
 type Image {
