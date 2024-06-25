@@ -161,7 +161,7 @@ svg {
 }
 
 #articleContent {
-  @apply cheltenham text-lg leading-6 text-gray-900 dark:text-gray-100;
+  @apply cheltenham text-base md:text-lg leading-6 text-gray-900 dark:text-gray-100;
 }
 
 #articleContent p {
@@ -173,27 +173,27 @@ svg {
 }
 
 #articleContent h1 {
-  @apply text-4xl mb-6 mt-2 font-bold;
+  @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-6 mt-2 font-bold;
 }
 
 #articleContent h2 {
-  @apply text-3xl mb-4 mt-1 font-bold;
+  @apply text-xl md:text-2xl lg:text-3xl xl:text-3xl mb-4 mt-1 font-bold;
 }
 
 #articleContent h3 {
-  @apply text-2xl mb-3 mt-1 font-bold;
+  @apply text-lg md:text-xl lg:text-2xl xl:text-2xl mb-3 mt-1 font-bold;
 }
 
 #articleContent h4 {
-  @apply text-xl mb-2 mt-1 font-bold;
+  @apply text-lg md:text-xl lg:text-2xl xl:text-2xl mb-2 mt-1 font-bold;
 }
 
 #articleContent h5 {
-  @apply text-xl mb-1 mt-0.5 font-bold;
+  @apply text-base mb-1 mt-0.5 font-bold;
 }
 
 #articleContent h6 {
-  @apply text-base mb-1 mt-0.5 font-bold;
+  @apply text-sm mb-1 mt-0.5 font-bold;
 }
 
 #articleContent a {

@@ -20,18 +20,18 @@ const followAuthor = async (authorId) => {
                     id: isFollowing.id,
                 },
             });
-            return { status: "unfollowed" };
+            return { status: false };
         } else {
-            await prisma.follower.create({
+            let isF = await prisma.follower.create({
                 data: {
                     author: { connect: { id: authorId } },
                     follower: { connect: { id: session.user.id } },
                 },
             });
-            return { status: "followed" };
+            return { status: true, id: isF?.id };
         }
     } catch (error) {
-        return { status: "error" };
+        return { status: null, error: error, message: "An error occurred while following author. Please try again later." };
     }
 }
 

@@ -74,7 +74,7 @@ const RuiToolTip = styled(({ className, ...props }) =>
 )(({ theme }) => ({
     '& .MuiTooltip-tooltip': {
         borderRadius: 12,
-        backgroundColor: theme.palette.bgSP.main,
+        backgroundColor: theme.palette?.bgSP?.main,
         color: theme.palette.grey[100],
         fontFamily: 'rb-cheltenham',
         fontWeight: 'bold',
@@ -84,7 +84,7 @@ const RuiToolTip = styled(({ className, ...props }) =>
         boxShadow: theme.shadows[1],
     },
     [`& .${tooltipClasses.arrow}`]: {
-        color: alpha(theme.palette.bgSP.main, 0.9),
+        color: alpha(theme.palette?.bgSP?.main, 0.9),
     },
 }));
 

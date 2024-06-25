@@ -488,3 +488,5 @@ const MenuSkeleton = (count) => {
 }
 
 export { MainSidebar, SmallSidebar };
+
+export const dynamic = 'force-static';

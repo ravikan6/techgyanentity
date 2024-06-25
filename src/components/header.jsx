@@ -7,6 +7,7 @@ import { SearchBar } from "./Home/head";
 import { Skeleton } from '@mui/material';
 import { NavMenu, UserProfileModel } from './Home/_profile-model';
 import { auth } from '@/lib/auth';
+import { VariantpPersistentClient } from './post/_client';
 
 const ManinLogo = async ({ className }) => {
     // const data = await get_SECTION_logo();
@@ -87,6 +88,19 @@ const Header = async () => {
             </header >
         </>
     );
+}
+
+export const VariantPersistent = () => {
+    return (
+        <>
+            <style id='r_tt' >{`
+                .rb_tt {
+                    display: none !important;
+                }
+             `}</style>
+            <VariantpPersistentClient />
+        </>
+    )
 }
 
 export { Header, ManinLogo, ManinLogo as MainLogo };

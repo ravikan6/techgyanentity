@@ -63,7 +63,7 @@ const MainLayout = ({ children, session }) => {
     }, [q]);
 
     return (
-        <DrawerContext.Provider value={{ open, setOpen, setVariant }}>
+        <DrawerContext.Provider value={{ open, setOpen, setVariant, variant }}>
             <Box sx={{ display: 'flex' }}>
 
                 <Drawer
@@ -92,7 +92,7 @@ const MainLayout = ({ children, session }) => {
                     variant={variant}
                     anchor="left"
                     open={open}
-                    className={(variant === 'permanent' ? '!hidden min-[600px]:!block' : '') + ' rb_SideBar_ScrollBar rb_tt'}
+                    className={(variant === 'permanent' ? '!hidden md:!block' : '') + ' rb_SideBar_ScrollBar rb_tt'}
                 >
                     {variant === 'persistent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
                         <IconButton

@@ -1,8 +1,8 @@
-import { ArticleWrapper } from '@/components/post/_client';
 import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { getCImageUrl } from '@/lib/helpers';
+import { Skeleton } from '@mui/material';
 import { getCldOgImageUrl } from 'next-cloudinary';
 
 export async function generateMetadata({ params, searchParams }) {
@@ -81,37 +81,37 @@ const DynamicPages = async ({ params, searchParams }) => {
 
 
     if (path && route?.length === 1) {
-        const post = await prisma.post.findUnique({
-            where: {
-                slug: path,
-            },
-            include: {
-                author: true,
-            },
-        });
-        if (post)
-            return (
-                <ArticleWrapper>
-                    <PostView article={post} />
-                </ArticleWrapper>
-            );
-        else return <></>
+        return <>NULL</>
     } else if (route?.length === 2) {
         const article = await getArticle(route[1], route[0])
-
-        if (article)
+        if (article) {
             return (
-                <ArticleWrapper>
-                    <PostView article={article} />
-                </ArticleWrapper>
-            );
+                <PostView article={article} />
+            )
+        }
         else return <>Sorry, we lost in space. or maybe in blackhole. my signals are disconne........</>
     }
-
     return (
         <>
         </>
     )
 };
+
+const FallBackPOst = () => {
+    return (
+        <>
+            <div className="mx-auto max-w-xl">
+                <Skeleton animation="wave" variant="rounded" width={'100%'} height={300} />
+                <Skeleton animation="wave" variant="text" width={'100%'} className="!mt-10" height={40} />
+                <div className="flex items-center justify-between mt-10">
+                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
+                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
+                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
+                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
+                </div>
+            </div>
+        </>
+    )
+}
 
 export default DynamicPages;

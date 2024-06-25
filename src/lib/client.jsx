@@ -1,12 +1,14 @@
+'use client';
 import Link from "next/link";
 import Image from "next/image";
 import { Skeleton } from "@mui/material";
 // import { get_SECTION_logo } from "./fetchers";
 import { MenuItem, TextField, ToggleButtonGroup } from "@/components/rui";
 import { ToggleButton } from "@mui/material";
-import React, { useMemo, useEffect, useState, memo } from "react";
+import React, { useMemo, useEffect, useState, memo, useContext } from "react";
 import { toast } from "react-toastify";
 import { LearnMoreBtn } from "@/components/Buttons";
+import { DrawerContext } from "@/components/mainlayout";
 
 const MainLogoClient = ({ className }) => {
     const [sectionData, setSectionData] = useState(null);
@@ -178,6 +180,15 @@ const toastError = (erros) => {
             toast.error(error.message);
         });
     }
+};
+
+export const VariantPermanent = () => {
+    const context = useContext(DrawerContext);
+
+    useEffect(() => {
+        if (context.variant !== 'permanent')
+            context.setVariant('permanent'); context.setOpen(true);
+    }, [context.variant]);
 };
 
 export {

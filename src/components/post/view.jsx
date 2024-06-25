@@ -1,8 +1,9 @@
-import { ArticleImage, ArticleSidebar, PostWrapper } from "./_client";
-import { headers } from "next/headers";
+'use server';
+import { VariantPersistent } from "../header";
+import { ArticleImage, ArticleTopMeta } from "./_client";
+
 
 export const PostView = async ({ article }) => {
-
     if (article?.id) {
         if (article?.privacy === 'PRIVATE') {
             return (
@@ -15,24 +16,43 @@ export const PostView = async ({ article }) => {
                 </main>
             );
         } else if (article?.privacy === 'PUBLIC' || article?.privacy === 'UNLISTED') {
-            const css = `min-[1017px]:max-w-[calc(100%-370px)] w-full min-[1055px]:max-w-[calc(100%-424px)] min-[1101px]:max-w-[calc(100%-460px)] min-[1195px]:max-w-[calc(100%-500px)] min-[1256px]:max-w-[calc(100%-525px)] min-[1300px]:max-w-[calc(100%-485px)]`;
             return (
-                <main className="overflow-clip ">
-                    <style>{`
-                        .rb_tt {
-                            display: none !important;
-                        }
-                    `}</style>
-                    <PostWrapper article={article} >
-                        <div className="pb-7">
-                            {article?.content && <div id="articleContent" dangerouslySetInnerHTML={{ __html: article?.content }} />}
+                <main className="overflow-clip max-w-[2400px] mx-auto">
+                    <VariantPersistent />
+                    <section className={`flex flex-col lg:flex-row lg:space-x-18 justify-between md:px-0 `}>
+                        <div className={`lg:w-[calc(100%-475px)] w-full py-3`}>
+                            <div className="max-w-xl w-full mx-auto">
+                                <div className='mb-2'>
+                                    {article?.image && (
+                                        <figure
+                                            key={article?.url}
+                                            className="block mb-10 text-center break-inside-avoid-column"
+                                        >
+                                            <ArticleImage image={article.image} />
+                                            <figcaption className="z-10 mt-4 text-sm italic text-gray-600">
+                                                {article?.image?.caption}
+                                            </figcaption>
+                                        </figure>
+                                    )}
+                                </div>
+                                <ArticleTopMeta article={article} />
+                                <div id="article_topMeta" className="mb-6 pb-4 border-b block lg:hidden border-gray-500 border-t pt-4">
+
+                                </div>
+                                <div className="pb-7">
+                                    {article?.content && <div id="articleContent" dangerouslySetInnerHTML={{ __html: article?.content }} />}
+                                </div>
+                                <div className="mt-8 flex items-center flex-wrap justify-evenly">
+                                    {
+                                        article.tags && article.tags.map((tag) => <div className="bg-lightHead mt-2 dark:bg-darkHead w-auto px-6 py-1.5 rounded-full text-sm font-semibold shadow hover:bg-accentLight dark:hover:bg-accentDark hover:text-white cursor-pointer" key={tag}>{tag}</div>)
+                                    }
+                                </div>
+                            </div>
                         </div>
-                        <div className="mt-10 flex items-center flex-wrap space-x-4">
-                            {
-                                article.tags && article.tags.map((tag) => <div className="bg-lightHead dark:bg-darkHead w-auto px-6 py-1.5 rounded-full text-sm font-semibold shadow hover:bg-accentLight dark:hover:bg-accentDark hover:text-white cursor-pointer" key={tag}>{tag}</div>)
-                            }
+                        <div id="article_sidebar">
+
                         </div>
-                    </PostWrapper>
+                    </section>
                 </main>
             );
         }

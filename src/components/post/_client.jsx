@@ -1,16 +1,17 @@
 "use client";
 import { CldImage } from "next-cloudinary";
 import { DrawerContext } from "../mainlayout";
-import { useContext, useEffect, useState, createContext } from "react";
+import { useContext, useEffect, useState, createContext, } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions } from "./postActions";
-import { Avatar, Skeleton, SwipeableDrawer, useMediaQuery } from "@mui/material";
+import { Avatar, Skeleton, SwipeableDrawer, styled, useMediaQuery } from "@mui/material";
 import { Button, IconButton, Tooltip } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
-import { formatLocalDate } from "@/lib/helpers";
 import { CloseBtn } from "../Buttons";
 import { LuUser } from "react-icons/lu";
 import useQuery from "@/hooks/useMediaQuery";
+import { createPortal } from 'react-dom';
+import { FollowButton } from "../author/utils";
 
 export const ArticleImage = ({ image, classes }) => {
     return <CldImage
@@ -26,30 +27,27 @@ export const ArticleImage = ({ image, classes }) => {
     />
 }
 
-export const ArticleWrapper = ({ children }) => {
-    const context = useContext(DrawerContext);
-
-    useEffect(() => {
-        context.setVariant('persistent');
-        context.setOpen(false);
-    }, []);
-
-    return <div className="">
-        {children}
-    </div>
-}
+const Puller = styled('div')(({ theme }) => ({
+    width: 30,
+    height: 6,
+    backgroundColor: theme.palette?.accent?.main,
+    borderRadius: 3,
+    position: 'absolute',
+    top: 8,
+    left: 'calc(50% - 15px)',
+}));
 
 const SidebarContext = createContext();
 
 export const ArticleSidebar = ({ article }) => {
     const [component, setComponent] = useState(<SidebarContent article={article} />);
-    const css = `min-[1017px]:max-w-[313px] min-[1055px]:max-w-[363px] min-[1101px]:max-w-[393px] min-[1195px]:max-w-[410px] min-[1256px]:max-w-[425px] min-[1300px]:max-w-[410px]`;
+    // const css = `min-[1017px]:max-w-[313px] min-[1055px]:max-w-[363px] min-[1101px]:max-w-[393px] min-[1195px]:max-w-[410px] min-[1256px]:max-w-[425px] min-[1300px]:max-w-[410px]`;
 
     return (
         <>
             <SidebarContext.Provider value={{ setComponent }}>
-                <div className={`overflow-hidden z-[999] w-96  min-[1017px]:block h-screen relative ${css}`}>
-                    <div className={`fixed h-[calc(100%-68px)] overflow-hidden bg-lightHead z-[998] dark:bg-darkHead rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0 ${css}`}>
+                <div className={`overflow-hidden mr-1 z-[999] lg:block h-screen relative w-[400px]`}>
+                    <div className={`fixed h-[calc(100%-68px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
                         <section className="relative h-[calc(100%-1px)] overflow-hidden">
                             {component}
                         </section>
@@ -99,16 +97,16 @@ const Description = ({ article, publishedAt, updatedAt }) => {
 const DescriptionContent = ({ article, onClose }) => {
     return (
         <>
-            <div className="bg-lightHead px-4 shadow-sm dark:bg-darkHead absolute flex items-center justify-between top-0 left-0 w-full h-14">
-                <h2 className="text-base font-bold ">
+            <div className="px-4 shadow-sm absolute flex items-center justify-between top-0 left-0 w-full h-14">
+                <h2 className="text-lg font-bold ">
                     About
                 </h2>
                 <CloseBtn onClick={onClose} />
             </div>
-            <div className="h-[calc(100%-62px)] p-4 overflow-x-hidden mt-14 pb-14">
+            <div className="h-[calc(100%-55px)] px-4 py-2 overflow-x-hidden mt-14 pb-14">
                 <div className="">
-                    <h1 className="text-base cheltenham mb-3 font-bold">{article.title}</h1>
-                    <div className="flex space-x-1 items-center justify-between font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
+                    <h1 className="text-xl mb-3 font-bold">{article.title}</h1>
+                    <div className="flex space-x-1 items-center justify-around font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
                         <div className={`flex flex-col items-center justify-center`}>
                             <span className="mb-0.5 cheltenham">233</span>
                             <span>views</span>
@@ -123,14 +121,14 @@ const DescriptionContent = ({ article, onClose }) => {
                     </div>
                 </div>
                 <div className="my-4">
-                    <h4 className="text-sm mx-1 bg-light dark:bg-dark p-3 rounded-md font-medium dark:text-gray-300 text-gray-700">{article.description}</h4>
+                    <h4 className="text-sm mx-1 bg-lightHead dark:bg-darkHead p-3 rounded-md font-medium dark:text-gray-300 text-gray-700">{article.description}</h4>
                 </div>
                 <div className="flex justify-between items-center mb-5 border-y-slate-500">
                     <div className="flex items-center py-1">
                         <div className="flex-shrink-0">
                             <Avatar src={article?.author?.image?.url} sx={{ width: 50, height: 50, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
                         </div>
-                        <div className="flex flex-col justify-around ml-5">
+                        <div className="flex flex-col justify-around ml-2">
                             <p className="text-base karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
                                 {article?.author?.name}
                             </p>
@@ -140,10 +138,15 @@ const DescriptionContent = ({ article, onClose }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center mt-2 space-x-4">
+                <div className="flex items-center mt-2 space-x-4 overflow-x-scroll w-full flex-row flex-nowrap justify-start">
+                    <FollowButton authorId={article?.author?.id} />
                     <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >About</Button>
                     <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<EmailRounded className="w-4 h-4 mr-1" />} size="small" >Contact</Button>
-                    <Button variant="contained" color="primary" size="small" >Follow</Button>
+                    {
+                        article?.author?.social && article?.author?.social?.map((social, index) => (
+                            <Button key={index} variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >{social?.title}</Button>
+                        ))
+                    }
                 </div>
             </div>
         </>
@@ -220,7 +223,7 @@ export const PostWrapper = ({ children, article }) => {
     const mediaWidth = useQuery('(min-width:945px)');
     const [drawable, setDrawable] = useState(false);
 
-    const container = window !== undefined ? () => window.document.body : undefined;
+    const container = undefined;
 
     return (
         <>
@@ -263,20 +266,6 @@ export const PostWrapper = ({ children, article }) => {
                     <ArticleSidebar article={article} />
                 )}
             </section>
-            {mediaWidth == 'undefined' && (
-                <>
-                    <div className="mx-auto max-w-xl">
-                        <Skeleton animation="wave" variant="rounded" width={'100%'} height={300} />
-                        <Skeleton animation="wave" variant="text" width={'100%'} className="!mt-10" height={40} />
-                        <div className="flex items-center justify-between mt-10">
-                            <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                            <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                            <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                            <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                        </div>
-                    </div>
-                </>
-            )}
         </>
     );
 }
@@ -284,7 +273,7 @@ export const PostWrapper = ({ children, article }) => {
 const ArticleAuthor = ({ article }) => {
     return (
         <>
-            <div className="flex justify-between space-x-2 items-center mb-5 border-y-slate-500">
+            <div className="flex justify-between hover:bg-black/10 dark:hover:bg-white/10 py-1 px-1 rounded-md space-x-2 items-center mb-5 border-y-slate-500">
                 <div className="flex items-center py-1">
                     <div className="flex-shrink-0">
                         <Avatar src={article?.author?.image?.url} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
@@ -302,14 +291,14 @@ const ArticleAuthor = ({ article }) => {
                     <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
                         <EmailRounded className="w-4 h-4" />
                     </IconButton>
-                    <Button variant="contained" color="primary" size="small" >Follow</Button>
+                    <FollowButton authorId={article?.author?.id} />
                 </div>
             </div>
         </>
     )
 }
 
-const ArticleTop = ({ article, onClick = () => { }, hSize = 'text-xl' }) => {
+export const ArticleTop = ({ article, onClick = () => { }, hSize = 'text-xl' }) => {
 
     return (
         <>
@@ -327,4 +316,91 @@ const ArticleTop = ({ article, onClick = () => { }, hSize = 'text-xl' }) => {
         </>
     )
 
+}
+
+export const ArticleTopMeta = ({ article }) => {
+    const [sContainer, setSContainer] = useState(null);
+    const [metaContent, setMetaContent] = useState(null);
+    const [drawable, setDrawable] = useState(false);
+
+    let width = useMediaQuery('(min-width:1024px)');
+    let belowWidth = useMediaQuery('(max-width:1024px)');
+
+    useEffect(() => {
+        if (width) {
+            let s_container = document.getElementById('article_sidebar');
+            if (s_container) {
+                while (s_container.firstChild) {
+                    s_container.firstChild.remove();
+                }
+                setSContainer(s_container);
+            }
+        } else setSContainer(null);
+        if (belowWidth) {
+            let meta_container = document.getElementById('article_topMeta');
+            if (meta_container) {
+                while (meta_container.firstChild) {
+                    meta_container.firstChild.remove();
+                }
+                setMetaContent(meta_container);
+            }
+        } else setMetaContent(null);
+    }, [width, belowWidth]);
+
+    return (
+        <>
+            <div className="">
+                {sContainer &&
+                    createPortal(<><ArticleSidebar article={article} /></>, sContainer)
+                }
+                <div className="pb-4 lg:hidden pt-4">
+                    <ArticleTop article={article} onClick={() => setDrawable(!drawable)} hSize="text-xl sm:text-2xl md:text-3xl" />
+                    {metaContent &&
+                        createPortal(<>
+                            <ArticleAuthor article={article} />
+                            <PostActions modern id={article.id} className="px-1" />
+                            <SwipeableDrawer minFlingVelocity={500} disableSwipeToOpen={false}
+                                swipeAreaWidth={40}
+                                sx={{ height: '100%' }}
+                                container={document.body}
+                                slotProps={{
+                                    root: {
+                                        style: {
+                                            height: '100%',
+                                            borderRadius: '20px 20px 0 0'
+                                        }
+                                    }
+                                }}
+                                ModalProps={{
+                                    keepMounted: true,
+                                }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
+                                <div className="visible">
+                                    <Puller />
+                                    <DescriptionContent article={article} onClose={() => setDrawable(false)} />
+                                </div>
+                            </SwipeableDrawer>
+                        </>, metaContent)
+                    }
+                </div>
+            </div>
+        </>
+    )
+}
+
+
+export const VariantpPersistentClient = () => {
+    const context = useContext(DrawerContext);
+
+    useEffect(() => {
+        if (context.variant !== 'persistent')
+            context.setVariant('persistent'); context.setOpen(false);
+    }, [context.variant]);
+
+    useEffect(() => {
+        const styleTag = document.getElementById('r_tt');
+        if (styleTag) {
+            styleTag.remove();
+        }
+    }, []);
+    return null;
 }

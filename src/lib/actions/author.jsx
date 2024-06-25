@@ -157,10 +157,11 @@ const followAuthorAction = async (authorId) => {
     }
     let follow = await followAuthor(authorId);
     if (follow?.status) {
-        res = { ...res, data: follow, status: 200 };
+        res = { ...res, data: { status: true, id: follow?.id }, status: 200 };
     } else {
-        res = { ...res, errors: [{ message: 'An error occurred while following author. Please try again later.' }] };
+        res = { ...res, data: { status: false, id: null }, status: 200 };
     }
+    return res;
 }
 
 const checkAuthorFollowAction = async (authorId) => {
@@ -177,9 +178,9 @@ const checkAuthorFollowAction = async (authorId) => {
         },
     });
     if (follow) {
-        res = { ...res, data: { status: 'followed' }, status: 200 };
+        res = { ...res, data: { status: true, id: follow?.id }, status: 200 };
     } else {
-        res = { ...res, data: { status: 'unfollowed' }, status: 200 };
+        res = { ...res, data: { status: false, id: null }, status: 200 };
     }
     return res;
 }
