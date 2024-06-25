@@ -141,7 +141,6 @@ const getUserAuthors = async () => {
   });
 
   res = { ...res, data: authors };
-  console.log(res, 'res from getUserAuthors');
   return res;
 }
 

@@ -1,17 +1,20 @@
 "use client";
-import { CldImage } from "next-cloudinary";
+import { CldImage, getCldImageUrl } from "next-cloudinary";
 import { DrawerContext } from "../mainlayout";
 import { useContext, useEffect, useState, createContext, } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions } from "./postActions";
 import { Avatar, Skeleton, SwipeableDrawer, styled, useMediaQuery } from "@mui/material";
-import { Button, IconButton, Tooltip } from "../rui";
+import { Button, IconButton, TextField, Tooltip } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
 import { CloseBtn } from "../Buttons";
 import { LuUser } from "react-icons/lu";
 import useQuery from "@/hooks/useMediaQuery";
 import { createPortal } from 'react-dom';
 import { FollowButton } from "../author/utils";
+import { articleCommentAction, articleCommentsListAction } from "@/lib/actions/author";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export const ArticleImage = ({ image, classes }) => {
     return <CldImage
@@ -72,12 +75,13 @@ const SidebarContent = ({ article }) => {
         <>
             <div className="h-[calc(100%-0px)] p-4 overflow-x-hidden">
                 <ArticleTop article={article} onClick={handleDescription} />
-                <div className="min-h-44">
-                    <div className="mb-8">
+                <div className="min-h-44 mb-2">
+                    <div className="mb-2">
                         <ArticleAuthor article={article} />
                         <PostActions id={article.id} />
                     </div>
                 </div>
+                <ArticleComments articleId={article.id} />
             </div>
         </>
     );
@@ -386,6 +390,166 @@ export const ArticleTopMeta = ({ article }) => {
         </>
     )
 }
+
+export const ArticleComments = ({ articleId }) => {
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        articleCommentsListAction(articleId).then(res => {
+            if (res?.status === 200) {
+                setComments(res?.data);
+                toast.success(`Comments loaded successfully ${res?.data?.length} comments found`);
+                setLoading(false);
+            }
+        });
+    }, [articleId]);
+
+    const handleAddComment = (comment) => {
+        articleCommentAction({ postId: articleId, body: comment }).then(res => {
+            toast.success(`'Comment added successfully' ${res?.data} \n\n ${res?.errors} comment added`);
+            if (res.status === 200) {
+                setComments([res.data, ...comments]);
+            }
+        });
+    };
+
+    const handleAddReply = (commentId, reply) => {
+        // Add reply logic here
+    };
+
+    return (
+        <>
+            <div className="mt-4">
+                <h3 className="text-lg font-semibold mb-2">Comments</h3>
+                {loading ? (
+                    <Skeleton variant="rounded" height={100} />
+                ) : (
+                    comments.map((comment, index) => {
+                        const replies = comment?.replies;
+                        const avatar = comment?.user?.image?.url && getCldImageUrl({ src: comment?.user?.image?.url, width: 40, height: 40, crop: 'fill', gravity: 'face' });
+                        return (
+                            <>
+                                <div key={index} className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center space-x-2">
+                                        <Avatar src={avatar} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={comment?.user?.name} >{comment?.user?.name.slice(0, 1)}</Avatar>
+                                        <div>
+                                            <p className="text-sm font-semibold dark:text-slate-100 text-gray-900">{comment?.user?.name}</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-300">{comment?.content}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <PostDatePublished date={comment?.createdAt} />
+                                    </div>
+                                </div>
+                                {
+                                    replies && replies.length > 0 && (
+                                        <div className="ml-8">
+                                            {replies.map((reply, replyIndex) => {
+                                                const avatar = reply?.user?.image?.url && getCldImageUrl({ src: reply?.user?.image?.url, width: 40, height: 40, crop: 'fill', gravity: 'face' });
+                                                return (<div key={replyIndex} className="flex items-center justify-between mb-2">
+                                                    <div className="flex items-center space-x-2">
+                                                        <Avatar src={avatar} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={reply?.user?.name} >{reply?.user?.name.slice(0, 1)}</Avatar>
+                                                        <div>
+                                                            <p className="text-sm font-semibold dark:text-slate-100 text-gray-900">{reply?.user?.name}</p>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-300">{reply?.content}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <PostDatePublished date={reply?.createdAt} />
+                                                    </div>
+                                                </div>)
+                                            })}
+                                        </div>
+                                    )
+                                }
+                                <div className="ml-8">
+                                    <CommentReplyForm commentId={comment.id} onAddReply={handleAddReply} />
+                                </div>
+                            </>
+                        );
+                    })
+                )}
+                <CommentForm onAddComment={handleAddComment} />
+            </div>
+        </>
+    );
+};
+
+const CommentForm = ({ onAddComment }) => {
+    const { data: session } = useSession();
+    const [comment, setComment] = useState('');
+    const currentUser = session?.user;
+
+    const handleCommentChange = (e) => {
+        setComment(e.target.value);
+    };
+
+    const handleCommentSubmit = () => {
+
+        onAddComment(comment);
+        setComment('');
+    };
+
+    return (
+        <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Add Comment</h3>
+            <div className="flex items-center space-x-2">
+                <Avatar src={currentUser?.image} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
+                <div className="">
+                    <TextField
+                        required
+                        minRows={3}
+                        size="large"
+                        fullWidth
+                        placeholder="Write your comment..."
+                        value={comment}
+                        onChange={handleCommentChange}
+                    ></TextField>
+                    <Button className="mt-3" onClick={handleCommentSubmit} variant="contained" color="primary">
+                        Add Comment
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const CommentReplyForm = ({ commentId, onAddReply }) => {
+    const { data: session } = useSession();
+    const currentUser = session?.user;
+    const [reply, setReply] = useState('');
+
+    const handleReplyChange = (e) => {
+        setReply(e.target.value);
+    };
+
+    const handleReplySubmit = () => {
+        // Add reply submit logic here
+        onAddReply(commentId, reply);
+        setReply('');
+    };
+
+    return (
+        <div className="mt-2">
+            <div className="flex items-center space-x-2">
+                <Avatar src={currentUser?.image} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
+                <div>
+                    <textarea
+                        className="w-full p-2 border border-gray-300 rounded-md resize-none"
+                        rows={2}
+                        placeholder="Write your reply..."
+                        value={reply}
+                        onChange={handleReplyChange}
+                    ></textarea>
+                    <Button onClick={handleReplySubmit} variant="contained" color="primary">
+                        Add Reply
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 
 export const VariantpPersistentClient = () => {

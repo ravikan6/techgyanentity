@@ -185,9 +185,73 @@ const checkAuthorFollowAction = async (authorId) => {
     return res;
 }
 
+const articleCommentsListAction = async (articleId) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let comments = await prisma.comment.findMany({
+            where: {
+                postId: articleId,
+                parentId: null
+            },
+            include: {
+                user: true,
+                replies: {
+                    include: {
+                        user: true,
+                        author: true
+                    }
+                },
+                author: true,
+            }
+        })
+        console.log(comments, '__________________________comments from ___')
+        res = { ...res, data: comments, status: 200 };
+    } catch (e) {
+        console.log(e, '__________________________error comments from ___')
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const articleCommentAction = async (data) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+    try {
+        let comment = await prisma.comment.create({
+            data: {
+                content: data.body,
+                user: { connect: { id: session.user.id } },
+                post : {connect: {id: data.postId}},
+                parent: data.parentId ? { connect: { id: data.parentId } } : null
+            },
+            include: {
+                user: true,
+                replies: {
+                    include: {
+                        user: true,
+                        author: true
+                    }
+                },
+                author: true
+            }
+        })
+        res = { ...res, data: comment, status: 200 };
+        console.log(comment, '__________________________comment added from ___')
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        console.log(e, '__________________________comment error added from ___')
+        return res;
+    }
+}
+
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction }
+export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction }
