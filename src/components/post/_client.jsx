@@ -4,8 +4,8 @@ import { DrawerContext } from "../mainlayout";
 import { useContext, useEffect, useState, createContext, } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions } from "./postActions";
-import { Avatar, Skeleton, SwipeableDrawer, styled, useMediaQuery } from "@mui/material";
-import { Button, IconButton, TextField, Tooltip } from "../rui";
+import { Avatar, ListItemIcon, MenuList, Skeleton, SwipeableDrawer, styled, useMediaQuery } from "@mui/material";
+import { Button, IconButton, Menu, MenuItem, TextField, Tooltip } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
 import { CloseBtn } from "../Buttons";
 import { LuUser } from "react-icons/lu";
@@ -15,6 +15,9 @@ import { FollowButton } from "../author/utils";
 import { articleCommentAction, articleCommentsListAction } from "@/lib/actions/author";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import Link from "next/link";
+import { PiDotsThreeOutlineVertical, PiHandsClapping } from "react-icons/pi";
+import { BsReply } from "react-icons/bs";
 
 export const ArticleImage = ({ image, classes }) => {
     return <CldImage
@@ -400,7 +403,7 @@ export const ArticleComments = ({ articleId }) => {
         articleCommentsListAction(articleId).then(res => {
             if (res?.status === 200) {
                 setComments(res?.data);
-                toast.success(`Comments loaded successfully ${res?.data?.length} comments found`);
+                // toast.success(`Comments loaded successfully ${res?.data?.length} comments found`);
                 setLoading(false);
             }
         });
@@ -440,44 +443,24 @@ export const ArticleComments = ({ articleId }) => {
                     comments?.map((comment, index) => {
                         const replies = comment?.replies;
                         const avatar = comment?.user?.image?.url && getCldImageUrl({ src: comment?.user?.image?.url, width: 40, height: 40, crop: 'fill', gravity: 'face' });
+
                         return (
                             <>
-                                <div key={index} className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center space-x-2">
-                                        <Avatar src={avatar} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={comment?.user?.name} >{comment?.user?.name.slice(0, 1)}</Avatar>
-                                        <div>
-                                            <p className="text-sm font-semibold dark:text-slate-100 text-gray-900">{comment?.user?.name}</p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-300">{comment?.content}</p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <PostDatePublished date={comment?.createdAt} />
-                                    </div>
+                                <div key={index} className="mb-2">
+                                    <CommentView avatar={avatar} replies={replies} comment={comment} toReplay={comment?.id} articleId={articleId} handleAddReply={handleAddReply} />
                                 </div>
                                 {
                                     replies && replies.length > 0 && (
                                         <div className="ml-8">
                                             {replies.map((reply, replyIndex) => {
                                                 const avatar = reply?.user?.image?.url && getCldImageUrl({ src: reply?.user?.image?.url, width: 40, height: 40, crop: 'fill', gravity: 'face' });
-                                                return (<div key={replyIndex} className="flex items-center justify-between mb-2">
-                                                    <div className="flex items-center space-x-2">
-                                                        <Avatar src={avatar} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={reply?.user?.name} >{reply?.user?.name.slice(0, 1)}</Avatar>
-                                                        <div>
-                                                            <p className="text-sm font-semibold dark:text-slate-100 text-gray-900">{reply?.user?.name}</p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-300">{reply?.content}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <PostDatePublished date={reply?.createdAt} />
-                                                    </div>
+                                                return (<div key={replyIndex} className="mb-2">
+                                                    <CommentView avatar={avatar} replies={reply?.replies} comment={reply} toReplay={comment?.id}  articleId={articleId} handleAddReply={handleAddReply} />
                                                 </div>)
                                             })}
                                         </div>
                                     )
                                 }
-                                <div className="ml-8">
-                                    <CommentReplyForm commentId={comment.id} onAddReply={handleAddReply} />
-                                </div>
                             </>
                         );
                     })
@@ -486,6 +469,78 @@ export const ArticleComments = ({ articleId }) => {
         </>
     );
 };
+
+const CommentView = ({ avatar, comment, articleId, replies, handleAddReply, toReplay }) => {
+    return (
+        <div className="flex items-start space-x-4 ">
+            <Link href='#' className="flex space-x-4">
+                <Avatar src={avatar} sx={{ width: 30, height: 30, borderRadius: 1000 }} alt={comment?.user?.name} >{comment?.user?.name.slice(0, 1)}</Avatar>
+            </Link>
+            <div className="flex flex-col">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                        <Link href='#'>
+                            <h4 className="text-sm font-bold dark:text-slate-100 text-gray-900">{comment?.user?.name}</h4>
+                        </Link>
+                        <span>.</span>
+                        <span>
+                            <Tooltip title={<>{new Date(comment?.createdAt).toLocaleString()}</>} placement="top" arrow>
+                                <time dateTime={comment?.createdAt} className="text-xs cheltenham">{formatDate(comment?.createdAt)}</time>
+                            </Tooltip>
+                        </span>
+                    </div>
+                    <CommentMenu articleId={articleId} />
+                </div>
+                <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
+                </div>
+                <div>
+                    <CommentBottomControl commentId={comment.id} toReplay={toReplay} onAddReply={handleAddReply} count={replies?.length || 0} />
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const CommentMenu = ({ articleId }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
+
+    return (
+        <>
+            <div className={` w-8`}>
+                <IconButton size='small' sx={{ minWidth: '25px', minHeight: '25px', p: 0 }} onClick={handleClick}>
+                    <PiDotsThreeOutlineVertical className="w-4 h-4" />
+                </IconButton>
+            </div>
+            <div className='absolute z-[999]'>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'comment-menu',
+                    }}
+                    sx={{ zIndex: '999', '& .MuiPaper-root': { borderRadius: '12px' } }} >
+                    <MenuList className='min-w-32'>
+                        <MenuItem>
+                            {/* <span className='text-base'>Report</span> */}
+                            Report
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+            </div>
+        </>
+    )
+}
 
 const CommentForm = ({ onAddComment }) => {
     const { data: session } = useSession();
@@ -501,6 +556,7 @@ const CommentForm = ({ onAddComment }) => {
 
         onAddComment(comment);
         setComment('');
+        setShowButtons(false);
     };
 
     const handleCancle = () => {
@@ -510,41 +566,57 @@ const CommentForm = ({ onAddComment }) => {
 
     return (
         <div className="mt-4 mb-4">
-            {/* <h3 className="text-lg font-semibold mb-2">Add Comment</h3> */}
-            <div className="">
-                <div className="flex justify-between space-x-4 mb-3">
-                    <Avatar src={currentUser?.image} sx={{ width: showButtons ? 40 : 30, height: showButtons ? 40 : 30, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
-                    <TextField
-                        required
-                        onClick={() => { setShowButtons(true) }}
-                        multiline
-                        variant="standard"
-                        size="small"
-                        fullWidth
-                        placeholder="Write your comment..."
-                        value={comment}
-                        onChange={handleCommentChange}
-                        className="text-sm"
-                    ></TextField>
-                </div>
-                {showButtons && <div className="flex items-center justify-end space-x-4">
-                    <Button size="small" onClick={handleCancle} variant="outlined" color="primary">
-                        Cancle
-                    </Button>
-                    <Button size="small" disabled={comment?.length === 0} onClick={handleCommentSubmit} variant="contained" color="primary">
-                        Comment
-                    </Button>
-                </div>}
-            </div>
+            <CommentFormField
+                currentUser={currentUser}
+                showButtons={showButtons}
+                setShowButtons={setShowButtons}
+                comment={comment}
+                handleCommentChange={handleCommentChange}
+                handleCommentSubmit={handleCommentSubmit}
+                handleCancle={handleCancle}
+            />
         </div>
     );
 };
 
-const CommentReplyForm = ({ commentId, onAddReply }) => {
+const CommentFormField = ({ currentUser, showButtons, setShowButtons, comment, handleCommentChange, handleCommentSubmit, handleCancle }) => {
+    return (
+        <div className="">
+            <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
+                <Avatar src={currentUser?.image} sx={{ width: showButtons ? 30 : 25, height: showButtons ? 30 : 25, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
+                <TextField
+                    required
+                    onClick={() => { setShowButtons(true) }}
+                    multiline
+                    variant="standard"
+                    size="small"
+                    fullWidth
+                    placeholder="Write your comment..."
+                    sx={{
+                        ...!showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } }
+                    }}
+                    value={comment}
+                    onChange={handleCommentChange}
+                    className="text-sm"
+                ></TextField>
+            </div>
+            {showButtons && <div className="flex items-center justify-end space-x-4">
+                <Button size="small" onClick={handleCancle} variant="outlined" color="primary">
+                    Cancle
+                </Button>
+                <Button size="small" disabled={comment?.length === 0} onClick={handleCommentSubmit} variant="contained" color="primary">
+                    Comment
+                </Button>
+            </div>}
+        </div>
+    )
+}
+
+const CommentBottomControl = ({ commentId, onAddReply, toReplay }) => {
     const { data: session } = useSession();
     const currentUser = session?.user;
     const [reply, setReply] = useState('');
-    const [showButtons, setShowButtons] = useState(false);
+    const [showForm, setShowForm] = useState(false);
 
     const handleReplyChange = (e) => {
         setReply(e.target.value);
@@ -552,48 +624,31 @@ const CommentReplyForm = ({ commentId, onAddReply }) => {
 
     const handleReplySubmit = () => {
         // Add reply submit logic here
-        onAddReply(commentId, reply);
+        onAddReply(toReplay, reply);
         setReply('');
+        setShowForm(false);
     };
 
     const handleCancle = () => {
-        setShowButtons(false);
+        setShowForm(false);
         setReply('');
     }
 
     return (
         <div className="mt-2">
 
-            {showButtons ? <div className="">
-                <div className="flex justify-between space-x-4 mb-3">
-                    <Avatar src={currentUser?.image} sx={{ width: 30, height: 30, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
-                    <TextField
-                        required
-                        onClick={() => { setShowButtons(true) }}
-                        multiline
-                        variant="standard"
-                        size="small"
-                        fullWidth
-                        placeholder="Write your comment..."
-                        value={reply}
-                        onChange={handleReplySubmit}
-                        className="text-sm"
-                    ></TextField>
-                </div>
-                <div className="flex items-center justify-end space-x-4">
-                    <Button size="small" onClick={handleCancle} variant="outlined" color="primary">
-                        Cancle
-                    </Button>
-                    <Button size="small" disabled={reply?.length === 0} onClick={handleReplySubmit} variant="contained" color="primary">
-                        Comment
-                    </Button>
-                </div>
+            {showForm ? <div className="">
+                <CommentFormField currentUser={currentUser} showButtons={showForm} setShowButtons={setShowForm} comment={reply} handleCommentChange={handleReplyChange} handleCommentSubmit={handleReplySubmit} handleCancle={handleCancle} />
             </div> :
-                <div className="flex items-center justify-end space-x-4">
-                    <Button size="small" onClick={() => setShowButtons(true)} variant="outlined" color="primary">
-                        Reply
-                    </Button>
-                </div>}
+                <div className="flex items-center justify-start space-x-4 mt-1">
+                    <IconButton size="small" onClick={() => { }} color="primary">
+                        <PiHandsClapping className="w-4 h-4" />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => setShowForm(true)} color="primary">
+                        <BsReply className="w-4 h-4" />
+                    </IconButton>
+                </div>
+            }
         </div>
     );
 };

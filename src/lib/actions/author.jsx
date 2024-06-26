@@ -191,7 +191,7 @@ const articleCommentsListAction = async (articleId) => {
         let comments = await prisma.comment.findMany({
             where: {
                 postId: articleId,
-                // parentId: null
+                parent: null
             },
             include: {
                 user: true,
@@ -221,13 +221,20 @@ const articleCommentAction = async (data) => {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
     }
+
+    if (!data.body || data.body.trim() == '') {
+        res.errors.push({ message: 'Comment body is required' });
+        return res;
+    }
+
     try {
         let comment = await prisma.comment.create({
             data: {
                 content: data.body,
                 user: { connect: { id: session.user.id } },
                 post: { connect: { id: data.postId } },
-                ...data.parentId && { parent: { connect: { id: data.parentId } } }
+                ...data.parentId && { parent: { connect: { id: data.parentId } } },
+                ...data.authorId && { author: { connect: { id: data.authorId } } }
             },
             include: {
                 user: true,
