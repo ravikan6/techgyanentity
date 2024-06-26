@@ -393,9 +393,10 @@ export const ArticleTopMeta = ({ article }) => {
 
 export const ArticleComments = ({ articleId }) => {
     const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
         articleCommentsListAction(articleId).then(res => {
             if (res?.status === 200) {
                 setComments(res?.data);
@@ -415,17 +416,28 @@ export const ArticleComments = ({ articleId }) => {
     };
 
     const handleAddReply = (commentId, reply) => {
-        // Add reply logic here
+        articleCommentAction({ postId: articleId, body: reply, parentId: commentId }).then(res => {
+            toast.success(`'Reply added successfully' ${res?.data} \n\n ${res?.errors} reply added`);
+            if (res.status === 200) {
+                setComments([res.data, ...comments]);
+            }
+        });
     };
 
     return (
         <>
             <div className="mt-4">
-                <h3 className="text-lg font-semibold mb-2">Comments</h3>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold mb-2">Comments</h3>
+                    <div className="flex items-center space-x-2">
+                        <span>sort</span>
+                    </div>
+                </div>
+                <CommentForm onAddComment={handleAddComment} />
                 {loading ? (
                     <Skeleton variant="rounded" height={100} />
                 ) : (
-                    comments.map((comment, index) => {
+                    comments?.map((comment, index) => {
                         const replies = comment?.replies;
                         const avatar = comment?.user?.image?.url && getCldImageUrl({ src: comment?.user?.image?.url, width: 40, height: 40, crop: 'fill', gravity: 'face' });
                         return (
@@ -470,7 +482,6 @@ export const ArticleComments = ({ articleId }) => {
                         );
                     })
                 )}
-                <CommentForm onAddComment={handleAddComment} />
             </div>
         </>
     );
@@ -479,6 +490,7 @@ export const ArticleComments = ({ articleId }) => {
 const CommentForm = ({ onAddComment }) => {
     const { data: session } = useSession();
     const [comment, setComment] = useState('');
+    const [showButtons, setShowButtons] = useState(false);
     const currentUser = session?.user;
 
     const handleCommentChange = (e) => {
@@ -491,25 +503,38 @@ const CommentForm = ({ onAddComment }) => {
         setComment('');
     };
 
+    const handleCancle = () => {
+        setShowButtons(false);
+        setComment('');
+    }
+
     return (
-        <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Add Comment</h3>
-            <div className="flex items-center space-x-2">
-                <Avatar src={currentUser?.image} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
-                <div className="">
+        <div className="mt-4 mb-4">
+            {/* <h3 className="text-lg font-semibold mb-2">Add Comment</h3> */}
+            <div className="">
+                <div className="flex justify-between space-x-4 mb-3">
+                    <Avatar src={currentUser?.image} sx={{ width: showButtons ? 40 : 30, height: showButtons ? 40 : 30, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
                     <TextField
                         required
-                        minRows={3}
-                        size="large"
+                        onClick={() => { setShowButtons(true) }}
+                        multiline
+                        variant="standard"
+                        size="small"
                         fullWidth
                         placeholder="Write your comment..."
                         value={comment}
                         onChange={handleCommentChange}
+                        className="text-sm"
                     ></TextField>
-                    <Button className="mt-3" onClick={handleCommentSubmit} variant="contained" color="primary">
-                        Add Comment
-                    </Button>
                 </div>
+                {showButtons && <div className="flex items-center justify-end space-x-4">
+                    <Button size="small" onClick={handleCancle} variant="outlined" color="primary">
+                        Cancle
+                    </Button>
+                    <Button size="small" disabled={comment?.length === 0} onClick={handleCommentSubmit} variant="contained" color="primary">
+                        Comment
+                    </Button>
+                </div>}
             </div>
         </div>
     );
@@ -519,6 +544,7 @@ const CommentReplyForm = ({ commentId, onAddReply }) => {
     const { data: session } = useSession();
     const currentUser = session?.user;
     const [reply, setReply] = useState('');
+    const [showButtons, setShowButtons] = useState(false);
 
     const handleReplyChange = (e) => {
         setReply(e.target.value);
@@ -530,23 +556,44 @@ const CommentReplyForm = ({ commentId, onAddReply }) => {
         setReply('');
     };
 
+    const handleCancle = () => {
+        setShowButtons(false);
+        setReply('');
+    }
+
     return (
         <div className="mt-2">
-            <div className="flex items-center space-x-2">
-                <Avatar src={currentUser?.image} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
-                <div>
-                    <textarea
-                        className="w-full p-2 border border-gray-300 rounded-md resize-none"
-                        rows={2}
-                        placeholder="Write your reply..."
+
+            {showButtons ? <div className="">
+                <div className="flex justify-between space-x-4 mb-3">
+                    <Avatar src={currentUser?.image} sx={{ width: 30, height: 30, borderRadius: 1000 }} alt={currentUser?.name} >{currentUser?.name.slice(0, 1)}</Avatar>
+                    <TextField
+                        required
+                        onClick={() => { setShowButtons(true) }}
+                        multiline
+                        variant="standard"
+                        size="small"
+                        fullWidth
+                        placeholder="Write your comment..."
                         value={reply}
-                        onChange={handleReplyChange}
-                    ></textarea>
-                    <Button onClick={handleReplySubmit} variant="contained" color="primary">
-                        Add Reply
+                        onChange={handleReplySubmit}
+                        className="text-sm"
+                    ></TextField>
+                </div>
+                <div className="flex items-center justify-end space-x-4">
+                    <Button size="small" onClick={handleCancle} variant="outlined" color="primary">
+                        Cancle
+                    </Button>
+                    <Button size="small" disabled={reply?.length === 0} onClick={handleReplySubmit} variant="contained" color="primary">
+                        Comment
                     </Button>
                 </div>
-            </div>
+            </div> :
+                <div className="flex items-center justify-end space-x-4">
+                    <Button size="small" onClick={() => setShowButtons(true)} variant="outlined" color="primary">
+                        Reply
+                    </Button>
+                </div>}
         </div>
     );
 };

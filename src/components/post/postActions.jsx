@@ -28,7 +28,7 @@ export const PostActions = ({ id, className, modern }) => {
                 <div className={`justify-start flex items-center space-x-6`}>
                     <ClapPost />
                     <Button
-
+                        onClick={() => setDrawable(true)}
                         sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='font-xs leading-none'>--</span></>} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
@@ -37,8 +37,6 @@ export const PostActions = ({ id, className, modern }) => {
                 </div>
             </div>
             <SwipeableDrawer disableSwipeToOpen={false}
-                swipeAreaWidth={40}
-                sx={{ height: '100%' }}
                 container={document?.body}
                 slotProps={{
                     root: {
@@ -49,9 +47,9 @@ export const PostActions = ({ id, className, modern }) => {
                     }
                 }}
                 ModalProps={{
-                    keepMounted: true,
+                    keepMounted: false,
                 }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
-                <div className="visible">
+                <div className="">
                     <ArticleComments articleId={id} />
                 </div>
             </SwipeableDrawer>

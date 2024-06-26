@@ -191,7 +191,7 @@ const articleCommentsListAction = async (articleId) => {
         let comments = await prisma.comment.findMany({
             where: {
                 postId: articleId,
-                parentId: null
+                // parentId: null
             },
             include: {
                 user: true,
@@ -206,6 +206,7 @@ const articleCommentsListAction = async (articleId) => {
         })
         console.log(comments, '__________________________comments from ___')
         res = { ...res, data: comments, status: 200 };
+        return res;
     } catch (e) {
         console.log(e, '__________________________error comments from ___')
         res.errors.push({ message: e.message });
@@ -225,8 +226,8 @@ const articleCommentAction = async (data) => {
             data: {
                 content: data.body,
                 user: { connect: { id: session.user.id } },
-                post : {connect: {id: data.postId}},
-                parent: data.parentId ? { connect: { id: data.parentId } } : null
+                post: { connect: { id: data.postId } },
+                ...data.parentId && { parent: { connect: { id: data.parentId } } }
             },
             include: {
                 user: true,
