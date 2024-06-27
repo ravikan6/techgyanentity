@@ -19,7 +19,7 @@ import { useState } from 'react';
  * @param {Object} props - The props object containing the post ID.
  * @returns {JSX.Element} - The JSX element representing the post buttons.
  */
-export const PostActions = ({ id, className, modern }) => {
+export const PostActions = ({ id, className, modern, commentCount }) => {
     const [drawable, setDrawable] = useState(false);
 
     return (
@@ -29,7 +29,7 @@ export const PostActions = ({ id, className, modern }) => {
                     <ClapPost />
                     <Button
                         onClick={() => setDrawable(true)}
-                        sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='font-xs leading-none'>--</span></>} />
+                        sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='font-xs leading-none'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
                     <Bookmark id={id} />

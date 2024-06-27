@@ -57,7 +57,12 @@ const getArticle = async (slug, handle) => {
                     authorId: author?.id  // Use author's ID
                 },
                 include: {
-                    author: true  // Including the related author information
+                    author: true, // Including the related author information
+                    _count: {
+                        select: {
+                            comments: true,
+                        }
+                    }
                 }
             });
             if (post?.author?.image?.url)

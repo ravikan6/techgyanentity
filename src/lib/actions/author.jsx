@@ -195,20 +195,77 @@ const articleCommentsListAction = async (articleId) => {
             },
             include: {
                 user: true,
-                replies: {
-                    include: {
-                        user: true,
-                        author: true
-                    }
-                },
                 author: true,
-            }
+                _count: {
+                    select: { replies: true, claps: true },
+                },
+                claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: 10
         })
-        console.log(comments, '__________________________comments from ___')
+        console.log(comments[1].claps.includes({ user: { id: '' } }), '__________________________comments from ___')
+
         res = { ...res, data: comments, status: 200 };
         return res;
     } catch (e) {
         console.log(e, '__________________________error comments from ___')
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const articleCommentRepliesListAction = async (commentId, options) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let replies = await prisma.comment.findMany({
+            where: {
+                parentId: commentId
+            },
+            include: {
+                user: true,
+                _count: {
+                    select: { replies: true, claps: true },
+                },
+                claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+        })
+        res = { ...res, data: replies, status: 200 };
+        return res;
+    } catch (e) {
         res.errors.push({ message: e.message });
         return res;
     }
@@ -238,13 +295,40 @@ const articleCommentAction = async (data) => {
             },
             include: {
                 user: true,
-                replies: {
-                    include: {
-                        user: true,
-                        author: true
+                author: true,
+                _count: {
+                    select: {
+                        replies: true,
+                        claps: true
                     }
                 },
-                author: true
+                parent: {
+                    include: {
+                        _count: {
+                            select: {
+                                replies: true,
+                                claps: true
+                            }
+                        },
+                        user: true,
+                        author: true,
+                        claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+                    }
+                }
             }
         })
         res = { ...res, data: comment, status: 200 };
@@ -257,9 +341,46 @@ const articleCommentAction = async (data) => {
     }
 }
 
+const articleCommentClapAction = async (data, action) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user || action) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        if (action == 'delete') {
+            let clap = await prisma.commentClap.delete({
+                where: {
+                    id: data.id
+                }
+            });
+            res = { ...res, data: clap, status: 200 };
+            console.log(clap, '__________________________comment clap from ___')
+            return res;
+        } else if (action == 'create') {
+            let clap = await prisma.commentClap.create({
+                data: {
+                    user: { connect: { id: session.user.id } },
+                    comment: { connect: { id: data.commentId } }
+                }
+            })
+            res = { ...res, data: clap, status: 200 };
+            console.log(clap, '__________________________comment clap from ___')
+            return res;
+        }
+        throw new Error('Invalid action');
+    } catch (e) {
+        console.log(e, '__________________________error comment clap from ___')
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction }
+export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction }
