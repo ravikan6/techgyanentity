@@ -313,20 +313,20 @@ const articleCommentAction = async (data) => {
                         user: true,
                         author: true,
                         claps: {
-                    select: {
-                        id: true,
-                        user: {
                             select: {
                                 id: true,
-                            }
-                        },
-                        comment: {
-                            select: {
-                                id: true,
+                                user: {
+                                    select: {
+                                        id: true,
+                                    }
+                                },
+                                comment: {
+                                    select: {
+                                        id: true,
+                                    }
+                                }
                             }
                         }
-                    }
-                }
                     }
                 }
             }
@@ -344,7 +344,7 @@ const articleCommentAction = async (data) => {
 const articleCommentClapAction = async (data, action) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
-    if (!session || !session.user || action) {
+    if (!session || !session.user || !action) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
     }

@@ -466,6 +466,7 @@ export const ArticleComments = ({ articleId }) => {
 };
 
 const CommentView = ({ avatar, comment, handleAddReply, toReplay }) => {
+    const { data: session } = useSession();
     return (
         <div className="flex items-start space-x-4 ">
             <Link href='#' className="flex space-x-4">
@@ -483,7 +484,7 @@ const CommentView = ({ avatar, comment, handleAddReply, toReplay }) => {
                             </Tooltip>
                         </Link>
                     </div>
-                    <CommentMenu id={comment?.id} />
+                    <CommentMenu id={comment?.id} isOwn={session?.user?.id === comment?.user?.id} />
                 </div>
                 <div id="comment_body">
                     <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
@@ -501,7 +502,7 @@ const CommentView = ({ avatar, comment, handleAddReply, toReplay }) => {
     )
 }
 
-const CommentMenu = ({ id }) => {
+const CommentMenu = ({ id, isOwn }) => {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
@@ -529,10 +530,19 @@ const CommentMenu = ({ id }) => {
                 }}
                 sx={{ zIndex: '999', '& .MuiPaper-root': { borderRadius: '12px' } }} >
                 <MenuList className='min-w-32'>
-                    <MenuItem>
-                        {/* <span className='text-base'>Report</span> */}
-                        Report
-                    </MenuItem>
+                    {
+                        isOwn ? <>
+                            <MenuItem>
+                                Edit
+                            </MenuItem>
+                            <MenuItem>
+                                Delete
+                            </MenuItem>
+                        </> : <MenuItem>
+                            {/* <span className='text-base'>Report</span> */}
+                            Report
+                        </MenuItem>
+                    }
                 </MenuList>
             </Menu>
         </>

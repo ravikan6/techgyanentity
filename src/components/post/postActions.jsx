@@ -29,7 +29,7 @@ export const PostActions = ({ id, className, modern, commentCount }) => {
                     <ClapPost />
                     <Button
                         onClick={() => setDrawable(true)}
-                        sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='font-xs leading-none'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />
+                        sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='!text-xs'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
                     <Bookmark id={id} />

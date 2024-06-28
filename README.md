@@ -42,3 +42,25 @@ sudo noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 6080
 
 
 DATABASE_URL="mongodb://<username>:<password>@<host>:<27017|port>/techgyan?retryWrites=true&w=majority&authSource=admin&<in&replicaSet=rs0&directConnection=true"
+
+sudo apt update -y
+
+sudo apt install -y qemu-kvm qemu-system-x86 openbox firefox tigervnc-standalone-server
+
+vncserver -SecurityTypes None -xstartup "openbox" -rfbport 5901
+
+sudo noVNC/utils/novnc_proxy --vnc 127.0.0.1:5901 --listen localhost:6081
+
+gp ports visibility 6080:public
+
+wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+
+echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+
+echo '
+Package: *
+Pin: origin packages.mozilla.org
+Pin-Priority: 1000
+' | sudo tee /etc/apt/preferences.d/mozilla
+
+sudo apt-get update -y && sudo apt-get install -y firefox
