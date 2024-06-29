@@ -240,6 +240,7 @@ const articleCommentRepliesListAction = async (commentId, options) => {
             },
             include: {
                 user: true,
+                author: true,
                 _count: {
                     select: { replies: true, claps: true },
                 },
@@ -298,6 +299,7 @@ const articleCommentAction = async (data) => {
             console.log(comment, '__________________________comment updated from ___')
             return res;
         } else {
+            console.log(data, '____________________-dt')
             let comment = await prisma.comment.create({
                 data: {
                     content: data.body,
@@ -437,9 +439,135 @@ const articleCommentDeleteAction = async (data) => {
     }
 }
 
+const articleClapsList = async (id) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let claps = await prisma.postClap.findMany({
+            where: {
+                postId: id
+            },
+        })
+        res = { ...res, data: claps, status: 200 };
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const articleClapsAction = async (id, action) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user || !action) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        if (action == 'delete') {
+            let clap = await prisma.postClap.delete({
+                where: {
+                    id: id
+                }
+            });
+            res = { ...res, data: clap, status: 200 };
+            return res;
+        } else if (action == 'create') {
+            let clap = await prisma.postClap.create({
+                data: {
+                    user: { connect: { id: session.user.id } },
+                    post: { connect: { id: id } }
+                }
+            })
+            res = { ...res, data: clap, status: 200 };
+            return res;
+        }
+        throw new Error('Invalid action');
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const checkBookmarkAction = async (id) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+    let bookmark = await prisma.user.findFirst({
+        where: {
+            id: session.user.id,
+            bookmarks: {
+                some: {
+                    id: id
+                }
+            }
+        }
+    });
+
+    if (bookmark) {
+        res = { ...res, data: { status: true }, status: 200 };
+    } else {
+        res = { ...res, data: { status: false }, status: 200 };
+    }
+    return res;
+}
+
+const bookmarkAction = async (id) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+    let bookmark = await prisma.user.findFirst({
+        where: {
+            id: session.user.id,
+            bookmarks: {
+                some: {
+                    id: id
+                }
+            }
+        }
+    });
+
+    if (bookmark) {
+        await prisma.user.update({
+            where: {
+                id: session.user.id
+            },
+            data: {
+                bookmarks: {
+                    disconnect: {
+                        id: id
+                    }
+                }
+            }
+        });
+        res = { ...res, data: { status: false }, status: 200 };
+    } else {
+        await prisma.user.update({
+            where: {
+                id: session.user.id
+            },
+            data: {
+                bookmarks: {
+                    connect: {
+                        id: id
+                    }
+                }
+            }
+        });
+        res = { ...res, data: { status: true }, status: 200 };
+    }
+    return res;
+}
+
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction }
+export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction, articleClapsList, articleClapsAction, checkBookmarkAction, bookmarkAction }

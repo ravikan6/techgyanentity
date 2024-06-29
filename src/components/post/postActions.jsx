@@ -6,26 +6,28 @@
  */
 import { AiOutlineComment } from 'react-icons/ai';
 import { PiHandsClappingLight } from 'react-icons/pi';
-// import { ShareModal } from './share';
-import Bookmark from './bookmark';
-import { BtnWithMenu } from '../Buttons';
+import { BookmarkBtn, BtnWithMenu } from '../Buttons';
 import { Button, SwipeableDrawer } from '../rui';
 import { ArticleComments } from './_client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkAction } from '@/lib/actions/author';
+import { useSession } from 'next-auth/react';
+import { FaHandsClapping } from 'react-icons/fa6';
+import { toast } from 'react-toastify';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
  * @param {Object} props - The props object containing the post ID.
  * @returns {JSX.Element} - The JSX element representing the post buttons.
  */
-export const PostActions = ({ id, className, modern, commentCount, isExpanded }) => {
+export const PostActions = ({ id, className, modern, commentCount, isExpanded, article }) => {
     const [drawable, setDrawable] = useState(false);
 
     return (
         <>
             <div className={`flex my-2 h-8 overflow-hidden ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
                 <div className={`justify-start flex items-center space-x-6`}>
-                    <ClapPost />
+                    <ClapPost id={id} />
                     {!isExpanded && <Button
                         onClick={() => setDrawable(true)}
                         sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='!text-xs'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />}
@@ -49,17 +51,108 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded })
                     keepMounted: false,
                 }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
                 <div className="">
-                    <ArticleComments articleId={id} />
+                    <ArticleComments articleId={id} article={article} />
                 </div>
             </SwipeableDrawer>}
         </>
     );
 }
 
-const ClapPost = () => {
+const Bookmark = ({ id }) => {
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setIsLoading(true);
+        try {
+            checkBookmarkAction(id).then((res) => {
+                if (res?.status === 200) {
+                    setIsBookmarked(res?.data?.status);
+                }
+            })
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const handleBookmarkClick = async () => {
+        setIsLoading(true);
+        try {
+            let res = await bookmarkAction(id)
+            if (res?.status === 200) {
+                setIsBookmarked(res?.data?.status);
+                toast.success(res?.data?.status ? 'Bookmarked' : 'Unbookmarked');
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
-        <Button sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<PiHandsClappingLight />} endIcon={<><span className='font-xs leading-none'>--</span></>} >
-            {/* <div className='h-full w-0.5 rounded-md bg-secondary/40 dark:bg-secondaryDark/20'></div> */}
-        </Button>
+        <BookmarkBtn isLoading={isLoading} onClick={handleBookmarkClick} bookmarked={isBookmarked} />
+    );
+}
+
+const ClapPost = ({ id }) => {
+    const [claps, setClaps] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isClapped, setIsClapped] = useState({ is: false, clappedId: null });
+    const [clapsCount, setClapsCount] = useState(0);
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        articleClapsList(id).then((res) => {
+            setClaps(res?.data);
+            setClapsCount(res?.data?.length);
+            setIsLoading(false);
+        }).catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+        });
+    }, [id])
+
+    useEffect(() => {
+        if (claps) {
+            claps.forEach((clap) => {
+                if (clap?.userId == session?.user?.id) {
+                    setIsClapped({ is: true, clappedId: clap?.id });
+                }
+            });
+        }
+    }, [claps])
+
+    const handleClap = async () => {
+        setIsLoading(true);
+        try {
+            if (isClapped.is && isClapped.clappedId) {
+                let res = await articleClapsAction(isClapped.clappedId, 'delete');
+                if (res?.status === 200) {
+                    setIsClapped({ is: false, clappedId: null });
+                    setClapsCount(clapsCount - 1);
+                }
+            } else {
+                let res = await articleClapsAction(id, 'create');
+                if (res?.status === 200) {
+                    let clapped = res?.data;
+                    if (clapped) {
+                        setIsClapped({ is: true, clappedId: clapped?.id });
+                        setClapsCount(clapsCount + 1);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to clap');
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    return (
+        <Button disabled={isLoading} sx={{ px: 2, height: '32px' }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
     );
 }

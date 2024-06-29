@@ -14,7 +14,7 @@ const ManinLogo = async ({ className }) => {
     // const sectionData = data?.data?.uiBrand;
 
     return (
-        <Link className={`${className} font-extrabold cheltenham-small capitalize italic text-accent dark:text-secondaryDark `} href={'/'}>
+        <Link className={`${className} font-extrabold cheltenham-small min-w-32 capitalize italic text-accent dark:text-secondaryDark line-clamp-1`} href={'/'}>
             <span className="fill-accentLight dark:fill-accentDark/60 hidden" />
             <span className="fill-black dark:fill-gray-100 hidden" />
             Techgyan Entity
@@ -53,10 +53,10 @@ const Header = async () => {
                                 <DrawerBtn />
                                 <ManinLogo className='ml-4' />
                             </div>
-                            <div className='flex justify-center items-center w-3/12'>
+                            <div className='justify-center hidden md:flex items-center w-3/12'>
                                 <SearchBar />
                             </div>
-                            <div className='flex space-x-6 justify-end items-center w-3/12'>
+                            <div className='flex space-x-3 md:space-x-6 justify-end items-center w-1/2 md:w-3/12'>
                                 {!session?.user ? (
                                     <>
                                         <div className='mr-4'>

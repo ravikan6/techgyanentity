@@ -29,7 +29,7 @@ const PersonalInfo = ({ user }) => {
 
   return (
     <>
-      <profile-info className=" content-center">
+      <profile-info className="content-center">
         <div className="flex flex-col space-y-2 mb-20">
           <h2 className="text-2xl cheltenham text-center font-semibold">Personal Information</h2>
           <p className="text-gray-600 dark:text-gray-400 text-center">Update your personal information and manage your account settings.</p>

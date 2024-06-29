@@ -147,7 +147,7 @@ export const UserProfileModel = ({ user }) => {
 
                     {(authors != 'loading' && data?.user) &&
                         <>
-                            <IconButton onClick={() => setShowAuthors(!showAuthors)} className='!absolute !w-5 !h-5 !z-[999] !-mt-[18px] transition-all duration-300 group-hover/menu_box:!flex justify-center items-center bg-light/90 dark:bg-dark/90 !hidden rounded-full right-3'>
+                            <IconButton onClick={() => setShowAuthors(!showAuthors)} className='!absolute !w-5 !h-5 !z-[999] !-mt-[18px] transition-all duration-300 group-hover/menu_box:!flex justify-center items-center bg-light/90 dark:bg-dark/90 !flex sm:!hidden rounded-full right-2.5'>
                                 <CgChevronUp className={`${showAuthors ? '' : 'rotate-180'} w-4 h-4 transition-all duration-300`} />
                             </IconButton>
                             <div className={`${showAuthors ? 'h-auto opacity-100' : 'opacity-0 h-0'} overflow-hidden transition-all duration-300`} >

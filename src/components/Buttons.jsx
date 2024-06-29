@@ -11,7 +11,7 @@ import { HiOutlineGlobe } from 'react-icons/hi';
 import { AiOutlineClose } from 'react-icons/ai';
 import { IoCreateOutline } from 'react-icons/io5';
 import { ArticleReportModal } from '@/components/popup';
-import { MdBookmarkAdd, MdBookmarkAdded, MdNavigateNext, MdOutlineKeyboardArrowLeft, MdOutlineReport } from 'react-icons/md';
+import { MdBookmarkAdd, MdBookmarkAdded, MdNavigateNext, MdOutlineBookmarkAdd, MdOutlineKeyboardArrowLeft, MdOutlineReport } from 'react-icons/md';
 import { MenuList, Zoom, ListItemIcon, alpha } from '@mui/material';
 import { AccountCircleOutlined, Add, DrawOutlined, NotificationsOutlined, Menu as MenuIcon } from '@mui/icons-material';
 import { Btn } from './rui/_components';
@@ -157,8 +157,8 @@ const BookmarkBtn = (props) => {
   const cliCk = props.onClick ? props.onClick : () => { };
   return (
     <div className={` ${clasS}`}>
-      <Button size='small' variant='outlined' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={cliCk}>
-        {bookMarked ? <MdBookmarkAdded className='text-gray-800 dark:text-gray-200 w-4 h-4' /> : <MdBookmarkAdd className='text-gray-800 dark:text-gray-200 w-4 h-4' />}
+      <Button disabled={props.isLoading} size='small' variant='outlined' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={cliCk}>
+        {bookMarked ? <MdBookmarkAdded className=' w-4 h-4' /> : <MdOutlineBookmarkAdd className='w-4 h-4' />}
       </Button>
     </div>
   )
