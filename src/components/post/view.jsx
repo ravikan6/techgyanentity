@@ -49,7 +49,7 @@ export const PostView = async ({ article }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="lg:block hidden" > {/* id="article_sidebar" */}
+                        <div className="lg:block hidden" id="article_sidebar_dr" > {/* id="article_sidebar" */}
                             <ArticleSidebar article={article} />
                         </div>
                     </section>

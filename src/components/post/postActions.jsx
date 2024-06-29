@@ -9,8 +9,7 @@ import { PiHandsClappingLight } from 'react-icons/pi';
 // import { ShareModal } from './share';
 import Bookmark from './bookmark';
 import { BtnWithMenu } from '../Buttons';
-import { Button } from '../rui';
-import { SwipeableDrawer } from '@mui/material';
+import { Button, SwipeableDrawer } from '../rui';
 import { ArticleComments } from './_client';
 import { useState } from 'react';
 
@@ -19,7 +18,7 @@ import { useState } from 'react';
  * @param {Object} props - The props object containing the post ID.
  * @returns {JSX.Element} - The JSX element representing the post buttons.
  */
-export const PostActions = ({ id, className, modern, commentCount }) => {
+export const PostActions = ({ id, className, modern, commentCount, isExpanded }) => {
     const [drawable, setDrawable] = useState(false);
 
     return (
@@ -27,16 +26,16 @@ export const PostActions = ({ id, className, modern, commentCount }) => {
             <div className={`flex my-2 h-8 overflow-hidden ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
                 <div className={`justify-start flex items-center space-x-6`}>
                     <ClapPost />
-                    <Button
+                    {!isExpanded && <Button
                         onClick={() => setDrawable(true)}
-                        sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='!text-xs'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />
+                        sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='!text-xs'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />}
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
                     <Bookmark id={id} />
                     <BtnWithMenu id={id} />
                 </div>
             </div>
-            <SwipeableDrawer disableSwipeToOpen={false}
+            {!isExpanded && <SwipeableDrawer disableSwipeToOpen={false}
                 container={document?.body}
                 slotProps={{
                     root: {
@@ -52,7 +51,7 @@ export const PostActions = ({ id, className, modern, commentCount }) => {
                 <div className="">
                     <ArticleComments articleId={id} />
                 </div>
-            </SwipeableDrawer>
+            </SwipeableDrawer>}
         </>
     );
 }

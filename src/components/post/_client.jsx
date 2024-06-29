@@ -4,8 +4,8 @@ import { DrawerContext } from "../mainlayout";
 import { useContext, useEffect, useState, createContext, useMemo } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions } from "./postActions";
-import { Avatar, ListItemIcon, MenuList, Skeleton, SwipeableDrawer, styled, useMediaQuery } from "@mui/material";
-import { Button, IconButton, Menu, MenuItem, TextField, Tooltip } from "../rui";
+import { Avatar, ListItemIcon, MenuList, Skeleton, styled, useMediaQuery } from "@mui/material";
+import { Button, IconButton, Menu, MenuItem, TextField, Tooltip, SwipeableDrawer } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
 import { CloseBtn } from "../Buttons";
 import { LuUser } from "react-icons/lu";
@@ -50,16 +50,19 @@ const SidebarContext = createContext();
 
 export const ArticleSidebar = ({ article }) => {
     let width = useMediaQuery('(min-width:1024px)');
-    const [component, setComponent] = useState(<SidebarContent article={article} />);
+    const [open, setOpen] = useState(false);
+    const publishedAt = getDate(article?.createdAt);
+    const updatedAt = getDate(article?.updatedAt);
+
     // const css = `min-[1017px]:max-w-[313px] min-[1055px]:max-w-[363px] min-[1101px]:max-w-[393px] min-[1195px]:max-w-[410px] min-[1256px]:max-w-[425px] min-[1300px]:max-w-[410px]`;
 
     return (
         <>
-            <SidebarContext.Provider value={{ setComponent }}>
+            <SidebarContext.Provider value={{ open, setOpen }}>
                 <div className={`overflow-hidden mr-1 z-[999] lg:block h-screen relative w-[400px]`}>
-                    <div className={`fixed h-[calc(100%-68px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
+                    <div className={`fixed h-[calc(100%-66px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
                         {width && <section id="rb_sidebar_comp" className="relative h-[calc(100%-1px)] overflow-hidden">
-                            {component}
+                            <SidebarContent article={article} />
                         </section>}
                     </div>
                 </div>
@@ -71,11 +74,10 @@ export const ArticleSidebar = ({ article }) => {
 const SidebarContent = ({ article }) => {
     const publishedAt = getDate(article?.createdAt);
     const updatedAt = getDate(article?.updatedAt);
-
-    const { setComponent } = useContext(SidebarContext);
+    const { open, setOpen } = useContext(SidebarContext);
 
     const handleDescription = () => {
-        setComponent(<Description article={article} publishedAt={publishedAt} updatedAt={updatedAt} />);
+        setOpen(true);
     }
 
     return (
@@ -85,42 +87,31 @@ const SidebarContent = ({ article }) => {
                 <div className="mb-2">
                     <div className="mb-4">
                         <ArticleAuthor article={article} />
-                        <PostActions id={article.id} commentCount={article?._count?.comments} />
+                        <PostActions id={article.id} commentCount={article?._count?.comments} isExpanded />
                     </div>
                 </div>
                 <ArticleComments articleId={article.id} />
             </div>
+            <Description article={article} publishedAt={publishedAt} updatedAt={updatedAt} open={open} setOpen={setOpen} />
         </>
     );
 };
 
-const Description = ({ article, publishedAt, updatedAt }) => {
-    const { setComponent } = useContext(SidebarContext);
+const Description = ({ article, open, setOpen }) => {
 
-    const onClose = () => {
-        setComponent(<SidebarContent article={article} />);
-    }
     return (
         <>
-            {/* <DescriptionContent article={article} onClose={onClose} /> */}
-            <SwipeableDrawer minFlingVelocity={500} disableSwipeToOpen={false}
+            <SwipeableDrawer disableSwipeToOpen={false}
                 swipeAreaWidth={40}
+                height="100%"
                 sx={{ height: '100%' }}
-                container={document.getElementById('rb_sidebar_comp')}
-                slotProps={{
-                    root: {
-                        style: {
-                            height: '100%',
-                            borderRadius: '20px 20px 0 0'
-                        }
-                    }
-                }}
                 ModalProps={{
-                    keepMounted: false,
-                }} anchor="bottom" open={true} onClose={() => setDrawable(onClose)} onOpen={() => { }}>
-                <div className="visible">
+                    style: { position: 'absolute', left: 0, right: 0, bottom: 0, top: 0 },
+                    disablePortal: true,
+                }} anchor="bottom" open={open} onClose={() => setOpen(false)} onOpen={() => setOpen(true)}>
+                <div className="visible relative">
                     <Puller />
-                    <DescriptionContent article={article} onClose={onClose} />
+                    <DescriptionContent article={article} onClose={() => setOpen(false)} />
                 </div>
             </SwipeableDrawer>
         </>
@@ -130,13 +121,13 @@ const Description = ({ article, publishedAt, updatedAt }) => {
 const DescriptionContent = ({ article, onClose }) => {
     return (
         <>
-            <div className="px-4 shadow-sm absolute flex items-center justify-between top-0 left-0 w-full h-14">
+            <div className="flex items-center justify-between w-full">
                 <h2 className="text-lg font-bold ">
                     About
                 </h2>
                 <CloseBtn onClick={onClose} />
             </div>
-            <div className="h-[calc(100%-55px)] px-4 py-2 overflow-x-hidden mt-14 pb-14">
+            <div className="py-2 overflow-x-hidde pb-14">
                 <div className="">
                     <h1 className="text-xl mb-3 font-bold">{article.title}</h1>
                     <div className="flex space-x-1 items-center justify-around font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
@@ -171,15 +162,17 @@ const DescriptionContent = ({ article, onClose }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center mt-2 space-x-4 overflow-x-scroll w-full flex-row flex-nowrap justify-start">
-                    <FollowButton authorId={article?.author?.id} />
-                    <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >About</Button>
-                    <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<EmailRounded className="w-4 h-4 mr-1" />} size="small" >Contact</Button>
-                    {
-                        article?.author?.social && article?.author?.social?.map((social, index) => (
-                            <Button key={index} variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >{social?.title}</Button>
-                        ))
-                    }
+                <div className="overflow-x-scroll w-full mt-2">
+                    <div className="flex items-center py-3 space-x-4 w-fit flex-row flex-nowrap justify-start">
+                        <FollowButton authorId={article?.author?.id} />
+                        <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >About</Button>
+                        <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<EmailRounded className="w-4 h-4 mr-1" />} size="small" >Contact</Button>
+                        {
+                            article?.author?.social && article?.author?.social?.map((social, index) => (
+                                <Button key={index} variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >{social?.title}</Button>
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
         </>
@@ -389,7 +382,7 @@ export const ArticleTopMeta = ({ article }) => {
                 <div className="pb-4 lg:hidden pt-4">
                     <ArticleTop article={article} onClick={() => setDrawable(!drawable)} hSize="text-xl sm:text-2xl md:text-3xl" />
                     {metaContent &&
-                        createPortal(<>
+                        createPortal(<div>
                             <ArticleAuthor article={article} />
                             <PostActions modern id={article.id} commentCount={article?._count?.comments} className="px-1" />
                             <SwipeableDrawer minFlingVelocity={500} disableSwipeToOpen={false}
@@ -412,7 +405,7 @@ export const ArticleTopMeta = ({ article }) => {
                                     <DescriptionContent article={article} onClose={() => setDrawable(false)} />
                                 </div>
                             </SwipeableDrawer>
-                        </>)
+                        </div>, metaContent)
                     }
                 </div>
             </div>
@@ -434,6 +427,8 @@ export const ArticleComments = ({ articleId }) => {
         });
     }, [articleId]);
 
+    console.log(comments, '_______________________commentS_from___YY')
+
     const handleAddReply = async (commentId, reply) => {
         const res = await articleCommentAction({ postId: articleId, body: reply, parentId: commentId })
         if (res?.status === 200) {
@@ -454,9 +449,8 @@ export const ArticleComments = ({ articleId }) => {
             if (res.status === 200) {
                 let newRes = await articleCommentsListAction(articleId)
                 if (newRes?.status === 200) {
-                    setComments(res?.data);
+                    setComments((comments) => [...newRes?.data, ...comments]);
                 }
-
             }
         }
     };
@@ -496,14 +490,14 @@ const CommentView = ({ avatar, comment, handleAddReply, toReplay, commentState }
     const handleUpdateComment = async (comment) => {
         const res = await articleCommentAction({ id: commentId, body: comment });
         if (res?.status === 200) {
-            let newComments = commentState?.comments?.map(comment => {
-                if (comment.id === commentId) {
-                    comment = { ...comment, ...res?.data };
-                    return comment;
-                }
-                return comment;
+            commentState?.setComments((comments) => {
+                return comments.map((c) => {
+                    if (c.id === commentId) {
+                        return { ...c, ...res?.data };
+                    }
+                    return c;
+                });
             });
-            commentState?.setComments(newComments);
         }
     }
 
@@ -705,6 +699,7 @@ const CommentFormField = ({ currentUser, showButtons, setShowButtons, isMc, onSu
                     variant="standard"
                     size="small"
                     fullWidth
+                    autoFocus={showButtons}
                     placeholder="Say something..."
                     sx={{
                         ...!showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
@@ -720,8 +715,8 @@ const CommentFormField = ({ currentUser, showButtons, setShowButtons, isMc, onSu
                 <Button disabled={isPosting} size="small" onClick={handleCancle} variant="outlined" color="primary">
                     Cancle
                 </Button>
-                <Button size="small" className="text-white dark:text-black" disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
-                    Comment
+                <Button size="small" className={!(comment?.length === 0 || isPosting) ? "text-white dark:text-black" : ''} disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
+                    {toReply ? 'Reply' : commentText ? 'Update' : 'Comment'}
                 </Button>
             </div>}
         </div>

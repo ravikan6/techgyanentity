@@ -1,6 +1,6 @@
 'use client'
 import React, { forwardRef, useState } from 'react'
-import { Menu, alpha, styled, Button, MenuItem, Tooltip, Zoom, tooltipClasses, Dialog, TextField, Box, Snackbar, IconButton, ToggleButtonGroup, ToggleButton, Switch } from "@mui/material";
+import { Menu, alpha, styled, Button, MenuItem, Tooltip, Zoom, tooltipClasses, Dialog, TextField, Box, Snackbar, IconButton, ToggleButtonGroup, ToggleButton, Switch, SwipeableDrawer } from "@mui/material";
 
 
 const RuiMenu = styled(React.forwardRef((props, ref) => (
@@ -235,7 +235,30 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
     }
 }))
 
-export { RuiMenu, RuiIcoBtn, RuiMenuItem, RuiButton, RuiTextField, RuiDialog, RuiToolTip, RuiSnakBar, RuiToggleButtonGroup, RuiToggleButton, RuiSwitch };
+const RuiSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
+    '& .MuiDrawer-paper': {
+        backgroundColor: theme.palette?.background?.paper,
+        borderRadius: '24px 24px 0 0',
+        padding: '12px',
+        position: 'absolute',
+        maxHeight: 'calc(100% - 40px)',
+        bottom: 0,
+        top: 'auto',
+        // width: 'calc(100% - 40px)',
+        // // maxWidth: '400px',
+        // right: '20px',
+        // left: '20px',
+    },
+    '& .MuiBackdrop-root': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+    },
+}))
+
+export { RuiMenu, RuiIcoBtn, RuiMenuItem, RuiButton, RuiTextField, RuiDialog, RuiToolTip, RuiSnakBar, RuiToggleButtonGroup, RuiToggleButton, RuiSwitch, RuiSwipeableDrawer };
 export { RuiButton as Button };
 export { RuiIcoBtn as Btn };
 export { RuiToolTip as Tooltip };

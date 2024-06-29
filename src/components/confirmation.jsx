@@ -10,7 +10,7 @@ import mui from '@/styles/mui';
 const Confirmation = ({
     okLabel = 'OK',
     cancelLabel = 'Cancel',
-    title = 'Confirmation',
+    title,
     confirmation,
     show,
     proceed,
@@ -20,28 +20,37 @@ const Confirmation = ({
 }) => {
     return (
         <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
-
             <Dialog
                 modal={modal}
                 open={show}
                 onClose={dismiss}
+                sx={{
+                    '& .MuiPaper-root': {
+                        boxShadow: (theme) => theme.shadows[4],
+                        backgroundColor: (theme) => theme.palette.mode === 'dark' ? theme.palette?.accent.main : theme.palette?.head.main,
+                    },
+                    maxWidth: 'sm',
+                    mx: 'auto',
+                }}
             >
-                <DialogTitle>
+                {title && <DialogTitle>
                     {title}
-                </DialogTitle>
+                </DialogTitle>}
                 <DialogContent>
                     {confirmation}
                 </DialogContent>
                 <DialogActions>
                     <Button
                         variant="text"
+                        size="small"
                         onClick={cancel}
                     >
                         {cancelLabel}
                     </Button>
                     <Button
                         variant="contained"
-                        color="accent"
+                        size="small"
+                        color="primary"
                         onClick={proceed}
                     >
                         {okLabel}
