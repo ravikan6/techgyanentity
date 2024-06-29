@@ -12,14 +12,15 @@ import { LuUser } from "react-icons/lu";
 import useQuery from "@/hooks/useMediaQuery";
 import { createPortal } from 'react-dom';
 import { FollowButton } from "../author/utils";
-import { articleCommentAction, articleCommentClapAction, articleCommentRepliesListAction, articleCommentsListAction } from "@/lib/actions/author";
+import { articleCommentAction, articleCommentClapAction, articleCommentDeleteAction, articleCommentRepliesListAction, articleCommentsListAction } from "@/lib/actions/author";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { PiDotsThreeOutlineVertical, PiHandsClappingLight } from "react-icons/pi";
 import { BsReply } from "react-icons/bs";
-import { MdChevronRight } from "react-icons/md";
+import { MdChevronRight, MdOutlineDeleteOutline, MdOutlineEdit, MdOutlineReport } from "react-icons/md";
 import { FaHandsClapping } from "react-icons/fa6";
+import confirm from "@/lib/confirm";
 
 export const ArticleImage = ({ image, classes }) => {
     return <CldImage
@@ -57,7 +58,7 @@ export const ArticleSidebar = ({ article }) => {
             <SidebarContext.Provider value={{ setComponent }}>
                 <div className={`overflow-hidden mr-1 z-[999] lg:block h-screen relative w-[400px]`}>
                     <div className={`fixed h-[calc(100%-68px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
-                        {width && <section className="relative h-[calc(100%-1px)] overflow-hidden">
+                        {width && <section id="rb_sidebar_comp" className="relative h-[calc(100%-1px)] overflow-hidden">
                             {component}
                         </section>}
                     </div>
@@ -100,7 +101,29 @@ const Description = ({ article, publishedAt, updatedAt }) => {
         setComponent(<SidebarContent article={article} />);
     }
     return (
-        <DescriptionContent article={article} onClose={onClose} />
+        <>
+            {/* <DescriptionContent article={article} onClose={onClose} /> */}
+            <SwipeableDrawer minFlingVelocity={500} disableSwipeToOpen={false}
+                swipeAreaWidth={40}
+                sx={{ height: '100%' }}
+                container={document.getElementById('rb_sidebar_comp')}
+                slotProps={{
+                    root: {
+                        style: {
+                            height: '100%',
+                            borderRadius: '20px 20px 0 0'
+                        }
+                    }
+                }}
+                ModalProps={{
+                    keepMounted: false,
+                }} anchor="bottom" open={true} onClose={() => setDrawable(onClose)} onOpen={() => { }}>
+                <div className="visible">
+                    <Puller />
+                    <DescriptionContent article={article} onClose={onClose} />
+                </div>
+            </SwipeableDrawer>
+        </>
     );
 }
 
@@ -389,7 +412,7 @@ export const ArticleTopMeta = ({ article }) => {
                                     <DescriptionContent article={article} onClose={() => setDrawable(false)} />
                                 </div>
                             </SwipeableDrawer>
-                        </>, metaContent)
+                        </>)
                     }
                 </div>
             </div>
@@ -455,7 +478,7 @@ export const ArticleComments = ({ articleId }) => {
                         const avatar = comment?.user?.image?.url && getCldImageUrl({ src: comment?.user?.image?.url, width: 40, height: 40, crop: 'fill', gravity: 'face' });
                         return (
                             <div key={index} className="mb-2">
-                                <CommentView avatar={avatar} comment={comment} toReplay={comment?.id} articleId={articleId} handleAddReply={handleAddReply} />
+                                <CommentView avatar={avatar} comment={comment} toReplay={comment?.id} articleId={articleId} handleAddReply={handleAddReply} commentState={{ comments, setComments }} />
                             </div>
                         );
                     })
@@ -465,86 +488,156 @@ export const ArticleComments = ({ articleId }) => {
     );
 };
 
-const CommentView = ({ avatar, comment, handleAddReply, toReplay }) => {
+const CommentView = ({ avatar, comment, handleAddReply, toReplay, commentState }) => {
     const { data: session } = useSession();
+    const [showForm, setShowForm] = useState(false);
+    const commentId = comment?.id;
+
+    const handleUpdateComment = async (comment) => {
+        const res = await articleCommentAction({ id: commentId, body: comment });
+        if (res?.status === 200) {
+            let newComments = commentState?.comments?.map(comment => {
+                if (comment.id === commentId) {
+                    comment = { ...comment, ...res?.data };
+                    return comment;
+                }
+                return comment;
+            });
+            commentState?.setComments(newComments);
+        }
+    }
+
+    const handleDeleteComment = async () => {
+        const res = await articleCommentDeleteAction({ id: commentId }, 'delete');
+        if (res?.status === 200) {
+            let newComments = commentState?.comments?.filter(comment => comment.id !== commentId);
+            commentState?.setComments(newComments);
+        }
+    }
+
     return (
-        <div className="flex items-start space-x-4 ">
-            <Link href='#' className="flex space-x-4">
-                <Avatar src={avatar} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={comment?.user?.name} >{comment?.user?.name.slice(0, 1)}</Avatar>
-            </Link>
-            <div className="flex flex-col grow">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        <Link href='#'>
-                            <h4 className="text-sm font-bold dark:text-slate-100 text-gray-900">{comment?.user?.name}</h4>
-                        </Link>
-                        <Link href={"#"}>
-                            <Tooltip title={<>{new Date(comment?.createdAt).toUTCString()}</>} placement="top" arrow>
-                                <time dateTime={comment?.createdAt} className="text-xs font-semibold dark:text-slate-200 text-gray-800">{formatDate(comment?.createdAt)}</time>
-                            </Tooltip>
-                        </Link>
+        !showForm ? (
+            <div className="flex items-start space-x-4 ">
+                <Link href='#' className="flex space-x-4">
+                    <Avatar src={avatar} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={comment?.user?.name} >{comment?.user?.name.slice(0, 1)}</Avatar>
+                </Link>
+                <div className="flex flex-col grow">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <Link href='#'>
+                                <h4 className="text-sm font-bold dark:text-slate-100 text-gray-900">{comment?.user?.name}</h4>
+                            </Link>
+                            <Link href={"#"}>
+                                <Tooltip title={<>{new Date(comment?.createdAt).toUTCString()}</>} placement="top" arrow>
+                                    <time dateTime={comment?.createdAt} className="text-xs font-semibold dark:text-slate-200 text-gray-800">{formatDate(comment?.createdAt)}</time>
+                                </Tooltip>
+                            </Link>
+                            {
+                                new Date(comment?.createdAt).getTime() !== new Date(comment?.updatedAt).getTime() && (
+                                    <Tooltip title={<>{new Date(comment?.updatedAt).toUTCString()}</>} placement="top" arrow>
+                                        <span className="text-xs font-semibold dark:text-slate-200 text-gray-800 cheltenham">( edited )</span>
+                                    </Tooltip>
+                                )
+                            }
+                        </div>
+                        <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} />
                     </div>
-                    <CommentMenu id={comment?.id} isOwn={session?.user?.id === comment?.user?.id} />
-                </div>
-                <div id="comment_body">
-                    <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
-                </div>
-                <div id="comment_button_control">
-                    <CommentBottomControl claps={comment?.claps} clapsCount={comment?._count?.claps} commentId={comment.id} toReplay={toReplay} onAddReply={handleAddReply} count={comment?._count?.replies || 0} />
-                </div>
-                {(comment?._count?.replies && (comment?._count?.replies > 0)) ? (
-                    <div className="mt-1">
-                        <BottomControlReplies commentId={comment.id} toReplay={toReplay} onAddReply={handleAddReply} count={comment?._count?.replies || 0} />
+                    <div id="comment_body">
+                        <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
                     </div>
-                ) : null}
-            </div>
-        </div>
+                    <div id="comment_button_control">
+                        <CommentBottomControl claps={comment?.claps} clapsCount={comment?._count?.claps} commentId={comment.id} toReplay={toReplay} onAddReply={handleAddReply} count={comment?._count?.replies || 0} />
+                    </div>
+                    {(comment?._count?.replies && (comment?._count?.replies > 0)) ? (
+                        <div className="mt-1">
+                            <BottomControlReplies commentId={comment.id} toReplay={toReplay} onAddReply={handleAddReply} count={comment?._count?.replies || 0} commentState={commentState} />
+                        </div>
+                    ) : null}
+                </div>
+            </div>) : (
+            <CommentFormField currentUser={session?.user} showButtons={true} setShowButtons={setShowForm} commentText={comment?.content} onSubmit={handleUpdateComment} />
+        )
     )
 }
 
-const CommentMenu = ({ id, isOwn }) => {
+const CommentMenu = ({ id, isOwn, onEdit, onDelete }) => {
     const [anchorEl, setAnchorEl] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
+        setOpen(true);
     }
 
     const handleClose = () => {
-        setAnchorEl(null);
+        setOpen(false)
+    }
+
+    const handleDelete = async () => {
+        try {
+            if (await confirm('Are you sure you want to delete this comment?')) {
+                setIsLoading(true);
+                try {
+                    await onDelete();
+                    toast.success('Comment deleted successfully');
+                } catch (error) {
+                    console.error(error);
+                    toast.error('Failed to delete comment');
+                } finally {
+                    setIsLoading(false);
+                    setAnchorEl(null);
+                }
+            } else null;
+        } catch { }
     }
 
     return (
         <>
             <div className={` w-8`}>
-                <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} onClick={handleClick}>
-                    <PiDotsThreeOutlineVertical className="w-4 h-4" />
-                </IconButton>
+                {isLoading ? <BetaLoader /> :
+                    <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} onClick={handleClick}>
+                        <PiDotsThreeOutlineVertical className="w-4 h-4" />
+                    </IconButton>
+                }
             </div>
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'comment-menu',
-                }}
-                sx={{ zIndex: '999', '& .MuiPaper-root': { borderRadius: '12px' } }} >
-                <MenuList className='min-w-32'>
+            {open && (
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'comment-menu',
+                    }}
+                    sx={{ zIndex: '999', '& .MuiPaper-root': { borderRadius: '12px', py: 0, minWidth: '128px' } }} >
                     {
-                        isOwn ? <>
+                        isOwn ? (
+                            [
+                                <MenuItem key="___1" onClick={onEdit}>
+                                    <ListItemIcon >
+                                        <MdOutlineEdit className='w-5 h-5' />
+                                    </ListItemIcon>
+                                    Edit
+                                </MenuItem>,
+                                <MenuItem key="___2" onClick={handleDelete}>
+                                    <ListItemIcon >
+                                        <MdOutlineDeleteOutline className='w-5 h-5' />
+                                    </ListItemIcon>
+                                    Delete
+                                </MenuItem>
+                            ]
+                        ) : (
                             <MenuItem>
-                                Edit
+                                <ListItemIcon >
+                                    <MdOutlineReport className='w-5 h-5' />
+                                </ListItemIcon>
+                                Report
                             </MenuItem>
-                            <MenuItem>
-                                Delete
-                            </MenuItem>
-                        </> : <MenuItem>
-                            {/* <span className='text-base'>Report</span> */}
-                            Report
-                        </MenuItem>
+                        )
                     }
-                </MenuList>
-            </Menu>
+                </Menu>
+            )}
         </>
     )
 }
@@ -567,8 +660,8 @@ const CommentForm = ({ onAddComment }) => {
     );
 };
 
-const CommentFormField = ({ currentUser, showButtons, setShowButtons, isMc, onSubmit, toReply }) => {
-    const [comment, setComment] = useState('');
+const CommentFormField = ({ currentUser, showButtons, setShowButtons, isMc, onSubmit, toReply, commentText }) => {
+    const [comment, setComment] = useState(commentText || '');
     const [isPosting, setIsPosting] = useState(false);
 
     const handleCancle = () => {
@@ -627,7 +720,7 @@ const CommentFormField = ({ currentUser, showButtons, setShowButtons, isMc, onSu
                 <Button disabled={isPosting} size="small" onClick={handleCancle} variant="outlined" color="primary">
                     Cancle
                 </Button>
-                <Button size="small" disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
+                <Button size="small" className="text-white dark:text-black" disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
                     Comment
                 </Button>
             </div>}
@@ -693,7 +786,7 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
     );
 };
 
-const BottomControlReplies = ({ commentId, toReplay, count, onAddReply }) => {
+const BottomControlReplies = ({ commentId, toReplay, count, onAddReply, commentState }) => {
     const [showReplies, setShowReplies] = useState(false);
 
     return (
@@ -701,14 +794,14 @@ const BottomControlReplies = ({ commentId, toReplay, count, onAddReply }) => {
             <Button onClick={() => { setShowReplies(!showReplies) }} sx={{ px: 2, height: '32px' }} startIcon={<MdChevronRight className={`w-6 h-6 transition-all duration-300 ${showReplies ? '-rotate-90' : 'rotate-90'}`} />} size='small' variant='text' endIcon={<><span className='!text-sm -ml-1'>{count} Replies</span></>} color='button' />
 
             {showReplies && <div className="mt-2">
-                <RepliesView commentId={commentId} toReplay={toReplay} handleAddReply={onAddReply} count={count} />
+                <RepliesView commentId={commentId} toReplay={toReplay} handleAddReply={onAddReply} count={count} commentState={commentState} />
             </div>
             }
         </>
     )
 }
 
-const RepliesView = ({ commentId, toReplay, handleAddReply, count }) => {
+const RepliesView = ({ commentId, toReplay, handleAddReply, count, commentState }) => {
     const [replies, setReplies] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -729,7 +822,7 @@ const RepliesView = ({ commentId, toReplay, handleAddReply, count }) => {
                 let avatar = reply?.user?.image?.url && getCldImageUrl({ src: reply?.user?.image?.url, width: 24, height: 24, crop: 'fill', gravity: 'face' });
                 return (
                     <div key={index} className="mb-2">
-                        <CommentView avatar={avatar} comment={reply} toReplay={toReplay} handleAddReply={handleAddReply} />
+                        <CommentView avatar={avatar} comment={reply} toReplay={toReplay} handleAddReply={handleAddReply} commentState={{ comments: replies, setComments: setReplies }} />
                     </div>
                 );
             }) : <div className="text-sm text-gray-500 dark:text-gray-300">No replies found</div>) :

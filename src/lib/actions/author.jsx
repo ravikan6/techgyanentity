@@ -285,55 +285,69 @@ const articleCommentAction = async (data) => {
     }
 
     try {
-        let comment = await prisma.comment.create({
-            data: {
-                content: data.body,
-                user: { connect: { id: session.user.id } },
-                post: { connect: { id: data.postId } },
-                ...data.parentId && { parent: { connect: { id: data.parentId } } },
-                ...data.authorId && { author: { connect: { id: data.authorId } } }
-            },
-            include: {
-                user: true,
-                author: true,
-                _count: {
-                    select: {
-                        replies: true,
-                        claps: true
-                    }
+        if (data?.id) {
+            let comment = await prisma.comment.update({
+                where: {
+                    id: data.id
                 },
-                parent: {
-                    include: {
-                        _count: {
-                            select: {
-                                replies: true,
-                                claps: true
-                            }
-                        },
-                        user: true,
-                        author: true,
-                        claps: {
-                            select: {
-                                id: true,
-                                user: {
-                                    select: {
-                                        id: true,
-                                    }
-                                },
-                                comment: {
-                                    select: {
-                                        id: true,
+                data: {
+                    content: data.body
+                },
+            });
+            res = { ...res, data: comment, status: 200 };
+            console.log(comment, '__________________________comment updated from ___')
+            return res;
+        } else {
+            let comment = await prisma.comment.create({
+                data: {
+                    content: data.body,
+                    user: { connect: { id: session.user.id } },
+                    post: { connect: { id: data.postId } },
+                    ...data.parentId && { parent: { connect: { id: data.parentId } } },
+                    ...data.authorId && { author: { connect: { id: data.authorId } } }
+                },
+                include: {
+                    user: true,
+                    author: true,
+                    _count: {
+                        select: {
+                            replies: true,
+                            claps: true
+                        }
+                    },
+                    parent: {
+                        include: {
+                            _count: {
+                                select: {
+                                    replies: true,
+                                    claps: true
+                                }
+                            },
+                            user: true,
+                            author: true,
+                            claps: {
+                                select: {
+                                    id: true,
+                                    user: {
+                                        select: {
+                                            id: true,
+                                        }
+                                    },
+                                    comment: {
+                                        select: {
+                                            id: true,
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-        })
-        res = { ...res, data: comment, status: 200 };
-        console.log(comment, '__________________________comment added from ___')
-        return res;
+            })
+            res = { ...res, data: comment, status: 200 };
+            console.log(comment, '__________________________comment added from ___')
+            return res;
+        }
     } catch (e) {
         res.errors.push({ message: e.message });
         console.log(e, '__________________________comment error added from ___')
@@ -378,9 +392,54 @@ const articleCommentClapAction = async (data, action) => {
     }
 }
 
+const articleCommentDeleteAction = async (data) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        let comment = await prisma.comment.findUnique({
+            where: {
+                id: data.id
+            },
+            include: {
+                user: true,
+            }
+        });
+        if (!comment) {
+            res.errors.push({ message: 'Comment not found' });
+            return res;
+        }
+        if (comment.userId !== session.user.id) {
+            res.errors.push({ message: 'Unauthorized' });
+            return res;
+        }
+        await prisma.comment.deleteMany({
+            where: {
+                parentId: data.id
+            }
+        })
+        let dt = await prisma.comment.delete({
+            where: {
+                id: data.id
+            }
+        });
+        res = { ...res, data: dt, status: 200 };
+        console.log(comment, '__________________________comment deleted from ___')
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        console.log(e, '__________________________error comment deleted from ___')
+        return res;
+    }
+}
+
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction }
+export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction }

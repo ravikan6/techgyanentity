@@ -96,9 +96,9 @@ const Transition = forwardRef(function Transition(props, ref) {
 const RuiDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiPaper-root': {
         boxShadow: theme.shadows[2],
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette?.background?.paper,
         backgroundImage: 'none',
-        borderColor: theme.palette.icon.main,
+        borderColor: theme.palette?.icon?.main,
         borderRadius: '24px',
     },
     '& .MuiBackdrop-root': {
