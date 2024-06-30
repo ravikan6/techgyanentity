@@ -1,8 +1,42 @@
-:root {
-    --bn-colors-editor-text: var(--rb-palette-background-paper) !important;
-    --bn-colors-editor-background: var(--rb-palette-background-paper) !important;
-    --bn-colors-menu-text: #3f3f3f;
-    --bn-colors-menu-background: var(--rb-palette-background-paper) !important;
-    --bn-colors-tooltip-text: #3f3f3f;
-    --bn-colors-tooltip-background: #efefef;
+.bn-container[data-color-scheme] {
+    --bn-colors-editor-text: var(--rb-palette-primary-main);
+    --bn-colors-editor-background: var(--rb-palette-background-paper);
+    --bn-colors-menu-text: var(--rb-palette-primary-main);
+    --bn-colors-menu-background: var(--rb-palette-head-main);
+    --bn-colors-tooltip-text: var(--rb-palette-primary-main);
+    --bn-colors-tooltip-background: var(--rb-palette-head-main);
+    --bn-colors-hovered-text: var(--rb-palette-primary-main);
+    --bn-colors-hovered-background: var(--rb-palette-secondary-main);
+    --bn-colors-selected-text: var(--rb-palette-background-main);
+    --bn-colors-selected-background: var(--rb-palette-button-main);
+    --bn-colors-disabled-text: var(--rb-palette-action-disabled);
+    --bn-colors-disabled-background: var(--rb-palette-action-disabledBackground);
+
+    --bn-colors-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+    --bn-colors-border: var(--rb-palette-accent-main);
+    --bn-colors-side-menu: var(--rb-palette-rbSlate-main);
+
+    /* --bn-colors-highlights-gray-text: var(--rb-palette-primary-main);
+    --bn-colors-highlights-gray-background: var(--rb-palette-rbSlate-main); */
+    --bn-colors-highlights-brown-text: var(--rb-palette-secondary-main);
+    --bn-colors-highlights-brown-background: var(--rb-palette-modelBg-main);
+    /* --bn-colors-highlights-red-text: var(--rb-palette-accent-main);
+    --bn-colors-highlights-red-background: var(--rb-palette-modelBg-main);
+    --bn-colors-highlights-orange-text: var(--rb-palette-button-main);
+    --bn-colors-highlights-orange-background: var(--rb-palette-button2-main);
+    --bn-colors-highlights-yellow-text: var(--rb-palette-head-main);
+    --bn-colors-highlights-yellow-background: var(--rb-palette-button2-main);
+    --bn-colors-highlights-green-text: var(--rb-palette-switch-accent);
+    --bn-colors-highlights-green-background: var(--rb-palette-modelBg-main); */
+    --bn-colors-highlights-blue-text: var(--rb-palette-icon-main);
+    --bn-colors-highlights-blue-background: var(--rb-palette-head-main);
+    /* --bn-colors-highlights-purple-text: var(--rb-palette-head-main);
+    --bn-colors-highlights-purple-background: var(--rb-palette-button2-main); */
+    --bn-colors-highlights-pink-text: var(--rb-palette-avatar-defaultBg);
+    --bn-colors-highlights-pink-background: var(--rb-palette-modelBg-main);
+
+    --bn-font-family: "rb-franklin", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Open Sans",
+        "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    --bn-border-radius: 16px;
 }

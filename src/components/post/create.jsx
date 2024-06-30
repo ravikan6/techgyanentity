@@ -19,7 +19,7 @@ const CreatePost = ({ onSubmit = () => { } }) => {
         slug: '',
         title: '',
         content: '',
-        authorId: '', // This should be set dynamically based on logged-in user
+        authorId: '',
         published: false,
         privacy: 'PUBLIC',
         tags: '',
@@ -45,7 +45,6 @@ const CreatePost = ({ onSubmit = () => { } }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(post, '_______________________post by setPost!')
         await createPostAction(post)
 
         // onSubmit(post);
@@ -53,12 +52,20 @@ const CreatePost = ({ onSubmit = () => { } }) => {
 
     return (
         <>
+            <TextField
+                label="Title"
+                name="title"
+                value={post.title}
+                onChange={handleChange}
+                fullWidth
+                className={'!mb-8'}
+                variant="filled"
+            />
             <div className="my-10">
                 <Editor />
             </div>
 
-
-            <Box
+            {/* <Box
                 component="form"
                 onSubmit={handleSubmit}
                 className="p-4 dark:bg-darkHead bg-lightHead shadow-md rounded-xl"
@@ -72,14 +79,7 @@ const CreatePost = ({ onSubmit = () => { } }) => {
                     className={'!mb-8'}
                     sx={{ mb: 4 }}
                 />
-                <TextField
-                    label="Title"
-                    name="title"
-                    value={post.title}
-                    onChange={handleChange}
-                    fullWidth
-                    className={'!mb-8'}
-                />
+
                 <TextField
                     label="Content"
                     name="content"
@@ -144,11 +144,7 @@ const CreatePost = ({ onSubmit = () => { } }) => {
                 >
                     Create Post
                 </Button>
-            </Box>
-
-            <div className="mt-32">
-                <CreateAuthor />
-            </div>
+            </Box> */}
         </>
     );
 };
