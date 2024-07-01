@@ -4,13 +4,15 @@ import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import '@/styles/editor.css';
 
-const Editor = () => {
-    const editor = useCreateBlockNote({ enableBlockNoteExtensions: true, });
+const Editor = ({ setBlocks }) => {
+    const editor = useCreateBlockNote({ enableBlockNoteExtensions: true, _tiptapOptions: { enableCoreExtensions: true } });
 
     if (typeof document !== 'undefined') {
         return (
             <>
-                <BlockNoteView editor={editor} />
+                <BlockNoteView editor={editor} onChange={() => {
+                    setBlocks(editor.document);
+                }} />
             </>
         );
     } else {

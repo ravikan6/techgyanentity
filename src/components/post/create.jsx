@@ -1,5 +1,4 @@
 "use client";
-import CreateAuthor from "../author/create";
 import { TextField, Button } from "../rui";
 import React, { useState } from 'react';
 import { createPostAction } from '@/lib/actions/blog';
@@ -11,10 +10,11 @@ import {
     MenuItem,
     FormControlLabel,
     Switch,
+    InputBase,
 } from '@mui/material';
 import Editor from "../create/editor";
 
-const CreatePost = ({ onSubmit = () => { } }) => {
+const CreatePost = ({ id }) => {
     const [post, setPost] = useState({
         slug: '',
         title: '',
@@ -26,6 +26,8 @@ const CreatePost = ({ onSubmit = () => { } }) => {
         imageUrl: '',
         imageAlt: '',
     });
+
+    const [blocks, setBlocks] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,17 +54,28 @@ const CreatePost = ({ onSubmit = () => { } }) => {
 
     return (
         <>
-            <TextField
-                label="Title"
-                name="title"
-                value={post.title}
-                onChange={handleChange}
-                fullWidth
-                className={'!mb-8'}
-                variant="filled"
-            />
-            <div className="my-10">
-                <Editor />
+            <div className="">
+                <div className="px-5">
+                    <InputBase label="Title"
+                        name="title"
+                        value={post.title}
+                        onChange={handleChange}
+                        fullWidth
+                        autoFocus
+                    />
+                </div>
+                <div className="my-2">
+                    <Editor setBlocks={setBlocks} />
+                </div>
+            </div>
+            <p> {id} </p>
+
+            <div>
+                <p>Below is The Json output of the block content</p>
+
+                <pre className="mtt-4">
+                    {JSON.stringify(blocks, null, 2)}
+                </pre>
             </div>
 
             {/* <Box
