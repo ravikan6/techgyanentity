@@ -38,7 +38,6 @@ const DecryptAuthorStudioCookie = async () => {
                     author.banner = await getCImageUrl(author?.banner?.url, { width: 1300, height: 620, crop: 'auto', quality: 100 });
                 }
             }
-            console.log(author, 'author_______________________________asyncAction');
             return author;
         }
         else {

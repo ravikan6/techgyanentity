@@ -1,6 +1,6 @@
 "use client";
-import { DecryptChannelStudioCookie, DecryptAuthorStudioCookie } from '@/lib/actions/studio';
-import { StCommunityContext, StudioContext } from '@/lib/context';
+import { DecryptAuthorStudioCookie } from '@/lib/actions/studio';
+import { StCommunityContext, StudioContext, StudioWriterContext } from '@/lib/context';
 import React, { useCallback, useMemo, useState } from 'react'
 import { useEffect } from 'react';
 import { Button } from '@/components/rui';
@@ -39,30 +39,16 @@ const StudioChannelLayoutWrapper = ({ children, cookieData }) => {
     );
 }
 
-const StudioCommunitylLayoutWrapper = ({ children, cookieData }) => {
-    const context = React.useContext(StudioContext);
-
-    useEffect(() => {
-        context.setData({ ...context.data, page: 'community', data: { ...cookieData } })
-    }, [cookieData]);
+const StudioWriteLayoutWrapper = ({ children, article }) => {
+    const [data, setData] = useState({ article: article });
 
     return (
-        children
-    );
-}
-
-const StudioChannelEditLayoutWrapper = ({ children }) => {
-    const [save, setSave] = useState(false);
-    const context = React.useContext(StudioContext);
-
-    return (
-        <StCommunityContext.Provider value={{ save, setSave }}>
-            <div className='fixed right-4 !z-[1000]'>
-                <Button disabled={save} onClick={() => setSave(true)} variant='outlined' color='ld' size='small' sx={{ px: 4 }} className="!bg-accent dark:!bg-accentDark">Save Changes</Button>
-            </div>
+        <StudioWriterContext.Provider value={{ data, setData }}>
             {children}
-        </StCommunityContext.Provider>
+        </StudioWriterContext.Provider>
     );
+
 }
 
-export { StudioMainLayoutWrapper, StudioChannelLayoutWrapper, StudioCommunitylLayoutWrapper, StudioChannelEditLayoutWrapper }
+
+export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper }

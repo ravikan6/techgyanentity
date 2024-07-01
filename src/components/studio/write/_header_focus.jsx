@@ -7,6 +7,7 @@ import { NavMenu } from '@/components/Home/_profile-model';
 import { auth } from '@/lib/auth';
 import { StudioServiceSelecterMenu } from '../_profile';
 import { WriteMenu } from './_menu';
+import { ManinLogo } from '@/components/header';
 
 
 /**

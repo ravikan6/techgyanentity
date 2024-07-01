@@ -1,11 +1,14 @@
 "use client";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
-import "@blocknote/mantine/style.css";
+// import "@blocknote/mantine/style.css";
 import '@/styles/editor.css';
 
-const Editor = ({ setBlocks }) => {
-    const editor = useCreateBlockNote({ enableBlockNoteExtensions: true, _tiptapOptions: { enableCoreExtensions: true } });
+const Editor = ({ setBlocks, focus }) => {
+    const editor = useCreateBlockNote();
+
+    if (focus)
+        editor.focus();
 
     if (typeof document !== 'undefined') {
         return (

@@ -230,7 +230,7 @@ const BtnWithMenu = (props) => {
 const CreateBtn = ({ classes, iconColor, sx }) => {
   let id = Math.random().toString(36).substring(7);
   return (
-    <Link href={`/studio/${id}/edit`} className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
+    <Link href={`/studio/p/${id}/edit`} className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
       <IconButton size='small' sx={{ ...sx }} >
         <DrawOutlined htmlColor={iconColor} />
       </IconButton>

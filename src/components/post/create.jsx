@@ -1,18 +1,10 @@
 "use client";
-import { TextField, Button } from "../rui";
-import React, { useState } from 'react';
+import { Button, Dialog } from "../rui";
+import React, { useState, useContext } from 'react';
 import { createPostAction } from '@/lib/actions/blog';
-import {
-    Box,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormControlLabel,
-    Switch,
-    InputBase,
-} from '@mui/material';
+import { TextField } from '@mui/material';
 import Editor from "../create/editor";
+import { StudioWriterContext } from "@/lib/context";
 
 const CreatePost = ({ id }) => {
     const [post, setPost] = useState({
@@ -26,7 +18,8 @@ const CreatePost = ({ id }) => {
         imageUrl: '',
         imageAlt: '',
     });
-
+    const [open, setOpen] = useState(false);
+    const [keyPress, setKeyPress] = useState(false);
     const [blocks, setBlocks] = useState([]);
 
     const handleChange = (e) => {
@@ -37,13 +30,21 @@ const CreatePost = ({ id }) => {
         }));
     };
 
-    const handleSwitchChange = (e) => {
-        const { name, checked } = e.target;
-        setPost((prevPost) => ({
-            ...prevPost,
-            [name]: checked,
-        }));
-    };
+    const { data } = useContext(StudioWriterContext);
+    // const handleSwitchChange = (e) => {
+    //     const { name, checked } = e.target;
+    //     setPost((prevPost) => ({
+    //         ...prevPost,
+    //         [name]: checked,
+    //     }));
+    // };
+
+    useEffect(() => {
+        if (data?.article) {
+            setPost({ ...post, title: data?.article?.title })
+        }
+    }, [data?.article])
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -52,112 +53,52 @@ const CreatePost = ({ id }) => {
         // onSubmit(post);
     };
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            e.stopPropagation();
+            setKeyPress(true);
+        } else {
+            setKeyPress(false);
+        }
+    }
+
     return (
         <>
             <div className="">
-                <div className="px-5">
-                    <InputBase label="Title"
+                <div className="mx-5">
+                    <TextField
                         name="title"
                         value={post.title}
                         onChange={handleChange}
-                        fullWidth
+                        onKeyDown={handleKeyPress}
                         autoFocus
+                        placeholder="Title"
+                        multiline
+                        variant="standard"
+                        InputProps={{
+                            disableUnderline: true,
+                            sx: { fontSize: '2.45rem', lineHeight: '2.6rem', fontWeight: 900, fontFamily: 'Karnak' },
+                            notched: false
+                        }}
                     />
                 </div>
-                <div className="my-2">
-                    <Editor setBlocks={setBlocks} />
+                <div className="my-2 lg:-mx-8">
+                    <Editor setBlocks={setBlocks} focus={keyPress} />
                 </div>
             </div>
-            <p> {id} </p>
 
-            <div>
-                <p>Below is The Json output of the block content</p>
+            <Button className="mt-10" variant="outlined" color="button" onClick={() => setOpen(true)}>Preview Json</Button>
 
-                <pre className="mtt-4">
-                    {JSON.stringify(blocks, null, 2)}
-                </pre>
-            </div>
+            <Dialog open={open} sx={{ maxWidth: '600px', p: 4, minWidth: '150px', minHeight: '150px' }} onClose={() => setOpen(false)}>
+                <strong> {id} </strong>
 
-            {/* <Box
-                component="form"
-                onSubmit={handleSubmit}
-                className="p-4 dark:bg-darkHead bg-lightHead shadow-md rounded-xl"
-            >
-                <TextField
-                    label="Slug"
-                    name="slug"
-                    value={post.slug}
-                    onChange={handleChange}
-                    fullWidth
-                    className={'!mb-8'}
-                    sx={{ mb: 4 }}
-                />
-
-                <TextField
-                    label="Content"
-                    name="content"
-                    value={post.content}
-                    onChange={handleChange}
-                    fullWidth
-                    multiline
-                    rows={4}
-                    className={'!mb-8'}
-                />
-                <FormControl fullWidth className={'!mb-8'}>
-                    <InputLabel>Privacy</InputLabel>
-                    <Select
-                        name="privacy"
-                        value={post.privacy}
-                        onChange={handleChange}
-                    >
-                        <MenuItem value="PUBLIC">Public</MenuItem>
-                        <MenuItem value="PRIVATE">Private</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField
-                    label="Tags (comma separated)"
-                    name="tags"
-                    value={post.tags}
-                    onChange={handleChange}
-                    fullWidth
-                    className={'!mb-8'}
-                />
-                <TextField
-                    label="Image URL"
-                    name="imageUrl"
-                    value={post.imageUrl}
-                    onChange={handleChange}
-                    fullWidth
-                    className={'!mb-8'}
-                />
-                <TextField
-                    label="Image Alt Text"
-                    name="imageAlt"
-                    value={post.imageAlt}
-                    onChange={handleChange}
-                    fullWidth
-                    className={'!mb-8'}
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={post.published}
-                            onChange={handleSwitchChange}
-                            name="published"
-                        />
-                    }
-                    label="Published"
-                    className={'!mb-8'}
-                />
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className="w-full"
-                >
-                    Create Post
-                </Button>
-            </Box> */}
+                <div className="mt-2 overflow-x-scroll">
+                    <pre className="mt-4">
+                        {JSON.stringify(blocks, null, 2)}
+                    </pre>
+                </div>
+            </Dialog>
         </>
     );
 };
