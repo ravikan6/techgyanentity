@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { NotificationBtn, SgBtn } from '@/components/Buttons';
 import { Skeleton } from '@mui/material';
-import { NavMenu } from './Home/_profile-model';
+import { NavMenu } from '@/components/Home/_profile-model';
 import { auth } from '@/lib/auth';
 import { StudioServiceSelecterMenu } from '../_profile';
 import { WriteMenu } from './_menu';
