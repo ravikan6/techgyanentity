@@ -1,7 +1,7 @@
 "use client";
 import { Button, Dialog } from "../rui";
 import React, { useState, useContext, useEffect } from 'react';
-import { createPostAction, updatePostAction } from '@/lib/actions/blog';
+import { updatePostAction } from '@/lib/actions/blog';
 import { TextField } from '@mui/material';
 import Editor from "../create/editor";
 import { StudioWriterContext } from "@/lib/context";
@@ -49,8 +49,8 @@ const CreatePost = ({ id }) => {
                 if (data?.article?.content) {
                     setBlocks(data?.article?.content);
                 }
-                setPostLoading(false);
             }
+            setPostLoading(false);
         }
         handler();
     }, [data?.article])
@@ -79,42 +79,58 @@ const CreatePost = ({ id }) => {
 
     return (
         <>
-            <div className="">
-                <div className="mx-5">
-                    <TextField
-                        name="title"
-                        value={post.title}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyPress}
-                        autoFocus
-                        placeholder="Title"
-                        multiline
-                        variant="standard"
-                        InputProps={{
-                            disableUnderline: true,
-                            sx: { fontSize: '2.45rem', lineHeight: '2.6rem', fontWeight: 900, fontFamily: 'Karnak' },
-                            // notched: false
-                        }}
-                    />
+            {postLoading ? (
+                <div class='flex space-x-2 justify-center items-centerw-full my-10 dark:invert'>
+                    <span class='sr-only'>Loading...</span>
+                    <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+                    <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+                    <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce'></div>
                 </div>
-                <div className="my-2 lg:-mx-8">
-                    <Editor content={post.content} loading={postLoading} setBlocks={setBlocks} focus={keyPress} />
+            ) : (
+                <div>
+                    <div className="mx-5">
+                        <TextField
+                            name="title"
+                            value={post.title}
+                            onChange={handleChange}
+                            onKeyDown={handleKeyPress}
+                            autoFocus
+                            placeholder="Title"
+                            multiline
+                            variant="standard"
+                            InputProps={{
+                                disableUnderline: true,
+                                sx: {
+                                    fontSize: '2.6rem',
+                                    lineHeight: '2.7rem',
+                                    fontWeight: 900,
+                                    fontFamily: 'rb-karnak',
+                                    color: (theme) => theme.palette.text.primary,
+                                },
+                            }}
+                            fullWidth
+                        />
+                    </div>
+                    <div className="my-2 lg:-mx-8">
+                        <Editor content={post.content} loading={postLoading} setBlocks={setBlocks} focus={keyPress} />
+                    </div>
                 </div>
-            </div>
-            {console.log(post, '_________________________________Post')}
-            <Button className="!mt-52" variant="outlined" color="button" onClick={() => setOpen(true)}>Preview Json</Button>
+            )}
 
-            <Button className="" variant="outlined" color="button" onClick={() => handleSubmit()}>Submit</Button>
+            <Button className="!mt-52" variant="outlined" color="button" onClick={() => setOpen(true)}>
+                Preview Json
+            </Button>
+
+            <Button className="" variant="outlined" color="button" onClick={() => handleSubmit()}>
+                Submit
+            </Button>
 
             <Dialog open={open} sx={{ maxWidth: '600px', p: 4, minWidth: '150px', minHeight: '150px' }} onClose={() => setOpen(false)}>
                 <strong> {id} </strong>
 
                 <div className="mt-2 overflow-x-scroll">
-                    <pre className="mt-4">
-                        {JSON.stringify(blocks, null, 2)}
-                    </pre>
+                    <pre className="mt-4">{JSON.stringify(blocks, null, 2)}</pre>
                 </div>
-
             </Dialog>
         </>
     );

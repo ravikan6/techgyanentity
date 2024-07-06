@@ -6,15 +6,15 @@
  */
 import { AiOutlineComment } from 'react-icons/ai';
 import { PiHandsClappingLight } from 'react-icons/pi';
-import { BookmarkBtn, BtnWithMenu } from '../Buttons';
+import { BookmarkBtn, BtnWithMenu, PostEditButton } from '../Buttons';
 import { Button, SwipeableDrawer } from '../rui';
 import { ArticleComments } from './_client';
-import { useState, useEffect } from 'react';
-import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkAction } from '@/lib/actions/author';
+import { useState, useEffect, useContext } from 'react';
+import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkAction, isPostAuthor } from '@/lib/actions/author';
 import { useSession } from 'next-auth/react';
 import { FaHandsClapping } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
-import { Edit } from '@mui/icons-material';
+import { StudioContext } from '@/lib/context';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
@@ -28,11 +28,11 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
         <>
             <div className={`flex my-2 h-8 overflow-hidden ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
                 <div className={`justify-start flex items-center space-x-6`}>
-                    <EditPost id={id} />
                     <ClapPost id={id} />
                     {!isExpanded && <Button
                         onClick={() => setDrawable(true)}
                         sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='!text-xs'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />}
+                    <AuthorActions id={id} authorId={article?.author?.id} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
                     <Bookmark id={id} />
@@ -159,8 +159,13 @@ const ClapPost = ({ id }) => {
     );
 }
 
-const EditPost = ({ id }) => {
-    return (
-        <Button sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<Edit />} href={`/${process.env.STUDIO_URL_PREFIX}/p/${id}/edit`} />
-    );
+
+const AuthorActions = ({ id, authorId }) => {
+    const { data } = useContext(StudioContext);
+
+    if (data?.data?.id === authorId) {
+        return (
+            <PostEditButton href={`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${id}/edit`} />
+        );
+    }
 }

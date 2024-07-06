@@ -23,6 +23,7 @@ const nextConfig = {
         AUTH_AUTH0_DOMAIN: 'https://raviblog.us.auth0.com',
         STUDIO_URL_PREFIX: 'studio',
         NEXT_PUBLIC_STUDIO_NAME: 'Content Studio',
+        NEXT_PUBLIC_STUDIO_PATH: 'studio',
         MODAL_BLUR: 'false',
     },
     experimental: {

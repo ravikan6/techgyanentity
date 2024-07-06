@@ -5,7 +5,6 @@ import { prisma } from "@/lib/db";
 const WriteLayout = async ({ children, params }) => {
     const { path } = params;
 
-
     if (path?.length === 2) {
         const postId = path[0];
         let article = null
@@ -15,25 +14,16 @@ const WriteLayout = async ({ children, params }) => {
                     id: postId
                 }
             });
-        } catch {
+            if (!article) {
+                article = await prisma.post.findUnique({
+                    where: {
+                        shortId: postId
+                    }
+                });
+            }
+        } catch { }
 
-        }
-
-        if (path[1] === 'new') {
-            return (
-                <StudioWriteLayoutWrapper article={article} >
-                    <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
-                        <WriteHeader />
-                        <div className="w-full h-full overflow-y-auto">
-                            <div className="max-w-[640px] w-full px-2 sm:px-0 mx-auto mt-[56px]">
-                                {children}
-                            </div>
-                        </div>
-                    </div>
-                </StudioWriteLayoutWrapper>
-            )
-        } else if (path[1] === 'edit') {
-            const id = path[0];
+        if (path[1] === 'edit') {
             return (
                 <StudioWriteLayoutWrapper article={article} >
                     <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">

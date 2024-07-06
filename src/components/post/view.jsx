@@ -101,5 +101,3 @@ const RenderBlock = ({ blocks }) => {
 
     return <>{blocks.map(renderBlock)}</>;
 };
-
-// export default BlockRenderer;

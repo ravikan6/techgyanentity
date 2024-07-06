@@ -5,13 +5,7 @@ const WritePage = ({ params }) => {
     const { path } = params;
 
     if (path?.length === 2) {
-        if (path[1] === 'new') {
-            return (
-                <div className='pt-10'>
-                    <CreatePost />
-                </div>
-            )
-        } else if (path[1] === 'edit') {
+        if (path[1] === 'edit') {
             const id = path[0];
             return (
                 <div className='pt-10'>

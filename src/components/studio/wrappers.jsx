@@ -51,4 +51,4 @@ const StudioWriteLayoutWrapper = ({ children, article }) => {
 }
 
 
-export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper }
+export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper, StudioMainLayoutWrapper as AuthorProvider }

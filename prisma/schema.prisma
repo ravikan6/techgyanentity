@@ -16,6 +16,7 @@ datasource db {
 model Post {
   id              String     @id @default(auto()) @map("_id") @db.ObjectId
   slug            String     @unique
+  shortId         String     @unique
   title           String
   description     String?
   content         Json

@@ -11,6 +11,9 @@ const Editor = ({ setBlocks, focus, content, loading }) => {
         if (initialContent === "loading") {
             return undefined;
         }
+        if (initialContent === null || initialContent === undefined || initialContent === "") {
+            return BlockNoteEditor.create();
+        }
         return BlockNoteEditor.create({ initialContent });
     }, [initialContent]);
 

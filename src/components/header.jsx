@@ -8,6 +8,7 @@ import { Skeleton } from '@mui/material';
 import { NavMenu, UserProfileModel } from './Home/_profile-model';
 import { auth } from '@/lib/auth';
 import { VariantpPersistentClient } from './post/_client';
+import { StudioServiceSelecterMenu } from './studio/_profile';
 
 const ManinLogo = async ({ className }) => {
     // const data = await get_SECTION_logo();
@@ -74,7 +75,7 @@ const Header = async () => {
                                                 <NotificationBtn classes={'border border-solid border-secondary dark:border-secondaryDark'} />
                                             </div>
                                             <div className="">
-                                                <UserProfileModel user={{ user: session?.user }} />
+                                                {(session?.user?.Author?.length > 0) ? (<StudioServiceSelecterMenu session={session} />) : (<UserProfileModel user={{ user: session?.user }} />)}
                                             </div>
                                         </>
                                     ) : (

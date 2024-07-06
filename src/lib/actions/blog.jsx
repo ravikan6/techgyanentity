@@ -1,6 +1,8 @@
 "use server";
 import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import { generateUniqueId } from '../helpers';
 
 export const getBlogs = async () => {
 
@@ -49,9 +51,42 @@ export const createPostAction = async (data) => {
 
 }
 
+export const handleCreatePostRedirectAction = async (authorId) => {
+    const session = await auth();
+    if (!session.user) {
+        redirect('/auth/v2/signin');
+    }
+    if (!authorId) {
+        redirect('/setup/author');
+    }
+    try {
+
+        let sId = generateUniqueId(12);
+        const p = await prisma.post.create({
+            data: {
+                title: 'Untitled',
+                author: {
+                    connect: {
+                        id: authorId,
+                    },
+                },
+                slug: `post-${sId}`,
+                published: false,
+                content: [],
+                shortId: sId,
+            }
+        });
+        if (p.id)
+            redirect(`/${process.env.STUDIO_URL_PREFIX}/p/${p.id}/edit`);
+    } catch (error) {
+        console.error("Error creating post:", error);
+        redirect('/');
+    }
+}
+
 export const updatePostAction = async (data) => {
     const session = await auth();
-    
+
     try {
         const updatedPost = await prisma.post.update({
             where: {
@@ -67,4 +102,16 @@ export const updatePostAction = async (data) => {
         console.error("Error updating post:", error);
         throw error;
     }
+}
+
+export const getDrafts = async (authorId) => {
+    const session = await auth();
+
+    const drafts = await prisma.post.findMany({
+        where: {
+            authorId: authorId,
+            published: false,
+        },
+    });
+    return drafts;
 }

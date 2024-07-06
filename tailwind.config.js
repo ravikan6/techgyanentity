@@ -32,7 +32,7 @@ module.exports = {
         accentDarker: 'rgb(57, 101, 137)', // Ming
         button: 'rgb(230, 184, 178)', // Rose fog
         darkHead: 'rgb(11, 31, 60)', // Blue Zodiac
-        darkButton: 'rgb(75, 90, 129)', // Blue Bayoux
+        darkButton: 'rgb(198, 215, 240)', // Spindle
         lightButton: 'rgb(243, 196, 185)', // Mandys Pink
         bgSP: 'rgb(221, 146, 136)', // Petite Orchid
         bgSpDark: 'rgb(89, 44, 59)', // Livid Brown

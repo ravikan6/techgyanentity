@@ -19,6 +19,8 @@ import { Button, IconButton, Tooltip, Menu, MenuItem } from '@/components/rui';
 import { DrawerContext } from './mainlayout';
 import { useRouter } from 'next/navigation';
 import { BsPatchQuestion } from 'react-icons/bs';
+import { StudioContext } from '@/lib/context';
+import { handleCreatePostRedirectAction } from '@/lib/actions/blog';
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -164,6 +166,19 @@ const BookmarkBtn = (props) => {
   )
 }
 
+const PostEditButton = ({ classes, disabled, show = true, href }) => {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push(href);
+  }
+  return show ? (
+    <div className={` ${classes}`}>
+      <Button disabled={disabled} size='small' variant='outlined' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={handleClick}>
+        <DrawOutlined className='w-4 h-4' />
+      </Button>
+    </div>
+  ) : null
+}
 
 const BtnWithMenu = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -228,13 +243,19 @@ const BtnWithMenu = (props) => {
 };
 
 const CreateBtn = ({ classes, iconColor, sx }) => {
-  let id = Math.random().toString(36).substring(7);
+  const { data } = useContext(StudioContext);
+  if (!data?.data) return null;
+
+  const handleClick = async () => {
+    await handleCreatePostRedirectAction(data.data?.id);
+  }
+
   return (
-    <Link href={`/studio/p/${id}/edit`} className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
+    <div onClick={handleClick} className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
       <IconButton size='small' sx={{ ...sx }} >
         <DrawOutlined htmlColor={iconColor} />
       </IconButton>
-    </Link>
+    </div>
   )
 }
 
@@ -289,5 +310,5 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
   )
 }
 
-export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn };
+export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton };
 

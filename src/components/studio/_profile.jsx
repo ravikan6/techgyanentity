@@ -28,16 +28,8 @@ export const StudioServiceSelecterMenu = ({ session }) => {
     const context = useContext(StudioContext);
     const page = context?.data?.page;
 
-    console.log(context?.data, 'context?.data', page, 'page');
-
     useMemo(() => {
-        // if (page === 'channel') {
-        //     setCurrentData({ ...currentData, ...context?.data?.data, url: `/${process.env.CHANNEL_URL_PREFIX}/@${context?.data?.data?.handle}` });
-        // } else if (page === 'community') {
         setCurrentData({ ...currentData, ...context?.data?.data, url: `/author/@${context?.data?.data?.handle}` });
-        // } else {
-        //     setCurrentData({ ...currentData, name: session?.user?.name, id: session?.user?.id, image: session?.user?.picture, handle: session?.user?.username, url: `/@${session?.user?.username}` });
-        // }
     }, [context]);
 
     // The below functions is used to handle the events of the main menu. (Start)
@@ -75,9 +67,13 @@ export const StudioServiceSelecterMenu = ({ session }) => {
         handleInsiderOpen: handleInsiderOpen,
         handleInsiderClose: handleInsiderClose,
     }
-    // The above functions is used to handle the events of the main menu. (End)
 
-    // The below is the code for the menu items of the main menu. (Start)
+    const protectEmail = (email) => {
+        const [username, domain] = email.split('@');
+        const usernameLength = username.length;
+        const protectedUsername = usernameLength <= 2 ? username : `${username.slice(0, 2)}${'*'.repeat(usernameLength - 2)}`;
+        return `${protectedUsername}@${domain}`;
+    };
 
     return (
         <Fragment>
@@ -114,11 +110,10 @@ export const StudioServiceSelecterMenu = ({ session }) => {
                             <Avatar alt='Avatar' className="w-20 h-20 rounded-full" src={currentData?.image}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                             <span className="mt-2 text-xl max-w-60 truncate font-medium cheltenham">Hi, {currentData?.name}</span>
                         </div>
-                        <Link href={'/account'}>
-                            <Button variant="outlined" color='secondary' fullWidth >Manage your Account</Button>
-                        </Link>
+                        <Tooltip title="Manage your Account">
+                            <Button href='/account' variant="outlined" startIcon={<Avatar alt='Avatar' className='uppercase font-medium text-base' src={session?.user?.image} sx={{ width: 24, height: 24 }}>{session?.user?.name?.slice(0, 1)?.toUpperCase()}</Avatar>} color='secondary' ><span className='ml-2.5 truncate'>{session?.user?.email && protectEmail(session?.user?.email)}</span></Button>
+                        </Tooltip>
                     </Box>
-
 
                     <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, boxShadow: null }}>
 
@@ -226,14 +221,6 @@ const SwitchAccount = ({ state, context }) => {
         des: 'Comming soon...',
         disabled: true,
     });
-
-    // useMemo(() => {
-    //     if (context?.data?.page === 'channel') {
-    //         setPageInfo({ ...pageInfo, serviceName: 'Channel', createUrl: '/setup/channel' });
-    //     } else if (context?.data?.page === 'community') {
-    //         setPageInfo({ ...pageInfo, serviceName: 'Community', createUrl: '/setup/community' });
-    //     }
-    // }, [context?.data?.page, state.insiderOpen]);
 
     const updateContextCookie = (data) => {
         try {

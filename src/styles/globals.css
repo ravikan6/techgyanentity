@@ -133,11 +133,7 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   font-family: 'rb-franklin', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
-}
-
-body {
-  background-color: #fff;
+  @apply bg-light dark:bg-dark;
 }
 
 a {
@@ -159,95 +155,6 @@ svg {
   mask-image: linear-gradient(180deg, #000 70%, transparent);
   -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent);
 }
-
-#articleContent {
-  @apply cheltenham text-base md:text-lg leading-6 text-gray-900 dark:text-gray-100;
-}
-
-#articleContent p {
-  @apply mb-3 mt-1;
-}
-
-#articleContent img {
-  @apply rounded-xl object-cover;
-}
-
-#articleContent h1 {
-  @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-6 mt-2 font-bold;
-}
-
-#articleContent h2 {
-  @apply text-xl md:text-2xl lg:text-3xl xl:text-3xl mb-4 mt-1 font-bold;
-}
-
-#articleContent h3 {
-  @apply text-lg md:text-xl lg:text-2xl xl:text-2xl mb-3 mt-1 font-bold;
-}
-
-#articleContent h4 {
-  @apply text-lg md:text-xl lg:text-2xl xl:text-2xl mb-2 mt-1 font-bold;
-}
-
-#articleContent h5 {
-  @apply text-base mb-1 mt-0.5 font-bold;
-}
-
-#articleContent h6 {
-  @apply text-sm mb-1 mt-0.5 font-bold;
-}
-
-#articleContent a {
-  @apply text-blue-700 underline-offset-2 hover:opacity-70 hover:no-underline transition-all dark:text-orange-400 underline;
-}
-
-#articleContent ul {
-  @apply list-inside;
-}
-
-#articleContent ol {
-  @apply list-inside;
-}
-
-#articleContent blockquote {
-  @apply border-l-4 border-gray-300 dark:border-zinc-700 pl-4 italic;
-}
-
-#articleContent code {
-  @apply text-sm font-mono;
-}
-
-#articleContent pre {
-  @apply overflow-x-auto;
-}
-
-#articleContent pre code {
-  @apply block p-4 rounded-md bg-gray-100 dark:bg-gray-800;
-}
-
-#articleContent table {
-  @apply table-auto;
-}
-
-#articleContent th {
-  @apply px-4 py-2 font-bold text-left;
-}
-
-#articleContent td {
-  @apply px-4 py-2 border-t;
-}
-
-#articleContent hr {
-  @apply my-4 border-t-2 border-slate-300 dark:border-zinc-700;
-}
-
-#articleContent figure {
-  @apply my-5;
-}
-
-#articleContent figcaption {
-  @apply text-xs my-1 text-slate-600 dark:text-gray-300 text-center imperial;
-}
-
 
 .header-wrapper {
   border-bottom: 1px solid;

@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { auth } from '@/lib/auth';
 import MainLayout from '@/components/mainlayout';
 import { Header } from '@/components/header';
+import { AuthorProvider } from '@/components/studio/wrappers';
 
 export async function generateMetadata() {
   return {
@@ -23,13 +24,15 @@ export default async function RootLayout({ children, models }) {
       <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
         <Providers>
           <CssBaseline enableColorScheme />
-          <MainLayout session={session} >
-            <Header lang='en' />
-            <main className="mt-[54px]">
-              {children}
-            </main>
-            {models}
-          </MainLayout>
+          <AuthorProvider session={session}>
+            <MainLayout session={session} >
+              <Header lang='en' />
+              <main className="mt-[54px]">
+                {children}
+              </main>
+              {models}
+            </MainLayout>
+          </AuthorProvider>
         </Providers>
       </body>
     </html>

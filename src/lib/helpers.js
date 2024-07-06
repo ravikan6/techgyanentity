@@ -58,11 +58,22 @@ async function getCImageUrl(id, options) {
     }
 }
 
+function generateUniqueId(length = 16) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let uniqueId = '';
+    const charactersLength = characters.length;
 
+    for (let i = 0; i < length; i++) {
+        uniqueId += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return uniqueId;
+}
 
 export {
     formatLocalDate,
     hashPassword,
     verifyPassword,
-    getCImageUrl
+    getCImageUrl,
+    generateUniqueId
 }

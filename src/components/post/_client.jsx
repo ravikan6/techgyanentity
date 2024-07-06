@@ -21,6 +21,7 @@ import { BsReply } from "react-icons/bs";
 import { MdChevronRight, MdOutlineDeleteOutline, MdOutlineEdit, MdOutlineReport } from "react-icons/md";
 import { FaHandsClapping } from "react-icons/fa6";
 import confirm from "@/lib/confirm";
+import { StudioContext } from "@/lib/context";
 
 export const ArticleImage = ({ image, classes }) => {
     return <CldImage
@@ -413,6 +414,7 @@ export const ArticleComments = ({ articleId, article }) => {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
+    const { data } = useContext(StudioContext);
 
     useMemo(() => {
         setLoading(true);
@@ -425,7 +427,7 @@ export const ArticleComments = ({ articleId, article }) => {
     }, [articleId]);
 
     const handleAddReply = async (commentId, reply) => {
-        let aId = (session?.user?.id === article?.author?.userId) ? article?.author?.id : null
+        let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
         const res = await articleCommentAction({ postId: articleId, body: reply, parentId: commentId, ...aId && { authorId: aId } })
         if (res?.status === 200) {
             let newComments = comments.map(comment => {
@@ -440,7 +442,7 @@ export const ArticleComments = ({ articleId, article }) => {
     };
 
     const handleAddComment = async (comment) => {
-        let aId = (session?.user?.id === article?.author?.userId) ? article?.author?.id : null
+        let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
         const res = await articleCommentAction({ postId: articleId, body: comment, ...aId && { authorId: aId } })
         if (res?.status === 200) {
             if (res.status === 200) {
@@ -534,7 +536,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
                                 )
                             }
                         </div>
-                        <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} />
+                        <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} authorId={comment?.author?.id} />
                     </div>
                     <div id="comment_body">
                         <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
@@ -554,10 +556,11 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
     )
 }
 
-const CommentMenu = ({ id, isOwn, onEdit, onDelete }) => {
+const CommentMenu = ({ id, isOwn, onEdit, onDelete, authorId }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { data } = useContext(StudioContext);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -604,9 +607,9 @@ const CommentMenu = ({ id, isOwn, onEdit, onDelete }) => {
                     MenuListProps={{
                         'aria-labelledby': 'comment-menu',
                     }}
-                    sx={{'& .MuiPaper-root': { borderRadius: '12px', py: 0, minWidth: '128px' } }} >
+                    sx={{ '& .MuiPaper-root': { borderRadius: '12px', py: 0, minWidth: '128px' } }} >
                     {
-                        isOwn ? (
+                        (authorId ? (authorId === data?.data?.id) && isOwn : isOwn) ? (
                             [
                                 <MenuItem key="___1" onClick={onEdit}>
                                     <ListItemIcon >
@@ -637,7 +640,6 @@ const CommentMenu = ({ id, isOwn, onEdit, onDelete }) => {
 }
 
 const CommentForm = ({ onAddComment, article }) => {
-    const { data: session } = useSession();
     const [showButtons, setShowButtons] = useState(false);
 
     return (
@@ -657,6 +659,7 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
     const [comment, setComment] = useState(commentText || '');
     const [isPosting, setIsPosting] = useState(false);
     const { data: session } = useSession();
+    const { data } = useContext(StudioContext);
 
     const handleCancle = () => {
         setShowButtons(false);
@@ -687,12 +690,10 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
         setComment(e.target.value);
     };
 
-    let options = { width: 40, height: 40, crop: 'fill', gravity: 'face' }
-
-    const currentUser = (session?.user?.id === article?.author?.userId) ? {
-        id: article?.author?.userId,
-        username: article?.author?.handle,
-        image: (article?.author?.image?.url && getCldImageUrl({ src: article?.author?.image?.url, ...options }))
+    const currentUser = (data?.data?.id === article?.author?.id) ? {
+        id: data?.data?.id,
+        username: data?.data?.handle,
+        image: data?.data?.image,
     } : {
         id: session?.user?.id,
         username: session?.user?.username,
