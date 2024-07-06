@@ -48,3 +48,23 @@ export const createPostAction = async (data) => {
     }
 
 }
+
+export const updatePostAction = async (data) => {
+    const session = await auth();
+    
+    try {
+        const updatedPost = await prisma.post.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                title: data.title,
+                content: data.content,
+            },
+        });
+        return updatedPost;
+    } catch (error) {
+        console.error("Error updating post:", error);
+        throw error;
+    }
+}

@@ -4,8 +4,6 @@ import React from 'react'
 const WritePage = ({ params }) => {
     const { path } = params;
 
-    console.log(path, '_____________________________path')
-
     if (path?.length === 2) {
         if (path[1] === 'new') {
             return (

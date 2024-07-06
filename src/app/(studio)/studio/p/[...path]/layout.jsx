@@ -8,11 +8,16 @@ const WriteLayout = async ({ children, params }) => {
 
     if (path?.length === 2) {
         const postId = path[0];
-        const article = await prisma.post.findUnique({
-            where: {
-                id: postId
-            }
-        });
+        let article = null
+        try {
+            article = await prisma.post.findUnique({
+                where: {
+                    id: postId
+                }
+            });
+        } catch {
+
+        }
 
         if (path[1] === 'new') {
             return (

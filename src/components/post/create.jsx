@@ -1,10 +1,11 @@
 "use client";
 import { Button, Dialog } from "../rui";
-import React, { useState, useContext } from 'react';
-import { createPostAction } from '@/lib/actions/blog';
+import React, { useState, useContext, useEffect } from 'react';
+import { createPostAction, updatePostAction } from '@/lib/actions/blog';
 import { TextField } from '@mui/material';
 import Editor from "../create/editor";
 import { StudioWriterContext } from "@/lib/context";
+import { toast } from "react-toastify";
 
 const CreatePost = ({ id }) => {
     const [post, setPost] = useState({
@@ -21,6 +22,8 @@ const CreatePost = ({ id }) => {
     const [open, setOpen] = useState(false);
     const [keyPress, setKeyPress] = useState(false);
     const [blocks, setBlocks] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [postLoading, setPostLoading] = useState(true)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,17 +43,28 @@ const CreatePost = ({ id }) => {
     // };
 
     useEffect(() => {
-        if (data?.article) {
-            setPost({ ...post, title: data?.article?.title })
+        const handler = () => {
+            if (data?.article) {
+                setPost({ ...post, title: data?.article?.title, ...data?.article })
+                if (data?.article?.content) {
+                    setBlocks(data?.article?.content);
+                }
+                setPostLoading(false);
+            }
         }
+        handler();
     }, [data?.article])
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await createPostAction(post)
-
-        // onSubmit(post);
+    const handleSubmit = async () => {
+        if (post.title === '' || post.content === '') {
+            return;
+        }
+        toast.promise(updatePostAction({ ...post, id: id, content: blocks }), {
+            pending: 'Updating Post...',
+            success: 'Post Updated',
+            error: 'Error updating post',
+        })
     };
 
     const handleKeyPress = (e) => {
@@ -79,16 +93,18 @@ const CreatePost = ({ id }) => {
                         InputProps={{
                             disableUnderline: true,
                             sx: { fontSize: '2.45rem', lineHeight: '2.6rem', fontWeight: 900, fontFamily: 'Karnak' },
-                            notched: false
+                            // notched: false
                         }}
                     />
                 </div>
                 <div className="my-2 lg:-mx-8">
-                    <Editor setBlocks={setBlocks} focus={keyPress} />
+                    <Editor content={post.content} loading={postLoading} setBlocks={setBlocks} focus={keyPress} />
                 </div>
             </div>
+            {console.log(post, '_________________________________Post')}
+            <Button className="!mt-52" variant="outlined" color="button" onClick={() => setOpen(true)}>Preview Json</Button>
 
-            <Button className="mt-10" variant="outlined" color="button" onClick={() => setOpen(true)}>Preview Json</Button>
+            <Button className="" variant="outlined" color="button" onClick={() => handleSubmit()}>Submit</Button>
 
             <Dialog open={open} sx={{ maxWidth: '600px', p: 4, minWidth: '150px', minHeight: '150px' }} onClose={() => setOpen(false)}>
                 <strong> {id} </strong>
@@ -98,6 +114,7 @@ const CreatePost = ({ id }) => {
                         {JSON.stringify(blocks, null, 2)}
                     </pre>
                 </div>
+
             </Dialog>
         </>
     );

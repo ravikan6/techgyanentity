@@ -14,6 +14,7 @@ import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkActi
 import { useSession } from 'next-auth/react';
 import { FaHandsClapping } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
+import { Edit } from '@mui/icons-material';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
@@ -27,6 +28,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
         <>
             <div className={`flex my-2 h-8 overflow-hidden ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
                 <div className={`justify-start flex items-center space-x-6`}>
+                    <EditPost id={id} />
                     <ClapPost id={id} />
                     {!isExpanded && <Button
                         onClick={() => setDrawable(true)}
@@ -154,5 +156,11 @@ const ClapPost = ({ id }) => {
 
     return (
         <Button disabled={isLoading} sx={{ px: 2, height: '32px' }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
+    );
+}
+
+const EditPost = ({ id }) => {
+    return (
+        <Button sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<Edit />} href={`/${process.env.STUDIO_URL_PREFIX}/p/${id}/edit`} />
     );
 }
