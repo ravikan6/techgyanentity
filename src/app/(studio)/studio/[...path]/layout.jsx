@@ -1,17 +1,13 @@
-'use client';
-import { StudioContext } from '@/lib/context';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { StudioPathLayoutWrapper } from "@/components/studio/wrappers";
 
 const StudioExpendedLayout = ({ children, params }) => {
     const { path } = params;
-    // const croute = path[0];
-    // const context = useContext(StudioContext);
 
-    // useMemo(() => {
-    //     context.setData({ ...context?.data, page: decodeURIComponent(croute), data: {} })
-    // }, [path]);
-
-    return children;
+    return (
+        <StudioPathLayoutWrapper path={decodeURIComponent(path[0])} >
+            {children}
+        </StudioPathLayoutWrapper>
+    )
 }
 
 export default StudioExpendedLayout;

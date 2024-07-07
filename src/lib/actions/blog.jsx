@@ -167,4 +167,25 @@ const getAuthorPosts = async (authorId) => {
     }
 }
 
-export { getAuthorPosts }
+const getArticleContent = async (id) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let content = await prisma.post.findUnique({
+            where: {
+                shortId: id,
+            },
+            select: {
+                content: true,
+            },
+        });
+        if (content) {
+            res = { ...res, data: content.content, status: 200 };
+        }
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+export { getAuthorPosts, getArticleContent }

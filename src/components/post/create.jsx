@@ -1,29 +1,25 @@
 "use client";
 import { Button, Dialog } from "../rui";
 import React, { useState, useContext, useEffect } from 'react';
-import { updatePostAction } from '@/lib/actions/blog';
+import { getArticleContent, updatePostAction } from '@/lib/actions/blog';
 import { TextField } from '@mui/material';
 import Editor from "../create/editor";
-import { StudioWriterContext } from "@/lib/context";
+import { StudioContext, StudioWriterContext } from "@/lib/context";
 import { toast } from "react-toastify";
 
 const CreatePost = ({ id }) => {
     const [post, setPost] = useState({
-        slug: '',
         title: '',
         content: '',
-        authorId: '',
-        published: false,
-        privacy: 'PUBLIC',
-        tags: '',
-        imageUrl: '',
-        imageAlt: '',
+
     });
     const [open, setOpen] = useState(false);
     const [keyPress, setKeyPress] = useState(false);
+
     const [blocks, setBlocks] = useState([]);
+    const [postLoading, setPostLoading] = useState(true);
+
     const [loading, setLoading] = useState(false);
-    const [postLoading, setPostLoading] = useState(true)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,7 +29,7 @@ const CreatePost = ({ id }) => {
         }));
     };
 
-    const { data } = useContext(StudioWriterContext);
+    const { data } = useContext(StudioContext);
     // const handleSwitchChange = (e) => {
     //     const { name, checked } = e.target;
     //     setPost((prevPost) => ({
@@ -43,11 +39,12 @@ const CreatePost = ({ id }) => {
     // };
 
     useEffect(() => {
-        const handler = () => {
+        const handler = async () => {
             if (data?.article) {
-                setPost({ ...post, title: data?.article?.title, ...data?.article })
-                if (data?.article?.content) {
-                    setBlocks(data?.article?.content);
+                setPost({ ...post, ...data?.article })
+                let dt = await getArticleContent(data?.article?.shortId);
+                if (dt?.content) {
+                    setBlocks(dt?.content);
                 }
             }
             setPostLoading(false);
@@ -57,7 +54,7 @@ const CreatePost = ({ id }) => {
 
 
     const handleSubmit = async () => {
-        if (post.title === '' || post.content === '') {
+        if (post.title === '' || blocks.length === 0 || loading) {
             return;
         }
         toast.promise(updatePostAction({ ...post, id: id, content: blocks }), {
@@ -121,7 +118,7 @@ const CreatePost = ({ id }) => {
                 Preview Json
             </Button>
 
-            <Button className="" variant="outlined" color="button" onClick={() => handleSubmit()}>
+            <Button disabled={loading} className="" variant="outlined" color="button" onClick={() => handleSubmit()}>
                 Submit
             </Button>
 

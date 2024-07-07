@@ -420,6 +420,10 @@ const ChannelEditLayout = ({ children }) => {
     let ref = useRef(null);
     const context = useContext(StudioContext);
 
+    useEffect(() => {
+        context?.setData({ ...context?.data, page: 'edit' });
+    }, []);
+
     const handlePublish = () => {
         context?.setLoading(true);
         setState({ ...state, run: true });
@@ -431,7 +435,7 @@ const ChannelEditLayout = ({ children }) => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 120) {
+            if (window.scrollY > 110) {
                 ref.current.classList.add('fixed', 'top-[54px]', 'right-0', 'z-20', 'bg-lightHead', 'dark:bg-darkHead', 'shadow-md', 'px-4', 'py-2', 'rounded-b-lg', '!mt-0', '!mb-0');
             } else {
                 ref.current.classList.remove('fixed', 'top-[54px]', 'right-0', 'z-20', 'bg-lightHead', 'dark:bg-darkHead', 'shadow-md', 'px-4', 'py-2', 'rounded-b-lg', '!mt-0', '!mb-0');
@@ -652,7 +656,7 @@ export const SetDynmicAuthor = ({ author }) => {
 
     return (
         <>
-            
+
         </>
     )
 }
