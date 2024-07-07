@@ -41,7 +41,7 @@ const StudioSidebar = (props) => {
             name: 'Content',
             icon: MdOutlineVideoLibrary,
             icon2: MdVideoLibrary,
-            link: `/${process.env.STUDIO_URL_PREFIX}/drafts`
+            link: `/${process.env.STUDIO_URL_PREFIX}/content`
         },
         {
             name: 'Analytics',

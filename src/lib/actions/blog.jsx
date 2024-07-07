@@ -115,3 +115,56 @@ export const getDrafts = async (authorId) => {
     });
     return drafts;
 }
+
+const getAuthorPosts = async (authorId) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        let posts = await prisma.post.findMany({
+            where: {
+                authorId: authorId,
+                isDeleted: false,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+            select: {
+                id: false,
+                title: true,
+                description: true,
+                shortId: true,
+                image: {
+                    select: {
+                        url: true,
+                        alt: true,
+                    }
+                },
+                published: true,
+                privacy: true,
+                publishedAt: true,
+                createdAt: true,
+                _count: {
+                    select: {
+                        claps: true,
+                        comments: true,
+                    }
+                }
+            },
+
+        });
+        if (posts) {
+            res = { ...res, data: posts, status: 200 };
+        }
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+export { getAuthorPosts }

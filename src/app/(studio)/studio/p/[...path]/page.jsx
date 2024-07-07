@@ -5,7 +5,7 @@ const WritePage = ({ params }) => {
     const { path } = params;
 
     if (path?.length === 2) {
-        if (path[1] === 'edit') {
+        if (path[1] === 'editor') {
             const id = path[0];
             return (
                 <div className='pt-10'>
@@ -17,7 +17,7 @@ const WritePage = ({ params }) => {
 
     return (
         <div>
-            <h1>Write Page</h1>
+            <h1>Post Edit</h1>
         </div>
     )
 }

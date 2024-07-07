@@ -80,11 +80,11 @@ const CreatePost = ({ id }) => {
     return (
         <>
             {postLoading ? (
-                <div class='flex space-x-2 justify-center items-centerw-full my-10 dark:invert'>
-                    <span class='sr-only'>Loading...</span>
-                    <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
-                    <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-                    <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce'></div>
+                <div className='flex space-x-2 justify-center items-centerw-full my-10 dark:invert'>
+                    <span className='sr-only'>Loading...</span>
+                    <div className='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+                    <div className='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+                    <div className='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce'></div>
                 </div>
             ) : (
                 <div>

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { SetDynmicAuthor } from '@/components/studio/author/_edit-funcs';
-import Drafts from '@/components/studio/drafts';
+import Drafts from '@/components/studio/content';
 
 const page = async ({ params, }) => {
   const { path } = params;
@@ -36,7 +36,7 @@ const page = async ({ params, }) => {
         <div>dashboard</div>
       </>
     );
-  } else if (croute === 'drafts') {
+  } else if (croute === 'content') {
 
     return (
       <>

@@ -33,14 +33,6 @@ export function metadata({ searchParams }) {
     };
 };
 
-async function getChannelInfo(id) {
-    return null;
-}
-
-async function getChannelBrand(id) {
-    return null;
-}
-
 const ChannelEditPage = async ({ searchParams }) => {
     let page = searchParams?.t || '';
     let data = {}
@@ -55,8 +47,6 @@ const ChannelEditPage = async ({ searchParams }) => {
     } else if (page === 'info') {
         data = authorInfo;
     }
-
-    console.log(data)
 
     if (page === 'sections') {
         return (
