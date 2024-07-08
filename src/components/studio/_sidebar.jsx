@@ -111,7 +111,7 @@ const StudioSidebar = (props) => {
     }, [context]);
 
     const MenuBtnStyle = (link) => {
-        return `mb-1 h-10 transition-colors ${open ? 'w-full rounded-xl' : 'w-10 rounded-full'} ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `mb-1 h-10 transition-colors rounded-full ${open ? 'w-full' : 'w-10'} ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     const bottomMenu = [

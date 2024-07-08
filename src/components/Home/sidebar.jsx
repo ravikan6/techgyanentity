@@ -117,15 +117,6 @@ const MainSidebar = (props) => {
     const [channelData, setchannelData] = useState(null);
     const [showMore, setShowMore] = useState(false);
 
-    useEffect(() => {
-        // if (session && session?.user?.id) {
-        //     const fetchUserData = async () => {
-        //         const data = await get_USER_DATA(session?.user?.username);
-        //         if (data && data?.data?.UserData?.edges[0]?.node) setUserData(data?.data?.UserData?.edges[0]?.node);
-        //     }
-        //     fetchUserData();
-        // }
-    }, [session]);
 
     const UserChannels = () => {
         const isPathMatching2 = false;
@@ -292,7 +283,7 @@ const MainSidebar = (props) => {
                 </div>
                 <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all bg-transparent`}>
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
-                        <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
+                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
                             {showMore ? <BiChevronUp className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
                             <span className={`${showMore ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{showMore ? 'Show less' : 'Show more'}</span>
                         </div>
@@ -304,7 +295,7 @@ const MainSidebar = (props) => {
 
     const NavBorder = () => {
         return (
-            <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
+            <span className='w-full border-accentLight/60 dark:border-accentDark/60 border-b my-2 h-0.5' ></span>
         )
     }
 
@@ -333,8 +324,9 @@ const MainSidebar = (props) => {
                             <NavBorder />
                             {!isSmall && <><UserChannels />
                                 <span className='w-full border-slate-200 dark:border-zinc-800 border-b my-2 h-0.5' ></span>
-                                <UserCommunities /> </>}
-                            <NavBorder />
+                                <UserCommunities />
+                                <NavBorder />
+                            </>}
                         </>
                     }
 
@@ -356,7 +348,7 @@ const MainSidebar = (props) => {
 
 const MenuItem = ({ menu, path, isSmall }) => {
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -375,7 +367,7 @@ const MenuItem = ({ menu, path, isSmall }) => {
             }}>
                 <Link href={menu.link} >
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
-                        <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
+                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
                             {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
                             <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{menu.name}</span>
                         </div>
@@ -446,7 +438,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
                 <p className="text-xs cheltenham text-center text-slate-700 dark:text-slate-100">
                     Join us! Sign in to like and comment on articles, vote & answer community posts, subscribe to channels, join communities, and follow other users.
                 </p>
-                <div>
+                <div className='flex space-x-4 justify-end items-center'>
                     <Button
                         variant='outlined'
                         color="primary"
@@ -476,8 +468,8 @@ const NonLoggedBox = ({ path, isSmall }) => {
             {staticMenu.map((menu, index) => (
                 <MenuItem key={index} menu={menu} path={path} />
             ))}
-            <div className='my-2'>
-                <Tooltip title={<TheBox />} open={showTip} placement="right" arrow>
+            <div className='my-2 flex w-full justify-center items-center'>
+                <Tooltip title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: true, }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
                     <Button
                         variant='outlined'
                         color="button"

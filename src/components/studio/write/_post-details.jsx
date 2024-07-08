@@ -1,4 +1,5 @@
 "use client";
+import { Button, TextField } from "@/components/rui";
 import { getArticledetails } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -62,6 +63,8 @@ const PostDetailsEditor = () => {
                     <div className=" w-8/12">
                         <div className="flex flex-col space-y-8 mb-5">
                             <TextField disabled={loading} size="large" required helperText={''} counter inputProps={{ maxLength: 150 }} className="" label="Title" value={npst?.title || post?.title} onChange={(e) => handleUpdateNewPost(e, 'title')} />
+
+                            <TextField disabled={loading} label="Description" size="large" required helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} className="" value={npst?.description || post?.description} onChange={(e) => handleUpdateNewPost(e, 'description')} />
                         </div>
                     </div>
                     <div className="w-3/12">

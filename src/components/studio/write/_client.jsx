@@ -174,6 +174,7 @@ export const UpdateEditorArticle = () => {
                         disabled={loading || !save}
                         variant="contained"
                         color="button"
+                        className={`${loading || !save ? '' : 'dark:!text-black'}`}
                     >
                         Save
                     </Button>
@@ -185,7 +186,7 @@ export const UpdateEditorArticle = () => {
 }
 
 export const BackToContent = () => {
-    const { state, loading } = useContext(StudioWriterContext);
+    const { state, loading, setLoading } = useContext(StudioWriterContext);
     const { data } = useContext(StudioContext)
     const { save } = state;
     const router = useRouter();
@@ -195,8 +196,10 @@ export const BackToContent = () => {
             if (save || loading) {
                 if (await confirm('Are you sure you want to leave this page?')) {
                     router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
-                }
+                    setLoading(true);
+                } else null;
             } else {
+                setLoading(true);
                 router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
             }
         } catch { }
@@ -208,8 +211,9 @@ export const BackToContent = () => {
                 onClick={onClickHandler}
                 size="small"
                 disabled={loading}
-                variant="contained"
+                variant="outlined"
                 color="button"
+                className="!text-nowrap"
             >
                 Post Details
             </Button>

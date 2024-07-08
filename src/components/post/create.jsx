@@ -30,6 +30,7 @@ const CreatePost = ({ id }) => {
                 let dt = await getArticleContent(data?.article?.shortId);
                 if (dt?.data) {
                     setPost({ ...post, ...data?.article, content: dt?.data })
+                    setBlocks(dt?.data);
                 } else setPost({ ...post, ...data?.article });
             }
             setPostLoading(false);
@@ -73,7 +74,8 @@ const CreatePost = ({ id }) => {
     };
 
     const handleCancle = () => {
-        setPost({ ...post, title: data?.article?.title, content: data?.article?.content });
+        setPost({ ...post, title: data?.article?.title });
+        setBlocks(post.content);
         setState({ ...state, save: false, cancle: false });
     }
 
