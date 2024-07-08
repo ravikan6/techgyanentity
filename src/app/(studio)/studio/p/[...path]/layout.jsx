@@ -1,6 +1,7 @@
 import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
 import { WriteHeader } from "@/components/studio/write/_header_focus";
 import { prisma } from "@/lib/db";
+import { getCldImageUrl } from "next-cloudinary";
 
 const WriteLayout = async ({ children, params }) => {
     const { path } = params;
@@ -32,6 +33,12 @@ const WriteLayout = async ({ children, params }) => {
                     }
                 }
             });
+
+            if (article) {
+                if (article?.image?.url) {
+                    article.image = getCldImageUrl({ src: article.image.url, width: 640, height: 360, crop: 'fill', quality: 'auto' })
+                }
+            }
 
             return (
                 <StudioWriteLayoutWrapper article={article} >

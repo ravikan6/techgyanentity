@@ -4,6 +4,7 @@ import { StudioContext, StudioWriterContext } from '@/lib/context';
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { useEffect } from 'react';
 import { Button } from '@/components/rui';
+import { usePathname } from 'next/navigation'
 
 const StudioMainLayoutWrapper = ({ children, session, authorData }) => {
     const [data, setData] = useState({ data: authorData, page: 'expended' });
@@ -11,22 +12,22 @@ const StudioMainLayoutWrapper = ({ children, session, authorData }) => {
 
     return (
         <StudioContext.Provider value={{ data, setData, loading, setLoading }}>
-            <StudioMainLayoutWrapperChild session={session} >
-                {children}
-            </StudioMainLayoutWrapperChild>
+            {children}
         </StudioContext.Provider>
     );
 }
 
 const StudioMainLayoutWrapperChild = ({ children, session }) => {
     const { data, setData } = useContext(StudioContext);
+    const pathname = usePathname();
+
     useEffect(() => {
         if (session && session?.user) {
             DecryptAuthorStudioCookie().then((res) => {
                 setData({ ...data, data: res });
             });
         }
-    }, [session]);
+    }, [session, pathname]);
 
     return (
         children

@@ -1,9 +1,10 @@
 'use client';
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useContext } from 'react';
 import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
 import { Divider, Box } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
 import { CreateOutlined, DraftsOutlined, FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
+import { StudioWriterContext } from '@/lib/context';
 
 export const WriteMenu = () => {
     const [anchorEl, setAnchorEl] = useState(null);

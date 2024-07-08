@@ -171,7 +171,7 @@ const PostBox = ({ url, title, image, open }) => {
         <>
             <div className="flex flex-col py-2 space-y-2 justify-center w-full items-center">
 
-                <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open && 'px-3'}`} >
+                <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open && 'px-3 w-full'}`} >
                     <Button fullWidth={open} sx={{ ...!open && { width: 32, height: 32, mx: 'auto' } }} >
                         <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
                             <ArrowBack className="w-5 dark:text-gray-200 text-gray-700 h-5" />
@@ -191,10 +191,10 @@ const PostBox = ({ url, title, image, open }) => {
                     </Tooltip>
                 </Link>
 
-                <div className={`${open ? 'flex' : 'hidden'} mt-2 flex-col px-3 mx-auto items-center`}>
+                <div className={`${open ? 'flex' : 'hidden'} mt-2 flex-col px-3 justify-start items-start`}>
                     <span className='text-base font-semibold mb-1'>Your Post</span>
                     <Tooltip title={title} placement='right'>
-                        <h3 className='text-sm text-start truncate w-full dark:text-gray-100 text-gray-800 cheltenham'>{title}</h3>
+                        <h3 className='text-sm text-start line-clamp-1 w-[99%] dark:text-gray-100 text-gray-800 cheltenham'>{title}</h3>
                     </Tooltip>
                 </div>
             </div>
