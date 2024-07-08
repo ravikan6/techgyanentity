@@ -1,12 +1,9 @@
 import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { NotificationBtn, SgBtn } from '@/components/Buttons';
+import { NotificationBtn } from '@/components/Buttons';
 import { Skeleton } from '@mui/material';
-import { NavMenu } from '@/components/Home/_profile-model';
 import { auth } from '@/lib/auth';
 import { StudioServiceSelecterMenu } from '../_profile';
-import { WriteMenu } from './_menu';
+import { UpdateEditorArticle, WriteMenu } from '@/components/studio/write/_client';
 import { ManinLogo } from '@/components/header';
 
 
@@ -37,6 +34,7 @@ const WriteHeader = async () => {
                                         </div>
                                         {session?.user?.id ? (
                                             <>
+                                                <UpdateEditorArticle />
                                                 <div>
                                                     <WriteMenu />
                                                 </div>
@@ -49,14 +47,7 @@ const WriteHeader = async () => {
                                         )}
                                     </>
                                 ) :
-                                    (
-                                        <>
-                                            <div className='mr-4'>
-                                                <NavMenu />
-                                            </div>
-                                            <SgBtn />
-                                        </>
-                                    )
+                                    null
                                 }
                             </div>
                         </div>

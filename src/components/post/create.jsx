@@ -9,17 +9,18 @@ import { toast } from "react-toastify";
 
 const CreatePost = ({ id }) => {
     const [post, setPost] = useState({
+        shortId: id,
         title: '',
         content: '',
-
     });
+
     const [open, setOpen] = useState(false);
     const [keyPress, setKeyPress] = useState(false);
 
     const [blocks, setBlocks] = useState([]);
     const [postLoading, setPostLoading] = useState(true);
 
-    const [loading, setLoading] = useState(false);
+    const { loading, setState, state } = useContext(StudioWriterContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,13 +31,6 @@ const CreatePost = ({ id }) => {
     };
 
     const { data } = useContext(StudioContext);
-    // const handleSwitchChange = (e) => {
-    //     const { name, checked } = e.target;
-    //     setPost((prevPost) => ({
-    //         ...prevPost,
-    //         [name]: checked,
-    //     }));
-    // };
 
     useEffect(() => {
         const handler = async () => {
@@ -53,11 +47,20 @@ const CreatePost = ({ id }) => {
     }, [data?.article])
 
 
+    useEffect(() => {
+        if ((post.title === '' || blocks.length === 0 || loading)) {
+            setState({ ...state, save: true, runner: handleSubmit })
+        } else {
+            setState({ ...state, save: false, runner: null })
+        }
+    }, [blocks, post]);
+
+
     const handleSubmit = async () => {
         if (post.title === '' || blocks.length === 0 || loading) {
             return;
         }
-        toast.promise(updatePostAction({ ...post, id: id, content: blocks }), {
+        toast.promise(updatePostAction({ id: post.shortId, content: blocks, title: post.title }), {
             pending: 'Updating Post...',
             success: 'Post Updated',
             error: 'Error updating post',
@@ -114,19 +117,17 @@ const CreatePost = ({ id }) => {
                 </div>
             )}
 
-            <Button className="!mt-52" variant="outlined" color="button" onClick={() => setOpen(true)}>
+            <Button className="!mt-52" size="small" variant="outlined" color="button" onClick={() => setOpen(true)}>
                 Preview Json
             </Button>
 
-            <Button disabled={loading} className="" variant="outlined" color="button" onClick={() => handleSubmit()}>
-                Submit
-            </Button>
+            <Dialog open={open} sx={{ maxWidth: '600px', minWidth: '150px', minHeight: '150px' }} onClose={() => setOpen(false)}>
+                <div className="p-4">
+                    <strong> {id} </strong>
 
-            <Dialog open={open} sx={{ maxWidth: '600px', p: 4, minWidth: '150px', minHeight: '150px' }} onClose={() => setOpen(false)}>
-                <strong> {id} </strong>
-
-                <div className="mt-2 overflow-x-scroll">
-                    <pre className="mt-4">{JSON.stringify(blocks, null, 2)}</pre>
+                    <div className="mt-2 overflow-x-scroll">
+                        <pre className="mt-4">{JSON.stringify(blocks, null, 2)}</pre>
+                    </div>
                 </div>
             </Dialog>
         </>

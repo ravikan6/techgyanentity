@@ -1,6 +1,6 @@
 'use client';
 import { Fragment, useState } from 'react';
-import { IconButton, Menu, Tooltip } from '@/components/rui'
+import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
 import { Divider, Box } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
 import { CreateOutlined, DraftsOutlined, FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
@@ -123,4 +123,33 @@ export const WriteMenu = () => {
 
         </Fragment>
     );
+}
+
+export const UpdateEditorArticle = () => {
+    const { state, setState, loading, setLoading } = useContext(StudioWriterContext);
+    const { save, cancle, runner } = state;
+
+    const onClickHandler = async () => {
+        if (runner && typeof runner === 'function' && !loading && save) {
+            setLoading(true);
+            await runner();
+            setState({ ...state, save: false, runner: null });
+            setLoading(false);
+        }
+    }
+
+    return (
+        <Tooltip title="Save">
+            <Button
+                onClick={onClickHandler}
+                size="small"
+                disabled={loading || !save}
+                variant="contained"
+                color="button"
+            >
+                Save
+            </Button>
+        </Tooltip>
+    );
+
 }

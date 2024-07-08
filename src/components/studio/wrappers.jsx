@@ -1,18 +1,35 @@
 "use client";
 import { DecryptAuthorStudioCookie } from '@/lib/actions/studio';
-import {  StudioContext, StudioWriterContext } from '@/lib/context';
+import { StudioContext, StudioWriterContext } from '@/lib/context';
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { useEffect } from 'react';
 import { Button } from '@/components/rui';
 
-const StudioMainLayoutWrapper = ({ children, authorData }) => {
+const StudioMainLayoutWrapper = ({ children, session, authorData }) => {
     const [data, setData] = useState({ data: authorData, page: 'expended' });
     const [loading, setLoading] = useState(false);
 
     return (
         <StudioContext.Provider value={{ data, setData, loading, setLoading }}>
-            {children}
+            <StudioMainLayoutWrapperChild session={session} >
+                {children}
+            </StudioMainLayoutWrapperChild>
         </StudioContext.Provider>
+    );
+}
+
+const StudioMainLayoutWrapperChild = ({ children, session }) => {
+    const { data, setData } = useContext(StudioContext);
+    useEffect(() => {
+        if (session && session?.user) {
+            DecryptAuthorStudioCookie().then((res) => {
+                setData({ ...data, data: res });
+            });
+        }
+    }, [session]);
+
+    return (
+        children
     );
 }
 
@@ -32,7 +49,6 @@ const StudioWriteLayoutWrapper = ({ children, article }) => {
     const { data, setData } = useContext(StudioContext);
 
     useEffect(() => {
-        console.log(article, '__________article');
         if (article && data?.data?.id) {
             if (data?.data?.id === article?.author?.id) {
                 setData({ ...data, page: 'p', article: article })
@@ -46,5 +62,15 @@ const StudioWriteLayoutWrapper = ({ children, article }) => {
 
 }
 
+const StudioWriteEditorWrapper = ({ children }) => {
+    const [state, setState] = useState({ save: false, cancle: false, runner: null });
+    const [loading, setLoading] = useState(false);
 
-export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper, StudioMainLayoutWrapper as AuthorProvider, StudioPathLayoutWrapper }
+    return (
+        <StudioWriterContext.Provider value={{ state, setState, loading, setLoading }}>
+            {children}
+        </StudioWriterContext.Provider>
+    );
+}
+
+export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper, StudioMainLayoutWrapper as AuthorProvider, StudioPathLayoutWrapper, StudioWriteEditorWrapper }

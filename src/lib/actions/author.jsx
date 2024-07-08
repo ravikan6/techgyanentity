@@ -220,12 +220,10 @@ const articleCommentsListAction = async (articleId) => {
             },
             take: 10
         })
-        console.log(comments[1].claps.includes({ user: { id: '' } }), '__________________________comments from ___')
 
         res = { ...res, data: comments, status: 200 };
         return res;
     } catch (e) {
-        console.log(e, '__________________________error comments from ___')
         res.errors.push({ message: e.message });
         return res;
     }
@@ -296,10 +294,8 @@ const articleCommentAction = async (data) => {
                 },
             });
             res = { ...res, data: comment, status: 200 };
-            console.log(comment, '__________________________comment updated from ___')
             return res;
         } else {
-            console.log(data, '____________________-dt')
             let comment = await prisma.comment.create({
                 data: {
                     content: data.body,
@@ -347,12 +343,10 @@ const articleCommentAction = async (data) => {
                 }
             })
             res = { ...res, data: comment, status: 200 };
-            console.log(comment, '__________________________comment added from ___')
             return res;
         }
     } catch (e) {
         res.errors.push({ message: e.message });
-        console.log(e, '__________________________comment error added from ___')
         return res;
     }
 }
@@ -373,7 +367,6 @@ const articleCommentClapAction = async (data, action) => {
                 }
             });
             res = { ...res, data: clap, status: 200 };
-            console.log(clap, '__________________________comment clap from ___')
             return res;
         } else if (action == 'create') {
             let clap = await prisma.commentClap.create({
@@ -383,12 +376,10 @@ const articleCommentClapAction = async (data, action) => {
                 }
             })
             res = { ...res, data: clap, status: 200 };
-            console.log(clap, '__________________________comment clap from ___')
             return res;
         }
         throw new Error('Invalid action');
     } catch (e) {
-        console.log(e, '__________________________error comment clap from ___')
         res.errors.push({ message: e.message });
         return res;
     }
@@ -430,11 +421,9 @@ const articleCommentDeleteAction = async (data) => {
             }
         });
         res = { ...res, data: dt, status: 200 };
-        console.log(comment, '__________________________comment deleted from ___')
         return res;
     } catch (e) {
         res.errors.push({ message: e.message });
-        console.log(e, '__________________________error comment deleted from ___')
         return res;
     }
 }

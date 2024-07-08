@@ -20,7 +20,7 @@ const StudioExpendedLayout = async ({ children }) => {
     }
 
     return (
-        <StudioMainLayoutWrapper authorData={authorData} >
+        <StudioMainLayoutWrapper authorData={authorData} session={session} >
             <StudioMainLayout.default session={session} >
                 <StudioHeader lang='en' />
                 <main className='mt-[54px]'>

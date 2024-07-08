@@ -4,13 +4,15 @@ import Image from 'next/image';
 import { Avatar, Skeleton } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState, useMemo, useContext } from 'react';
-import { MdAnalytics, MdAttachMoney, MdDashboardCustomize, MdFeedback, MdOutlineAnalytics, MdOutlineAttachMoney, MdOutlineDashboardCustomize, MdOutlineFeedback, MdOutlineSettings, MdOutlineVideoLibrary, MdSettings, MdVideoLibrary, } from 'react-icons/md';
-import { Button, Tooltip } from '@/components/rui/_components';
+import { MdAnalytics, MdAttachMoney, MdDashboardCustomize, MdFeedback, MdOutlineAnalytics, MdOutlineAttachMoney, MdOutlineDashboardCustomize, MdOutlineFeedback, MdOutlineSettings, MdOutlineVideoLibrary, MdSettings, MdVideoLibrary, MdDraw, MdOutlineDraw, MdCopyright } from 'react-icons/md';
+import { Button, Tooltip } from '@/components/rui';
 import { TbExternalLinkOff } from "react-icons/tb";
 import { useSession } from 'next-auth/react';
 import { StudioContext } from '@/lib/context';
-import { RiSettingsFill, RiSettingsLine } from 'react-icons/ri';
+import { RiSettingsFill, RiSettingsLine, RiArticleFill, RiArticleLine } from 'react-icons/ri';
 import { ArrowBack } from '@mui/icons-material';
+import { BiCommentDetail, BiSolidCommentDetail } from 'react-icons/bi';
+import { PiCopyrightFill } from 'react-icons/pi';
 
 const mainMenu = [
     {
@@ -47,17 +49,35 @@ const mainMenu = [
 
 const postMenu = (url) => [
     {
-        name: 'Edit',
-        icon: MdSettings,
-        icon2: MdOutlineSettings,
+        name: 'Details',
+        icon: RiArticleFill,
+        icon2: RiArticleLine,
         link: `${url}/edit`
     },
     {
-        name: 'Settings',
-        icon: MdSettings,
-        icon2: MdOutlineSettings,
-        link: `${url}/settings`
+        name: 'Analytics',
+        icon: MdAnalytics,
+        icon2: MdOutlineAnalytics,
+        link: `${url}/analytics`
     },
+    {
+        name: 'Editor',
+        icon: MdDraw,
+        icon2: MdOutlineDraw,
+        link: `${url}/editor`
+    },
+    {
+        name: 'Comments',
+        icon: BiSolidCommentDetail,
+        icon2: BiCommentDetail,
+        link: `${url}/comments`
+    },
+    {
+        name: 'Copyrights',
+        icon: MdCopyright,
+        icon2: PiCopyrightFill,
+        link: `${url}/rights`
+    }
 ]
 
 const StudioSidebar = (props) => {
@@ -81,7 +101,7 @@ const StudioSidebar = (props) => {
     }, [context]);
 
     const MenuBtnStyle = (link) => {
-        return `mb-0.5 h-10 max-w-[204px] transition-colors w-full rounded-full ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `mb-0.5 h-10 transition-colors w-full rounded-full ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     const bottomMenu = [
@@ -107,15 +127,15 @@ const StudioSidebar = (props) => {
                         <UserBox currentData={currentData} open={open} />
                     </div>}
 
-                    <div className={`${open ? 'h-[calc(100vh-256px)]' : 'h-[calc(100vh-200px)]'} w-full px-1.5 min-h-10 overflow-hidden hover:overflow-y-auto`}>
+                    <div className={`${open ? 'h-[calc(100vh-256px)]' : 'h-[calc(100vh-200px)]'} w-full px-1.5 rb__studio__menu min-h-10 overflow-hidden hover:overflow-y-auto`}>
                         <div className={`dark:bg-dark bg-light py-1 rounded-xl ${open ? 'w-full px-1.5' : 'flex flex-col items-center'} h-full overflow-hidden hover:overflow-y-auto`}>
                             {staticMenu.map((menu, index) => (
                                 <div key={index} className={MenuBtnStyle(menu.link)} >
                                     <Link href={menu.link} >
-                                        <Button fullWidth={open} >
+                                        <Button fullWidth={open} sx={{ ...!open && { width: 32, height: 32, mx: 'auto' } }} >
                                             <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
-                                                {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-white text-black h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                                {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">{menu.name}</span>}
+                                                {(path === menu.link) ? <menu.icon2 className={`w-5 h-5 dark:text-black text-black`} /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                                                {open && <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base font-semibold truncate`}>{menu.name}</span>}
                                             </div>
                                         </Button>
                                     </Link>
@@ -128,7 +148,7 @@ const StudioSidebar = (props) => {
                             {bottomMenu.map((menu, index) => (
                                 <div key={index} className={MenuBtnStyle(menu.link)} >
                                     <Link href={menu.link} >
-                                        <Button fullWidth={open} >
+                                        <Button fullWidth={open} sx={{ ...!open && { width: 32, height: 32, mx: 'auto' } }} >
                                             <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
                                                 {(path === menu.link) ? <menu.icon className="w-5 dark:text-white text-black h-5" /> : <menu.icon2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
                                                 {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">{menu.name}</span>}
@@ -151,17 +171,19 @@ const PostBox = ({ url, title, image, open }) => {
         <>
             <div className="flex flex-col py-2 space-y-2 justify-center w-full items-center">
 
-                <Button fullWidth={open} href={`/${process.env.STUDIO_URL_PREFIX}/content`} >
-                    <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
-                        <ArrowBack className="w-5 dark:text-gray-200 text-gray-700 h-5" />
-                        {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">Content</span>}
-                    </div>
-                </Button>
+                <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open && 'px-3'}`} >
+                    <Button fullWidth={open} sx={{ ...!open && { width: 32, height: 32, mx: 'auto' } }} >
+                        <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
+                            <ArrowBack className="w-5 dark:text-gray-200 text-gray-700 h-5" />
+                            {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">Content</span>}
+                        </div>
+                    </Button>
+                </Link>
 
                 <Link href={url} className={`${open ? '!w-[224px] !h-[127px]' : '!w-14 !h-8'} mx-auto rounded-full`}>
                     <Tooltip title='View on article page' placement='right'>
                         <div className='flex flex-col group justify-center items-center'>
-                            <Image draggable={false} className={`${open ? '!w-[224px] !h-[127px] text-2xl' : '!w-14 !h-8 text-base'} font-semibold rounded-md`} alt={title || ''} src={image || ''} width={224} height={127} />
+                            <Image draggable={false} className={`${open ? '!w-[224px] !h-[127px] text-xs' : '!w-14 !h-8 text-base'} bg-black/5 dark:bg-white/5 rounded-md`} alt={title || ''} src={image || ''} width={224} height={127} />
                             <div className={`hidden ${open ? '!w-[224px] cheltenham !h-[127px] text-base' : '!w-14 !h-8'} rounded-md justify-center items-center group-hover:flex absolute bg-dark/50`}>
                                 <TbExternalLinkOff className={`${open ? 'w-6 h-6' : 'w-2 h-2'}`} />
                             </div>
@@ -169,11 +191,12 @@ const PostBox = ({ url, title, image, open }) => {
                     </Tooltip>
                 </Link>
 
-                {open && <div className='flex mt-2 flex-col w-9/12 mx-auto items-center'>
+                <div className={`${open ? 'flex' : 'hidden'} mt-2 flex-col px-3 mx-auto items-center`}>
+                    <span className='text-base font-semibold mb-1'>Your Post</span>
                     <Tooltip title={title} placement='right'>
-                        <h3 className='text-lg text-start truncate w-full dark:text-gray-100 text-gray-800 font-semibold'>{title}</h3>
+                        <h3 className='text-sm text-start truncate w-full dark:text-gray-100 text-gray-800 cheltenham'>{title}</h3>
                     </Tooltip>
-                </div>}
+                </div>
             </div>
         </>
     )

@@ -54,10 +54,10 @@ export const createPostAction = async (data) => {
 export const handleCreatePostRedirectAction = async (authorId) => {
     const session = await auth();
     if (!session.user) {
-        redirect('/auth/v2/signin');
+        return redirect('/auth/v2/signin');
     }
     if (!authorId) {
-        redirect('/setup/author');
+        return redirect('/setup/author');
     }
     try {
 
@@ -76,31 +76,37 @@ export const handleCreatePostRedirectAction = async (authorId) => {
                 shortId: sId,
             }
         });
-        if (p.id)
-            redirect(`/${process.env.STUDIO_URL_PREFIX}/p/${p.id}/edit`);
+        if (p.shortId)
+            return redirect(`/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor`);
     } catch (error) {
         console.error("Error creating post:", error);
-        redirect('/');
+        return redirect('/');
     }
 }
 
 export const updatePostAction = async (data) => {
+    let res = { data: null, status: 500, errors: [] };
     const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
 
     try {
         const updatedPost = await prisma.post.update({
             where: {
-                id: data.id,
+                shortId: data.id,
             },
             data: {
                 title: data.title,
                 content: data.content,
             },
         });
-        return updatedPost;
+        res = { ...res, data: updatedPost, status: 200 };
+        return res;
     } catch (error) {
-        console.error("Error updating post:", error);
-        throw error;
+        res.errors.push({ message: e.message });
+        return res;
     }
 }
 

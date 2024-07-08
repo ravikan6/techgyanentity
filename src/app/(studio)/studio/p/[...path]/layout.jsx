@@ -1,4 +1,4 @@
-import { StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
+import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
 import { WriteHeader } from "@/components/studio/write/_header_focus";
 import { prisma } from "@/lib/db";
 
@@ -35,14 +35,14 @@ const WriteLayout = async ({ children, params }) => {
 
             return (
                 <StudioWriteLayoutWrapper article={article} >
-                    {path[1] === 'editor' ? <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
+                    {path[1] === 'editor' ? <StudioWriteEditorWrapper> <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
                         <WriteHeader />
                         <div className="w-full h-full overflow-y-auto">
                             <div className="max-w-[640px] w-full px-2 sm:px-0 mx-auto mt-[56px]">
                                 {children}
                             </div>
                         </div>
-                    </div> : children}
+                    </div> </StudioWriteEditorWrapper> : children}
                 </StudioWriteLayoutWrapper>
             )
 
