@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { getUserAuthors } from '@/lib/actions/user';
 
 
-export const StudioServiceSelecterMenu = ({ session }) => {
+export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) => {
     const usesession = useSession();
     if (usesession?.data) {
         session = usesession.data;
@@ -117,7 +117,7 @@ export const StudioServiceSelecterMenu = ({ session }) => {
 
                     <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, boxShadow: null }}>
 
-                        <SwitchAccount state={state} context={context} />
+                        {canSwitchAuthor ? <SwitchAccount state={state} context={context} /> : null}
 
                         <ListItemRdX link={{
                             name: 'Your data & privacy',

@@ -1,59 +1,31 @@
 import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
 import { WriteHeader } from "@/components/studio/write/_header_focus";
 import { prisma } from "@/lib/db";
-import { getCldImageUrl } from "next-cloudinary";
+import { getCImageUrl } from "@/lib/helpers";
+import { redirect } from 'next/navigation';
 
 const WriteLayout = async ({ children, params }) => {
     const { path } = params;
 
     if (path?.length === 2) {
-        const id = path[0];
-        let article = null
-        try {
-            article = await prisma.post.findUnique({
-                where: {
-                    shortId: id
-                },
-                select: {
-                    shortId: true,
-                    title: true,
-                    description: true,
-                    image: {
-                        select: {
-                            url: true,
-                            alt: true
-                        }
-                    },
-                    published: true,
-                    author: {
-                        select: {
-                            id: true,
-                            handle: true,
-                        }
-                    }
-                }
-            });
+        const article = await getArticle(path[0]);
 
-            if (article) {
-                if (article?.image?.url) {
-                    article.image = getCldImageUrl({ src: article.image.url, width: 640, height: 360, crop: 'fill', quality: 'auto' })
-                }
-            }
+        if (!article) {
+            return redirect
+        }
 
-            return (
-                <StudioWriteLayoutWrapper article={article} >
-                    {path[1] === 'editor' ? <StudioWriteEditorWrapper> <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
-                        <WriteHeader />
-                        <div className="w-full h-full overflow-y-auto">
-                            <div className="max-w-[640px] w-full px-2 sm:px-0 mx-auto mt-[56px]">
-                                {children}
-                            </div>
+        return (
+            <StudioWriteLayoutWrapper article={article} >
+                {path[1] === 'editor' ? <StudioWriteEditorWrapper> <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
+                    <WriteHeader />
+                    <div className="w-full h-full overflow-y-auto">
+                        <div className="max-w-[640px] w-full px-2 sm:px-0 mx-auto mt-[56px]">
+                            {children}
                         </div>
-                    </div> </StudioWriteEditorWrapper> : children}
-                </StudioWriteLayoutWrapper>
-            )
-
-        } catch { }
+                    </div>
+                </div> </StudioWriteEditorWrapper> : children}
+            </StudioWriteLayoutWrapper>
+        )
     }
 
     return (
@@ -61,6 +33,44 @@ const WriteLayout = async ({ children, params }) => {
             <h1>Write Page</h1>
         </div>
     )
+}
+
+const getArticle = async (id) => {
+    try {
+        const article = await prisma.post.findUnique({
+            where: {
+                shortId: id
+            },
+            select: {
+                shortId: true,
+                title: true,
+                description: true,
+                image: {
+                    select: {
+                        url: true,
+                        alt: true,
+                        provider: true
+                    }
+                },
+                published: true,
+                author: {
+                    select: {
+                        id: true,
+                        handle: true,
+                    }
+                }
+            }
+        });
+
+        if (article) {
+            if (article?.image?.provider === 'cloudinary') {
+                article.image = await getCImageUrl(article?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
+            }
+        }
+        return article;
+    } catch {
+        return null;
+    }
 }
 
 export default WriteLayout;

@@ -64,7 +64,7 @@ const StudioWriteLayoutWrapper = ({ children, article }) => {
 }
 
 const StudioWriteEditorWrapper = ({ children }) => {
-    const [state, setState] = useState({ save: false, cancle: false, runner: null });
+    const [state, setState] = useState({ save: false, cancle: false, runner: null, onCancle: null });
     const [loading, setLoading] = useState(false);
 
     return (

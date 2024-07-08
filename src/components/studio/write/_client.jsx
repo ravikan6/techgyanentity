@@ -1,7 +1,7 @@
 'use client';
 import { Fragment, useState, useContext } from 'react';
 import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
-import { Divider, Box } from '@mui/material';
+import { Divider, Box, LinearProgress } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
 import { CreateOutlined, DraftsOutlined, FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
 import { StudioWriterContext } from '@/lib/context';
@@ -128,29 +128,62 @@ export const WriteMenu = () => {
 
 export const UpdateEditorArticle = () => {
     const { state, setState, loading, setLoading } = useContext(StudioWriterContext);
-    const { save, cancle, runner } = state;
+    const { save, cancle, runner, onCancle } = state;
 
     const onClickHandler = async () => {
         if (runner && typeof runner === 'function' && !loading && save) {
             setLoading(true);
             await runner();
-            setState({ ...state, save: false, runner: null });
+            setState({ ...state, save: false, runner: null, cancle: false });
+            setLoading(false);
+        }
+    }
+
+    const onCancleHandler = () => {
+        if (!loading && cancle && onCancle && typeof onCancle === 'function') {
+            setLoading(true);
+            onCancle();
+            setState({ ...state, cancle: false, save: false });
             setLoading(false);
         }
     }
 
     return (
-        <Tooltip title="Save">
-            <Button
-                onClick={onClickHandler}
-                size="small"
-                disabled={loading || !save}
-                variant="contained"
-                color="button"
-            >
-                Save
-            </Button>
-        </Tooltip>
+        <>
+            <div className='flex space-x-6 items-center justify-end'>
+                <Tooltip title="Discard Changes">
+                    <Button
+                        onClick={onCancleHandler}
+                        size="small"
+                        disabled={loading || !cancle}
+                        variant="outlined"
+                        color="primary"
+                    >
+                        Undo Changes
+                    </Button>
+                </Tooltip>
+                <Tooltip title="Save or Update the Post">
+                    <Button
+                        onClick={onClickHandler}
+                        size="small"
+                        disabled={loading || !save}
+                        variant="contained"
+                        color="button"
+                    >
+                        Save
+                    </Button>
+                </Tooltip>
+            </div>
+        </>
     );
 
+}
+
+export const HeaderLoader = () => {
+    const { loading } = useContext(StudioWriterContext);
+    return (
+        <>
+            <LinearProgress className="!h-0.5 !fixed !top-[0] !z-[99] w-full" hidden={!loading} color="accent" />
+        </>
+    )
 }

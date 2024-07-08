@@ -131,13 +131,13 @@ function DataTable({ rows, columns }) {
 
 
 
-const BetaLoader2 = () => {
+export const BetaLoader2 = () => {
     return (
-        <div class='flex space-x-2 justify-center items-centerw-full my-10 dark:invert'>
+        <div class='flex space-x-2 justify-center items-centerw-full my-10'>
             <span class='sr-only'>Loading...</span>
-            <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
-            <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-            <div class='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce'></div>
+            <div class='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+            <div class='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+            <div class='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce'></div>
         </div>
     );
 };

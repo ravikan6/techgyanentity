@@ -19,31 +19,36 @@ const mainMenu = [
         name: 'Dashboard',
         icon: MdOutlineDashboardCustomize,
         icon2: MdDashboardCustomize,
-        link: `/${process.env.STUDIO_URL_PREFIX}/dashboard`
+        link: `/${process.env.STUDIO_URL_PREFIX}/dashboard`,
+        tip: 'View the dashboard'
     },
     {
         name: 'Content',
         icon: MdOutlineVideoLibrary,
         icon2: MdVideoLibrary,
-        link: `/${process.env.STUDIO_URL_PREFIX}/content`
+        link: `/${process.env.STUDIO_URL_PREFIX}/content`,
+        tip: 'Manage content'
     },
     {
         name: 'Analytics',
         icon: MdOutlineAnalytics,
         icon2: MdAnalytics,
-        link: `/${process.env.STUDIO_URL_PREFIX}/analytics`
+        link: `/${process.env.STUDIO_URL_PREFIX}/analytics`,
+        tip: 'View analytics'
     },
     {
         name: 'Monetization',
         icon: MdOutlineAttachMoney,
         icon2: MdAttachMoney,
-        link: `/${process.env.STUDIO_URL_PREFIX}/monetization`
+        link: `/${process.env.STUDIO_URL_PREFIX}/monetization`,
+        tip: 'Manage monetization'
     },
     {
         name: 'Customization',
         icon: RiSettingsLine,
         icon2: RiSettingsFill,
-        link: `/${process.env.STUDIO_URL_PREFIX}/edit`
+        link: `/${process.env.STUDIO_URL_PREFIX}/edit`,
+        tip: 'Customize settings'
     },
 ];
 
@@ -52,33 +57,38 @@ const postMenu = (url) => [
         name: 'Details',
         icon: RiArticleLine,
         icon2: RiArticleFill,
-        link: `${url}/edit`
+        link: `${url}/edit`,
+        tip: 'View article details'
     },
     {
         name: 'Analytics',
         icon: MdOutlineAnalytics,
         icon2: MdAnalytics,
-        link: `${url}/analytics`
+        link: `${url}/analytics`,
+        tip: 'View article analytics'
     },
     {
         name: 'Editor',
         icon: MdOutlineDraw,
         icon2: MdDraw,
-        link: `${url}/editor`
+        link: `${url}/editor`,
+        tip: 'Access article editor'
     },
     {
         name: 'Comments',
         icon: BiCommentDetail,
         icon2: BiSolidCommentDetail,
-        link: `${url}/comments`
+        link: `${url}/comments`,
+        tip: 'Manage article comments'
     },
     {
         name: 'Copyrights',
         icon: PiCopyrightFill,
         icon2: MdCopyright,
-        link: `${url}/rights`
+        link: `${url}/rights`,
+        tip: 'Manage article copyrights'
     }
-]
+];
 
 const StudioSidebar = (props) => {
     const path = usePathname();
@@ -131,14 +141,16 @@ const StudioSidebar = (props) => {
                         <div className={`dark:bg-dark bg-light py-1.5 rounded-xl ${open ? 'w-full px-1.5' : 'flex flex-col items-center'} h-full overflow-hidden hover:overflow-y-auto`}>
                             {staticMenu.map((menu, index) => (
                                 <div key={index} className={MenuBtnStyle(menu.link)} >
-                                    <Link href={menu.link} >
-                                        <Button fullWidth={open}  >
-                                            <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
-                                                {(path === menu.link) ? <menu.icon2 className={`w-5 h-5 dark:text-black text-black`} /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                                {open && <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base font-semibold truncate`}>{menu.name}</span>}
-                                            </div>
-                                        </Button>
-                                    </Link>
+                                    <Tooltip title={menu.tip} placement="right">
+                                        <Link href={menu.link} >
+                                            <Button fullWidth={open} sx={{ ...!open && { height: '40px', minWidth: '40px !important' } }}  >
+                                                <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : ''} items-center`}>
+                                                    {(path === menu.link) ? <menu.icon2 className={`w-5 h-5 dark:text-black text-black`} /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                                                    {open && <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base font-semibold truncate`}>{menu.name}</span>}
+                                                </div>
+                                            </Button>
+                                        </Link>
+                                    </Tooltip>
                                 </div>
                             ))}
                         </div>
@@ -148,8 +160,8 @@ const StudioSidebar = (props) => {
                             {bottomMenu.map((menu, index) => (
                                 <div key={index} className={MenuBtnStyle(menu.link)} >
                                     <Link href={menu.link} >
-                                        <Button fullWidth={open}  >
-                                            <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
+                                        <Button fullWidth={open} sx={{ ...!open && { height: '40px', minWidth: '40px !important' } }} >
+                                            <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : ''} items-center`}>
                                                 {(path === menu.link) ? <menu.icon className="w-5 dark:text-white text-black h-5" /> : <menu.icon2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
                                                 {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">{menu.name}</span>}
                                             </div>
@@ -169,19 +181,16 @@ const PostBox = ({ url, title, image, open }) => {
 
     return (
         <>
-            <div className="flex flex-col py-2 space-y-2 justify-center w-full items-center">
+            <div className="flex flex-col pb-2 space-y-2 justify-center w-full items-center">
 
-                <Link target="_blank" href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open && 'px-3 w-full'}`} >
-                    <Button fullWidth={open}  >
-                        <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : 'p-1'} items-center`}>
-                            <ArrowBack className="w-5 dark:text-gray-200 text-gray-700 h-5" />
-                            {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">Content</span>}
-                        </div>
+                <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open ? 'hidden' : 'inline'}`} >
+                    <Button className="!bg-light dark:!bg-dark" sx={{ height: '40px', minWidth: '40px !important', borderRadius: 999 }}  >
+                        <ArrowBack className="w-5 dark:text-white text-black h-5" />
                     </Button>
                 </Link>
 
-                <Link href={url} target="_blank" className={`${open ? '!w-[224px] !h-[127px]' : '!w-14 !h-8'} mx-auto rounded-full`}>
-                    <Tooltip title='View on article page' placement='right'>
+                <a href={url} target="_blank" className={`${open ? '!w-[224px] !h-[127px]' : '!w-14 !h-8'} mx-auto rounded-full`}>
+                    <Tooltip title={`Post Details: ${title}`} placement='right'>
                         <div className='flex flex-col group justify-center items-center'>
                             <Image draggable={false} className={`${open ? '!w-[224px] !h-[127px] text-xs' : '!w-14 !h-8 text-base'} bg-black/5 dark:bg-white/5 rounded-md`} alt={title || ''} src={image || '#'} width={224} height={127} />
                             <div className={`hidden ${open ? '!w-[224px] cheltenham !h-[127px] text-base' : '!w-14 !h-8'} rounded-md justify-center items-center group-hover:flex absolute bg-dark/50`}>
@@ -189,14 +198,23 @@ const PostBox = ({ url, title, image, open }) => {
                             </div>
                         </div>
                     </Tooltip>
-                </Link>
+                </a>
 
                 <div className={`${open ? 'flex' : 'hidden'} mt-2 w-full flex-col px-3 justify-start items-start`}>
-                    <span className='text-base font-semibold mb-1'>Your Post</span>
+                    <span className='text-base font-semibold mb-0.5'>Your Post</span>
                     <Tooltip title={title} placement='right'>
                         <h3 className='text-sm text-start line-clamp-1 w-[99%] dark:text-gray-300 text-gray-600 cheltenham'>{title}</h3>
                     </Tooltip>
                 </div>
+
+                <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open ? 'px-0.5 w-full block' : 'hidden'}`} >
+                    <Button size="small" fullWidth={open} >
+                        <div className={`flex ${open ? 'space-x-5 w-full' : ''} items-center`}>
+                            <ArrowBack className="w-5 dark:text-gray-200 text-gray-700 h-5" />
+                            <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">Back to Content</span>
+                        </div>
+                    </Button>
+                </Link>
             </div>
         </>
     )
@@ -206,7 +224,7 @@ const UserBox = ({ currentData, open }) => {
     return (
         <>
             <div className="flex flex-col py-2 justify-center w-full items-center">
-                <Link href={currentData?.url} className={`${open ? 'w-[100px] h-[100px]' : 'w-8 h-8'} mx-auto rounded-full`}>
+                <a target='_blank' href={currentData?.url} className={`${open ? 'w-[100px] h-[100px]' : 'w-8 h-8'} mx-auto rounded-full`}>
                     <Tooltip title='View' placement='bottom'>
                         <div className='flex flex-col group justify-center items-center'>
                             <Avatar draggable={false} className={`${open ? '!w-[100px] !h-[100px] text-2xl' : '!w-8 !h-8 text-base'} font-semibold rounded-full`} alt={currentData?.name || 'A'} src={currentData?.image} >{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
@@ -215,7 +233,7 @@ const UserBox = ({ currentData, open }) => {
                             </div>
                         </div>
                     </Tooltip>
-                </Link>
+                </a>
 
                 {open && <div className='flex mt-2 flex-col w-9/12 mx-auto items-center'>
                     <Tooltip title={currentData?.name} placement='right'>

@@ -6,12 +6,13 @@ import { TextField } from '@mui/material';
 import Editor from "../create/editor";
 import { StudioContext, StudioWriterContext } from "@/lib/context";
 import { toast } from "react-toastify";
+import { BetaLoader2 } from "../studio/content";
 
 const CreatePost = ({ id }) => {
     const [post, setPost] = useState({
         shortId: id,
         title: '',
-        content: '',
+        content: [],
     });
 
     const [open, setOpen] = useState(false);
@@ -35,16 +36,15 @@ const CreatePost = ({ id }) => {
     useEffect(() => {
         const handler = async () => {
             if (data?.article) {
-                setPost({ ...post, ...data?.article })
                 let dt = await getArticleContent(data?.article?.shortId);
                 if (dt?.data) {
-                    setBlocks(dt?.data);
-                }
+                    setPost({ ...post, ...data?.article, content: dt?.data })
+                } else setPost({ ...post, ...data?.article });
             }
             setPostLoading(false);
         }
         handler();
-    }, [data])
+    }, [data?.article])
 
 
     useEffect(() => {
@@ -80,12 +80,7 @@ const CreatePost = ({ id }) => {
     return (
         <>
             {postLoading ? (
-                <div className='flex space-x-2 justify-center items-centerw-full my-10 dark:invert'>
-                    <span className='sr-only'>Loading...</span>
-                    <div className='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
-                    <div className='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-                    <div className='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce'></div>
-                </div>
+                <BetaLoader2 />
             ) : (
                 <div>
                     <div className="mx-5">
