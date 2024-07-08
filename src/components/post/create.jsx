@@ -37,18 +37,18 @@ const CreatePost = ({ id }) => {
             if (data?.article) {
                 setPost({ ...post, ...data?.article })
                 let dt = await getArticleContent(data?.article?.shortId);
-                if (dt?.content) {
-                    setBlocks(dt?.content);
+                if (dt?.data) {
+                    setBlocks(dt?.data);
                 }
             }
             setPostLoading(false);
         }
         handler();
-    }, [data?.article])
+    }, [data])
 
 
     useEffect(() => {
-        if ((post.title === '' || blocks.length === 0 || loading)) {
+        if ((post.title !== '' || blocks.length !== 0 || !loading)) {
             setState({ ...state, save: true, runner: handleSubmit })
         } else {
             setState({ ...state, save: false, runner: null })
@@ -82,9 +82,9 @@ const CreatePost = ({ id }) => {
             {postLoading ? (
                 <div className='flex space-x-2 justify-center items-centerw-full my-10 dark:invert'>
                     <span className='sr-only'>Loading...</span>
-                    <div className='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
-                    <div className='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-                    <div className='h-6 w-6 bg-lightButton dark:bg-darkButton rounded-full animate-bounce'></div>
+                    <div className='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+                    <div className='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+                    <div className='h-6 w-6 bg-lightButton dark:!bg-darkButton rounded-full animate-bounce'></div>
                 </div>
             ) : (
                 <div>
@@ -121,7 +121,7 @@ const CreatePost = ({ id }) => {
                 Preview Json
             </Button>
 
-            <Dialog open={open} sx={{ maxWidth: '600px', minWidth: '150px', minHeight: '150px' }} onClose={() => setOpen(false)}>
+            <Dialog open={open} sx={{ maxWidth: '600px', minWidth: '150px', minHeight: '150px', mx: 'auto' }} onClose={() => setOpen(false)}>
                 <div className="p-4">
                     <strong> {id} </strong>
 

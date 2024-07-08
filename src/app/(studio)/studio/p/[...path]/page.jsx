@@ -1,7 +1,7 @@
 import { CreatePost } from '@/components/post/create'
 import React from 'react'
 
-const WritePage = ({ params }) => {
+const PostEditPage = ({ params }) => {
     const { path } = params;
 
     if (path?.length === 2) {
@@ -12,7 +12,13 @@ const WritePage = ({ params }) => {
                     <CreatePost id={id} />
                 </div>
             )
-        }
+        } else if (path[1] === 'edit') {
+            return (
+                <div>
+                    Welocme to the post details page for editing, here you can edit the post
+                </div>
+            )
+        } 
     }
 
     return (
@@ -22,4 +28,4 @@ const WritePage = ({ params }) => {
     )
 }
 
-export default WritePage;
+export default PostEditPage;
