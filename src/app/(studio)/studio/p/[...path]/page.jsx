@@ -1,4 +1,5 @@
 import { CreatePost } from '@/components/post/create'
+import PostDetailsEditor from '@/components/studio/write/_post-details';
 import React from 'react'
 
 const PostEditPage = ({ params }) => {
@@ -14,11 +15,9 @@ const PostEditPage = ({ params }) => {
             )
         } else if (path[1] === 'edit') {
             return (
-                <div>
-                    Welocme to the post details page for editing, here you can edit the post
-                </div>
+                <PostDetailsEditor />
             )
-        } 
+        }
     }
 
     return (

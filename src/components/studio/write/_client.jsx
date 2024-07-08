@@ -4,7 +4,9 @@ import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
 import { Divider, Box, LinearProgress } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
 import { CreateOutlined, DraftsOutlined, FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
-import { StudioWriterContext } from '@/lib/context';
+import { StudioContext, StudioWriterContext } from '@/lib/context';
+import { useRouter } from 'next/navigation';
+import confirm from '@/lib/confirm';
 
 export const WriteMenu = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -144,7 +146,9 @@ export const UpdateEditorArticle = () => {
             setLoading(true);
             onCancle();
             setState({ ...state, cancle: false, save: false });
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
         }
     }
 
@@ -158,6 +162,7 @@ export const UpdateEditorArticle = () => {
                         disabled={loading || !cancle}
                         variant="outlined"
                         color="primary"
+                        className="!text-nowrap"
                     >
                         Undo Changes
                     </Button>
@@ -179,11 +184,44 @@ export const UpdateEditorArticle = () => {
 
 }
 
+export const BackToContent = () => {
+    const { state, loading } = useContext(StudioWriterContext);
+    const { data } = useContext(StudioContext)
+    const { save } = state;
+    const router = useRouter();
+
+    const onClickHandler = async () => {
+        try {
+            if (save || loading) {
+                if (await confirm('Are you sure you want to leave this page?')) {
+                    router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
+                }
+            } else {
+                router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
+            }
+        } catch { }
+    }
+
+    return (
+        <Tooltip title="Back to Post Details">
+            <Button
+                onClick={onClickHandler}
+                size="small"
+                disabled={loading}
+                variant="contained"
+                color="button"
+            >
+                Post Details
+            </Button>
+        </Tooltip>
+    )
+}
+
 export const HeaderLoader = () => {
     const { loading } = useContext(StudioWriterContext);
     return (
         <>
-            <LinearProgress className="!h-0.5 !fixed !top-[0] !z-[99] w-full" hidden={!loading} color="accent" />
+            <LinearProgress className="!h-0.5 !absolute !top-[0] !z-[999] w-full" hidden={!loading} color="button" />
         </>
     )
 }

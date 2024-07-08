@@ -290,47 +290,17 @@ const MainSidebar = (props) => {
                         <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
                     ))}
                 </div>
-                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`mb-0.5 h-10 max-w-[204px] transition-all duration-500 w-full rounded-xl bg-transparent`}>
-                    <Button fullWidth >
+                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all bg-transparent`}>
+                    <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
                         <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
-                            {showMore ? <BiChevronUp className="w-5 text-black dark:text-white h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                            <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate">{showMore ? 'Show less' : 'Show more'}</span>
+                            {showMore ? <BiChevronUp className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
+                            <span className={`${showMore ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{showMore ? 'Show less' : 'Show more'}</span>
                         </div>
                     </Button>
                 </div>
             </>
         );
     }
-
-    const SubscriptionMenu = () => {
-        const [showMore, setShowMore] = useState(false);
-        let FirstFollowings = [];
-        if (channelData && channelData.followings && channelData.followings.data) {
-            FirstFollowings = channelData.followings.data.slice(0, 8);
-        }
-        return (
-            <>
-                <div className='mb-2 karnak font-semibold tracking-[1px]'>
-                    <div className='truncate'>Subscriptions</div>
-                </div>
-                {FirstFollowings.map((item, index) => (
-                    <div key={index} className="flex w-full items-center">
-                        <Link href={`/@${item?.handle}`} className={`h-10 rounded-t-xl  backdrop-blur-2xl transition-colors w-full `}>
-                            <Button fullWidth >
-                                <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
-                                    <Image width={20} height={20} className="h-5 w-5 rounded-md" src={item.logo?.url} alt="user" />
-                                    <span className="text-base dark:text-gray-100 text-gray-800 font-semibold">{item?.name}</span>
-                                </div>
-                            </Button>
-                        </Link>
-                    </div>
-                ))
-                }
-                <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
-            </>
-        )
-
-    };
 
     const NavBorder = () => {
         return (
@@ -339,7 +309,7 @@ const MainSidebar = (props) => {
     }
 
     const MenuBtnStyle = (link) => {
-        return `mb-0.5 h-10 max-w-[204px] transition-colors w-full ${(path === link) ? 'bg-lightButton dark:bg-darkButton rounded-full' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -353,7 +323,7 @@ const MainSidebar = (props) => {
                     {(!session && !session?.user?.id) &&
                         <>
                             <Suspense fallback={<div>Loading...</div>}>
-                                <NonLoggedBox path={path} />
+                                <NonLoggedBox path={path} isSmall={isSmall} />
                             </Suspense>
                         </>
                     }
@@ -361,15 +331,15 @@ const MainSidebar = (props) => {
                         <>
                             <UserMenu />
                             <NavBorder />
-                            <UserChannels />
-                            <span className='w-full border-slate-200 dark:border-zinc-800 border-b my-2 h-0.5' ></span>
-                            <UserCommunities />
+                            {!isSmall && <><UserChannels />
+                                <span className='w-full border-slate-200 dark:border-zinc-800 border-b my-2 h-0.5' ></span>
+                                <UserCommunities /> </>}
                             <NavBorder />
                         </>
                     }
-                    {/* <SubscriptionMenu /> */}
+
                     <div className='w-full mb-10'>
-                        <div className='mb-2 karnak font-semibold tracking-[1px]'>
+                        <div className={`${isSmall ? '!text-[0]' : 'mb-2 karnak font-semibold tracking-[1px]'}`}>
                             <span className='truncate'>Explore</span>
                         </div>
                         <div className='w-full'>
@@ -386,7 +356,7 @@ const MainSidebar = (props) => {
 
 const MenuItem = ({ menu, path, isSmall }) => {
     const MenuBtnStyle = (link) => {
-        return `mb-0.5 h-10 max-w-[204px] transition-all w-full ${(path === link) ? 'bg-lightButton dark:bg-darkButton rounded-full' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -404,10 +374,10 @@ const MenuItem = ({ menu, path, isSmall }) => {
                 },
             }}>
                 <Link href={menu.link} >
-                    <Button fullWidth={isSmall ? false : true} >
+                    <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
                         <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
-                            {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-white text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
-                            <span className={`text-base ${isSmall && 'w-0'} dark:text-gray-100 text-gray-800 font-semibold truncate`}>{menu.name}</span>
+                            {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
+                            <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{menu.name}</span>
                         </div>
                     </Button>
                 </Link>
@@ -436,7 +406,9 @@ const SmallSidebar = (props) => {
     );
 }
 
-const NonLoggedBox = ({ path }) => {
+const NonLoggedBox = ({ path, isSmall }) => {
+    const [showTip, setShowTip] = useState(false);
+
     const staticMenu = [
         {
             name: 'Content studio',
@@ -451,27 +423,70 @@ const NonLoggedBox = ({ path }) => {
             link: '/history'
         },
     ];
+
+    useEffect(() => {
+        let dt = localStorage.getItem('_non_logged_in_tip');
+        if (dt = null) {
+            setTimeout(() => {
+                setShowTip(true)
+            }, 3000)
+        } else {
+            setShowTip(false)
+        }
+    }, [])
+
+    function boxCloser() {
+        setShowTip(false)
+        localStorage.setItem('_non_logged_in_tip', 'true')
+    }
+
+    const TheBox = () => {
+        return (
+            <div className="flex flex-col backdrop-blur-md p-2 items-center justify-center space-y-4">
+                <p className="text-xs cheltenham text-center text-slate-700 dark:text-slate-100">
+                    Join us! Sign in to like and comment on articles, vote & answer community posts, subscribe to channels, join communities, and follow other users.
+                </p>
+                <div>
+                    <Button
+                        variant='outlined'
+                        color="primary"
+                        size="small"
+                        onClick={boxCloser}
+                    >
+                        Close
+                    </Button>
+
+                    <Button
+                        variant='outlined'
+                        color="button"
+                        size="small"
+                        onClick={boxCloser}
+                    >
+                        <BiSolidUserCircle className='w-5 h-5 mr-2' />
+                        <span >Sign In</span>
+                    </Button>
+                </div>
+            </div>
+
+        )
+    }
+
     return (
         <>
             {staticMenu.map((menu, index) => (
                 <MenuItem key={index} menu={menu} path={path} />
             ))}
-            <div className='rounded-xl mt-2 bg-slate-100 dark:bg-slate-800 overflow-hidden'>
-                <div className={`bg-[url('/static/images/rb-signin-light-box-1603847734787-9e8a3f3e9d60.avif')] dark:bg-[url('/static/images/rb-signin-dark-box-1655835584195-1839b9cdf2ae.avif')]`}>
-                    <div className="flex flex-col backdrop-blur-md bg-white/30 dark:bg-dark/30 p-2 items-center justify-center space-y-4">
-                        <p className="text-xs cheltenham text-center text-slate-700 dark:text-slate-100">
-                            Join us! Sign in to like and comment on articles, vote & answer community posts, subscribe to channels, join communities, and follow other users.
-                        </p>
-                        <Button
-                            variant='outlined'
-                            color="accent"
-                            className="dark:hover:!bg-gray-50 hover:!bg-dark hover:!text-white dark:hover:!text-stone-900 !rounded-full !font-bold !py-1 !px-4"
-                        >
-                            <BiSolidUserCircle className='w-5 h-5 mr-2' />
-                            <span className='mt-0.5'>Sign In</span>
-                        </Button>
-                    </div>
-                </div>
+            <div className='my-2'>
+                <Tooltip title={<TheBox />} open={showTip} placement="right" arrow>
+                    <Button
+                        variant='outlined'
+                        color="button"
+                        sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }}
+                    >
+                        <BiSolidUserCircle className='w-5 h-5' />
+                        <span className={`mt-0.5 ml-2 ${isSmall && 'hidden'}`}>Sign In</span>
+                    </Button>
+                </Tooltip>
             </div>
             <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
         </>

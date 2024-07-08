@@ -101,6 +101,10 @@ export const updatePostAction = async (data) => {
                 title: data.title,
                 content: data.content,
             },
+            select: {
+                title: true,
+                content: true,
+            }
         });
         res = { ...res, data: updatedPost, status: 200 };
         return res;
@@ -194,4 +198,39 @@ const getArticleContent = async (id) => {
     }
 }
 
-export { getAuthorPosts, getArticleContent }
+const getArticledetails = async (id) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        const dt = await prisma.post.findUnique({
+            where: {
+                shortId: id,
+            },
+            select: {
+                id: false,
+                content: false,
+                slug: true,
+                shortId: true,
+                title: true,
+                description: true,
+                published: true,
+                privacy: true,
+                publishedAt: true,
+                createdAt: true,
+                updatedAt: true,
+                deletedAt: true,
+                isDeleted: true,
+                tags: true,
+                image: true
+            },
+        });
+        if (dt) {
+            res = { ...res, data: dt, status: 200 };
+        }
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+export { getAuthorPosts, getArticleContent, getArticledetails }

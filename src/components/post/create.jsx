@@ -1,5 +1,4 @@
 "use client";
-import { Button, Dialog } from "../rui";
 import React, { useState, useContext, useEffect } from 'react';
 import { getArticleContent, updatePostAction } from '@/lib/actions/blog';
 import { TextField } from '@mui/material';
@@ -9,19 +8,13 @@ import { toast } from "react-toastify";
 import { BetaLoader2 } from "../studio/content";
 
 const CreatePost = ({ id }) => {
-    const [post, setPost] = useState({
-        shortId: id,
-        title: '',
-        content: [],
-    });
-
-    const [open, setOpen] = useState(false);
+    const [post, setPost] = useState({ shortId: id, title: '', content: [], });
     const [keyPress, setKeyPress] = useState(false);
-
     const [blocks, setBlocks] = useState([]);
     const [postLoading, setPostLoading] = useState(true);
 
     const { loading, setState, state } = useContext(StudioWriterContext);
+    const { data } = useContext(StudioContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,8 +23,6 @@ const CreatePost = ({ id }) => {
             [name]: value,
         }));
     };
-
-    const { data } = useContext(StudioContext);
 
     useEffect(() => {
         const handler = async () => {
@@ -49,9 +40,13 @@ const CreatePost = ({ id }) => {
 
     useEffect(() => {
         if ((post.title !== '' || blocks.length !== 0 || !loading)) {
-            setState({ ...state, save: true, runner: handleSubmit })
+            if (post.title === data?.article?.title && JSON.stringify(blocks) === JSON.stringify(data?.article?.content)) {
+                setState({ ...state, save: false, cancle: false })
+            } else {
+                setState({ ...state, save: true, cancle: true, runner: handleSubmit, onCancle: handleCancle })
+            }
         } else {
-            setState({ ...state, save: false, runner: null })
+            setState({ ...state, save: false, runner: null, cancle: false })
         }
     }, [blocks, post]);
 
@@ -60,12 +55,27 @@ const CreatePost = ({ id }) => {
         if (post.title === '' || blocks.length === 0 || loading) {
             return;
         }
-        toast.promise(updatePostAction({ id: post.shortId, content: blocks, title: post.title }), {
-            pending: 'Updating Post...',
-            success: 'Post Updated',
-            error: 'Error updating post',
-        })
+        try {
+            let data = {
+                title: post.title,
+                content: blocks,
+                shortId: post.shortId
+            }
+            const dt = await updatePostAction(data);
+            if (dt?.status === 200 && dt?.data) {
+                setPost({ ...post, ...dt?.data });
+                toast.success('Post updated successfully');
+            }
+        } catch {
+            toast.error('Something went wrong');
+        }
+
     };
+
+    const handleCancle = () => {
+        setPost({ ...post, title: data?.article?.title, content: data?.article?.content });
+        setState({ ...state, save: false, cancle: false });
+    }
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -111,20 +121,6 @@ const CreatePost = ({ id }) => {
                     </div>
                 </div>
             )}
-
-            <Button className="!mt-52" size="small" variant="outlined" color="button" onClick={() => setOpen(true)}>
-                Preview Json
-            </Button>
-
-            <Dialog open={open} sx={{ maxWidth: '600px', minWidth: '150px', minHeight: '150px', mx: 'auto' }} onClose={() => setOpen(false)}>
-                <div className="p-4">
-                    <strong> {id} </strong>
-
-                    <div className="mt-2 overflow-x-scroll">
-                        <pre className="mt-4">{JSON.stringify(blocks, null, 2)}</pre>
-                    </div>
-                </div>
-            </Dialog>
         </>
     );
 };

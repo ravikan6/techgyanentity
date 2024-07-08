@@ -11,10 +11,10 @@ const Editor = ({ setBlocks, focus, content, loading }) => {
         if (initialContent === "loading") {
             return undefined;
         }
-        if (initialContent === null || initialContent === undefined || initialContent === "") {
-            return BlockNoteEditor.create();
+        if (initialContent && initialContent !== "loading" && typeof initialContent === "object" && initialContent.length > 0) {
+            return BlockNoteEditor.create({ initialContent });
         }
-        return BlockNoteEditor.create({ initialContent });
+        return BlockNoteEditor.create();
     }, [initialContent]);
 
     useEffect(() => {

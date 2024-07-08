@@ -111,7 +111,7 @@ const StudioSidebar = (props) => {
     }, [context]);
 
     const MenuBtnStyle = (link) => {
-        return `mb-0.5 h-10 transition-colors ${open ? 'w-full' : 'w-10'} rounded-full ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `mb-1 h-10 transition-colors ${open ? 'w-full rounded-xl' : 'w-10 rounded-full'} ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     const bottomMenu = [
@@ -128,6 +128,8 @@ const StudioSidebar = (props) => {
             link: '#'
         },
     ];
+
+    console.log(currentData, '\n\n', context?.data?.article, '\n\n ____from Whatever')
 
     return (
         <>
@@ -146,7 +148,7 @@ const StudioSidebar = (props) => {
                                             <Button fullWidth={open} sx={{ ...!open && { height: '40px', minWidth: '40px !important' } }}  >
                                                 <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : ''} items-center`}>
                                                     {(path === menu.link) ? <menu.icon2 className={`w-5 h-5 dark:text-black text-black`} /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                                    {open && <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base font-semibold truncate`}>{menu.name}</span>}
+                                                    <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} ${!open && 'w-0'} text-base font-semibold truncate`}>{menu.name}</span>
                                                 </div>
                                             </Button>
                                         </Link>

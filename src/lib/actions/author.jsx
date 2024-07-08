@@ -27,7 +27,6 @@ const updateAuthorAction = async (obj) => {
 
         res = { ...res, data: author }
     } catch (error) {
-        console.log(error, '______________error____________from______________updateAuthorAction')
         res = { ...res, errors: [{ message: error.message }] };
     }
     return res;
@@ -72,7 +71,6 @@ const updateAuthorImagesAction = async (data, files) => {
                     throw new Error(logoData?.message);
                 }
             } catch (error) {
-                console.log('Error in logo upload:', error);
                 res.errors.push({ message: 'An error occurred while uploading logo. Please try again later.' });
                 lgData = null;
             }
@@ -107,7 +105,6 @@ const updateAuthorImagesAction = async (data, files) => {
                     throw new Error(bannerData?.message);
                 }
             } catch (error) {
-                console.error('Error in banner upload:', error);
                 res.errors.push({ message: 'An error occurred while uploading banner. Please try again later.' });
                 bnData = null;
             }
@@ -142,7 +139,6 @@ const updateAuthorImagesAction = async (data, files) => {
         }
         return res;
     } catch (error) {
-        console.error('Error in updateAuthorImagesAction:', error);
         res.errors.push({ message: 'An error occurred while updating images. Please try again later.' });
         return res;
     }

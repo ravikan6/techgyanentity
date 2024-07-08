@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 
 const StudioMainLayoutWrapper = ({ children, session, authorData }) => {
     const [data, setData] = useState({ data: authorData, page: 'expended' });
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     return (
         <StudioContext.Provider value={{ data, setData, loading, setLoading }}>
