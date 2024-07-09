@@ -30,8 +30,6 @@ const nextConfig = {
         instrumentationHook: true,
     },
     images: {
-        loader: 'custom',
-        loaderFile: './src/lib/NextImage.jsx',
         remotePatterns: [
             {
                 protocol: 'https',
