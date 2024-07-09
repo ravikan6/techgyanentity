@@ -2,14 +2,12 @@
 import { Button, TextField } from "@/components/rui";
 import { getArticledetails } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
-import { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { InputHeader } from "../author/_edit-funcs";
 import { CldImage } from "next-cloudinary";
 import { imgUrl } from "@/lib/helpers";
-import React, { useState } from 'react';
 import { Box, Chip } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
@@ -103,16 +101,7 @@ const PostDetailsEditor = () => {
 
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        '& .MuiChip-root': {
-            margin: theme.spacing(0.5),
-        },
-    },
-}));
-
 const TagInput = ({ tags, setTags }) => {
-    const classes = useStyles();
     const [inputValue, setInputValue] = useState('');
 
     const handleAddTag = (event) => {
@@ -127,7 +116,7 @@ const TagInput = ({ tags, setTags }) => {
     };
 
     return (
-        <Box className={`p-4 border rounded ${classes.root}`}>
+        <Box className={`p-4 border rounded`}>
             <Box display="flex" flexWrap="wrap">
                 {tags.map((tag, index) => (
                     <Chip

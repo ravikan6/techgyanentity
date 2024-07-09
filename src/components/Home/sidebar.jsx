@@ -418,7 +418,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
 
     useEffect(() => {
         let dt = localStorage.getItem('_non_logged_in_tip');
-        if (dt = null) {
+        if (dt === null) {
             setTimeout(() => {
                 setShowTip(true)
             }, 3000)
