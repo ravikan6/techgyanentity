@@ -1,5 +1,5 @@
 "use client";
-import { Button, TextField } from "@/components/rui";
+import { Button, MenuItem, Switch, TextField } from "@/components/rui";
 import { getArticledetails } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { InputHeader } from "../author/_edit-funcs";
 import { CldImage } from "next-cloudinary";
 import { imgUrl } from "@/lib/helpers";
-import { Box, Chip } from '@mui/material';
+import { Box, Chip, InputAdornment, Select } from '@mui/material';
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
@@ -91,10 +91,24 @@ const PostDetailsEditor = () => {
                                 <InputHeader label="Image" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} tip={'The image is the visual representation of your post.'} />
                                 <TextField readOnly disabled={loading} size="small" required helperText={''} className="" label="Image URL" value={npst?.image?.url || post?.image?.url || ''} onChange={(e) => handleUpdateNewPost(e, 'image')} />
                             </div>
+
+                            <div className="flex flex-col space-y-3">
+                                <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or password-protected.'} tip={'Choose the privacy settings for your post.'} />
+                                <Select value={npst?.privacy || post?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
+                                    <MenuItem value="PUBLIC">Public</MenuItem>
+                                    <MenuItem value="PRIVATE">Private</MenuItem>
+                                    <MenuItem value="UNLISTED">Unlisted</MenuItem>
+                                </Select>
+                            </div>
+
+                            <div className="flex flex-col space-y-3">
+                                <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
+                                <Switch label="Published" checked={npst?.published || post?.published || false} onChange={(e) => handleUpdateNewPost(e, 'published')} />
+                            </div>
+
                         </div>
                     </div>
                 </div>
-
             </div>
         </>
     )

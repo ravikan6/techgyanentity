@@ -450,7 +450,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
 
                     <Button
                         variant='outlined'
-                        color="button"
+                        color="head"
                         size="small"
                         onClick={boxCloser}
                     >
@@ -469,7 +469,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
                 <MenuItem key={index} menu={menu} path={path} />
             ))}
             <div className='my-2 flex w-full justify-center items-center'>
-                <Tooltip title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: true, }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
+                <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: true, }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
                     <Button
                         variant='outlined'
                         color="button"

@@ -78,7 +78,7 @@ const Drafts = () => {
                     <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{post?.title}</h3>
                     <div className="h-10 group/pst__view transition-all duration-300 w-[99%]">
                         <p className="text-gray-600 dark:text-gray-400 line-clamp-2 visible group-hover/pst__view:invisible text-xs text-pretty">{post?.description}</p>
-                        <div className="space-x-3 bottom-1.5 absolute flex transition-all duration-300 justify-start items-center invisible group-hover/pst__view:visible w-full">
+                        <div className="space-x-3 mb-2 absolute flex transition-all duration-300 justify-start items-center invisible group-hover/pst__view:visible w-full">
                             <IconView Icon={Edit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
                             <IconView Icon={Comment} onClick={() => toast('Comments')} tip='Comments' />
                             <IconView Icon={Analytics} onClick={() => toast('Analytics')} tip='Analytics' />
