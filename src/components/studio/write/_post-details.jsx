@@ -4,6 +4,8 @@ import { getArticledetails } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { InputHeader } from "../author/_edit-funcs";
+import { CldImage } from "next-cloudinary";
 
 
 const PostDetailsEditor = () => {
@@ -17,11 +19,10 @@ const PostDetailsEditor = () => {
         !loading && setLoading(true)
         const dtHandler = async () => {
             let dt = await getArticledetails(data?.article?.shortId);
-            if (dt.data) { setPost(dt.data); setLoading(false) } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
+            if (dt?.data) { setPost(dt.data); setLoading(false) } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
         }
-        dtHandler()
+        if (data?.article?.shortId) dtHandler();
     }, [data?.article])
-
 
     let ref = useRef(null);
 
@@ -62,13 +63,23 @@ const PostDetailsEditor = () => {
                 <div className="flex items-start mt-5 justify-between">
                     <div className=" w-8/12">
                         <div className="flex flex-col space-y-8 mb-5">
-                            <TextField disabled={loading} size="large" required helperText={''} counter inputProps={{ maxLength: 150 }} className="" label="Title" value={npst?.title || post?.title} onChange={(e) => handleUpdateNewPost(e, 'title')} />
+                            <div className="flex flex-col space-y-3">
+                                <InputHeader label="Title" desc={'The title of your post.'} tip={'The title of your post is the first thing that your readers will see. Make sure it is catchy and engaging.'} />
+                                <TextField disabled={loading} size="large" required helperText={''} counter inputProps={{ maxLength: 150 }} className="" label="Title" value={npst?.title || post?.title || ''} onChange={(e) => handleUpdateNewPost(e, 'title')} />
+                            </div>
+                            <div className="flex flex-col space-y-3">
+                                <InputHeader label="Description" desc={'The description of your post.'} tip={'The description of your post is a brief summary of what your post is about. It should be engaging and informative.'} />
+                                <TextField disabled={loading} label="Description" size="large" required helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} className="" value={npst?.description || post?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} />
+                            </div>
 
-                            <TextField disabled={loading} label="Description" size="large" required helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} className="" value={npst?.description || post?.description} onChange={(e) => handleUpdateNewPost(e, 'description')} />
                         </div>
                     </div>
                     <div className="w-3/12">
-
+                        <div className="flex flex-col space-y-8">
+                            <div>
+                                <CldImage width={320} height={160} src={npst?.image?.url || post?.image} alt={npst?.image?.alt || post?.title} className="w-full object-cover rounded-lg" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
