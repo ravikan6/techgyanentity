@@ -230,7 +230,7 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb': {
         backgroundColor: theme.palette?.switch?.contrastText,
     },
-    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    '& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-track': {
         backgroundColor: theme.palette?.switch?.accent,
     }
 }))
