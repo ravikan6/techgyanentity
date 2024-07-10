@@ -114,6 +114,49 @@ export const updatePostAction = async (data) => {
     }
 }
 
+export const updatePostDetailsAction = async (data) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        const updatedPost = await prisma.post.update({
+            where: {
+                shortId: data.id,
+            },
+            data: {
+                ...data?.data
+            },
+            select: {
+                id: false,
+                content: false,
+                slug: true,
+                shortId: true,
+                title: true,
+                description: true,
+                published: true,
+                privacy: true,
+                publishedAt: true,
+                createdAt: false,
+                updatedAt: true,
+                deletedAt: true,
+                isDeleted: true,
+                tags: true,
+                image: true
+            },
+        });
+        res = { ...res, data: updatedPost, status: 200 };
+        return res;
+    } catch (error) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+
 export const getDrafts = async (authorId) => {
     const session = await auth();
 

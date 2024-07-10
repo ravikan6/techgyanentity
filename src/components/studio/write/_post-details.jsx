@@ -1,12 +1,12 @@
 "use client";
 import { Button, MenuItem, Switch, TextField } from "@/components/rui";
-import { getArticledetails } from "@/lib/actions/blog";
+import { getArticledetails, updatePostDetailsAction } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { InputHeader } from "../author/_edit-funcs";
 import { getCldImageUrl } from "next-cloudinary";
-import { imgUrl } from "@/lib/helpers";
+import { getCImageUrl, imgUrl } from "@/lib/helpers";
 import { Box, Chip, InputAdornment, Select } from '@mui/material';
 import Image from 'next/image';
 
@@ -21,15 +21,45 @@ const PostDetailsEditor = () => {
         !loading && setLoading(true)
         const dtHandler = async () => {
             let dt = await getArticledetails(data?.article?.shortId);
-            if (dt?.data) { setPost(dt.data); setLoading(false) } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
+            if (dt?.data) {
+                setPost(dt.data)
+                setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, published: dt.data?.published })
+                setLoading(false)
+            } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
         }
         if (data?.article?.shortId) dtHandler();
     }, [data?.article])
 
     let ref = useRef(null);
 
-    const undoHandler = () => { }
-    const publishHandler = () => { }
+    const undoHandler = () => {
+        setNpst({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published })
+        setState({ ...state, canUndo: false, canSave: false })
+    }
+
+    const publishHandler = async () => {
+        setLoading(true)
+        try {
+            let res = await updatePostDetailsAction(data?.article?.shortId, npst)
+            if (res?.status === 200 && res.data) {
+                setPost({ ...post, ...res.data })
+                setState({ ...state, canUndo: false, canSave: false })
+                let img;
+                if (res.data?.image?.provider === 'cloudinary') {
+                    img = await getCImageUrl(res.data?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
+                }
+                setData({ ...data, article: { ...data?.article, ...res.data, image: img } })
+                setLoading(false)
+                toast.success('Post details saved successfully.')
+            } else {
+                setLoading(false)
+                toast.error('Something went wrong while saving post details, Please try again.')
+            }
+        } catch (e) {
+            setLoading(false)
+            toast.error('Something went wrong while saving post details, Please try again.')
+        }
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -61,6 +91,14 @@ const PostDetailsEditor = () => {
         });
     }
 
+    useEffect(() => {
+        if (npst?.title !== post?.title || npst?.slug !== post?.slug || npst?.description !== post?.description || npst?.tags !== post?.tags || npst?.image !== post?.image || npst?.privacy !== post?.privacy || npst?.published !== post?.published) {
+            setState({ ...state, canSave: true })
+        } else {
+            setState({ ...state, canSave: false })
+        }
+    }, [npst])
+
     return (
         <>
             <div className="relative">
@@ -81,7 +119,7 @@ const PostDetailsEditor = () => {
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Slug" desc={'The slug is the URL of your post. It is automatically generated based on the title of your post, but you can customize it.'} tip={'The slug is the URL of your post.'} />
-                                <TextField disabled={loading} size="small" required helperText={''} counter InputProps={{ maxLength: 250 }} endAdornment={<InputAdornment position="end"><div className="mx-1 font-semibold text-gray-600 dark:text-gray-400 stymie">{post?.shortId}</div></InputAdornment>} className="" label="Slug" value={npst?.slug || post?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
+                                <TextField disabled={loading} size="small" required helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 font-semibold text-gray-600 dark:text-gray-400 stymie">{post?.shortId}</div></InputAdornment> }} className="" label="Slug" value={npst?.slug || post?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Description" desc={'The description provides a summary of your post and helps readers understand what it is about. Make it engaging, informative, and concise.'} tip={'The description of your post is a brief summary of what your post is about.'} />
@@ -114,7 +152,7 @@ const PostDetailsEditor = () => {
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
-                                <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((npst?.post === undefined || post?.published === null) ? false : post?.published) : npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published')} />
+                                <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : post?.published) : npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published')} />
                             </div>
 
                         </div>
@@ -128,6 +166,7 @@ const PostDetailsEditor = () => {
 
 const TagInput = ({ tags, setTags }) => {
     const [inputValue, setInputValue] = useState('');
+    const [focus, setFocus] = useState(false);
 
     const handleAddTag = (event) => {
         if (event.key === 'Enter' && inputValue.trim() !== '') {
@@ -140,8 +179,14 @@ const TagInput = ({ tags, setTags }) => {
         setTags(tags.filter((tag) => tag !== tagToDelete));
     };
 
+    const handleFocus = () => {
+        if (tags && tags?.length > 0) {
+            setFocus(true)
+        } else setFocus(false)
+    }
+
     return (
-        <Box className={`${(tags && tags?.length > 0) ? 'p-2' : 'p-0'} border rounded-2xl dark:border-white/40 border-black/40 focus-within:dark:border-white focus-within:border-black`}>
+        <Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/40 border-black/40 focus-within:dark:border-white focus-within:border-black`}>
             <Box display="flex" flexWrap="wrap">
                 {tags.map((tag, index) => (
                     <Chip
@@ -157,12 +202,14 @@ const TagInput = ({ tags, setTags }) => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleAddTag}
-                    className="!w-auto !h-[32px] !mx-1"
+                    className="!h-[32px] !mx-1"
+                    sx={{ width: '20px', maxWidth: 'auto' }}
                     variant="standard"
                     margin="dense"
                     InputProps={{
                         disableUnderline: true,
                     }}
+                    focus={focus}
                 />
             </Box>
         </Box>

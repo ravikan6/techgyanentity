@@ -132,7 +132,7 @@ const UnstyledTextField = ({ counter, ...props }) => {
                 InputProps={{
                     ...InputProps,
                     ...inputProps,
-                    endAdornment: (
+                    endAdornment: inputProps?.endAdornment ? inputProps?.endAdornment : (
                         condition && <p className={`absolute right-1 mr-5 backdrop-blur-sm px-1 rounded-sm font-semibold ${size == 'small' ? `text-[8px] -bottom-0.5` : `text-[10px] bottom-1`} ${value?.length >= inputProps?.maxLength ? 'text-red-800 dark:text-red-600' : 'text-slate-700 dark:text-slate-300'} cheltenham text-right`}>{value?.length}{inputProps?.maxLength && `/${inputProps?.maxLength}`}</p>
                     ),
                 }}
