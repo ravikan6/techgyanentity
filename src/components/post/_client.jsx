@@ -26,7 +26,7 @@ import { StudioContext } from "@/lib/context";
 export const ArticleImage = ({ image, classes }) => {
     return <CldImage
         src={image?.url}
-        alt={image.alt}
+        alt={image?.alt}
         width={720}
         height={480}
         sizes="100vw"

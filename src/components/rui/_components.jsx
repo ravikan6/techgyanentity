@@ -220,6 +220,7 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
         '&.Mui-checked': {
             '& + .MuiSwitch-track': {
                 backgroundColor: theme.palette?.button?.main,
+                borderColor: theme.palette?.button?.main,
             },
         },
     },

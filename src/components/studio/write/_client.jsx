@@ -195,12 +195,12 @@ export const BackToContent = () => {
         try {
             if (save || loading) {
                 if (await confirm('Are you sure you want to leave this page?')) {
-                    router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
                     setLoading(true);
+                    return router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
                 } else null;
             } else {
                 setLoading(true);
-                router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
+                return router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
             }
         } catch { }
     }
@@ -211,7 +211,7 @@ export const BackToContent = () => {
                 onClick={onClickHandler}
                 size="small"
                 disabled={loading}
-                variant="outlined"
+                variant="text"
                 color="button"
                 className="!text-nowrap"
             >

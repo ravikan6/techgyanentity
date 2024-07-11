@@ -41,7 +41,7 @@ const CreatePost = ({ id }) => {
 
     useEffect(() => {
         if ((post.title !== '' || blocks.length !== 0 || !loading)) {
-            if (post.title === data?.article?.title && JSON.stringify(blocks) === JSON.stringify(data?.article?.content)) {
+            if ((post.title === data?.article?.title) && (JSON.stringify(blocks) === JSON.stringify(data?.article?.content))) {
                 setState({ ...state, save: false, cancle: false })
             } else {
                 setState({ ...state, save: true, cancle: true, runner: handleSubmit, onCancle: handleCancle })
@@ -60,7 +60,7 @@ const CreatePost = ({ id }) => {
             let data = {
                 title: post.title,
                 content: blocks,
-                shortId: post.shortId
+                id: post.shortId
             }
             const dt = await updatePostAction(data);
             if (dt?.status === 200 && dt?.data) {

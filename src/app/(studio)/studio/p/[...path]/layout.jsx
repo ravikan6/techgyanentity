@@ -23,7 +23,9 @@ const WriteLayout = async ({ children, params }) => {
                             {children}
                         </div>
                     </div>
-                </div> </StudioWriteEditorWrapper> : children}
+                </div> </StudioWriteEditorWrapper> : <div className="max-w-7xl w-full mx-auto">
+                    {children}
+                </div>}
             </StudioWriteLayoutWrapper>
         )
     }

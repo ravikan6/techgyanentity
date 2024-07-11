@@ -77,12 +77,19 @@ const PostDetailsEditor = () => {
     }, []);
 
     const handleUpdateNewPost = (e, key, c) => {
-        if (c) setNpst({ ...npst, [key]: e?.target?.checked })
-        else if (e?.target?.value && key)
-            if (key.includes('.')) {
-                let [k1, k2] = key.split('.');
-                setNpst({ ...npst, [k1]: { ...npst[k1], [k2]: e?.target?.value } })
-            } else setNpst({ ...npst, [key]: e?.target?.value })
+        if (key) {
+            const isHTMLContent = /<[a-z][\s\S]*>/i.test(e?.target?.value);
+            if (!isHTMLContent) {
+                if (c) {
+                    setNpst({ ...npst, [key]: e?.target?.checked });
+                } else if (key.includes('.')) {
+                    let [k1, k2] = key.split('.');
+                    setNpst({ ...npst, [k1]: { ...npst[k1], [k2]: e?.target?.value } });
+                } else {
+                    setNpst({ ...npst, [key]: e?.target?.value });
+                }
+            }
+        }
     }
 
     let image;
@@ -138,12 +145,12 @@ const PostDetailsEditor = () => {
                     <div className="w-3/12">
                         <div className="flex flex-col space-y-8">
                             <div className="flex flex-col space-y-2">
-                                {image ? <Image width={320} height={168} src={imgUrl(image)} alt={post?.image?.alt} className="w-full object-cover rounded-lg" /> : <div className="w-[320px] h-[168px] rounded-lg border border-dashed flex justify-center items-center">
+                                {image ? <Image width={320} height={168} src={imgUrl(image)} alt={post?.image?.alt} className="w-full object-cover rounded-lg" /> : <div className="w-full h-[168px] rounded-lg border border-dashed flex justify-center items-center">
                                     <div className="text-gray-400 dark:text-gray-600">No Image</div>
                                 </div>}
                                 <div className="flex flex-col space-y-3">
                                     <InputHeader label="" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} />
-                                    <TextField disabled={loading} size="small" required label="Caption" value={npst?.image?.caption || post?.image?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />
+                                    {image && <TextField disabled={loading} size="small" required label="Caption" value={npst?.image?.caption || post?.image?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />}
                                 </div>
                             </div>
 
@@ -216,7 +223,7 @@ const TagInput = ({ tags, setTags }) => {
     }, [inputValue])
 
     return (
-        <Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/40 border-black/40 focus-within:dark:border-white focus-within:border-black`}>
+        <Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/30 border-black/30 focus-within:dark:border-white focus-within:border-black`}>
             <Box display="flex" flexWrap="wrap">
                 {tags.map((tag, index) => (
                     <Chip

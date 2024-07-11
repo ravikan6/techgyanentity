@@ -109,7 +109,7 @@ export const updatePostAction = async (data) => {
         res = { ...res, data: updatedPost, status: 200 };
         return res;
     } catch (error) {
-        res.errors.push({ message: e.message });
+        res.errors.push({ message: error.message });
         return res;
     }
 }
@@ -151,7 +151,7 @@ export const updatePostDetailsAction = async (data) => {
         res = { ...res, data: updatedPost, status: 200 };
         return res;
     } catch (error) {
-        res.errors.push({ message: e.message });
+        res.errors.push({ message: error.message });
         return res;
     }
 }

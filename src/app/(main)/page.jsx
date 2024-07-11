@@ -39,10 +39,10 @@ export default async function Home() {
           {
             arr.map(() => {
               return (blogPosts.map((post) => (
-                <Link href={`/${post.author.handle}/${post.slug}`} key={post.slug} className="text-left">
-                  <ArticleImage classes={'rounded-lg'} image={post.image} />
+                <Link href={`/${post?.author?.handle}/${post.slug}`} key={post?.slug} className="text-left">
+                  <ArticleImage classes={'rounded-lg'} image={post?.image} />
                   <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
-                  <div className="flex ">
+                  <span className="flex ">
                     <Link className="flex mt-2 space-x-3 items-center" href={`/@${post?.author?.handle}`}>
                       <span className="w-10 h-10 rounded-3xl bg-black/20 dark:bg-white/20 animate-pulse" />
                       <p className="text-base flex flex-col font-semibold">
@@ -50,12 +50,11 @@ export default async function Home() {
                         <span className="text-sm -mt-1.5 font-medium">{post?.author?.handle}</span>
                       </p>
                     </Link>
-                  </div>
+                  </span>
                 </Link>)
               ))
             })
           }
-
         </div>
       </div>
     </>
