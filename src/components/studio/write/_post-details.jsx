@@ -76,9 +76,13 @@ const PostDetailsEditor = () => {
         };
     }, []);
 
-    const handleUpdateNewPost = (e, key) => {
-        if (e?.target?.value && key)
-            setNpst({ ...npst, [key]: e?.target?.value })
+    const handleUpdateNewPost = (e, key, c) => {
+        if (c) setNpst({ ...npst, [key]: e?.target?.checked })
+        else if (e?.target?.value && key)
+            if (key.includes('.')) {
+                let [k1, k2] = key.split('.');
+                setNpst({ ...npst, [k1]: { ...npst[k1], [k2]: e?.target?.value } })
+            } else setNpst({ ...npst, [key]: e?.target?.value })
     }
 
     let image;
@@ -92,10 +96,10 @@ const PostDetailsEditor = () => {
     }
 
     useEffect(() => {
-        if (npst?.title !== post?.title || npst?.slug !== post?.slug || npst?.description !== post?.description || npst?.tags !== post?.tags || npst?.image !== post?.image || npst?.privacy !== post?.privacy || npst?.published !== post?.published) {
-            setState({ ...state, canSave: true })
+        if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published })) {
+            setState({ ...state, canSave: true, canUndo: true })
         } else {
-            setState({ ...state, canSave: false })
+            setState({ ...state, canSave: false, canUndo: false })
         }
     }, [npst])
 
@@ -115,15 +119,15 @@ const PostDetailsEditor = () => {
                         <div className="flex flex-col space-y-8 mb-5">
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Title" desc={'The title of your post. Make it catchy and engaging to attract readers.'} tip={'The title of your post is the first thing that your readers will see.'} />
-                                <TextField disabled={loading} size="small" required helperText={''} counter inputProps={{ maxLength: 150 }} className="" label="Title" value={npst?.title || post?.title || ''} onChange={(e) => handleUpdateNewPost(e, 'title')} />
+                                <TextField disabled={loading} size="small" required helperText={''} counter inputProps={{ maxLength: 150 }} label="Title" value={npst?.title || post?.title || ''} onChange={(e) => handleUpdateNewPost(e, 'title')} />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Slug" desc={'The slug is the URL of your post. It is automatically generated based on the title of your post, but you can customize it.'} tip={'The slug is the URL of your post.'} />
-                                <TextField disabled={loading} size="small" required helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 font-semibold text-gray-600 dark:text-gray-400 stymie">{post?.shortId}</div></InputAdornment> }} className="" label="Slug" value={npst?.slug || post?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
+                                <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} label="Slug" value={npst?.slug || post?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Description" desc={'The description provides a summary of your post and helps readers understand what it is about. Make it engaging, informative, and concise.'} tip={'The description of your post is a brief summary of what your post is about.'} />
-                                <TextField disabled={loading} size="large" helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} className="" value={npst?.description || post?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} />
+                                <TextField disabled={loading} size="large" helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} value={npst?.description || post?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Tags" desc={'Tags help readers find your post. Add tags that are relevant to the content of your post.'} tip={'Tags help readers find your post.'} />
@@ -134,16 +138,18 @@ const PostDetailsEditor = () => {
                     <div className="w-3/12">
                         <div className="flex flex-col space-y-8">
                             <div className="flex flex-col space-y-2">
-                                <Image width={320} height={160} src={imgUrl(image)} alt={post?.image?.alt} className="w-full object-cover rounded-lg" />
+                                {image ? <Image width={320} height={168} src={imgUrl(image)} alt={post?.image?.alt} className="w-full object-cover rounded-lg" /> : <div className="w-[320px] h-[168px] rounded-lg border border-dashed flex justify-center items-center">
+                                    <div className="text-gray-400 dark:text-gray-600">No Image</div>
+                                </div>}
                                 <div className="flex flex-col space-y-3">
-                                    <InputHeader label="" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} tip={'The image is the visual representation of your post.'} />
-                                    {/* <TextField readOnly disabled={loading} size="small" required helperText={''} className="" label="Image URL" value={npst?.image?.url || post?.image?.url || ''} onChange={(e) => handleUpdateNewPost(e, 'image')} /> */}
+                                    <InputHeader label="" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} />
+                                    <TextField disabled={loading} size="small" required label="Caption" value={npst?.image?.caption || post?.image?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />
                                 </div>
                             </div>
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or password-protected.'} tip={'Choose the privacy settings for your post.'} />
-                                <Select size="small" value={npst?.privacy || post?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
+                                <Select size="small" className="!rounded-full" value={npst?.privacy || post?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
                                     <MenuItem value="PUBLIC">Public</MenuItem>
                                     <MenuItem value="PRIVATE">Private</MenuItem>
                                     <MenuItem value="UNLISTED">Unlisted</MenuItem>
@@ -152,7 +158,7 @@ const PostDetailsEditor = () => {
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
-                                <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : post?.published) : npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published')} />
+                                <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : !!post?.published) : !!npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published', c)} />
                             </div>
 
                         </div>
@@ -167,6 +173,9 @@ const PostDetailsEditor = () => {
 const TagInput = ({ tags, setTags }) => {
     const [inputValue, setInputValue] = useState('');
     const [focus, setFocus] = useState(false);
+    const backspaceCountRef = useRef(0);
+    const timeoutRef = useRef(null);
+    const [width, setWidth] = useState(0);
 
     const handleAddTag = (event) => {
         if (event.key === 'Enter' && inputValue.trim() !== '') {
@@ -175,15 +184,36 @@ const TagInput = ({ tags, setTags }) => {
         }
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Backspace' && inputValue.trim() === '' && tags.length > 0) {
+            backspaceCountRef.current += 1;
+
+            if (backspaceCountRef.current === 2) {
+                setTags(tags.pop());
+                backspaceCountRef.current = 0;
+            }
+
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+                backspaceCountRef.current = 0;
+            }, 300);
+        }
+    };
+
     const handleDeleteTag = (tagToDelete) => {
         setTags(tags.filter((tag) => tag !== tagToDelete));
     };
 
     const handleFocus = () => {
-        if (tags && tags?.length > 0) {
+        if (tags && tags?.length <= 0) {
             setFocus(true)
         } else setFocus(false)
     }
+
+    useEffect(() => {
+        if ((inputValue.length * 8 + 40) < 100) setWidth(100)
+        else setWidth(inputValue.length * 8 + 40)
+    }, [inputValue])
 
     return (
         <Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/40 border-black/40 focus-within:dark:border-white focus-within:border-black`}>
@@ -198,12 +228,12 @@ const TagInput = ({ tags, setTags }) => {
                 ))}
                 <TextField
                     size="small"
-                    placeholder="tag"
+                    placeholder="Add a tag..."
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleAddTag}
+                    onKeyDown={(e) => { handleAddTag(e), handleKeyDown(e) }}
                     className="!h-[32px] !mx-1"
-                    sx={{ width: '20px', maxWidth: 'auto' }}
+                    sx={{ width: `${width}px`, maxWidth: 'fit-content', mx: '6px', my: '4px !important', '& .MuiInputBase-root': { '& .MuiInputBase-input': { padding: '0px 10px !important', height: '32px !important' } } }}
                     variant="standard"
                     margin="dense"
                     InputProps={{

@@ -209,16 +209,27 @@ const RuiToggleButton = styled(ToggleButton)(({ theme }) => ({
 const RuiSwitch = styled(Switch)(({ theme }) => ({
     padding: 8,
     '& .MuiSwitch-switchBase': {
+        backgroundColor: 'transparent',
         '&:hover': {
             '& .MuiSwitch-thumb': {
                 width: 18,
                 height: 18,
                 margin: 1,
             }
-        }
+        },
+        '&.Mui-checked': {
+            '& + .MuiSwitch-track': {
+                backgroundColor: theme.palette?.button?.main,
+            },
+            '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: 0.5,
+            },
+        },
     },
     '& .MuiSwitch-track': {
         borderRadius: 22 / 2,
+        backgroundColor: 'transparent',
+        opacity: 1,
     },
     '& .MuiSwitch-thumb': {
         boxShadow: 'none',
@@ -227,13 +238,11 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
         margin: 2,
         backgroundColor: theme.palette?.switch?.main,
     },
-    '& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb': {
-        backgroundColor: theme.palette?.switch?.contrastText,
+    '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+        backgroundColor: 'transparent',
     },
-    '& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-track': {
-        backgroundColor: theme.palette?.switch?.accent,
-    }
-}))
+}));
 
 const RuiSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
     '& .MuiDrawer-paper': {
