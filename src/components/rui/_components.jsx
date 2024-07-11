@@ -212,30 +212,27 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
         backgroundColor: 'transparent',
         '&:hover': {
             '& .MuiSwitch-thumb': {
-                width: 18,
-                height: 18,
-                margin: 1,
+                width: 16,
+                height: 16,
+                margin: 2,
             }
         },
         '&.Mui-checked': {
             '& + .MuiSwitch-track': {
                 backgroundColor: theme.palette?.button?.main,
             },
-            '&.Mui-disabled + .MuiSwitch-track': {
-                opacity: 0.5,
-            },
         },
     },
     '& .MuiSwitch-track': {
         borderRadius: 22 / 2,
         backgroundColor: 'transparent',
-        opacity: 1,
+        border: '1px solid',
     },
     '& .MuiSwitch-thumb': {
         boxShadow: 'none',
-        width: 16,
-        height: 16,
-        margin: 2,
+        width: 14,
+        height: 14,
+        margin: 3,
         backgroundColor: theme.palette?.switch?.main,
     },
     '&.Mui-disabled + .MuiSwitch-track': {

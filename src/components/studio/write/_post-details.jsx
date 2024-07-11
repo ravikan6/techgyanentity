@@ -18,8 +18,8 @@ const PostDetailsEditor = () => {
     const { data, setData, loading, setLoading } = useContext(StudioContext)
 
     useEffect(() => {
-        !loading && setLoading(true)
         const dtHandler = async () => {
+            !loading && setLoading(true)
             let dt = await getArticledetails(data?.article?.shortId);
             if (dt?.data) {
                 setPost(dt.data)
@@ -28,7 +28,7 @@ const PostDetailsEditor = () => {
             } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
         }
         if (data?.article?.shortId) dtHandler();
-    }, [data?.article])
+    }, [data?.article?.shortId])
 
     let ref = useRef(null);
 
@@ -40,7 +40,7 @@ const PostDetailsEditor = () => {
     const publishHandler = async () => {
         setLoading(true)
         try {
-            let res = await updatePostDetailsAction(data?.article?.shortId, npst)
+            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npst })
             if (res?.status === 200 && res.data) {
                 setPost({ ...post, ...res.data })
                 setState({ ...state, canUndo: false, canSave: false })
@@ -158,7 +158,7 @@ const PostDetailsEditor = () => {
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
-                                <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : !!post?.published) : !!npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published', c)} />
+                                <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : !!post?.published) : !!npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published', true)} />
                             </div>
 
                         </div>
@@ -189,7 +189,7 @@ const TagInput = ({ tags, setTags }) => {
             backspaceCountRef.current += 1;
 
             if (backspaceCountRef.current === 2) {
-                setTags(tags.pop());
+                setTags(tags.slice(0, tags.length - 1));
                 backspaceCountRef.current = 0;
             }
 
