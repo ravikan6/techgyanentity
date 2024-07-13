@@ -256,7 +256,7 @@ const TagInput = ({ tags, setTags }) => {
     );
 };
 
-const FtImage = ({ img, handleUpdateNewPost, image, setImage }) => {
+const FtImage = ({ img, handleUpdateNewPost }) => {
     const [error, setError] = useState({ error: false, message: null });
     const [image, setImage] = useState(null);
 
