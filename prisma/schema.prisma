@@ -35,6 +35,7 @@ model Post {
   claps           PostClap[]
   bookmarkUsers   User[]     @relation(fields: [bookmarkUserIds], references: [id])
   bookmarkUserIds String[]   @db.ObjectId
+  meta            PostMeta?
 }
 
 model User {
@@ -129,6 +130,10 @@ type Image {
   provider String? @default("cloudinary")
   caption  String?
   location String?
+}
+
+type PostMeta {
+  comment_enabled Boolean @default(true)
 }
 
 type Avatar {

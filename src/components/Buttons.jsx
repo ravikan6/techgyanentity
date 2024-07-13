@@ -242,6 +242,49 @@ const BtnWithMenu = (props) => {
   );
 };
 
+const PostDetailsImageMenu = ({ onFistClick }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <div className={` w-8`}>
+        <Button variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={handleClick}>
+          <PiDotsThreeOutline className="w-4 h-4" />
+        </Button>
+      </div>
+      <div className=''>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+          sx={{ zIndex: '999' }} >
+          <MenuList className='min-w-48'>
+            <MenuItem onClick={onFistClick}>
+              <ListItemIcon >
+                <TbHeartHandshake className='w-6 h-6' />
+              </ListItemIcon>
+              <span className='stymie text-base'>Change Image</span>
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </div>
+    </>
+  );
+};
+
+
 const CreateBtn = ({ classes, iconColor, sx }) => {
   const { data } = useContext(StudioContext);
   if (!data?.data) return null;
@@ -310,5 +353,5 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
   )
 }
 
-export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton };
+export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu };
 

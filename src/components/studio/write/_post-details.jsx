@@ -9,6 +9,7 @@ import { getCldImageUrl } from "next-cloudinary";
 import { getCImageUrl, imgUrl } from "@/lib/helpers";
 import { Box, Chip, InputAdornment, Select } from '@mui/material';
 import Image from 'next/image';
+import { PostDetailsImageMenu } from "@/components/Buttons";
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
@@ -40,7 +41,13 @@ const PostDetailsEditor = () => {
     const publishHandler = async () => {
         setLoading(true)
         try {
-            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npst })
+            let data = npst;
+            let file = new FormData()
+            if (npst?.image && npst?.image?.provider === 'file') {
+                file.append('image', npst?.image?.url)
+                data?.image?.url = post?.image?.url;
+            }
+            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: data }, file)
             if (res?.status === 200 && res.data) {
                 setPost({ ...post, ...res.data })
                 setState({ ...state, canUndo: false, canSave: false })
@@ -92,16 +99,6 @@ const PostDetailsEditor = () => {
         }
     }
 
-    let image;
-
-    if (post?.image?.url) {
-        image = getCldImageUrl({
-            width: 320,
-            height: 160,
-            src: post?.image?.url,
-        });
-    }
-
     useEffect(() => {
         if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published })) {
             setState({ ...state, canSave: true, canUndo: true })
@@ -134,7 +131,7 @@ const PostDetailsEditor = () => {
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Description" desc={'The description provides a summary of your post and helps readers understand what it is about. Make it engaging, informative, and concise.'} tip={'The description of your post is a brief summary of what your post is about.'} />
-                                <TextField disabled={loading} size="large" helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} value={npst?.description || post?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} />
+                                <TextField disabled={loading} size="large" helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} value={npst?.description || post?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} placeholder="Add brief summary of what your post is about" />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Tags" desc={'Tags help readers find your post. Add tags that are relevant to the content of your post.'} tip={'Tags help readers find your post.'} />
@@ -144,18 +141,11 @@ const PostDetailsEditor = () => {
                     </div>
                     <div className="w-3/12">
                         <div className="flex flex-col space-y-8">
-                            <div className="flex flex-col space-y-2">
-                                {image ? <Image width={320} height={168} src={imgUrl(image)} alt={post?.image?.alt} className="w-full object-cover rounded-lg" /> : <div className="w-full h-[168px] rounded-lg border border-dashed flex justify-center items-center">
-                                    <div className="text-gray-400 dark:text-gray-600">No Image</div>
-                                </div>}
-                                <div className="flex flex-col space-y-3">
-                                    <InputHeader label="" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} />
-                                    {image && <TextField disabled={loading} size="small" required label="Caption" value={npst?.image?.caption || post?.image?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />}
-                                </div>
-                            </div>
+
+                            <FtImage img={npst?.image || post?.image} handleUpdateNewPost={handleUpdateNewPost} />
 
                             <div className="flex flex-col space-y-3">
-                                <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or password-protected.'} tip={'Choose the privacy settings for your post.'} />
+                                <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or unlisted.'} tip={'Choose the privacy settings for your post.'} />
                                 <Select size="small" className="!rounded-full" value={npst?.privacy || post?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
                                     <MenuItem value="PUBLIC">Public</MenuItem>
                                     <MenuItem value="PRIVATE">Private</MenuItem>
@@ -163,10 +153,16 @@ const PostDetailsEditor = () => {
                                 </Select>
                             </div>
 
-                            <div className="flex flex-col space-y-3">
+                            {((npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : !!post?.published) : !!npst?.published) && <>
+                                <Button fullWidth disabled={!state.canSave || loading} variant="outlined" color="button" className="dark:text-black" onClick={() => { handleUpdateNewPost({ target: { value: true } }, published), publishHandler() }}>
+                                    Publish
+                                </Button>
+                            </>}
+
+                            {/* <div className="flex flex-col space-y-3">
                                 <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
                                 <Switch label="Published" checked={(npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : !!post?.published) : !!npst?.published} onChange={(e) => handleUpdateNewPost(e, 'published', true)} />
-                            </div>
+                            </div> */}
 
                         </div>
                     </div>
@@ -222,6 +218,13 @@ const TagInput = ({ tags, setTags }) => {
         else setWidth(inputValue.length * 8 + 40)
     }, [inputValue])
 
+    const handleOnChange = (e) => {
+        if (e.target.value === ',') {
+            (inputValue.trim() !== '') && (setTags([...tags, inputValue.trim()]), setInputValue(''))
+        }
+        setInputValue(e.target.value)
+    }
+
     return (
         <Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/30 border-black/30 focus-within:dark:border-white focus-within:border-black`}>
             <Box display="flex" flexWrap="wrap">
@@ -237,7 +240,7 @@ const TagInput = ({ tags, setTags }) => {
                     size="small"
                     placeholder="Add a tag..."
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={(e) => handleOnChange(e)}
                     onKeyDown={(e) => { handleAddTag(e), handleKeyDown(e) }}
                     className="!h-[32px] !mx-1"
                     sx={{ width: `${width}px`, maxWidth: 'fit-content', mx: '6px', my: '4px !important', '& .MuiInputBase-root': { '& .MuiInputBase-input': { padding: '0px 10px !important', height: '32px !important' } } }}
@@ -252,6 +255,107 @@ const TagInput = ({ tags, setTags }) => {
         </Box>
     );
 };
+
+const FtImage = ({ img, handleUpdateNewPost, image, setImage }) => {
+    const [error, setError] = useState({ error: false, message: null });
+    const [image, setImage] = useState(null);
+
+    const { data, setData, loading, setLoading } = useContext(StudioContext)
+
+    let imageUrl;
+
+    if (img?.url) {
+        if (img?.provider === 'cloudinary') {
+            imageUrl = getCldImageUrl({
+                width: 320,
+                height: 160,
+                src: img?.url,
+            });
+        } else if (img?.provider === 'file') {
+            imageUrl = URL.createObjectURL(img?.url);
+        }
+    }
+
+    const handleFeaturedImageUpload = () => {
+        const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+        const MIN_WIDTH = 600;
+        const MIN_HEIGHT = Math.round((MIN_WIDTH / 16) * 9);
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/png, image/jpeg, image/gif';
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.onload = () => {
+                        const { width, height } = image;
+                        const fileSize = file.size;
+                        const fileType = file.type;
+
+                        // Check file size
+                        if (fileSize > 6 * 1024 * 1024) {
+                            setError({ error: true, message: 'File size should be less than 6MB.' });
+                            return;
+                        }
+
+                        // Check file type
+                        if (!ACCEPTED_FILE_TYPES.includes(fileType)) {
+                            setError({ error: true, message: 'Invalid file type. Please upload a PNG, JPEG, or GIF file.' });
+                            return;
+                        }
+
+                        // Check dimensions
+                        if (width < MIN_WIDTH || height < MIN_HEIGHT) {
+                            setError({ error: true, message: `Minimum width and height should be ${MIN_WIDTH}px * ${MIN_HEIGHT}px` });
+                            return;
+                        }
+
+                        // Clear previous error message if any
+                        setError({ error: false, message: null });
+
+                        setImage({ file });
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    };
+
+    useEffect(() => {
+        if (image?.file && !error.error) {
+            handleUpdateNewPost({ target: { value: 'file' } }, 'image.provider');
+            handleUpdateNewPost({ target: { value: image?.file } }, 'image.url')
+        }
+    }, [image])
+
+    return (
+        <div className="flex flex-col space-y-2">
+            {imageUrl ?
+                <div className="relative">
+                    <Image width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg" />
+                    <div className="absolute top-2 right-2">
+                        <PostDetailsImageMenu onFistClick={handleFeaturedImageUpload} />
+                    </div>
+                </div> : <>
+                    <div onClick={handleFeaturedImageUpload} className="w-full h-[168px] rounded-lg border border-dashed flex justify-center items-center border-lightHead dark:border-darkHead">
+                        <div className="text-lightButton dark:text-darkButton">Upload Image</div>
+                    </div>
+                    {error.error && <span className=" mt-1 text-xs text-red-700 dark:text-red-500">
+                        {error?.message}
+                    </span>}
+                </>}
+            <div className="flex flex-col space-y-3">
+                <InputHeader label="" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} />
+                {imageUrl && <TextField disabled={loading} size="small" required label="Caption" value={img?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />}
+            </div>
+        </div >
+    )
+}
 
 
 

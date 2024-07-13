@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { generateUniqueId } from '../helpers';
+import { deleteCloudinaryImage, uploadImage } from './upload';
+import { cloudinaryProvider } from './author';
 
 export const getBlogs = async () => {
 
@@ -114,12 +116,36 @@ export const updatePostAction = async (data) => {
     }
 }
 
-export const updatePostDetailsAction = async (data) => {
+export const updatePostDetailsAction = async (data, file) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
     if (!session || !session.user) {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
+    }
+
+    let image = file?.get('image')
+
+    if (image && !image === undefined && data?.data?.image?.provider === 'file') {
+        try {
+            let ftImage = await uploadImage(image);
+            if (ftImage?.success) {
+                ftImage = await cloudinaryProvider(ftImage?.data);
+                data.data.image = { ...data?.data?.image, ...ftImage }
+                if (data?.data?.image?.url) {
+                    let rmImg = await deleteCloudinaryImage(data?.data?.image?.url);
+                    if (!rmImg?.success) {
+                        throw new Error(rmImg?.message);
+                    }
+                }
+            } else {
+                throw new Error(ftImage?.message);
+            }
+        } catch (error) {
+            res.errors.push({ message: 'An error occurred while uploading post Image. Please try again later.' });
+            delete data.data.image.url;
+            delete data.data.image.provider;
+        }
     }
 
     try {
