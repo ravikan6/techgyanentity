@@ -45,7 +45,7 @@ const PostDetailsEditor = () => {
             let file = new FormData()
             if (npst?.image && npst?.image?.provider === 'file') {
                 file.append('image', npst?.image?.url)
-                data?.image?.url = post?.image?.url;
+                data.image.url = post?.image?.url;
             }
             let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: data }, file)
             if (res?.status === 200 && res.data) {
