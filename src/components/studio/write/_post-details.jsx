@@ -266,7 +266,7 @@ const TagInput = ({ tags, setTags }) => {
 const FtImage = ({ img, handleUpdateNewPost }) => {
     const [error, setError] = useState({ error: false, message: null });
     const [image, setImage] = useState({});
-    console.log(image, '___img__', img, URL.createObjectURL(img?.url))
+    console.log(image, '___img__', img)
     const { data, setData, loading, setLoading } = useContext(StudioContext)
 
     let imageUrl;
@@ -278,7 +278,7 @@ const FtImage = ({ img, handleUpdateNewPost }) => {
                 height: 160,
                 src: img?.url,
             });
-        } else if (img?.provider === 'file') {
+        } else if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
             imageUrl = URL.createObjectURL(img?.url);
         }
     }
