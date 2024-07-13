@@ -8,7 +8,7 @@ import { InputHeader } from "../author/_edit-funcs";
 import { getCldImageUrl } from "next-cloudinary";
 import { getCImageUrl, imgUrl } from "@/lib/helpers";
 import { Box, Chip, InputAdornment, Select } from '@mui/material';
-import Image from 'next/image';
+import { default as NextImage } from 'next/image';
 import { PostDetailsImageMenu } from "@/components/Buttons";
 
 const PostDetailsEditor = () => {
@@ -153,11 +153,11 @@ const PostDetailsEditor = () => {
                                 </Select>
                             </div>
 
-                            {((npst?.published === undefined || npst?.published === null) ? ((post?.published === undefined || post?.published === null) ? false : !!post?.published) : !!npst?.published) && <>
-                                <Button fullWidth disabled={!state.canSave || loading} variant="outlined" color="button" className="dark:text-black" onClick={() => { handleUpdateNewPost({ target: { value: true } }, published), publishHandler() }}>
+                            {(npst?.published === false || npst?.published === false) ? <>
+                                <Button fullWidth disabled={loading} variant="outlined" color="button" className="dark:text-black" onClick={() => { handleUpdateNewPost({ target: { value: true } }, published), publishHandler() }}>
                                     Publish
                                 </Button>
-                            </>}
+                            </> : null}
 
                             {/* <div className="flex flex-col space-y-3">
                                 <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
@@ -220,9 +220,11 @@ const TagInput = ({ tags, setTags }) => {
 
     const handleOnChange = (e) => {
         if (e.target.value === ',') {
-            (inputValue.trim() !== '') && (setTags([...tags, inputValue.trim()]), setInputValue(''))
-        }
-        setInputValue(e.target.value)
+            if (inputValue.trim() !== '') {
+                setTags([...tags, inputValue.trim()])
+                setInputValue('')
+            }
+        } else setInputValue(e.target.value)
     }
 
     return (
@@ -337,7 +339,7 @@ const FtImage = ({ img, handleUpdateNewPost }) => {
         <div className="flex flex-col space-y-2">
             {imageUrl ?
                 <div className="relative">
-                    <Image width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg" />
+                    <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg" />
                     <div className="absolute top-2 right-2">
                         <PostDetailsImageMenu onFistClick={handleFeaturedImageUpload} />
                     </div>

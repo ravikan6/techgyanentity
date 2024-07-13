@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import { BsPatchQuestion } from 'react-icons/bs';
 import { StudioContext } from '@/lib/context';
 import { handleCreatePostRedirectAction } from '@/lib/actions/blog';
+import { LuReplaceAll } from "react-icons/lu";
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -256,7 +257,7 @@ const PostDetailsImageMenu = ({ onFistClick }) => {
   return (
     <>
       <div className={` w-8`}>
-        <Button variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={handleClick}>
+        <Button variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className="!bg-lightHead dark:!bg-darkHead" onClick={handleClick}>
           <PiDotsThreeOutline className="w-4 h-4" />
         </Button>
       </div>
@@ -273,7 +274,7 @@ const PostDetailsImageMenu = ({ onFistClick }) => {
           <MenuList className='min-w-48'>
             <MenuItem onClick={onFistClick}>
               <ListItemIcon >
-                <TbHeartHandshake className='w-6 h-6' />
+                <LuReplaceAll className='w-6 h-6' />
               </ListItemIcon>
               <span className='stymie text-base'>Change Image</span>
             </MenuItem>
