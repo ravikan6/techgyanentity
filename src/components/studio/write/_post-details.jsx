@@ -18,6 +18,8 @@ const PostDetailsEditor = () => {
 
     const { data, setData, loading, setLoading } = useContext(StudioContext)
 
+    console.log(npst, 'NPST_From_SERVER_ACTIONS_____') //#rm
+
     useEffect(() => {
         const dtHandler = async () => {
             !loading && setLoading(true)
@@ -41,14 +43,15 @@ const PostDetailsEditor = () => {
     const publishHandler = async () => {
         setLoading(true)
         try {
-            let data = npst;
-            let file = new FormData()
+            let npstData = npst;
+            let file = new FormData();
             if (npst?.image && npst?.image?.provider === 'file') {
                 file.append('image', npst?.image?.url)
-                data.image.url = post?.image?.url;
+                npstData.image.url = post?.image?.url;
             }
-            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: data }, file)
+            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData }, file)
             if (res?.status === 200 && res.data) {
+                console.log(res, '_______________res')
                 setPost({ ...post, ...res.data })
                 setState({ ...state, canUndo: false, canSave: false })
                 let img;
@@ -63,6 +66,7 @@ const PostDetailsEditor = () => {
                 toast.error('Something went wrong while saving post details, Please try again.')
             }
         } catch (e) {
+            console.log(e, '______________error')
             setLoading(false)
             toast.error('Something went wrong while saving post details, Please try again.')
         }
@@ -219,6 +223,7 @@ const TagInput = ({ tags, setTags }) => {
     }, [inputValue])
 
     const handleOnChange = (e) => {
+        console.log(e.target.value, e.target.value === ',') //#rm
         if (e.target.value === ',') {
             if (inputValue.trim() !== '') {
                 setTags([...tags, inputValue.trim()])
@@ -260,8 +265,8 @@ const TagInput = ({ tags, setTags }) => {
 
 const FtImage = ({ img, handleUpdateNewPost }) => {
     const [error, setError] = useState({ error: false, message: null });
-    const [image, setImage] = useState(null);
-
+    const [image, setImage] = useState({});
+    console.log(image, '___img__', img, URL.createObjectURL(img?.url))
     const { data, setData, loading, setLoading } = useContext(StudioContext)
 
     let imageUrl;
@@ -319,7 +324,7 @@ const FtImage = ({ img, handleUpdateNewPost }) => {
                         // Clear previous error message if any
                         setError({ error: false, message: null });
 
-                        setImage({ file });
+                        setImage({ file: file });
                     };
                 };
                 reader.readAsDataURL(file);

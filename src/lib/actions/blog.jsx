@@ -116,7 +116,7 @@ export const updatePostAction = async (data) => {
     }
 }
 
-export const updatePostDetailsAction = async (data, file) => {
+export const updatePostDetailsAction = async (data, file = new FormData()) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
     if (!session || !session.user) {
@@ -124,14 +124,15 @@ export const updatePostDetailsAction = async (data, file) => {
         return res;
     }
 
-    let image = file?.get('image')
+    let setter = data?.data;
 
-    if (image && !image === undefined && data?.data?.image?.provider === 'file') {
+    if (file.has('image') && data?.data?.image?.provider === 'file') {
+        let image = file.get('image')
         try {
             let ftImage = await uploadImage(image);
-            if (ftImage?.success) {
+            if (ftImage.success) {
                 ftImage = await cloudinaryProvider(ftImage?.data);
-                data.data.image = { ...data?.data?.image, ...ftImage }
+                setter.image = { ...data?.data?.image, ...ftImage }
                 if (data?.data?.image?.url) {
                     let rmImg = await deleteCloudinaryImage(data?.data?.image?.url);
                     if (!rmImg?.success) {
@@ -143,8 +144,8 @@ export const updatePostDetailsAction = async (data, file) => {
             }
         } catch (error) {
             res.errors.push({ message: 'An error occurred while uploading post Image. Please try again later.' });
-            delete data.data.image.url;
-            delete data.data.image.provider;
+            setter?.image?.url && delete setter.image.url;
+            setter?.image?.provider && delete setter.image.provider;
         }
     }
 
@@ -154,7 +155,7 @@ export const updatePostDetailsAction = async (data, file) => {
                 shortId: data.id,
             },
             data: {
-                ...data?.data
+                ...setter
             },
             select: {
                 id: false,
