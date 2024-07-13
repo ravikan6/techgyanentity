@@ -116,7 +116,7 @@ export const updatePostAction = async (data) => {
     }
 }
 
-export const updatePostDetailsAction = async (data, file = new FormData()) => {
+export const updatePostDetailsAction = async (data) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
     if (!session || !session.user) {
@@ -125,8 +125,9 @@ export const updatePostDetailsAction = async (data, file = new FormData()) => {
     }
 
     let setter = data?.data;
+    let file = data?.file ? data?.file : new FormData();
 
-    if (file.has('image') && data?.data?.image?.provider === 'file') {
+    if (file.has('image') && setter?.image?.provider === 'file') {
         let image = file.get('image')
         try {
             let ftImage = await uploadImage(image);

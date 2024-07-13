@@ -49,7 +49,8 @@ const PostDetailsEditor = () => {
                 file.append('image', npst?.image?.url)
                 npstData.image.url = post?.image?.url;
             }
-            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData }, file)
+            console.log({ id: data?.article?.shortId, data: npstData, file: file }, "______________________")
+            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData, file: file })
             if (res?.status === 200 && res.data) {
                 console.log(res, '_______________res')
                 setPost({ ...post, ...res.data })
@@ -103,6 +104,10 @@ const PostDetailsEditor = () => {
         }
     }
 
+    const handleImageData = (dt) => {
+        setNpst({ ...npst, image: { ...npst?.image, ...dt } });
+    }
+
     useEffect(() => {
         if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published })) {
             setState({ ...state, canSave: true, canUndo: true })
@@ -122,8 +127,8 @@ const PostDetailsEditor = () => {
                     </div>
                 </div>
 
-                <div className="flex items-start mt-5 justify-between">
-                    <div className=" w-8/12">
+                <div className="flex items-start mt-5 justify-between flex-wrap">
+                    <div className="w-full md:w-8/12 min-w-[400px]">
                         <div className="flex flex-col space-y-8 mb-5">
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Title" desc={'The title of your post. Make it catchy and engaging to attract readers.'} tip={'The title of your post is the first thing that your readers will see.'} />
@@ -143,10 +148,10 @@ const PostDetailsEditor = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="w-3/12">
+                    <div className="w-full md:w-3/12 min-w-[300px]">
                         <div className="flex flex-col space-y-8">
 
-                            <FtImage img={npst?.image || post?.image} handleUpdateNewPost={handleUpdateNewPost} />
+                            <FtImage img={npst?.image || post?.image} handleImageData={handleImageData} />
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or unlisted.'} tip={'Choose the privacy settings for your post.'} />
@@ -223,12 +228,12 @@ const TagInput = ({ tags, setTags }) => {
     }, [inputValue])
 
     const handleOnChange = (e) => {
-        console.log(e.target.value, e.target.value === ',') //#rm
-        if (e.target.value === ',') {
-            if (inputValue.trim() !== '') {
-                setTags([...tags, inputValue.trim()])
-                setInputValue('')
-            }
+        let value = e.target?.value;
+        value = value?.replaceAll(' ', '')
+        if (value && value.includes(',')) {
+            let arr = value.split(',')
+            setTags([...tags, arr.filter((a) => { if (a?.length >= 3) { return a } })])
+            setInputValue('')
         } else setInputValue(e.target.value)
     }
 
@@ -263,7 +268,7 @@ const TagInput = ({ tags, setTags }) => {
     );
 };
 
-const FtImage = ({ img, handleUpdateNewPost }) => {
+const FtImage = ({ img, handleImageData }) => {
     const [error, setError] = useState({ error: false, message: null });
     const [image, setImage] = useState({});
     console.log(image, '___img__', img)
@@ -335,8 +340,7 @@ const FtImage = ({ img, handleUpdateNewPost }) => {
 
     useEffect(() => {
         if (image?.file && !error.error) {
-            handleUpdateNewPost({ target: { value: 'file' } }, 'image.provider');
-            handleUpdateNewPost({ target: { value: image?.file } }, 'image.url')
+            handleImageData({ url: image?.file, provider: 'file' })
         }
     }, [image])
 
