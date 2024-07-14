@@ -3,8 +3,7 @@ import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
-import { headers } from "next/headers";
-import { getCImageUrl } from "./helpers";
+import { v2 as cloudinary } from 'cloudinary';
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -109,7 +108,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     });
 
                     if (response?.image?.url) {
-                        response.image = await getCImageUrl(response?.image?.url)
+                        try {
+                            let res = await cloudinary.api.resource(response.image.url);
+                            response.image = await res?.secure_url;    
+                        } catch {}
                     }
                     token = { ...token, ...response };
                     delete token.password;
