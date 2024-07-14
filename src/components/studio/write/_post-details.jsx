@@ -2,7 +2,7 @@
 import { Button, MenuItem, Switch, TextField } from "@/components/rui";
 import { deletePostAction, getArticledetails, updatePostDetailsAction } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { InputHeader } from "../author/_edit-funcs";
 import { getCldImageUrl } from "next-cloudinary";
@@ -12,6 +12,7 @@ import { default as NextImage } from 'next/image';
 import { PostDetailsActionMenu, PostDetailsImageMenu } from "@/components/Buttons";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
+import confirm from "@/lib/confirm";
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
@@ -44,7 +45,7 @@ const PostDetailsEditor = () => {
     const publishHandler = async () => {
         setLoading(true)
         try {
-            let npstData = { ...npst };
+            const npstData = Object.assign({}, npst);
             let file = new FormData();
             if (npst?.image && npst?.image?.provider === 'file') {
                 file.append('image', npst?.image?.url)
@@ -52,23 +53,19 @@ const PostDetailsEditor = () => {
             }
             let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData, file: file })
             if (res?.status === 200 && res.data) {
-                setPost({ ...post, ...res.data })
-                setState({ ...state, canUndo: false, canSave: false })
                 let img;
                 if (res.data?.image?.provider === 'cloudinary') {
                     img = await getCImageUrl(res.data?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
                 }
+                setPost({ ...post, ...res.data })
+                setState({ ...state, canUndo: false, canSave: false })
                 setData({ ...data, article: { ...data?.article, ...res.data, image: img } })
-                setLoading(false)
                 toast.success('Post details saved successfully.')
-            } else {
-                setLoading(false)
-                toast.error('Something went wrong while saving post details, Please try again.')
             }
+            res?.errors.map((e) => toast.error(e.message))
         } catch (e) {
-            setLoading(false)
             toast.error('Something went wrong while saving post details, Please try again.')
-        }
+        } finally { setLoading(false) }
     }
 
     useEffect(() => {
@@ -116,18 +113,25 @@ const PostDetailsEditor = () => {
 
     const onDelete = async () => {
         try {
-            setLoading(true)
-            let res = await deletePostAction(data?.article?.shortId)
-            if (res?.status === 200 && res.data) {
-                toast.success('Post deleted successfully.')
-                router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
-            } else {
-                throw new Error('Something went wrong while deleting post, Please try again.')
+            if (await confirm('Are you sure you want to delete this post?')) {
+                try {
+                    setLoading(true)
+                    let res = await deletePostAction(data?.article?.shortId)
+                    if (res?.status === 200 && res.data) {
+                        toast.success('Post deleted successfully.')
+                        router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
+                    } else {
+                        throw new Error('Something went wrong while deleting post, Please try again.')
+                    }
+                } catch (e) {
+                    toast.error(e.message)
+                } finally {
+                    setLoading(false)
+                }
             }
+
         } catch (e) {
-            toast.error(e.message)
-        } finally {
-            setLoading(false)
+            console.error('Error navigating:', e);
         }
     }
 
@@ -144,7 +148,7 @@ const PostDetailsEditor = () => {
                         <Button disabled={state?.canUndo ? loading : true} onClick={undoHandler} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="primary" size="small" > Undo Changes </Button>
                         <div className="flex items-center space-x-2 md:space-x-3">
                             <Button disabled={state?.canSave ? loading : true} onClick={() => publishHandler()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Save </Button>
-                            <PostDetailsActionMenu list={list} />
+                            <PostDetailsActionMenu disabled={loading} list={list} />
                         </div>
                     </div>
                 </div>
@@ -173,7 +177,7 @@ const PostDetailsEditor = () => {
                     <div className="w-full md:w-3/12 min-w-[300px]">
                         <div className="flex flex-col space-y-8">
 
-                            <FtImage img={npst?.image} handleImageData={handleImageData} />
+                            <FtImage img={npst?.image} handleImageData={handleImageData} handleUpdateNewPost={handleUpdateNewPost} />
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or unlisted.'} tip={'Choose the privacy settings for your post.'} />
@@ -291,25 +295,25 @@ const TagInput = ({ tags, setTags }) => {
     );
 };
 
-const FtImage = ({ img, handleImageData }) => {
+const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
     const [error, setError] = useState({ error: false, message: null });
     const [image, setImage] = useState({});
-    console.log(image, '___img__', img)
     const { data, setData, loading, setLoading } = useContext(StudioContext)
+    const [imageUrl, setImageUrl] = useState(null);
 
-    let imageUrl;
-
-    if (img?.url) {
-        if (img?.provider === 'cloudinary') {
-            imageUrl = getCldImageUrl({
-                width: 320,
-                height: 160,
-                src: img?.url,
-            });
-        } else if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
-            imageUrl = URL.createObjectURL(img?.url);
+    useMemo(() => {
+        if (img?.url) {
+            if (img?.provider === 'cloudinary') {
+                setImageUrl(getCldImageUrl({
+                    width: 320,
+                    height: 160,
+                    src: img?.url,
+                }));
+            } else if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
+                setImageUrl(URL.createObjectURL(img?.url));
+            }
         }
-    }
+    }, [img])
 
     const handleFeaturedImageUpload = () => {
         const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
@@ -373,11 +377,11 @@ const FtImage = ({ img, handleImageData }) => {
                 <div className="relative">
                     <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg" />
                     <div className="absolute top-2 right-2">
-                        <PostDetailsImageMenu onFistClick={handleFeaturedImageUpload} />
+                        <PostDetailsImageMenu disabled={loading} onFistClick={handleFeaturedImageUpload} />
                     </div>
                 </div> : <>
                     <div onClick={handleFeaturedImageUpload} className="w-full h-[168px] rounded-lg border border-dashed flex justify-center items-center border-lightHead dark:border-darkHead">
-                        <div className="text-lightButton dark:text-darkButton">Upload Image</div>
+                        <div className={`${loading ? 'text-lightButton/60 dark:text-darkButton/60' : 'text-lightButton dark:text-darkButton'}`}>{loading ? 'Loading...' : 'Upload Image'}</div>
                     </div>
                     {error.error && <span className=" mt-1 text-xs text-red-700 dark:text-red-500">
                         {error?.message}

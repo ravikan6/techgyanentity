@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { BlockNoteView } from "@blocknote/mantine";
 import { BlockNoteEditor } from "@blocknote/core";
 import '@/styles/editor.css';
@@ -10,8 +10,8 @@ const Editor = ({ setBlocks, focus, content }) => {
         if (!content) {
             return undefined;
         }
-        if (content && typeof initialContent === "object" && initialContent.length > 0) {
-            return BlockNoteEditor.create({ initialContent });
+        if (content && typeof content === "object" && content.length > 0) {
+            return BlockNoteEditor.create({ initialContent: content });
         }
         return BlockNoteEditor.create();
     }, [content]);

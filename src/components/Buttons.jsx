@@ -243,7 +243,7 @@ const BtnWithMenu = (props) => {
   );
 };
 
-const PostDetailsImageMenu = ({ onFistClick }) => {
+const PostDetailsImageMenu = ({ onFistClick, disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -257,7 +257,7 @@ const PostDetailsImageMenu = ({ onFistClick }) => {
   return (
     <>
       <div className={` w-8`}>
-        <Button variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className="!bg-lightHead dark:!bg-darkHead" onClick={handleClick}>
+        <Button disabled={disabled} variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className="!bg-lightHead dark:!bg-darkHead" onClick={handleClick}>
           <PiDotsThreeOutline className="w-4 h-4" />
         </Button>
       </div>
@@ -285,7 +285,7 @@ const PostDetailsImageMenu = ({ onFistClick }) => {
   );
 };
 
-const PostDetailsActionMenu = ({ list = [] }) => {
+const PostDetailsActionMenu = ({ list = [], disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -298,9 +298,9 @@ const PostDetailsActionMenu = ({ list = [] }) => {
 
   return (
     <>
-      <Button variant="outlined" color="primary" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className="!bg-light dark:!bg-dark" onClick={handleClick}>
+      <IconButton color="primary" size='small' disabled={disabled} onClick={handleClick}>
         <PiDotsThreeOutline className="w-4 h-4" />
-      </Button>
+      </IconButton>
       <Menu
         anchorEl={anchorEl}
         open={!!anchorEl}
@@ -309,7 +309,7 @@ const PostDetailsActionMenu = ({ list = [] }) => {
           'aria-labelledby': 'post_details_action',
         }}
         sx={{ zIndex: '999' }} >
-        <MenuList>
+        <MenuList className='px-2'>
           {
             list.map((item, index) => {
               return (

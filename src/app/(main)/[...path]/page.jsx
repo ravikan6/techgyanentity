@@ -12,66 +12,37 @@ export async function generateMetadata({ params, searchParams }) {
     const path = decodeURIComponent(params?.path[0]);
     const query = searchParams;
 
-
     if (path.startsWith('post') && route?.length === 2) {
-        const article = await getArticle(decodeURIComponent(route[1]))
-        const url = article?.image?.url ? getCldOgImageUrl({ src: article?.image?.url }) : null
-        return {
-            title: article?.title,
-            description: article?.description,
-            openGraph: {
-                title: article?.title,
-                description: article?.description,
-                siteName: process.env.APP_NAME,
-                ...url && {
-                    images: [
-                        {
-                            url,
-                            width: 800,
-                            height: 600,
-                        },
-                    ]
-                },
-                locale: 'en_US',
-                type: 'article',
-                publishedTime: article?.publishedAt,
-                authors: [article?.author?.name]
+        const meta = await articleMeta(route[1]);
+        return meta;
+    }
+    else {
+        const author = await getAuthor(path)
+        if (author) {
+            if (route?.length === 1) {
+                return {
+                    title: author.name,
+                    description: author.bio,
+                    openGraph: {
+                        title: author.name,
+                        description: author.bio,
+                        siteName: process.env.APP_NAME,
+                        images: [
+                            {
+                                url: author?.image?.url ? getCldOgImageUrl({ src: author?.image?.url }) : null,
+                                width: 800,
+                                height: 600,
+                            },
+                        ],
+                        locale: 'en_US',
+                        type: 'profile',
+                    }
+                }
+            } else if (route?.length === 2) {
+                return await articleMeta(route[1]);
             }
         }
     }
-    else if (path?.startsWith('@')) {
-        if (route?.length === 1) {
-            return { title: 'Author' }
-        }
-
-    } else if (route?.length === 2) {
-        const article = await getArticle(decodeURIComponent(route[1]), path)
-        const url = article?.image?.url ? getCldOgImageUrl({ src: article?.image?.url }) : null
-        return {
-            title: article?.title,
-            description: article?.description,
-            openGraph: {
-                title: article?.title,
-                description: article?.description,
-                siteName: process.env.APP_NAME,
-                ...url && {
-                    images: [
-                        {
-                            url,
-                            width: 800,
-                            height: 600,
-                        },
-                    ]
-                },
-                locale: 'en_US',
-                type: 'article',
-                publishedTime: article?.publishedAt,
-                authors: [article?.author?.name]
-            }
-        }
-    }
-    else return { title: 'Page Not Found.' }
-
 }
 
 const DynamicPages = async ({ params, searchParams }) => {
@@ -87,62 +58,34 @@ const DynamicPages = async ({ params, searchParams }) => {
                 <PostView article={article} />
             )
         }
-    }
-    else if (path?.startsWith('@')) {
-        if (route?.length === 1) {
-            const author = await getAuthor(path.slice(1))
-            return <AuthorSingleViewPage author={author} />
+    } else {
+        const author = await getAuthor(path)
+        if (author) {
+            if (route?.length === 1) {
+                return <AuthorSingleViewPage author={author} />
+            } else if (route?.length === 2) {
+                const article = await getArticle(decodeURIComponent(route[1]), author.id)
+                if (article) {
+                    return (
+                        <PostView article={article} />
+                    )
+                }
+            }
         }
-
-    } else if (route?.length === 2) {
-        const article = await getArticle(decodeURIComponent(route[1]), path)
-        if (article) {
-            return (
-                <PostView article={article} />
-            )
-        }
-        else return notFound();
+        return notFound();
     }
-    return (
-        <>
-        </>
-    )
 };
 
-const FallBackPOst = () => {
-    return (
-        <>
-            <div className="mx-auto max-w-xl">
-                <Skeleton animation="wave" variant="rounded" width={'100%'} height={300} />
-                <Skeleton animation="wave" variant="text" width={'100%'} className="!mt-10" height={40} />
-                <div className="flex items-center justify-between mt-10">
-                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                    <Skeleton animation="wave" variant="circular" width={40} className="" height={40} />
-                </div>
-            </div>
-        </>
-    )
-}
-
-const getArticle = async (slug, handle) => {
-    let reHandle;
-    if (handle) {
-        if (handle.startsWith('@')) {
-            reHandle = handle.slice(1)
-        } else reHandle = handle;
-    }
+const getArticle = async (slug, id) => {
     try {
         const post = await prisma.post.findFirst({
             where: {
                 slug: slug,
-                ...reHandle && {
-                    author: {
-                        handle: reHandle,
-                    }
+                ...id && {
+                    authorId: id,
                 },
-                isDeleted: false
+                isDeleted: false,
+                published: true,
             },
             include: {
                 author: true,
@@ -163,10 +106,16 @@ const getArticle = async (slug, handle) => {
 }
 
 const getAuthor = async (handle) => {
+    let reHandle;
+    if (handle) {
+        if (handle.startsWith('@')) {
+            reHandle = handle.slice(1)
+        } else reHandle = handle;
+    }
     try {
         let author = await prisma.author.findUnique({
             where: {
-                handle: handle,
+                handle: reHandle,
                 isDeleted: false,
             },
             select: {
@@ -186,6 +135,33 @@ const getAuthor = async (handle) => {
     } catch (e) {
         console.log(e, '_________________errror_while_fetching_author')
         return null;
+    }
+}
+
+const articleMeta = async (slug) => {
+    const article = await getArticle(decodeURIComponent(slug))
+    const url = article?.image?.url ? getCldOgImageUrl({ src: article?.image?.url }) : null
+    return {
+        title: article?.title,
+        description: article?.description,
+        openGraph: {
+            title: article?.title,
+            description: article?.description,
+            siteName: process.env.APP_NAME,
+            ...url && {
+                images: [
+                    {
+                        url,
+                        width: 800,
+                        height: 600,
+                    },
+                ]
+            },
+            locale: 'en_US',
+            type: 'article',
+            publishedTime: article?.publishedAt,
+            authors: [article?.author?.name]
+        }
     }
 }
 

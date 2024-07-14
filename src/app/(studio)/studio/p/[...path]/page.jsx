@@ -17,9 +17,6 @@ const PostEditPage = async ({ params }) => {
                     where: {
                         shortId: id,
                         isDeleted: false,
-                        author: {
-                            userId: session.user.id,
-                        },
                     },
                     select: {
                         title: true,
@@ -30,7 +27,7 @@ const PostEditPage = async ({ params }) => {
                 if (data) {
                     return (
                         <div className='pt-10'>
-                            <CreatePost data={data}/>
+                            <CreatePost data={data} />
                         </div>
                     )
                 } else {

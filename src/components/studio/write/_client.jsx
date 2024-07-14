@@ -29,17 +29,23 @@ export const WriteMenu = () => {
 
     const onBackToContent = async (url) => {
         try {
+            console.log('Navigating to URL:', url);
             if (save || loading) {
                 if (await confirm('Are you sure you want to leave this page?')) {
                     setLoading(true);
+                    console.log('Confirmed, navigating...');
                     router.push(url);
-                } else null;
+                }
+                // No need for else null here
             } else {
                 setLoading(true);
+                console.log('Navigating...');
                 router.push(url);
             }
-        } catch (e) { console.error(e) }
-    }
+        } catch (e) {
+            console.error('Error navigating:', e);
+        }
+    };
 
     return (
         <Fragment>

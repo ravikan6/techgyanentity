@@ -45,9 +45,6 @@ const getArticle = async (id, userId) => {
             where: {
                 shortId: id,
                 isDeleted: false,
-                author: {
-                    userId: userId,
-                },
             },
             select: {
                 shortId: true,
