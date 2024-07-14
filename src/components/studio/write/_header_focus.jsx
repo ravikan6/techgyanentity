@@ -2,7 +2,7 @@ import React from 'react';
 import { Skeleton } from '@mui/material';
 import { auth } from '@/lib/auth';
 import { StudioServiceSelecterMenu } from '../_profile';
-import { BackToContent, HeaderLoader, UpdateEditorArticle, WriteMenu } from '@/components/studio/write/_client';
+import { HeaderLoader, UpdateEditorArticle, WriteMenu } from '@/components/studio/write/_client';
 import { ManinLogo } from '@/components/header';
 
 
@@ -24,7 +24,6 @@ const WriteHeader = async () => {
                         <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
                             <div className='flex justify-start space-x-2 md:space-x-10 items-center logo w-3/12'>
                                 <ManinLogo />
-                                <BackToContent />
                             </div>
                             <div className='flex space-x-3 md:space-x-6 justify-end items-center w-1/2 md:w-3/12'>
                                 {session?.user && session?.user?.id ? (

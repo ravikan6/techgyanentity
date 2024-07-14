@@ -4,32 +4,25 @@ import { BlockNoteView } from "@blocknote/mantine";
 import { BlockNoteEditor } from "@blocknote/core";
 import '@/styles/editor.css';
 
-const Editor = ({ setBlocks, focus, content, loading }) => {
-    const [initialContent, setInitialContent] = useState('loading');
+const Editor = ({ setBlocks, focus, content }) => {
 
     const editor = useMemo(() => {
-        if (initialContent === "loading") {
+        if (!content) {
             return undefined;
         }
-        if (initialContent && initialContent !== "loading" && typeof initialContent === "object" && initialContent.length > 0) {
+        if (content && typeof initialContent === "object" && initialContent.length > 0) {
             return BlockNoteEditor.create({ initialContent });
         }
         return BlockNoteEditor.create();
-    }, [initialContent]);
+    }, [content]);
 
     useEffect(() => {
-        if (!loading) {
-            setInitialContent(content);
-        }
-    }, [content, loading]);
-
-    useEffect(() => {
-        if (editor !== undefined && !loading) {
+        if (editor !== undefined) {
             if (focus) {
                 editor.focus();
             }
         }
-    }, [loading, focus, editor]);
+    }, [focus, editor]);
 
 
     if (editor === undefined) {

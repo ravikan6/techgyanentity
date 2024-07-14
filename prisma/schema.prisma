@@ -68,6 +68,8 @@ model Author {
   userId       String?    @db.ObjectId
   name         String
   handle       String     @unique
+  deletedAt    DateTime?
+  isDeleted    Boolean    @default(false)
   social       LinkType[]
   contactEmail String?
   bio          String?

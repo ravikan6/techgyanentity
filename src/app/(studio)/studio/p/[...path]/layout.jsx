@@ -1,14 +1,16 @@
 import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
 import { WriteHeader } from "@/components/studio/write/_header_focus";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getCImageUrl } from "@/lib/helpers";
 import { redirect } from 'next/navigation';
 
 const WriteLayout = async ({ children, params }) => {
     const { path } = params;
+    const session = await auth();
 
     if (path?.length === 2) {
-        const article = await getArticle(path[0]);
+        const article = await getArticle(path[0], session?.user?.id);
 
         if (!article) {
             return redirect('/studio/content')
@@ -37,11 +39,15 @@ const WriteLayout = async ({ children, params }) => {
     )
 }
 
-const getArticle = async (id) => {
+const getArticle = async (id, userId) => {
     try {
         const article = await prisma.post.findUnique({
             where: {
-                shortId: id
+                shortId: id,
+                isDeleted: false,
+                author: {
+                    userId: userId,
+                },
             },
             select: {
                 shortId: true,

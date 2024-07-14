@@ -363,9 +363,9 @@ export const NavMenu = () => {
 }
 
 
-const ListItemRdX = ({ link }) => {
+const ListItemRdX = ({ link, onClick = () => { } }) => {
     return (
-        <MenuItem key={link.name} >
+        <MenuItem key={link.name} onClick={onClick} >
             <Link className='w-full' href={link.url}>
                 <Tooltip title={link.helpText || link.name} placement="left" slotProps={{
                     popper: {

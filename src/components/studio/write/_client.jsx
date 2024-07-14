@@ -3,16 +3,21 @@ import { Fragment, useState, useContext } from 'react';
 import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
 import { Divider, Box, LinearProgress } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
-import { CreateOutlined, DraftsOutlined, FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
+import { FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
 import { StudioContext, StudioWriterContext } from '@/lib/context';
 import { useRouter } from 'next/navigation';
 import confirm from '@/lib/confirm';
+import { IoCaretBackCircleOutline } from 'react-icons/io5';
+import { TbEditCircle } from 'react-icons/tb';
 
 export const WriteMenu = () => {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [insiderOpen, setInsiderOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [insiderData, setInsiderData] = useState(null);
+
+    const { state, loading, setLoading } = useContext(StudioWriterContext);
+    const { data } = useContext(StudioContext)
+    const { save } = state;
+    const router = useRouter();
 
     const handleClick = (event) => {
         setMenuOpen(event.currentTarget);
@@ -22,28 +27,18 @@ export const WriteMenu = () => {
         setMenuOpen(null);
     };
 
-    const handleInsiderOpen = (event) => {
-        setInsiderOpen(event.currentTarget);
-        handleClose(); // Close the first menu when the second menu is opened
-    };
-
-    const handleInsiderClose = () => {
-        setInsiderOpen(false);
-    };
-    const handleBack = () => {
-        setInsiderOpen(false);
-        setMenuOpen(true);
-    }
-
-    const insiderRun = (value) => {
-        setInsiderData({ ...insiderData, selected: value });
-    }
-
-    const state = {
-        insiderOpen: insiderOpen,
-        insiderData: insiderData,
-        setInsiderData: setInsiderData,
-        handleInsiderOpen: handleInsiderOpen,
+    const onBackToContent = async (url) => {
+        try {
+            if (save || loading) {
+                if (await confirm('Are you sure you want to leave this page?')) {
+                    setLoading(true);
+                    router.push(url);
+                } else null;
+            } else {
+                setLoading(true);
+                router.push(url);
+            }
+        } catch (e) { console.error(e) }
     }
 
     return (
@@ -74,19 +69,19 @@ export const WriteMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 className="rb_sss rb_ss overflow-y-auto"
             >
-                <Box elevation={0} className="bg-lightHead dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
+                <Box elevation={0} sx={{ py: 2, px: 1 }}>
 
-                    <ListItemRdX link={{
-                        name: 'New Post',
-                        url: '/studio/write/new',
-                        icon: CreateOutlined,
+                    <ListItemRdX onClick={() => onBackToContent(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/content`)} link={{
+                        name: 'Back to Content',
+                        url: '#',
+                        icon: IoCaretBackCircleOutline,
                     }} />
 
                     <ListItemRdX link={{
-                        name: 'Drafts',
-                        url: '/studio/drafts',
-                        icon: DraftsOutlined,
-                    }} />
+                        name: 'Edit Details',
+                        url: '#',
+                        icon: TbEditCircle,
+                    }} onClick={() => onBackToContent(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`)} />
 
                     <Divider sx={{ my: 1 }} />
 
@@ -102,28 +97,6 @@ export const WriteMenu = () => {
                     }} />
                 </Box>
             </Menu>
-            {/* <Menu
-                anchorEl={anchorEl}
-                id="account-menu-inside"
-                open={insiderOpen}
-                onClose={handleInsiderClose}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            borderRadius: '12px',
-                            width: '260px',
-                            mt: 1.5,
-                            pt: '0 !important',
-                        }
-                    }
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                className="rb_sss"
-            >
-                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} />
-            </Menu> */}
-
         </Fragment>
     );
 }
@@ -183,42 +156,6 @@ export const UpdateEditorArticle = () => {
         </>
     );
 
-}
-
-export const BackToContent = () => {
-    const { state, loading, setLoading } = useContext(StudioWriterContext);
-    const { data } = useContext(StudioContext)
-    const { save } = state;
-    const router = useRouter();
-
-    const onClickHandler = async () => {
-        try {
-            if (save || loading) {
-                if (await confirm('Are you sure you want to leave this page?')) {
-                    setLoading(true);
-                    return router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
-                } else null;
-            } else {
-                setLoading(true);
-                return router.push(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`);
-            }
-        } catch { }
-    }
-
-    return (
-        <Tooltip title="Back to Post Details">
-            <Button
-                onClick={onClickHandler}
-                size="small"
-                disabled={loading}
-                variant="text"
-                color="button"
-                className="!text-nowrap"
-            >
-                Post Details
-            </Button>
-        </Tooltip>
-    )
 }
 
 export const HeaderLoader = () => {

@@ -79,10 +79,10 @@ export const handleCreatePostRedirectAction = async (authorId) => {
             }
         });
         if (p.shortId)
-            return redirect(`/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor`);
+            redirect(`/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor`);
     } catch (error) {
         console.error("Error creating post:", error);
-        return redirect('/');
+        redirect('/');
     }
 }
 
@@ -98,6 +98,7 @@ export const updatePostAction = async (data) => {
         const updatedPost = await prisma.post.update({
             where: {
                 shortId: data.id,
+                isDeleted: false,
             },
             data: {
                 title: data.title,
@@ -124,7 +125,7 @@ export const updatePostDetailsAction = async (data) => {
         return res;
     }
 
-    let setter = data?.data;
+    let setter = { ...data?.data };
     let file = data?.file ? data?.file : new FormData();
 
     if (file.has('image') && setter?.image?.provider === 'file') {
@@ -154,6 +155,7 @@ export const updatePostDetailsAction = async (data) => {
         const updatedPost = await prisma.post.update({
             where: {
                 shortId: data.id,
+                isDeleted: false,
             },
             data: {
                 ...setter
@@ -184,6 +186,31 @@ export const updatePostDetailsAction = async (data) => {
     }
 }
 
+export const deletePostAction = async (id) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+    try {
+        const deletedPost = await prisma.post.update({
+            where: {
+                shortId: id,
+                isDeleted: false,
+            },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+            },
+        })
+        res = { ...res, data: deletedPost.isDeleted, status: 200 };
+        return res;
+    } catch (error) {
+        res.errors.push({ message: error.message });
+        return res;
+    }
+}
 
 export const getDrafts = async (authorId) => {
     const session = await auth();
@@ -254,6 +281,7 @@ const getArticleContent = async (id) => {
         let content = await prisma.post.findUnique({
             where: {
                 shortId: id,
+                isDeleted: false,
             },
             select: {
                 content: true,
@@ -275,6 +303,7 @@ const getArticledetails = async (id) => {
         const dt = await prisma.post.findUnique({
             where: {
                 shortId: id,
+                isDeleted: false,
             },
             select: {
                 id: false,

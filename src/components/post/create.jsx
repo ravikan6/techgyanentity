@@ -1,20 +1,18 @@
 "use client";
 import React, { useState, useContext, useEffect } from 'react';
-import { getArticleContent, updatePostAction } from '@/lib/actions/blog';
+import { updatePostAction } from '@/lib/actions/blog';
 import { TextField } from '@mui/material';
 import Editor from "../create/editor";
 import { StudioContext, StudioWriterContext } from "@/lib/context";
 import { toast } from "react-toastify";
-import { BetaLoader2 } from "../studio/content";
 
-const CreatePost = ({ id }) => {
-    const [post, setPost] = useState({ shortId: id, title: '', content: [], });
+const CreatePost = (props) => {
+    const [post, setPost] = useState({ ...props.data });
     const [keyPress, setKeyPress] = useState(false);
-    const [blocks, setBlocks] = useState([]);
-    const [postLoading, setPostLoading] = useState(true);
+    const [blocks, setBlocks] = useState(props.data?.content || []);
 
     const { loading, setState, state } = useContext(StudioWriterContext);
-    const { data } = useContext(StudioContext);
+    const { data, setData } = useContext(StudioContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -25,23 +23,8 @@ const CreatePost = ({ id }) => {
     };
 
     useEffect(() => {
-        const handler = async () => {
-            if (data?.article) {
-                let dt = await getArticleContent(data?.article?.shortId);
-                if (dt?.data) {
-                    setPost({ ...post, ...data?.article, content: dt?.data })
-                    setBlocks(dt?.data);
-                } else setPost({ ...post, ...data?.article });
-            }
-            setPostLoading(false);
-        }
-        handler();
-    }, [data?.article])
-
-
-    useEffect(() => {
         if ((post.title !== '' || blocks.length !== 0 || !loading)) {
-            if ((post.title === data?.article?.title) && (JSON.stringify(blocks) === JSON.stringify(data?.article?.content))) {
+            if ((post.title === data?.article?.title) && (JSON.stringify(blocks) === JSON.stringify(post?.content))) {
                 setState({ ...state, save: false, cancle: false })
             } else {
                 setState({ ...state, save: true, cancle: true, runner: handleSubmit, onCancle: handleCancle })
@@ -57,14 +40,10 @@ const CreatePost = ({ id }) => {
             return;
         }
         try {
-            let data = {
-                title: post.title,
-                content: blocks,
-                id: post.shortId
-            }
-            const dt = await updatePostAction(data);
+            const dt = await updatePostAction({ title: post.title, id: props.data.shortId, content: blocks });
             if (dt?.status === 200 && dt?.data) {
                 setPost({ ...post, ...dt?.data });
+                setData({ ...data, article: { ...data?.article, title: dt.data?.title } });
                 toast.success('Post updated successfully');
             }
         } catch {
@@ -74,7 +53,7 @@ const CreatePost = ({ id }) => {
     };
 
     const handleCancle = () => {
-        setPost({ ...post, title: data?.article?.title });
+        setPost({ ...post, title: props?.data?.title });
         setBlocks(post.content);
         setState({ ...state, save: false, cancle: false });
     }
@@ -91,38 +70,34 @@ const CreatePost = ({ id }) => {
 
     return (
         <>
-            {postLoading ? (
-                <BetaLoader2 />
-            ) : (
-                <div>
-                    <div className="mx-5">
-                        <TextField
-                            name="title"
-                            value={post.title}
-                            onChange={handleChange}
-                            onKeyDown={handleKeyPress}
-                            autoFocus
-                            placeholder="Title"
-                            multiline
-                            variant="standard"
-                            InputProps={{
-                                disableUnderline: true,
-                                sx: {
-                                    fontSize: '2.6rem',
-                                    lineHeight: '2.7rem',
-                                    fontWeight: 900,
-                                    fontFamily: 'rb-karnak',
-                                    color: (theme) => theme.palette.text.primary,
-                                },
-                            }}
-                            fullWidth
-                        />
-                    </div>
-                    <div className="my-2 lg:-mx-8">
-                        <Editor content={post.content} loading={postLoading} setBlocks={setBlocks} focus={keyPress} />
-                    </div>
+            <div>
+                <div className="mx-5">
+                    <TextField
+                        name="title"
+                        value={post.title}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyPress}
+                        autoFocus
+                        placeholder="Title"
+                        multiline
+                        variant="standard"
+                        InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                                fontSize: '2.6rem',
+                                lineHeight: '2.7rem',
+                                fontWeight: 900,
+                                fontFamily: 'rb-karnak',
+                                color: (theme) => theme.palette.text.primary,
+                            },
+                        }}
+                        fullWidth
+                    />
                 </div>
-            )}
+                <div className="my-2 lg:-mx-8">
+                    <Editor content={post.content} setBlocks={setBlocks} focus={keyPress} />
+                </div>
+            </div>
         </>
     );
 };

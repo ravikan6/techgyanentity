@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import { BsPatchQuestion } from 'react-icons/bs';
 import { StudioContext } from '@/lib/context';
 import { handleCreatePostRedirectAction } from '@/lib/actions/blog';
-import { LuReplaceAll } from "react-icons/lu";
+import { LuImagePlus } from "react-icons/lu";
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -271,12 +271,12 @@ const PostDetailsImageMenu = ({ onFistClick }) => {
             'aria-labelledby': 'basic-button',
           }}
           sx={{ zIndex: '999' }} >
-          <MenuList className='min-w-48'>
-            <MenuItem onClick={onFistClick}>
+          <MenuList className=''>
+            <MenuItem onClick={() => { onFistClick(), handleClose() }}>
               <ListItemIcon >
-                <LuReplaceAll className='w-6 h-6' />
+                <LuImagePlus className='w-5 h-5' />
               </ListItemIcon>
-              <span className='stymie text-base'>Change Image</span>
+              <span className='text-base'>Change Image</span>
             </MenuItem>
           </MenuList>
         </Menu>
@@ -285,6 +285,48 @@ const PostDetailsImageMenu = ({ onFistClick }) => {
   );
 };
 
+const PostDetailsActionMenu = ({ list = [] }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <Button variant="outlined" color="primary" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className="!bg-light dark:!bg-dark" onClick={handleClick}>
+        <PiDotsThreeOutline className="w-4 h-4" />
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'post_details_action',
+        }}
+        sx={{ zIndex: '999' }} >
+        <MenuList>
+          {
+            list.map((item, index) => {
+              return (
+                <MenuItem key={index} onClick={item.onClick}>
+                  <ListItemIcon >
+                    <item.icon className='w-5 h-5' />
+                  </ListItemIcon>
+                  <span className='text-base'>{item.label}</span>
+                </MenuItem>
+              )
+            })
+          }
+        </MenuList>
+      </Menu>
+    </>
+  );
+};
 
 const CreateBtn = ({ classes, iconColor, sx }) => {
   const { data } = useContext(StudioContext);
@@ -354,5 +396,5 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
   )
 }
 
-export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu };
+export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu };
 

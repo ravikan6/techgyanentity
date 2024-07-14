@@ -1,6 +1,6 @@
 "use client";
 import { Button, MenuItem, Switch, TextField } from "@/components/rui";
-import { getArticledetails, updatePostDetailsAction } from "@/lib/actions/blog";
+import { deletePostAction, getArticledetails, updatePostDetailsAction } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -9,16 +9,18 @@ import { getCldImageUrl } from "next-cloudinary";
 import { getCImageUrl, imgUrl } from "@/lib/helpers";
 import { Box, Chip, InputAdornment, Select } from '@mui/material';
 import { default as NextImage } from 'next/image';
-import { PostDetailsImageMenu } from "@/components/Buttons";
+import { PostDetailsActionMenu, PostDetailsImageMenu } from "@/components/Buttons";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
     const [post, setPost] = useState({})
     const [npst, setNpst] = useState({})
 
-    const { data, setData, loading, setLoading } = useContext(StudioContext)
+    const router = useRouter();
 
-    console.log(npst, 'NPST_From_SERVER_ACTIONS_____') //#rm
+    const { data, setData, loading, setLoading } = useContext(StudioContext)
 
     useEffect(() => {
         const dtHandler = async () => {
@@ -27,10 +29,9 @@ const PostDetailsEditor = () => {
             if (dt?.data) {
                 setPost(dt.data)
                 setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, published: dt.data?.published })
-                setLoading(false)
             } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
         }
-        if (data?.article?.shortId) dtHandler();
+        if (data?.article?.shortId) dtHandler().finally(() => setLoading(false));
     }, [data?.article?.shortId])
 
     let ref = useRef(null);
@@ -43,16 +44,14 @@ const PostDetailsEditor = () => {
     const publishHandler = async () => {
         setLoading(true)
         try {
-            let npstData = npst;
+            let npstData = { ...npst };
             let file = new FormData();
             if (npst?.image && npst?.image?.provider === 'file') {
                 file.append('image', npst?.image?.url)
                 npstData.image.url = post?.image?.url;
             }
-            console.log({ id: data?.article?.shortId, data: npstData, file: file }, "______________________")
             let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData, file: file })
             if (res?.status === 200 && res.data) {
-                console.log(res, '_______________res')
                 setPost({ ...post, ...res.data })
                 setState({ ...state, canUndo: false, canSave: false })
                 let img;
@@ -67,7 +66,6 @@ const PostDetailsEditor = () => {
                 toast.error('Something went wrong while saving post details, Please try again.')
             }
         } catch (e) {
-            console.log(e, '______________error')
             setLoading(false)
             toast.error('Something went wrong while saving post details, Please try again.')
         }
@@ -116,6 +114,27 @@ const PostDetailsEditor = () => {
         }
     }, [npst])
 
+    const onDelete = async () => {
+        try {
+            setLoading(true)
+            let res = await deletePostAction(data?.article?.shortId)
+            if (res?.status === 200 && res.data) {
+                toast.success('Post deleted successfully.')
+                router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
+            } else {
+                throw new Error('Something went wrong while deleting post, Please try again.')
+            }
+        } catch (e) {
+            toast.error(e.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const list = [
+        { label: 'Delete', icon: RiDeleteBin5Line, onClick: onDelete },
+    ]
+
     return (
         <>
             <div className="relative">
@@ -123,7 +142,10 @@ const PostDetailsEditor = () => {
                     <h2 className="text-xl font-semibold">Post Details</h2>
                     <div ref={ref} className="flex justify-between mb-1 mt-1 sm:justify-end w-full sm:w-auto transition-all duration-500 items-center space-x-2 md:space-x-3">
                         <Button disabled={state?.canUndo ? loading : true} onClick={undoHandler} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="primary" size="small" > Undo Changes </Button>
-                        <Button disabled={state?.canSave ? loading : true} onClick={() => publishHandler()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Save </Button>
+                        <div className="flex items-center space-x-2 md:space-x-3">
+                            <Button disabled={state?.canSave ? loading : true} onClick={() => publishHandler()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Save </Button>
+                            <PostDetailsActionMenu list={list} />
+                        </div>
                     </div>
                 </div>
 
@@ -132,30 +154,30 @@ const PostDetailsEditor = () => {
                         <div className="flex flex-col space-y-8 mb-5">
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Title" desc={'The title of your post. Make it catchy and engaging to attract readers.'} tip={'The title of your post is the first thing that your readers will see.'} />
-                                <TextField disabled={loading} size="small" required helperText={''} counter inputProps={{ maxLength: 150 }} label="Title" value={npst?.title || post?.title || ''} onChange={(e) => handleUpdateNewPost(e, 'title')} />
+                                <TextField disabled={loading} size="small" required helperText={''} counter inputProps={{ maxLength: 150 }} label="Title" value={npst?.title || ''} onChange={(e) => handleUpdateNewPost(e, 'title')} />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Slug" desc={'The slug is the URL of your post. It is automatically generated based on the title of your post, but you can customize it.'} tip={'The slug is the URL of your post.'} />
-                                <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} label="Slug" value={npst?.slug || post?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
+                                <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} label="Slug" value={npst?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Description" desc={'The description provides a summary of your post and helps readers understand what it is about. Make it engaging, informative, and concise.'} tip={'The description of your post is a brief summary of what your post is about.'} />
-                                <TextField disabled={loading} size="large" helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} value={npst?.description || post?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} placeholder="Add brief summary of what your post is about" />
+                                <TextField disabled={loading} size="large" helperText={''} multiline counter minRows={4} inputProps={{ maxLength: 5000 }} value={npst?.description || ''} onChange={(e) => handleUpdateNewPost(e, 'description')} placeholder="Add brief summary of what your post is about" />
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Tags" desc={'Tags help readers find your post. Add tags that are relevant to the content of your post.'} tip={'Tags help readers find your post.'} />
-                                <TagInput tags={npst?.tags || post?.tags || []} setTags={(tags) => setNpst({ ...npst, tags })} />
+                                <TagInput tags={npst?.tags || []} setTags={(tags) => setNpst({ ...npst, tags })} />
                             </div>
                         </div>
                     </div>
                     <div className="w-full md:w-3/12 min-w-[300px]">
                         <div className="flex flex-col space-y-8">
 
-                            <FtImage img={npst?.image || post?.image} handleImageData={handleImageData} />
+                            <FtImage img={npst?.image} handleImageData={handleImageData} />
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or unlisted.'} tip={'Choose the privacy settings for your post.'} />
-                                <Select size="small" className="!rounded-full" value={npst?.privacy || post?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
+                                <Select size="small" className="!rounded-full" value={npst?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
                                     <MenuItem value="PUBLIC">Public</MenuItem>
                                     <MenuItem value="PRIVATE">Private</MenuItem>
                                     <MenuItem value="UNLISTED">Unlisted</MenuItem>
@@ -191,7 +213,8 @@ const TagInput = ({ tags, setTags }) => {
 
     const handleAddTag = (event) => {
         if (event.key === 'Enter' && inputValue.trim() !== '') {
-            setTags([...tags, inputValue.trim()]);
+            let value = inputValue?.trim()?.replaceAll(' ', '')
+            setTags([...tags, value]);
             setInputValue('');
         }
     };
@@ -232,7 +255,7 @@ const TagInput = ({ tags, setTags }) => {
         value = value?.replaceAll(' ', '')
         if (value && value.includes(',')) {
             let arr = value.split(',')
-            setTags([...tags, arr.filter((a) => { if (a?.length >= 3) { return a } })])
+            setTags([...tags, ...arr.filter((a) => { if (a?.length >= 3) { return a } })])
             setInputValue('')
         } else setInputValue(e.target.value)
     }
@@ -362,7 +385,7 @@ const FtImage = ({ img, handleImageData }) => {
                 </>}
             <div className="flex flex-col space-y-3">
                 <InputHeader label="" desc={'The image is the visual representation of your post. Choose an image that is engaging and relevant to your post.'} />
-                {imageUrl && <TextField disabled={loading} size="small" required label="Caption" value={img?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />}
+                {imageUrl && <TextField disabled={loading} size="small" label="Caption" value={img?.caption || ''} onChange={(e) => handleUpdateNewPost(e, 'image.caption')} helperText="Add a caption for the image." />}
             </div>
         </div >
     )
