@@ -1,7 +1,4 @@
 import '@/styles/globals.css'
-import "https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css";
-import "https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css";
-
 import { Providers } from '@/components/providers';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -16,6 +13,26 @@ export default async function RootLayout({ children }) {
 
     return (
         <html lang='en' suppressHydrationWarning>
+            <head>
+                <link
+                    rel="prefetch"
+                    href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
+                    as="style"
+                />
+                <link
+                    rel="prefetch"
+                    href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
+                    as="style"
+                />
+                <link
+                    rel="stylesheet"
+                    href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
+                />
+                <link
+                    rel="stylesheet"
+                    href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
+                />
+            </head>
             <body className='dark:bg-dark bg-light'>
                 <Providers>
                     <CssBaseline />

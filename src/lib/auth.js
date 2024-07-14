@@ -4,6 +4,7 @@ import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
 import { headers } from "next/headers";
+import { getCImageUrl } from "./helpers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -94,21 +95,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             }
             if (token.id) {
                 try {
-                    const url = headers().get('origin') || process.env.APP_URL;
-                    let fdata = new FormData();
-                    fdata.append('id', token.id);
-                    const res = await fetch(`${url}/api/user`, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
+                    const response = await prisma.user.findUnique({
+                        where: {
+                            id: token.id,
                         },
-                        body: fdata,
-                        next: {
-                            revalidate: 10,
+                        include: {
+                            Author: {
+                                select: {
+                                    id: true,
+                                }
+                            }
                         }
                     });
-                    const response = await res.json();
-                    token = { ...token, ...response?.data };
+
+                    if (response?.image?.url) {
+                        response.image = await getCImageUrl(response?.image?.url)
+                    }
+                    token = { ...token, ...response };
+                    delete token.password;
                 } catch (error) {
                     console.log("Server Error:", error?.message) //TODO: Will be removed in production
                 }
