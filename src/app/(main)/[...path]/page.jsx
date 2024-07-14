@@ -108,10 +108,9 @@ const getAuthor = async (handle) => {
     handle = await handle?.startsWith('@') ? handle.slice(1) : handle;
 
     try {
-        let author = await prisma.author.findUnique({
+        let author = await prisma.author.findFirst({
             where: {
                 handle: handle,
-                isDeleted: false,
             },
             select: {
                 handle: true,
@@ -120,15 +119,16 @@ const getAuthor = async (handle) => {
                 social: true,
                 image: true,
                 banner: true,
+                isDeleted: true,
             }
         })
-        if (author) {
+
+        if (author && !author.isDeleted) {
             (author?.image?.provider === 'cloudinary' && author?.image?.url) && (author.image.url = await getCImageUrl(author.image.url));
             (author?.banner?.provider === 'cloudinary' && author?.banner?.url) && (author.banner.url = await getCImageUrl(author.banner.url));
+            return author;
         }
-        return author;
     } catch (e) {
-        console.log(e, '_________________errror_while_fetching_author')
         return null;
     }
 }

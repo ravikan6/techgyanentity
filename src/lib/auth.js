@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
-import { v2 as cloudinary } from 'cloudinary';
+import { headers } from "next/headers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -34,9 +34,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         },
                     });
                     if (response) {
-                        // if (response.image.url) {
-                        //     response.image = await getCldImageUrl({ src: response.image.url })
-                        // }
+                        if (response.image.url) {
+                            delete response.image;
+                        }
                         return { ...response };
                     } else {
                         return null;
@@ -94,25 +94,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             }
             if (token.id) {
                 try {
-                    const response = await prisma.user.findUnique({
-                        where: {
-                            id: token.id,
+                    const url = headers().get('origin') || process.env.APP_URL;
+                    let fdata = new FormData();
+                    fdata.append('id', token.id);
+                    const res = await fetch(`${url}/api/user`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
                         },
-                        include: {
-                            Author: {
-                                select: {
-                                    id: true,
-                                }
-                            }
+                        body: fdata,
+                        next: {
+                            revalidate: 10,
                         }
                     });
-
-                    if (response?.image?.url) {
-                        try {
-                            let res = await cloudinary.api.resource(response.image.url);
-                            response.image = await res?.secure_url;    
-                        } catch {}
-                    }
+                    const response = await res.json();
                     token = { ...token, ...response };
                     delete token.password;
                 } catch (error) {
