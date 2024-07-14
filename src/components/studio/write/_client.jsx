@@ -77,7 +77,7 @@ export const WriteMenu = () => {
             >
                 <Box elevation={0} sx={{ py: 2, px: 1 }}>
 
-                    <ListItemRdX onClick={() => onBackToContent(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/content`)} link={{
+                    <ListItemRdX onClick={() => onBackToContent(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)} link={{
                         name: 'Back to Content',
                         url: '#',
                         icon: IoCaretBackCircleOutline,
@@ -87,7 +87,7 @@ export const WriteMenu = () => {
                         name: 'Edit Details',
                         url: '#',
                         icon: TbEditCircle,
-                    }} onClick={() => onBackToContent(`/${process.env?.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`)} />
+                    }} onClick={() => onBackToContent(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`)} />
 
                     <Divider sx={{ my: 1 }} />
 
@@ -168,7 +168,7 @@ export const HeaderLoader = () => {
     const { loading } = useContext(StudioWriterContext);
     return (
         <>
-            <LinearProgress className="!h-0.5 !absolute !top-[0] !z-[999] w-full" hidden={!loading} color="button" />
+            <LinearProgress className={`!h-0.5 !absolute !top-[0] !z-[999] w-full ${!loading && '!hidden'}`} hidden={!loading} color="button" />
         </>
     )
 }

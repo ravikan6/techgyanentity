@@ -1,4 +1,7 @@
 import '@/styles/globals.css'
+import "https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css";
+import "https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css";
+
 import { Providers } from '@/components/providers';
 import CssBaseline from '@mui/material/CssBaseline';
 

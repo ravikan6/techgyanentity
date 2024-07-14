@@ -13,7 +13,7 @@ const WriteLayout = async ({ children, params }) => {
         const article = await getArticle(path[0], session?.user?.id);
 
         if (!article) {
-            return redirect('/studio/content')
+            redirect('/studio/content')
         }
 
         return (

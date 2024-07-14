@@ -14,8 +14,7 @@ export default auth(async (req) => {
     if (req.auth) {
       async function setAuthor(res) {
         let author = await req.auth?.user?.Author?.length > 0 ? req.auth?.user?.Author[0].id : null;
-        console.log(isSecure, 'isSecure', author)
-
+        
         if (author) {
           author = encrypt(author, secret);
           res.cookies.set({

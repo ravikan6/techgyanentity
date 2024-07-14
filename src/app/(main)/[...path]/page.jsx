@@ -3,7 +3,6 @@ import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { getCImageUrl } from '@/lib/helpers';
-import { Skeleton } from '@mui/material';
 import { getCldOgImageUrl } from 'next-cloudinary';
 import { notFound } from 'next/navigation';
 
@@ -106,16 +105,12 @@ const getArticle = async (slug, id) => {
 }
 
 const getAuthor = async (handle) => {
-    let reHandle;
-    if (handle) {
-        if (handle.startsWith('@')) {
-            reHandle = handle.slice(1)
-        } else reHandle = handle;
-    }
+    handle = await handle?.startsWith('@') ? handle.slice(1) : handle;
+
     try {
         let author = await prisma.author.findUnique({
             where: {
-                handle: reHandle,
+                handle: handle,
                 isDeleted: false,
             },
             select: {

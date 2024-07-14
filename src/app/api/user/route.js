@@ -4,7 +4,7 @@ import { getCImageUrl } from "@/lib/helpers";
 export async function POST(request) {
     try {
         const formData = await request.formData()
-        const id = formData.get('id')
+        const id = await formData.get('id')
         const response = await prisma.user.findUnique({
             where: {
                 id: id,
