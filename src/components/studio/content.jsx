@@ -71,6 +71,7 @@ const StudioContent = () => {
             id: 'post',
             header: 'Post',
             size: 320,
+            maxSize: 320,
             Cell: ({ renderedCellValue, row }) => {
                 return <SidePostView post={row.original.post} title={renderedCellValue} />
             },
@@ -105,7 +106,6 @@ const StudioContent = () => {
             accessorKey: 'claps',
             filterFn: 'between',
             header: 'Claps',
-            size: 200,
             columnFilterModeOptions: ['between', 'lessThan', 'greaterThan'],
         },
         {
@@ -141,10 +141,10 @@ const StudioContent = () => {
         enableGlobalFilterModes: true,
         globalFilterModeOptions: ['fuzzy', 'startsWith', 'date', 'contains', 'equals'],
         paginationDisplayMode: 'pages',
-        positionToolbarAlertBanner: 'bottom',
+        positionToolbarAlertBanner: 'top',
         muiSearchTextFieldProps: {
             size: 'small',
-            variant: 'outlined',
+            variant: 'standard',
         },
         muiPaginationProps: {
             color: 'secondary',
@@ -164,13 +164,13 @@ const StudioContent = () => {
         },
         muiTableHeadCellProps: ({ column }) => ({
             sx: ({ theme }) => ({
-                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+                backgroundColor: column.getIsPinned() ? theme?.palette?.background?.default : theme?.palette?.background?.default,
             }),
             className: `${column.getIsPinned() && 'before:!shadow-none'}`
         }),
         muiTableBodyCellProps: ({ column }) => ({
             sx: ({ theme }) => ({
-                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+                backgroundColor: column.getIsPinned() ? theme?.palette?.background?.default : theme?.palette?.background?.default,
             }),
             className: `${column.getIsPinned() && 'before:!shadow-none'}`
         }),
@@ -179,7 +179,7 @@ const StudioContent = () => {
         ),
         muiTableFooterCellProps: ({ column }) => ({
             sx: ({ theme }) => ({
-                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+                backgroundColor: column.getIsPinned() ? theme?.palette?.background?.default : theme?.palette?.background?.default,
             }),
         }),
         muiTableFooterProps: {
@@ -195,31 +195,44 @@ const StudioContent = () => {
             };
 
             return (
-                <Box
-                    sx={(theme) => ({
-                        display: 'flex',
-                        gap: '0.5rem',
-                        p: '8px',
-                        justifyContent: 'space-between',
-                    })}
-                >
-                    <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <MRT_ToggleFiltersButton table={table} />
-                        <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null, classes: { notchedOutline: { border: 'none' }, root: { border: 'none' } } }} table={table} />
-                    </Box>
-                    <Box>
-                        <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-                            <Button
-                                color="button"
-                                disabled={!table.getIsSomeRowsSelected()}
-                                onClick={handleDeactivate}
-                                variant="outlined"
-                            >
-                                Delete
-                            </Button>
+                <>
+                    <div className="flex items-center justify-between w-full px-2 mb-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
+                        {
+                            [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
+                                return (
+                                    <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-lightButton dark:!bg-darkButton !text-black dark:!text-black' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="button" size="small" >
+                                        {item.name}
+                                    </Button>
+                                );
+                            })
+                        }
+                    </div>
+                    <Box
+                        sx={(theme) => ({
+                            display: 'flex',
+                            gap: '0.5rem',
+                            p: '8px',
+                            justifyContent: 'space-between',
+                        })}
+                    >
+                        <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <MRT_ToggleFiltersButton table={table} />
+                            <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null, classes: { notchedOutline: { border: 'none' }, root: { border: 'none' } } }} table={table} />
+                        </Box>
+                        <Box>
+                            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                                <Button
+                                    color="button"
+                                    disabled={!table.getIsSomeRowsSelected()}
+                                    onClick={handleDeactivate}
+                                    variant="outlined"
+                                >
+                                    Delete
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
-                </Box>
+                </>
             );
         },
     });
@@ -244,7 +257,7 @@ const SidePostView = ({ post, title }) => {
                 <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{title}</h3>
                 <div className="h-10 relative transition-all duration-300 w-[99%]">
                     <p className="text-gray-600 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{post?.description}</p>
-                    <div className="space-x-4 md:space-x-8 top-1.5 rb__studio__content__action absolute flex justify-between items-center w-full">
+                    <div className="space-x-4 md:space-x-6 top-1.5 rb__studio__content__action absolute flex justify-start items-center w-full">
                         <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
                         <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
                         <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
@@ -268,28 +281,11 @@ const IconView = ({ Icon, onClick, tip }) => {
 };
 
 const StudioContentView = () => {
-    const { loading } = useContext(StudioContext);
-
     return (
         <>
-            <div className='h-[calc(100vh-57px)]'>
-                <div className="flex overflow-x-auto h-[60px] flex-wrap justify-between px-4 items-center py-2 rounded-xl -mx-5 sm:space-x-1">
-                    <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
-                        {
-                            [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
-                                return (
-                                    <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-lightButton dark:!bg-darkButton !text-black dark:!text-black' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="button" size="small" >
-                                        {item.name}
-                                    </Button>
-                                );
-                            })
-                        }
-                    </div>
-                </div>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <StudioContent />
-                </LocalizationProvider>
-            </div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <StudioContent />
+            </LocalizationProvider>
         </>
     )
 };
