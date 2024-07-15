@@ -22,15 +22,18 @@ import {
     Box,
     lighten,
 } from '@mui/material';
+import { DrawerContext } from '../mainlayout';
+import { PrivacyHandlerBtn } from '../Buttons';
+import { PiReadCvLogo } from 'react-icons/pi';
 
 
 const StudioContent = () => {
     const [posts, setPosts] = useState([]);
     const [postData, setPostData] = useState([]);
-    const [isMapping, setIsMapping] = useState(false);
+    const [isMapping, setIsMapping] = useState(true);
     const { data, setLoading, loading } = useContext(StudioContext);
 
-    const { variant, open } = useContext(StudioContext);
+    const { variant, open } = useContext(DrawerContext);
 
     useEffect(() => {
         setLoading(true);
@@ -46,7 +49,7 @@ const StudioContent = () => {
 
     useEffect(() => {
         if (posts?.length > 0) {
-            setIsMapping(true);
+            !isMapping && setIsMapping(true);
             const data = posts?.map((post) => {
                 return {
                     id: post?.shortId,
@@ -71,27 +74,45 @@ const StudioContent = () => {
             Cell: ({ renderedCellValue, row }) => {
                 return <SidePostView post={row.original.post} title={renderedCellValue} />
             },
+            columnFilterModeOptions: ['fuzzy', 'contains', 'startsWith'],
         },
         {
             accessorKey: 'visibility',
             header: 'Visibility',
+            enableColumnFilter: false,
+            enableGlobalFilter: false,
+            Cell: ({ renderedCellValue, row }) => {
+                const v = row.original?.visibility;
+                return (
+                    <div className='flex items-center'>
+                        <PrivacyHandlerBtn privacy={v?.toLowerCase()} />
+                        <span className='capitalize'>
+                            {v}
+                        </span>
+                    </div>
+                )
+            },
         },
         {
             accessorFn: (row) => new Date(row?.date?.value),
             id: 'date',
             header: 'Date',
             filterVariant: 'date',
-            Cell: ({ cell, row }) => <div className='flex flex-col'><span>{formatDate(cell.getValue())}</span> <span>{row?.original?.date?.label}</span></div>
+            columnFilterModeOptions: ['date'],
+            Cell: ({ cell, row }) => <div className='flex flex-col justify-center items-center'><span className='font-semibold'>{formatDate(cell.getValue())}</span> <span>{row?.original?.date?.label}</span></div>
         },
         {
             accessorKey: 'claps',
             filterFn: 'between',
             header: 'Claps',
             size: 200,
+            columnFilterModeOptions: ['between', 'lessThan', 'greaterThan'],
         },
         {
             accessorKey: 'comments',
             header: 'Comments',
+            enableColumnFilter: false,
+            enableGlobalFilter: false,
         },
 
     ]);
@@ -100,7 +121,7 @@ const StudioContent = () => {
         columns,
         data: postData,
         enableColumnFilterModes: true,
-        enableColumnOrdering: true,
+        enableColumnOrdering: false,
         enableGrouping: false,
         enableColumnPinning: true,
         enableFacetedValues: true,
@@ -117,6 +138,8 @@ const StudioContent = () => {
                 }
             }
         },
+        enableGlobalFilterModes: true,
+        globalFilterModeOptions: ['fuzzy', 'startsWith', 'date', 'contains', 'equals'],
         paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'bottom',
         muiSearchTextFieldProps: {
@@ -136,22 +159,25 @@ const StudioContent = () => {
                 backgroundColor: 'transparent',
             },
         },
+        muiTableHeadCellProps: ({ column }) => ({
+            sx: {
+                backgroundColor: ({ theme }) => theme.palette?.background?.paper,
+            },
+            className: `${column.getIsPinned() && 'before:!shadow-none'}`
+        }),
+        muiTableBodyCellProps: ({ column }) => ({
+            sx: {
+                backgroundColor: ({ theme }) => theme.palette?.background?.paper,
+            },
+            className: `${column.getIsPinned() && 'before:!shadow-none'}`
+        }),
+        renderEmptyRowsFallback: ({ table }) => (
+            <div className="flex justify-center items-center">No Posts Found</div>
+        ),
         renderTopToolbar: ({ table }) => {
             const handleDeactivate = () => {
                 table.getSelectedRowModel().flatRows.map((row) => {
-                    alert('deactivating ' + row.getValue('post'));
-                });
-            };
-
-            const handleActivate = () => {
-                table.getSelectedRowModel().flatRows.map((row) => {
-                    alert('activating ' + row.getValue('name'));
-                });
-            };
-
-            const handleContact = () => {
-                table.getSelectedRowModel().flatRows.map((row) => {
-                    alert('contact ' + row.getValue('name'));
+                    alert('deactivating ' + row.original?.post?.shortId);
                 });
             };
 
@@ -171,28 +197,12 @@ const StudioContent = () => {
                     <Box>
                         <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                             <Button
-                                color="error"
+                                color="button"
                                 disabled={!table.getIsSomeRowsSelected()}
                                 onClick={handleDeactivate}
-                                variant="contained"
+                                variant="outlined"
                             >
-                                Deactivate
-                            </Button>
-                            <Button
-                                color="success"
-                                disabled={!table.getIsSomeRowsSelected()}
-                                onClick={handleActivate}
-                                variant="contained"
-                            >
-                                Activate
-                            </Button>
-                            <Button
-                                color="info"
-                                disabled={!table.getIsSomeRowsSelected()}
-                                onClick={handleContact}
-                                variant="contained"
-                            >
-                                Contact
+                                Delete
                             </Button>
                         </Box>
                     </Box>
@@ -202,10 +212,8 @@ const StudioContent = () => {
     });
 
     return (
-        <div>
-            {(loading || isMapping) ? <BetaLoader2 /> : <div style={{ width: (variant === 'permanent') ? (open ? 'calc(100% - 240px)' : 'calc(100% - 80px)') : '100%' }}>
-                <MaterialReactTable table={table} />
-            </div>}
+        <div style={{ width: (variant === 'permanent') ? (open ? 'calc(100% - 240px + 40px)' : 'calc(100% - 80px + 40px)') : '100%', margin: (variant === 'permanent') && '0 -20px' }}>
+            <MaterialReactTable table={table} state={{ isLoading: isMapping }} muiTableContainerProps={{ sx: { maxHeight: '100%' } }} />
         </div>
     );
 
@@ -215,18 +223,19 @@ const SidePostView = ({ post, title }) => {
     const router = useRouter();
 
     return (
-        <div key={post?.shortId} className="flex items-center h-full w-[99%] space-x-4">
+        <div key={post?.shortId} className="flex max-w-[400px] items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
                 <CldImage width={100} height={56} src={post?.image?.url} alt={post?.image?.alt} className="rounded-lg bg-black/5 dark:bg-white/5" />
             </div>
             <div className="flex flex-col flex-grow justify-start w-[calc(100%-100px)] items-start">
                 <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{title}</h3>
                 <div className="h-10 relative transition-all duration-300 w-[99%]">
-                    <p className="text-gray-600 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{post?.description}</p>
-                    <div className="space-x-3 mb-2 top-1 rb__studio__content__action absolute flex justify-start items-center w-full">
+                    <p className="text-gray-600 transition-all duration-300 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{post?.description}</p>
+                    <div className="space-x-3 top-1.5 transition-all duration-300 rb__studio__content__action absolute flex justify-between items-center w-full">
                         <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
-                        <IconView Icon={MdOutlineComment} onClick={() => toast('Comments')} tip='Comments' />
-                        <IconView Icon={MdOutlineAnalytics} onClick={() => toast('Analytics')} tip='Analytics' />
+                        <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
+                        <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
+                        <IconView Icon={PiReadCvLogo} onClick={() => router.push(`/post/${post?.slug}`)} tip='Read on Main Page' />
                         <IconView Icon={CiMenuKebab} onClick={() => router.push(`/studio/p/${post?.shortId}/editor`)} tip='Menu' />
                     </div>
                 </div>
@@ -239,18 +248,36 @@ const IconView = ({ Icon, onClick, tip }) => {
     return (
         <Tooltip title={tip} placement='bottom'>
             <IconButton onClick={onClick} >
-                <Icon className="w-5 h-5" color="primary" />
+                <Icon className="w-6 h-6 p-1 text-black dark:text-white" />
             </IconButton>
         </Tooltip>
     )
 };
 
-const StudioContentView = () => (
+const StudioContentView = () => {
+    const { loading } = useContext(StudioContext);
 
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <StudioContent />
-    </LocalizationProvider>
-);
+    return (
+        <>
+            <div className="flex overflow-x-auto flex-wrap justify-between px-4 items-center py-2 rounded-xl bg-lightHead dark:bg-darkHead sm:space-x-1">
+                <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
+                    {
+                        [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
+                            return (
+                                <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
+                                    {item.name}
+                                </Button>
+                            );
+                        })
+                    }
+                </div>
+            </div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <StudioContent />
+            </LocalizationProvider>
+        </>
+    )
+};
 
 export default StudioContentView;
 

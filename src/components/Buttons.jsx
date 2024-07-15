@@ -130,17 +130,21 @@ const PrivacyHandlerBtn = (props) => {
     return (
       <Tooltip followCursor arrow TransitionComponent={Zoom} title="Public">
         <span>
-          <HiOutlineGlobe className='text-2xl h-5 w-5 ml-1 mr-1' />
+          <HiOutlineGlobe className={`text-2xl h-5 w-5 ml-1 mr-1`} />
         </span>
       </Tooltip>
     )
   } else if (privacy === 'private') {
     return (
-      <TbLockCheck className='text-2xl h-5 w-5 ml-1 mr-1' />
+      <Tooltip followCursor arrow TransitionComponent={Zoom} title="Private">
+        <span>
+          <TbLockCheck className='text-2xl h-5 w-5 ml-1 mr-1' />
+        </span>
+      </Tooltip>
     )
   } else if (privacy === 'unlisted') {
     return (
-      <Tooltip title="This tooltip works great">
+      <Tooltip followCursor arrow TransitionComponent={Zoom} title="Unlisted">
         <div>
           <CgLink className='text-2xl h-5 w-5 ml-1 mr-1' /></div>
       </Tooltip>

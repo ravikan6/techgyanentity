@@ -246,6 +246,7 @@ const getAuthorPosts = async (authorId) => {
                 title: true,
                 description: true,
                 shortId: true,
+                slug: true,
                 image: {
                     select: {
                         url: true,

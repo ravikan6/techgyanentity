@@ -457,7 +457,7 @@ const ChannelEditLayout = ({ children }) => {
                             {
                                 [{ name: 'Sections', value: 'sections' }, { name: 'Branding', value: 'branding' }, { name: 'Basic Info', value: 'info' }].map((item, index) => {
                                     return (
-                                        <Button disabled={context?.data?.loading} key={index} onClick={() => router.push(`/${process.env.STUDIO_URL_PREFIX}/edit?t=${item.value}`)} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${q === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
+                                        <Button disabled={context?.loading} key={index} onClick={() => router.push(`/${process.env.STUDIO_URL_PREFIX}/edit?t=${item.value}`)} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${q === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
                                             {item.name}
                                         </Button>
                                     );
@@ -466,8 +466,8 @@ const ChannelEditLayout = ({ children }) => {
                         </div>
 
                         <div ref={ref} className="flex justify-between mb-1 mt-1 sm:justify-end w-full sm:w-auto transition-all duration-500 items-center space-x-2 md:space-x-3">
-                            <Button disabled={state?.data?.isRunnable ? context?.data?.loading : (state?.data?.aCancle ? context?.data?.loading : true)} onClick={handleCancle} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="primary" size="small" > Cancel </Button>
-                            <Button disabled={state?.data?.isRunnable ? context?.data?.loading : true} onClick={() => handlePublish()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Publish </Button>
+                            <Button disabled={state?.data?.isRunnable ? context?.loading : (state?.data?.aCancle ? context?.loading : true)} onClick={handleCancle} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="primary" size="small" > Cancel </Button>
+                            <Button disabled={state?.data?.isRunnable ? context?.loading : true} onClick={() => handlePublish()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Publish </Button>
                         </div>
                     </div>
                 </div>
