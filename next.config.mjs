@@ -28,6 +28,7 @@ const nextConfig = {
     },
     experimental: {
         instrumentationHook: true,
+        urlImports: [],
     },
     images: {
         remotePatterns: [

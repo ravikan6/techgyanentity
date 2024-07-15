@@ -3,12 +3,10 @@ import { Fragment, useState, useContext } from 'react';
 import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
 import { Divider, Box, LinearProgress } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
-import { FeedbackOutlined, HelpOutlineOutlined, MoreVert } from '@mui/icons-material';
+import { FeedbackOutlined, HelpOutlineOutlined, MoreVert, EditOutlined, KeyboardArrowLeft } from '@mui/icons-material';
 import { StudioContext, StudioWriterContext } from '@/lib/context';
 import { useRouter } from 'next/navigation';
 import confirm from '@/lib/confirm';
-import { IoCaretBackCircleOutline } from 'react-icons/io5';
-import { TbEditCircle } from 'react-icons/tb';
 
 export const WriteMenu = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -75,18 +73,17 @@ export const WriteMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 className="rb_sss rb_ss overflow-y-auto"
             >
-                <Box elevation={0} sx={{ py: 2, px: 1 }}>
+                <Box elevation={0}>
 
                     <ListItemRdX onClick={() => onBackToContent(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)} link={{
                         name: 'Back to Content',
                         url: '#',
-                        icon: IoCaretBackCircleOutline,
+                        icon: KeyboardArrowLeft,
                     }} />
-
                     <ListItemRdX link={{
                         name: 'Edit Details',
                         url: '#',
-                        icon: TbEditCircle,
+                        icon: EditOutlined,
                     }} onClick={() => onBackToContent(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`)} />
 
                     <Divider sx={{ my: 1 }} />

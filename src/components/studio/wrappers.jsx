@@ -67,6 +67,12 @@ const StudioWriteEditorWrapper = ({ children }) => {
     const [state, setState] = useState({ save: false, cancle: false, runner: null, onCancle: null });
     const [loading, setLoading] = useState(false);
 
+    const context = useContext(StudioContext);
+
+    useEffect(() => {
+        if (context?.loading) context?.setLoading(false);
+    }, [context?.loading])
+
     return (
         <StudioWriterContext.Provider value={{ state, setState, loading, setLoading }}>
             {children}

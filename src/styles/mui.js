@@ -40,6 +40,7 @@ const mui = extendTheme({
         background: {
           main: '#1e1a28',
           paper: 'rgb(253, 236, 236)', // Wisp Pink
+          default: 'rgb(253, 236, 236)', // Wisp Pink 
         },
         Avatar: {
           defaultBg: 'rgb(241, 162, 162)', // Wewak
@@ -49,6 +50,12 @@ const mui = extendTheme({
         },
         button2: {
           main: 'rgb(243, 196, 185)', // Mandys Pink
+        },
+        TableCell: {
+          border: 'rgb(249, 222, 210)', // Givry
+        },
+        common: {
+          background: 'rgb(253, 236, 236)', // Wisp Pink 
         }
       }
     },
@@ -78,6 +85,7 @@ const mui = extendTheme({
         background: {
           main: '#1e1a28',
           paper: 'rgb(26, 45, 76)', // Big Stone
+          default: 'rgb(26, 45, 76)', // Big Stone
         },
         button: {
           main: 'rgb(198, 215, 240)', // Spindle
@@ -97,6 +105,12 @@ const mui = extendTheme({
         },
         button2: {
           main: 'rgb(75, 90, 129)', // Blue Bayoux
+        },
+        TableCell: {
+          border: 'rgb(11, 31, 60)', // Blue Zodiac
+        },
+        common: {
+          background: 'rgb(26, 45, 76)', // Big Stone
         }
       }
     }

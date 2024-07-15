@@ -13,7 +13,7 @@ import { IoCreateOutline } from 'react-icons/io5';
 import { ArticleReportModal } from '@/components/popup';
 import { MdBookmarkAdd, MdBookmarkAdded, MdNavigateNext, MdOutlineBookmarkAdd, MdOutlineKeyboardArrowLeft, MdOutlineReport } from 'react-icons/md';
 import { MenuList, Zoom, ListItemIcon, alpha } from '@mui/material';
-import { AccountCircleOutlined, Add, DrawOutlined, NotificationsOutlined, Menu as MenuIcon } from '@mui/icons-material';
+import { AccountCircleOutlined, Add, DrawOutlined, NotificationsOutlined, Menu as MenuIcon, MoreVert } from '@mui/icons-material';
 import { Btn } from './rui/_components';
 import { Button, IconButton, Tooltip, Menu, MenuItem } from '@/components/rui';
 import { DrawerContext } from './mainlayout';
@@ -257,7 +257,7 @@ const PostDetailsImageMenu = ({ onFistClick, disabled }) => {
   return (
     <>
       <div className={` w-8`}>
-        <Button disabled={disabled} variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className="!bg-lightHead dark:!bg-darkHead" onClick={handleClick}>
+        <Button disabled={disabled} variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} className={`!bg-lightHead dark:!bg-darkHead ${disabled && 'opacity-40'}`} onClick={handleClick}>
           <PiDotsThreeOutline className="w-4 h-4" />
         </Button>
       </div>
@@ -299,7 +299,7 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
   return (
     <>
       <IconButton color="primary" size='small' disabled={disabled} onClick={handleClick}>
-        <PiDotsThreeOutline className="w-4 h-4" />
+        <MoreVert className="w-4 h-4" />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -309,7 +309,7 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
           'aria-labelledby': 'post_details_action',
         }}
         sx={{ zIndex: '999' }} >
-        <MenuList className='px-2'>
+        <MenuList>
           {
             list.map((item, index) => {
               return (
@@ -317,7 +317,7 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
                   <ListItemIcon >
                     <item.icon className='w-5 h-5' />
                   </ListItemIcon>
-                  <span className='text-base'>{item.label}</span>
+                  <span className='text-base font-semibold mr-1.5'>{item.label}</span>
                 </MenuItem>
               )
             })

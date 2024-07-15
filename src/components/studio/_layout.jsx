@@ -34,7 +34,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
 
 
 const StudioLayout = ({ children, session }) => {
-    const q = useMediaQuery('(max-width:600px)');
+    const q = useMediaQuery('(max-width:768px)');
     let v = q ? 'persistent' : 'permanent';
     let o = q ? false : true;
     const [open, setOpen] = React.useState(o);
@@ -49,7 +49,6 @@ const StudioLayout = ({ children, session }) => {
     React.useMemo(() => {
         setOpen(o)
         setVariant(v)
-        console.log(q, v, o, open, variant)
     }, [q]);
 
     const drawerWidth_get = () => {
@@ -61,7 +60,7 @@ const StudioLayout = ({ children, session }) => {
     }
 
     return (
-        <DrawerContext.Provider value={{ open, setOpen }}>
+        <DrawerContext.Provider value={{ open, setOpen, variant }}>
             <Box sx={{ display: 'flex' }}>
                 <Drawer
                     sx={{

@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link";
 import Image from "next/image";
-import { Skeleton } from "@mui/material";
+import { Skeleton, useMediaQuery } from "@mui/material";
 // import { get_SECTION_logo } from "./fetchers";
 import { MenuItem, TextField, ToggleButtonGroup } from "@/components/rui";
 import { ToggleButton } from "@mui/material";
@@ -184,11 +184,12 @@ const toastError = (erros) => {
 
 export const VariantPermanent = () => {
     const context = useContext(DrawerContext);
+    const width = useMediaQuery('(max-width:768px)');
 
     useEffect(() => {
         if (context.variant !== 'permanent')
-            context.setVariant('permanent'); context.setOpen(true);
-    }, [context.variant]);
+            if (!width) context.setVariant('permanent'); context.setOpen(true);
+    }, [context.variant, width]);
 };
 
 export {

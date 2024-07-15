@@ -21,8 +21,6 @@ export default async function RootLayout({ children, models }) {
   const session = await auth();
   let authorData = null;
 
-  console.log(session, 'session');
-
   if (session && session.user) {
     authorData = await DecryptAuthorStudioCookie();
   }
