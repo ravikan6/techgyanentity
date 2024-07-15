@@ -16,9 +16,14 @@ const drawerWidthClose = 80;
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shouldForwardProp: (prop) => prop !== 'variant' })(
     ({ theme, open, variant }) => ({
         flexGrow: 1,
-        padding: theme.spacing(3),
+        paddingLeft: theme.spacing(3),
+        paddingRight: theme.spacing(3),
         marginLeft: 0,
-        width: '100%',
+        width: `calc(100% - ${drawerWidth_get(open, variant)}px)`,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
         ...((open && variant == 'permanent') && {
             transition: theme.transitions.create('margin', {
                 easing: theme.transitions.easing.easeOut,
@@ -32,6 +37,13 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
     }),
 );
 
+const drawerWidth_get = (open, variant) => {
+    if (variant === 'persistent') {
+        return open ? drawerWidth : 0;
+    } else {
+        return open ? drawerWidth : drawerWidthClose;
+    }
+}
 
 const StudioLayout = ({ children, session }) => {
     const q = useMediaQuery('(max-width:768px)');
@@ -51,41 +63,36 @@ const StudioLayout = ({ children, session }) => {
         setVariant(v)
     }, [q]);
 
-    const drawerWidth_get = () => {
-        if (variant === 'persistent') {
-            return open ? drawerWidth : 0;
-        } else {
-            return open ? drawerWidth : drawerWidthClose;
-        }
-    }
-
     return (
         <DrawerContext.Provider value={{ open, setOpen, variant }}>
             <Box sx={{ display: 'flex' }}>
                 <Drawer
                     sx={{
-                        width: drawerWidth_get(),
+                        width: drawerWidth_get(open, variant),
                         flexShrink: 0,
+
                         transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
                             easing: theme.transitions.easing.sharp,
                             duration: theme.transitions.duration.enteringScreen,
                         }),
+
                         '& .MuiDrawer-paper': {
-                            width: drawerWidth_get(),
-                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette.head.main : 'transparent',
-                            mt: variant === 'persistent' ? 0 : '54px',
+                            width: drawerWidth_get(open, variant),
+                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette?.modelBG?.main : 'transparent',
+                            mt: variant === 'persistent' ? 0 : 0,
+                            pt: variant === 'persistent' ? 0 : '54px',
                             border: 'none',
                             transition: (theme) => theme.transitions.create('width', {
                                 easing: theme.transitions.easing.sharp,
                                 duration: theme.transitions.duration.enteringScreen,
                             }),
                         },
-                        zIndex: variant === 'persistent' ? (theme) => theme.zIndex.drawer + 1 : (theme) => 3,
+                        zIndex: variant === 'persistent' ? (theme) => theme.zIndex.drawer + 1 : 1,
                     }}
                     variant={variant}
                     anchor="left"
                     open={open}
-                    className={variant === 'permanent' ? '!hidden min-[600px]:!block' : ''}
+                    className={variant === 'permanent' ? '!hidden md:!block' : ''}
                 >
                     {variant === 'persistent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
                         <IconButton

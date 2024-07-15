@@ -86,8 +86,8 @@ const StudioContent = () => {
                 return (
                     <div className='flex items-center'>
                         <PrivacyHandlerBtn privacy={v?.toLowerCase()} />
-                        <span className='capitalize'>
-                            {v}
+                        <span className='text-[16px] mt-0.5 ml-2'>
+                            {v?.slice(0, 1) + v?.slice(1).toLowerCase()   /* Capitalize first letter */}
                         </span>
                     </div>
                 )
@@ -99,7 +99,7 @@ const StudioContent = () => {
             header: 'Date',
             filterVariant: 'date',
             columnFilterModeOptions: ['date'],
-            Cell: ({ cell, row }) => <div className='flex flex-col justify-center items-center'><span className='font-semibold'>{formatDate(cell.getValue())}</span> <span>{row?.original?.date?.label}</span></div>
+            Cell: ({ cell, row }) => <div className='flex flex-col text-center'><span className='text-center'>{formatDate(cell.getValue())}</span> <span className="opacity-80 text-center">{row?.original?.date?.label}</span></div>
         },
         {
             accessorKey: 'claps',
@@ -172,7 +172,7 @@ const StudioContent = () => {
             className: `${column.getIsPinned() && 'before:!shadow-none'}`
         }),
         renderEmptyRowsFallback: ({ table }) => (
-            <div className="flex justify-center items-center">No Posts Found</div>
+            <div className="flex justify-center min-h-96 items-center">No Posts Found</div>
         ),
         renderTopToolbar: ({ table }) => {
             const handleDeactivate = () => {
@@ -191,8 +191,8 @@ const StudioContent = () => {
                     })}
                 >
                     <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <MRT_GlobalFilterTextField table={table} />
                         <MRT_ToggleFiltersButton table={table} />
+                        <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null }} table={table} />
                     </Box>
                     <Box>
                         <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -212,8 +212,8 @@ const StudioContent = () => {
     });
 
     return (
-        <div style={{ width: (variant === 'permanent') ? (open ? 'calc(100% - 240px + 40px)' : 'calc(100% - 80px + 40px)') : '100%', margin: (variant === 'permanent') && '0 -20px' }}>
-            <MaterialReactTable table={table} state={{ isLoading: isMapping }} muiTableContainerProps={{ sx: { maxHeight: '100%' } }} />
+        <div style={{ margin: (variant === 'permanent') && '0 -20px' }}>
+            <MaterialReactTable table={table} state={{ isLoading: isMapping, showSkeletons: isMapping }} muiTableContainerProps={{ sx: { maxHeight: 'calc(100vh - 116px)' } }} />
         </div>
     );
 
@@ -223,20 +223,20 @@ const SidePostView = ({ post, title }) => {
     const router = useRouter();
 
     return (
-        <div key={post?.shortId} className="flex max-w-[400px] items-center h-full w-[99%] space-x-4">
+        <div key={post?.shortId} className="flex items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
                 <CldImage width={100} height={56} src={post?.image?.url} alt={post?.image?.alt} className="rounded-lg bg-black/5 dark:bg-white/5" />
             </div>
             <div className="flex flex-col flex-grow justify-start w-[calc(100%-100px)] items-start">
                 <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{title}</h3>
                 <div className="h-10 relative transition-all duration-300 w-[99%]">
-                    <p className="text-gray-600 transition-all duration-300 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{post?.description}</p>
-                    <div className="space-x-3 top-1.5 transition-all duration-300 rb__studio__content__action absolute flex justify-between items-center w-full">
+                    <p className="text-gray-600 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{post?.description}</p>
+                    <div className="space-x-4 md:space-x-8 top-1.5 rb__studio__content__action absolute flex justify-between items-center w-full">
                         <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
                         <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
                         <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
                         <IconView Icon={PiReadCvLogo} onClick={() => router.push(`/post/${post?.slug}`)} tip='Read on Main Page' />
-                        <IconView Icon={CiMenuKebab} onClick={() => router.push(`/studio/p/${post?.shortId}/editor`)} tip='Menu' />
+                        <IconView Icon={CiMenuKebab} onClick={() => router.push(`/studio/`)} tip='Menu' />
                     </div>
                 </div>
             </div>
@@ -248,7 +248,7 @@ const IconView = ({ Icon, onClick, tip }) => {
     return (
         <Tooltip title={tip} placement='bottom'>
             <IconButton onClick={onClick} >
-                <Icon className="w-6 h-6 p-1 text-black dark:text-white" />
+                <Icon className="w-5 h-5 text-black dark:text-white" />
             </IconButton>
         </Tooltip>
     )
@@ -259,22 +259,24 @@ const StudioContentView = () => {
 
     return (
         <>
-            <div className="flex overflow-x-auto flex-wrap justify-between px-4 items-center py-2 rounded-xl bg-lightHead dark:bg-darkHead sm:space-x-1">
-                <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
-                    {
-                        [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
-                            return (
-                                <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
-                                    {item.name}
-                                </Button>
-                            );
-                        })
-                    }
+            <div className='h-[calc(100vh-57px)]'>
+                <div className="flex overflow-x-auto h-[60px] flex-wrap justify-between px-4 items-center py-2 rounded-xl bg-lightHead dark:bg-darkHead -mx-4 sm:space-x-1">
+                    <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
+                        {
+                            [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
+                                return (
+                                    <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
+                                        {item.name}
+                                    </Button>
+                                );
+                            })
+                        }
+                    </div>
                 </div>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <StudioContent />
+                </LocalizationProvider>
             </div>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <StudioContent />
-            </LocalizationProvider>
         </>
     )
 };
