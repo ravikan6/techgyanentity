@@ -160,15 +160,15 @@ const StudioContent = () => {
             },
         },
         muiTableHeadCellProps: ({ column }) => ({
-            sx: {
-                backgroundColor: ({ theme }) => theme.palette?.background?.paper,
-            },
+            sx: ({ theme }) => ({
+                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+            }),
             className: `${column.getIsPinned() && 'before:!shadow-none'}`
         }),
         muiTableBodyCellProps: ({ column }) => ({
-            sx: {
-                backgroundColor: ({ theme }) => theme.palette?.background?.paper,
-            },
+            sx: ({ theme }) => ({
+                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+            }),
             className: `${column.getIsPinned() && 'before:!shadow-none'}`
         }),
         renderEmptyRowsFallback: ({ table }) => (
