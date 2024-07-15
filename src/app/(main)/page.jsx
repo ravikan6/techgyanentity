@@ -9,6 +9,8 @@ export default async function Home() {
   const blogPosts = await prisma.post.findMany({
     where: {
       published: true,
+      isDeleted: false,
+      privacy: "PUBLIC",
     },
     select: {
       title: true,
@@ -27,33 +29,29 @@ export default async function Home() {
     },
   });
 
-  console.log(blogPosts, 'blogPosts');
-
-  const arr = [0]
-
   return (
     <>
       <div className="py-2">
         <VariantPermanent />
         <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 max-w-5xl mx-auto gap-6 sm:w-full">
           {
-            arr.map(() => {
-              return (blogPosts.map((post) => (
-                <Link href={`/${post?.author?.handle}/${post.slug}`} key={post?.slug} className="text-left">
-                  <ArticleImage classes={'rounded-lg'} image={post?.image} />
+            blogPosts.map((post) => (
+              <div key={post?.slug} className="text-left">
+                <Link href={`/${post?.author?.handle}/${post.slug}`}>
+                  <ArticleImage classes="rounded-lg" image={post?.image} />
                   <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
-                  <span className="flex ">
-                    <Link className="flex mt-2 space-x-3 items-center" href={`/@${post?.author?.handle}`}>
-                      <span className="w-10 h-10 rounded-3xl bg-black/20 dark:bg-white/20 animate-pulse" />
-                      <p className="text-base flex flex-col font-semibold">
-                        {post?.author?.name}
-                        <span className="text-sm -mt-1.5 font-medium">{post?.author?.handle}</span>
-                      </p>
-                    </Link>
-                  </span>
-                </Link>)
-              ))
-            })
+                </Link>
+                <span className="flex mt-2 space-x-3 items-center">
+                  <Link href={`/@${post?.author?.handle}`} className="flex items-center space-x-3">
+                    <span className="w-10 h-10 rounded-3xl bg-black/20 dark:bg-white/20 animate-pulse" />
+                    <p className="text-base flex flex-col font-semibold">
+                      {post?.author?.name}
+                      <span className="text-sm -mt-1.5 font-medium">{post?.author?.handle}</span>
+                    </p>
+                  </Link>
+                </span>
+              </div>
+            ))
           }
         </div>
       </div>

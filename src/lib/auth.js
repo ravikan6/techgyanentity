@@ -108,7 +108,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         }
                     });
                     const response = await res.json();
-                    token = { ...token, ...response };
+                    token = { ...token, ...response?.data };
                     delete token.password;
                 } catch (error) {
                     console.log("Server Error:", error?.message) //TODO: Will be removed in production

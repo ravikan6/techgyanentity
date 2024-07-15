@@ -8,12 +8,12 @@ import { useContext, useEffect, useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import { toast } from 'react-toastify';
 import { IconButton, Tooltip } from '../rui';
-
-import { Analytics, Comment, Edit, MenuOutlined } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import { CiMenuKebab } from 'react-icons/ci';
+import { MdOutlineAnalytics, MdOutlineComment, MdOutlineEdit } from 'react-icons/md';
 
 
-const Drafts = () => {
+const StudioContent = () => {
     const [posts, setPosts] = useState([]);
     const [postData, setPostData] = useState([]);
     const [isMapping, setIsMapping] = useState(false);
@@ -76,13 +76,13 @@ const Drafts = () => {
                 </div>
                 <div className="flex flex-col flex-grow justify-start w-[calc(100%-100px)] items-start">
                     <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{post?.title}</h3>
-                    <div className="h-10 group/pst__view transition-all duration-300 w-[99%]">
-                        <p className="text-gray-600 dark:text-gray-400 line-clamp-2 visible group-hover/pst__view:invisible text-xs text-pretty">{post?.description}</p>
-                        <div className="space-x-3 mb-2 absolute flex transition-all duration-300 justify-start items-center invisible group-hover/pst__view:visible w-full">
-                            <IconView Icon={Edit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
-                            <IconView Icon={Comment} onClick={() => toast('Comments')} tip='Comments' />
-                            <IconView Icon={Analytics} onClick={() => toast('Analytics')} tip='Analytics' />
-                            <IconView Icon={MenuOutlined} onClick={() => router.push(`/studio/p/${post?.shortId}/editor`)} tip='Menu' />
+                    <div className="h-10 group/pst__view relative transition-all duration-300 w-[99%]">
+                        <p className="text-gray-600 dark:text-gray-400 line-clamp-2 visible group-hover/pst__view:invisible text-xs text-pretty transition-all duration-300">{post?.description}</p>
+                        <div className="space-x-3 mb-2 top-1 absolute flex transition-all duration-300 justify-start items-center invisible group-hover/pst__view:visible w-full">
+                            <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
+                            <IconView Icon={MdOutlineComment} onClick={() => toast('Comments')} tip='Comments' />
+                            <IconView Icon={MdOutlineAnalytics} onClick={() => toast('Analytics')} tip='Analytics' />
+                            <IconView Icon={CiMenuKebab} onClick={() => router.push(`/studio/p/${post?.shortId}/editor`)} tip='Menu' />
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,24 @@ function DataTable({ rows, columns }) {
                 }}
                 pageSizeOptions={[5, 10]}
                 checkboxSelection
-                rowHeight={64}
+                rowHeight={68}
+                disableRowSelectionOnClick
+                autoHeight
+                sx={{
+                    '&.MuiDataGrid-root': {
+                        border: 'none',
+                    },
+                    '.MuiDataGrid-columnSeparator': {
+                        display: 'none',
+                    },
+                    "& .MuiDataGrid-cell:focus-within": {
+                        outline: 'none !important'
+                    },
+                    '& .MuiDataGrid-cell': {
+                        border: 'none',
+                    },
+
+                }}
             />
         </div>
     );
@@ -142,4 +159,4 @@ export const BetaLoader2 = () => {
     );
 };
 
-export default Drafts;
+export default StudioContent;
