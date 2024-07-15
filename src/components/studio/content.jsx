@@ -159,6 +159,9 @@ const StudioContent = () => {
                 backgroundColor: 'transparent',
             },
         },
+        state: {
+            showSkeletons: isMapping
+        },
         muiTableHeadCellProps: ({ column }) => ({
             sx: ({ theme }) => ({
                 backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
@@ -174,6 +177,16 @@ const StudioContent = () => {
         renderEmptyRowsFallback: ({ table }) => (
             <div className="flex justify-center min-h-96 items-center">No Posts Found</div>
         ),
+        muiTableFooterCellProps: ({ column }) => ({
+            sx: ({ theme }) => ({
+                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+            }),
+        }),
+        muiTableFooterProps: {
+            sx: ({ theme }) => ({
+                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+            }),
+        },
         renderTopToolbar: ({ table }) => {
             const handleDeactivate = () => {
                 table.getSelectedRowModel().flatRows.map((row) => {
@@ -192,7 +205,7 @@ const StudioContent = () => {
                 >
                     <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                         <MRT_ToggleFiltersButton table={table} />
-                        <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null }} table={table} />
+                        <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null, classes: { notchedOutline: { border: 'none' }, root: { border: 'none' } } }} table={table} />
                     </Box>
                     <Box>
                         <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -213,7 +226,7 @@ const StudioContent = () => {
 
     return (
         <div style={{ margin: (variant === 'permanent') && '0 -20px' }}>
-            <MaterialReactTable table={table} state={{ isLoading: isMapping, showSkeletons: isMapping }} muiTableContainerProps={{ sx: { maxHeight: 'calc(100vh - 116px)' } }} />
+            <MaterialReactTable table={table} muiTableContainerProps={{ style: { height: 'calc(100vh - 230px) !important' } }} />
         </div>
     );
 
@@ -260,12 +273,12 @@ const StudioContentView = () => {
     return (
         <>
             <div className='h-[calc(100vh-57px)]'>
-                <div className="flex overflow-x-auto h-[60px] flex-wrap justify-between px-4 items-center py-2 rounded-xl bg-lightHead dark:bg-darkHead -mx-4 sm:space-x-1">
+                <div className="flex overflow-x-auto h-[60px] flex-wrap justify-between px-4 items-center py-2 rounded-xl -mx-5 sm:space-x-1">
                     <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                         {
                             [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
                                 return (
-                                    <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-accentLight dark:!bg-accentDark !text-white dark:!text-secondaryDark' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="primary" size="small" >
+                                    <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-lightButton dark:!bg-darkButton !text-black dark:!text-black' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="button" size="small" >
                                         {item.name}
                                     </Button>
                                 );
