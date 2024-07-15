@@ -10,22 +10,18 @@ import { useRouter } from 'next/navigation';
 import { CiMenuKebab } from 'react-icons/ci';
 import { MdOutlineAnalytics, MdOutlineComment, MdOutlineEdit } from 'react-icons/md';
 import { formatDate } from '@/lib/utils';
-
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
     MaterialReactTable,
     useMaterialReactTable,
     MRT_GlobalFilterTextField,
     MRT_ToggleFiltersButton,
 } from 'material-react-table';
-
 import {
     Box,
-    ListItemIcon,
-    Typography,
     lighten,
 } from '@mui/material';
-import { AccountCircle, Send } from '@mui/icons-material';
 
 
 const StudioContent = () => {
@@ -33,6 +29,8 @@ const StudioContent = () => {
     const [postData, setPostData] = useState([]);
     const [isMapping, setIsMapping] = useState(false);
     const { data, setLoading, loading } = useContext(StudioContext);
+
+    const { variant, open } = useContext(StudioContext);
 
     useEffect(() => {
         setLoading(true);
@@ -69,10 +67,9 @@ const StudioContent = () => {
             accessorFn: (row) => row?.post?.title,
             id: 'post',
             header: 'Post',
-            size: 370,
-            Cell: ({ renderedCellValue, cell, row }) => {
-                console.log(renderedCellValue, cell, row, '_____________tbl')
-                return <SidePostView post={cell} title={renderedCellValue} />
+            size: 320,
+            Cell: ({ renderedCellValue, row }) => {
+                return <SidePostView post={row.original.post} title={renderedCellValue} />
             },
         },
         {
@@ -84,7 +81,7 @@ const StudioContent = () => {
             id: 'date',
             header: 'Date',
             filterVariant: 'date',
-            Cell: ({ cell, row }) => <div className='flex flex-col'><span>{formatDate(cell.getValue())}</span> <span>{row?.date?.label}</span></div>
+            Cell: ({ cell, row }) => <div className='flex flex-col'><span>{formatDate(cell.getValue())}</span> <span>{row?.original?.date?.label}</span></div>
         },
         {
             accessorKey: 'claps',
@@ -109,12 +106,16 @@ const StudioContent = () => {
         enableFacetedValues: true,
         enableRowActions: false,
         enableRowSelection: true,
+        enableExpanding: false,
+        enableStickyHeader: true,
         initialState: {
             showColumnFilters: false,
             showGlobalFilter: true,
-            columnPinning: {
-                left: ['mrt-row-expand', 'mrt-row-select', 'post'],
-            },
+            ...(variant === 'permanent') && {
+                columnPinning: {
+                    left: ['mrt-row-select', 'post'],
+                }
+            }
         },
         paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'bottom',
@@ -125,51 +126,16 @@ const StudioContent = () => {
         muiPaginationProps: {
             color: 'secondary',
             rowsPerPageOptions: [10, 20, 30],
-            shape: 'rounded',
+            shape: 'circular',
             variant: 'outlined',
         },
-        renderDetailPanel: ({ row }) => (
-            <Box
-                sx={{
-                    alignItems: 'center',
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    left: '30px',
-                    maxWidth: '1000px',
-                    position: 'sticky',
-                    width: '100%',
-                }}
-            >
-                {JSON.stringify(row)}
-            </Box>
-        ),
-        renderRowActionMenuItems: ({ closeMenu }) => [
-            <MenuItem
-                key={0}
-                onClick={() => {
-                    closeMenu();
-                }}
-                sx={{ m: 0 }}
-            >
-                <ListItemIcon>
-                    <AccountCircle />
-                </ListItemIcon>
-                View Profile
-            </MenuItem>,
-            <MenuItem
-                key={1}
-                onClick={() => {
-                    // Send email logic...
-                    closeMenu();
-                }}
-                sx={{ m: 0 }}
-            >
-                <ListItemIcon>
-                    <Send />
-                </ListItemIcon>
-                Send Email
-            </MenuItem>,
-        ],
+        muiTablePaperProps: {
+            elevation: 0,
+            sx: {
+                borderRadius: '0',
+                backgroundColor: 'transparent',
+            },
+        },
         renderTopToolbar: ({ table }) => {
             const handleDeactivate = () => {
                 table.getSelectedRowModel().flatRows.map((row) => {
@@ -192,7 +158,6 @@ const StudioContent = () => {
             return (
                 <Box
                     sx={(theme) => ({
-                        backgroundColor: lighten(theme.palette.background.default, 0.05),
                         display: 'flex',
                         gap: '0.5rem',
                         p: '8px',
@@ -200,7 +165,6 @@ const StudioContent = () => {
                     })}
                 >
                     <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        {/* import MRT sub-components */}
                         <MRT_GlobalFilterTextField table={table} />
                         <MRT_ToggleFiltersButton table={table} />
                     </Box>
@@ -239,7 +203,7 @@ const StudioContent = () => {
 
     return (
         <div>
-            {(loading || isMapping) ? <BetaLoader2 /> : <div>
+            {(loading || isMapping) ? <BetaLoader2 /> : <div style={{ width: (variant === 'permanent') ? (open ? 'calc(100% - 240px)' : 'calc(100% - 80px)') : '100%' }}>
                 <MaterialReactTable table={table} />
             </div>}
         </div>
@@ -281,6 +245,15 @@ const IconView = ({ Icon, onClick, tip }) => {
     )
 };
 
+const StudioContentView = () => (
+
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <StudioContent />
+    </LocalizationProvider>
+);
+
+export default StudioContentView;
+
 export const BetaLoader2 = () => {
     return (
         <div class='flex space-x-2 justify-center items-centerw-full my-10'>
@@ -291,5 +264,3 @@ export const BetaLoader2 = () => {
         </div>
     );
 };
-
-export default StudioContent;

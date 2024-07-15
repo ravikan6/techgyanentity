@@ -13,11 +13,11 @@
 }
 
 *::-webkit-scrollbar {
-  @apply w-2;
+  @apply w-2 h-1.5;
 }
 
 *::-webkit-scrollbar-track {
-  @apply mt-0.5 mb-0.5 border-0 bg-transparent;
+  @apply mt-0.5 mb-0.5 border-0 bg-transparent mx-0.5;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -229,7 +229,7 @@ svg {
   visibility: visible;
 }
 
-.MuiDataGrid-row:hover .rb__studio__content__desc {
+.MuiTableRow-root:hover .rb__studio__content__desc {
   visibility: hidden;
 }
 
@@ -237,7 +237,7 @@ svg {
   visibility: hidden;
 }
 
-.MuiDataGrid-row:hover .rb__studio__content__action {
+.MuiTableRow-root:hover .rb__studio__content__action {
   visibility: visible;
 }
 
