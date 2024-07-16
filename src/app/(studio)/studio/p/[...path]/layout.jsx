@@ -21,12 +21,10 @@ const WriteLayout = async ({ children, params }) => {
             if (!author) {
                 redirect('/studio/content')
             }
-
             const article = await getArticle(path[0], author?.id);
             if (!article) {
                 redirect('/studio/content')
             }
-
             return (
                 <StudioWriteLayoutWrapper article={article} >
                     {path[1] === 'editor' ? <StudioWriteEditorWrapper> <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
@@ -59,7 +57,6 @@ const getArticle = async (id, authorId) => {
         const article = await prisma.post.findUnique({
             where: {
                 shortId: id,
-                isDeleted: false,
                 author: {
                     id: authorId
                 }
@@ -68,6 +65,7 @@ const getArticle = async (id, authorId) => {
                 shortId: true,
                 title: true,
                 description: true,
+                isDeleted: true,
                 image: {
                     select: {
                         url: true,
@@ -81,7 +79,7 @@ const getArticle = async (id, authorId) => {
                         id: true,
                         handle: true,
                     }
-                }
+                },
             }
         });
 

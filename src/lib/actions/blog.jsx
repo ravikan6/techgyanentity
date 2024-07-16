@@ -56,10 +56,10 @@ export const createPostAction = async (data) => {
 export const handleCreatePostRedirectAction = async (authorId) => {
     const session = await auth();
     if (!session.user) {
-        return redirect('/auth/v2/signin');
+        redirect('/auth/v2/signin');
     }
     if (!authorId) {
-        return redirect('/setup/author');
+        redirect('/setup/author');
     }
     try {
 
@@ -79,10 +79,11 @@ export const handleCreatePostRedirectAction = async (authorId) => {
             }
         });
         if (p.shortId)
-            redirect(`/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor`);
+           return {status: 200, url: `/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor`};
+        else throw new Error('An error occurred while creating the post. Please try again later.');
     } catch (error) {
         console.error("Error creating post:", error);
-        redirect('/');
+        return {status: 500, message: error.message};
     }
 }
 
@@ -288,7 +289,6 @@ const getArticleContent = async (id) => {
         let content = await prisma.post.findUnique({
             where: {
                 shortId: id,
-                isDeleted: false,
             },
             select: {
                 content: true,
@@ -310,7 +310,6 @@ const getArticledetails = async (id, authorId) => {
         const dt = await prisma.post.findUnique({
             where: {
                 shortId: id,
-                isDeleted: false,
                 author: {
                     id: authorId,
                 },
@@ -333,7 +332,7 @@ const getArticledetails = async (id, authorId) => {
                 image: true
             },
         });
-        if (dt) {
+        if (dt && !dt.isDeleted) {
             res = { ...res, data: dt, status: 200 };
         }
         return res;

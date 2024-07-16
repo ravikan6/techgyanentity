@@ -192,7 +192,7 @@ const PostDetailsEditor = () => {
                             </div>
 
                             {(npst?.published === false || npst?.published === false) ? <>
-                                <Button fullWidth disabled={loading} variant="outlined" color="button" className="dark:text-black" onClick={() => { handleUpdateNewPost({ target: { value: true } }, 'doPublish'), publishHandler() }}>
+                                <Button fullWidth disabled={loading} variant="contained" color="button" className="dark:text-black" onClick={() => { handleUpdateNewPost({ target: { value: true } }, 'doPublish'), publishHandler() }}>
                                     Publish
                                 </Button>
                             </> : null}

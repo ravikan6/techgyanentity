@@ -441,14 +441,27 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
 const CreateBtn = ({ classes, iconColor, sx }) => {
   const { data } = useContext(StudioContext);
   if (!data?.data) return null;
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleClick = async () => {
-    await handleCreatePostRedirectAction(data.data?.id);
+    try {
+      if (loading) return;
+      let dt = await handleCreatePostRedirectAction(data.data?.id);
+      if (dt?.status === 200 && dt.url) {
+        router.push(dt.url);
+      } else {
+        throw new Error('Something went wrong while creating post, Please try again.')
+      }
+    } catch (e) {
+      toast.error('Something went wrong while creating post, Please try again.')
+    } finally { setLoading(false) }
   }
 
   return (
-    <div onClick={handleClick} className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
-      <IconButton size='small' sx={{ ...sx }} >
+    <div className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
+      <IconButton disabled={loading} onClick={handleClick} size='small' sx={{ ...sx }} >
         <DrawOutlined htmlColor={iconColor} />
       </IconButton>
     </div>

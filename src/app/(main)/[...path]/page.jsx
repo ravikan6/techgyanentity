@@ -83,8 +83,6 @@ const getArticle = async (slug, id) => {
                 ...id && {
                     authorId: id,
                 },
-                isDeleted: false,
-                published: true,
             },
             include: {
                 author: true,
@@ -95,6 +93,7 @@ const getArticle = async (slug, id) => {
                 }
             }
         });
+        if (post?.isDeleted && !post.published) return null;
         if (post?.author?.image?.url)
             post.author.image.url = await getCImageUrl(post?.author?.image?.url);
         return post

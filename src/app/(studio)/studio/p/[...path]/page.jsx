@@ -16,15 +16,16 @@ const PostEditPage = async ({ params }) => {
                 let data = await prisma.post.findUnique({
                     where: {
                         shortId: id,
-                        isDeleted: false,
                     },
                     select: {
                         title: true,
                         content: true,
                         shortId: true,
+                        isDeleted: true,
                     },
                 })
-                if (data) {
+                if (data && !data.isDeleted) {
+                    delete data.isDeleted;
                     return (
                         <div className='pt-10'>
                             <CreatePost data={data} />
@@ -34,6 +35,7 @@ const PostEditPage = async ({ params }) => {
                     throw new Error('Post not found')
                 }
             } catch (error) {
+                console.log(error)
                 redirect(`/${process.env?.STUDIO_URL_PREFIX}/content`)
             }
         } else if (path[1] === 'edit') {

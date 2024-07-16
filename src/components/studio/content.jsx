@@ -274,7 +274,7 @@ const SidePostView = ({ post, title, setPosts }) => {
     const { data } = useContext(StudioContext);
 
     return (
-        <div key={post?.shortId} className="flex max-w-[370px] items-center h-full w-[99%] space-x-4">
+        <div key={post?.shortId} className="flex max-w-[370px] min-w-[370px] items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
                 <CldImage width={100} height={56} src={imgUrl(post?.image?.url)} alt={post?.image?.alt} className="rounded-lg bg-black/5 dark:bg-white/5" />
             </div>
