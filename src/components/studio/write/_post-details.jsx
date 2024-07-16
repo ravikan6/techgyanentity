@@ -26,11 +26,14 @@ const PostDetailsEditor = () => {
     useEffect(() => {
         const dtHandler = async () => {
             !loading && setLoading(true)
-            let dt = await getArticledetails(data?.article?.shortId);
+            let dt = await getArticledetails(data?.article?.shortId, data?.data?.id);
             if (dt?.data) {
                 setPost(dt.data)
                 setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, published: dt.data?.published })
-            } else { toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.') }
+            } else {
+                toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.')
+                router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
+            }
         }
         if (data?.article?.shortId) dtHandler().finally(() => setLoading(false));
     }, [data?.article?.shortId])

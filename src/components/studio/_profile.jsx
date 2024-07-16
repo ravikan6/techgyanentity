@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { image_URL_v2 } from '@/lib/resolver';
 import React, { Fragment, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Avatar, ListItemIcon, Typography, List, Divider, Skeleton } from '@mui/material';
 import { NavigateBefore, Check, HelpOutlineOutlined, DashboardCustomizeOutlined, SettingsOutlined, Person4Outlined, AdminPanelSettingsOutlined, NightsStayOutlined, WbSunnyOutlined, SettingsBrightness, Logout, FeedbackOutlined, KeyboardArrowRightOutlined, TranslateOutlined, MoreVert } from '@mui/icons-material';
@@ -228,6 +227,7 @@ const SwitchAccount = ({ state, context }) => {
                 if (res) {
                     context.setData({ ...context.data, data: data });
                     state.handleInsiderClose();
+                    window.location.reload();
                 }
             });
         }

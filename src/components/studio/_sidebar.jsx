@@ -179,7 +179,6 @@ const StudioSidebar = (props) => {
 };
 
 const PostBox = ({ url, title, image, open }) => {
-    console.log(url, title, image, open, '_______________________PostBox')
     return (
         <>
             <div className="flex flex-col pb-2 space-y-2 justify-center w-full items-center">

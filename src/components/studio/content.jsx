@@ -4,10 +4,8 @@ import { getAuthorPosts } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import { CldImage } from "next-cloudinary";
 import { useContext, useEffect, useState, useMemo } from "react";
-import { toast } from 'react-toastify';
-import { Button, IconButton, MenuItem, Tooltip } from '../rui';
+import { Button, IconButton, Tooltip } from '../rui';
 import { useRouter } from 'next/navigation';
-import { CiMenuKebab } from 'react-icons/ci';
 import { MdOutlineAnalytics, MdOutlineComment, MdOutlineEdit } from 'react-icons/md';
 import { formatDate } from '@/lib/utils';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -52,21 +50,19 @@ const StudioContent = () => {
     }, [data]);
 
     useEffect(() => {
-        if (posts?.length > 0) {
-            !isMapping && setIsMapping(true);
-            const data = posts?.map((post) => {
-                return {
-                    id: post?.shortId,
-                    post: post,
-                    visibility: post?.privacy,
-                    date: post?.publishedAt ? { value: post?.publishedAt, label: 'Published' } : { value: post?.createdAt, label: 'Created' },
-                    claps: post?._count?.claps,
-                    comments: post?._count?.comments,
-                };
-            });
-            setPostData(data);
-            setIsMapping(false);
-        }
+        !isMapping && setIsMapping(true);
+        const data = posts?.map((post) => {
+            return {
+                id: post?.shortId,
+                post: post,
+                visibility: post?.privacy,
+                date: post?.publishedAt ? { value: post?.publishedAt, label: 'Published' } : { value: post?.createdAt, label: 'Created' },
+                claps: post?._count?.claps,
+                comments: post?._count?.comments,
+            };
+        });
+        setPostData(data || []);
+        setIsMapping(false);
     }, [posts]);
 
     const columns = useMemo(() => [
@@ -149,11 +145,12 @@ const StudioContent = () => {
         },
         enableGlobalFilterModes: true,
         globalFilterModeOptions: ['fuzzy', 'startsWith', 'date', 'contains', 'equals'],
-        paginationDisplayMode: 'pages',
-        positionToolbarAlertBanner: 'top',
+        paginationDisplayMode: 'default',
+        positionToolbarAlertBanner: 'head-overlay',
         muiSearchTextFieldProps: {
             size: 'small',
             variant: 'standard',
+            placeholder: ' ',
         },
         muiPaginationProps: {
             color: 'secondary',
@@ -193,10 +190,16 @@ const StudioContent = () => {
                 {
                     backgroundColor: 'var(--rb-palette-background-default)',
                 },
-                '& tr > th:not([data-pinned="false"])::before':
-                {
+            }),
+        },
+        muiTableHeadProps: {
+            sx: (theme) => ({
+                '& th': {
                     backgroundColor: 'var(--rb-palette-background-default)',
                 },
+                '& th[data-pinned="true"]::before': {
+                    backgroundColor: 'var(--rb-palette-background-default)',
+                }
             }),
         },
         muiTableContainerProps: {
@@ -270,7 +273,7 @@ const SidePostView = ({ post, title, setPosts }) => {
     const router = useRouter();
 
     return (
-        <div key={post?.shortId} className="flex items-center h-full w-[99%] space-x-4">
+        <div key={post?.shortId} className="flex max-w-[370px] items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
                 <CldImage width={100} height={56} src={imgUrl(post?.image?.url)} alt={post?.image?.alt} className="rounded-lg bg-black/5 dark:bg-white/5" />
             </div>

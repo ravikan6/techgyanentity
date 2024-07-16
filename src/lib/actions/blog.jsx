@@ -304,13 +304,16 @@ const getArticleContent = async (id) => {
     }
 }
 
-const getArticledetails = async (id) => {
+const getArticledetails = async (id, authorId) => {
     let res = { data: null, status: 500, errors: [] };
     try {
         const dt = await prisma.post.findUnique({
             where: {
                 shortId: id,
                 isDeleted: false,
+                author: {
+                    id: authorId,
+                },
             },
             select: {
                 id: false,
