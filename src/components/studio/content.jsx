@@ -77,7 +77,7 @@ const StudioContent = () => {
             size: 320,
             maxSize: 320,
             Cell: ({ renderedCellValue, row }) => {
-                return <SidePostView post={row.original.post} title={renderedCellValue} />
+                return <SidePostView post={row.original.post} title={renderedCellValue} setPosts={setPosts} />
             },
             columnFilterModeOptions: ['fuzzy', 'contains', 'startsWith'],
         },
@@ -266,7 +266,7 @@ const StudioContent = () => {
 
 };
 
-const SidePostView = ({ post, title }) => {
+const SidePostView = ({ post, title, setPosts }) => {
     const router = useRouter();
 
     return (
