@@ -83,13 +83,13 @@ const getArticle = async (id, authorId) => {
             }
         });
 
-        if (article) {
-            if (article?.image?.provider === 'cloudinary') {
-                article.image = await getCImageUrl(article?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
-            }
+        if (!article || article?.isDeleted) return null;
+        if (article?.image && (article?.image?.provider === 'cloudinary')) {
+            article.image = await getCImageUrl(article?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
         }
         return article;
-    } catch {
+    } catch(e) {
+        console.log(e, '-----errror-from')
         return null;
     }
 }
