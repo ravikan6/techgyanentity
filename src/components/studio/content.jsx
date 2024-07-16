@@ -45,12 +45,12 @@ const StudioContent = () => {
                 if (dt?.data) setPosts(dt.data);
             }
             setLoading(false);
+            setIsMapping(false);
         };
         handler();
     }, [data]);
 
     useEffect(() => {
-        !isMapping && setIsMapping(true);
         const data = posts?.map((post) => {
             return {
                 id: post?.shortId,
@@ -62,7 +62,6 @@ const StudioContent = () => {
             };
         });
         setPostData(data || []);
-        setIsMapping(false);
     }, [posts]);
 
     const columns = useMemo(() => [
@@ -166,7 +165,8 @@ const StudioContent = () => {
             },
         },
         state: {
-            showSkeletons: isMapping
+            showSkeletons: isMapping,
+            
         },
         muiTableBodyProps: {
             sx: (theme) => ({
@@ -204,7 +204,7 @@ const StudioContent = () => {
         },
         muiTableContainerProps: {
             sx: { maxHeight: 'calc(100vh - 210px) !important', height: 'calc(100vh - 210px)' },
-            style: { maxHeight: 'calc(100vh - 210px) !important' }
+            style: { maxHeight: 'calc(100vh - 210px) !important', minHeight: '300px' }
         },
         mrtTheme: (theme) => ({
             baseBackgroundColor: baseBackgroundColor,
@@ -262,7 +262,7 @@ const StudioContent = () => {
     });
 
     return (
-        <div style={{ margin: (variant === 'permanent') && '0 -20px' }}>
+        <div className={`${(variant === 'permanent') && 'md:-mx-5'}`}>
             <MaterialReactTable table={table} />
         </div>
     );
@@ -271,6 +271,7 @@ const StudioContent = () => {
 
 const SidePostView = ({ post, title, setPosts }) => {
     const router = useRouter();
+    const { data } = useContext(StudioContext);
 
     return (
         <div key={post?.shortId} className="flex max-w-[370px] items-center h-full w-[99%] space-x-4">
@@ -285,7 +286,7 @@ const SidePostView = ({ post, title, setPosts }) => {
                         <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
                         <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
                         <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
-                        <IconView Icon={RiLinkUnlinkM} onClick={() => window.open(`/post/${post?.slug}`, '_blank')} tip='Read it on Post Page' />
+                        <IconView Icon={RiLinkUnlinkM} onClick={() => window.open(`/${data?.data?.handle ? `@${data?.data?.handle}` : 'post'}/${post?.slug}`, '_blank')} tip='Read it on Post Page' />
                         <PostDetailsTableViewMenu url={post?.slug} data={{ id: post?.shortId, img: post?.image?.url, title: title, description: post?.description }} setPosts={setPosts} />
                     </div>
                 </div>

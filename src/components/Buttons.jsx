@@ -309,14 +309,14 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
 
   const View = () => (
     <>
-      <div className='bg-lightHead dark:bg-darkHead truncate rounded-xl p-2 flex space-x-4'>
+      <div className='bg-light dark:bg-dark truncate rounded-xl p-2 flex space-x-4'>
         <CldImage src={imgUrl(data?.img)} width='100' height='40' className='rounded-lg' />
-        <div className='flex flex-col'>
-          <span className='text-sm line-clamp-1 max-w-[300px] truncate font-semibold'>{data?.title}</span>
-          <span className='text-xs line-clamp-2 max-w-[300px] truncate mt-0.5'>{data?.description}</span>
+        <div className='flex flex-col max-w-[300px]'>
+          <h3 className='text-sm line-clamp-1 text-black dark:text-white truncate text-wrap font-semibold'>{data?.title}</h3>
+          <p className='text-xs line-clamp-2 text-gray-600 dark:text-gray-400 truncate text-wrap mt-0.5'>{data?.description}</p>
         </div>
       </div>
-      <p className='mt-2 opacity-70'> Please note that this action is irreversible. </p>
+      <p className='mt-2 opacity-70 cheltenham-small'> Please note that this action is irreversible. </p>
     </>
   )
 

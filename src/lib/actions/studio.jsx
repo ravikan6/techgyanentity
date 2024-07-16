@@ -47,20 +47,19 @@ const DecryptAuthorStudioCookie = async () => {
     return null;
 }
 
-const DecryptAuthorIdStudioCookie = async () => {
-    let cookieData = cookies().get('__Secure-RSUAUD');
-    cookieData = await decrypt(cookieData?.value, process.env.COOKIE_SECRET);
+const DecryptAuthorIdStudioCookie = async (cookieData) => {
+    cookieData = await decrypt(cookieData, process.env.COOKIE_SECRET);
     if (cookieData) {
         let author = await prisma.author.findUnique({
             where: {
                 id: cookieData,
-                isDeleted: false,
             },
             select: {
                 id: true,
+                isDeleted: true,
             }
         });
-        if (author) {
+        if (author && !author.isDeleted) {
             return author;
         }
         else {

@@ -110,7 +110,7 @@ const StudioLayout = ({ children, session }) => {
                         open={open && variant === 'persistent'}
                         onClick={handleDrawerOpen}
                     > </Backdrop>
-                    <Backdrop open={loading} invisible sx={{ zIndex: 1, opacity: 0.1 }} />
+                    <Backdrop open={loading} invisible sx={{ zIndex: 1, opacity: 0.1, left: drawerWidth_get(open, variant) }} />
                     <LinearProgress className="!h-0.5 !fixed !top-[54px] !-ml-6 !z-[99] w-full" hidden={!loading} color="accent" />
                     {children}
                 </Main>

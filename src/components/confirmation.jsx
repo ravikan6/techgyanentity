@@ -27,22 +27,23 @@ const Confirmation = ({
                 sx={{
                     '& .MuiPaper-root': {
                         boxShadow: (theme) => theme.shadows[4],
-                        backgroundColor: (theme) => theme.palette.mode === 'dark' ? theme.palette?.accent.main : theme.palette?.head.main,
+                        backgroundColor: (theme) => theme.palette.mode === 'dark' ? theme.palette?.button.main : theme.palette?.head.main,
                     },
                     maxWidth: 'sm',
                     mx: 'auto',
                 }}
             >
-                {title && <DialogTitle>
+                {title && <DialogTitle className='!font-bold !text-black'>
                     {title}
                 </DialogTitle>}
-                <DialogContent>
+                <DialogContent className='text-gray-900'>
                     {confirmation}
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className='flex space-x-4'>
                     <Button
                         variant="text"
                         size="small"
+                        color='accent'
                         onClick={cancel}
                     >
                         {cancelLabel}
@@ -50,7 +51,7 @@ const Confirmation = ({
                     <Button
                         variant="contained"
                         size="small"
-                        color="primary"
+                        color="accent"
                         onClick={proceed}
                     >
                         {okLabel}

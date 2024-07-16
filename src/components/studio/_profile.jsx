@@ -225,9 +225,9 @@ const SwitchAccount = ({ state, context }) => {
         try {
             SetAuthorStudioCookie(data?.id).then((res) => {
                 if (res) {
-                    context.setData({ ...context.data, data: data });
                     state.handleInsiderClose();
                     window.location.reload();
+                    context.setData({ ...context.data, data: data }); // Commented because it is usefull while reloading the page
                 }
             });
         }
@@ -246,7 +246,7 @@ const SwitchAccount = ({ state, context }) => {
             } catch (error) {
                 toast.error('An error occurred while fetching data. Please try again.');
             }
-        }, [session, state.insiderOpen]);
+        }, [session, state?.insiderOpen]);
 
         return (
             <div className='mb-2'>

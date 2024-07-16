@@ -15,12 +15,12 @@ export default async function RootLayout({ children }) {
         <html lang='en' suppressHydrationWarning>
             <head>
                 <link
-                    rel="prefetch"
+                    rel="preload"
                     href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
                     as="style"
                 />
                 <link
-                    rel="prefetch"
+                    rel="preload"
                     href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
                     as="style"
                 />
