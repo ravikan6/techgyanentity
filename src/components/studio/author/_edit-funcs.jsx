@@ -451,7 +451,7 @@ const ChannelEditLayout = ({ children }) => {
     return (
         <>
             <ChannelEditContext.Provider value={{ state, setState }}>
-                <div className="relative w-full">
+                <div className="relative w-full pt-4">
                     <div className="flex overflow-x-auto flex-wrap justify-between px-4 items-center py-2 rounded-xl bg-lightHead dark:bg-darkHead sm:space-x-1">
                         <div className="flex items-center justify-between w-full mb-1 mt-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                             {

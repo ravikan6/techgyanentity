@@ -308,13 +308,16 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
   };
 
   const View = () => (
-    <div className='bg-lightHead dark:bg-darkHead rounded-xl p-2 flex space-x-4'>
-      <CldImage src={imgUrl(data?.img)} width='100' height='40' className='rounded-lg' />
-      <div className='flex flex-col'>
-        <span className='text-sm line-clamp-1 truncate font-semibold'>{data?.title}</span>
-        <span className='text-xs line-clamp-2 truncate mt-0.5'>{data?.description}</span>
+    <>
+      <div className='bg-lightHead dark:bg-darkHead truncate rounded-xl p-2 flex space-x-4'>
+        <CldImage src={imgUrl(data?.img)} width='100' height='40' className='rounded-lg' />
+        <div className='flex flex-col'>
+          <span className='text-sm line-clamp-1 max-w-[300px] truncate font-semibold'>{data?.title}</span>
+          <span className='text-xs line-clamp-2 max-w-[300px] truncate mt-0.5'>{data?.description}</span>
+        </div>
       </div>
-    </div>
+      <p className='mt-2 opacity-70'> Please note that this action is irreversible. </p>
+    </>
   )
 
   const onDelete = async () => {

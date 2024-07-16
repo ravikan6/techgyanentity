@@ -1,5 +1,6 @@
 import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
 import { WriteHeader } from "@/components/studio/write/_header_focus";
+import { DecryptAuthorIdStudioCookie } from "@/lib/actions/studio";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getCImageUrl } from "@/lib/helpers";
@@ -7,10 +8,14 @@ import { redirect } from 'next/navigation';
 
 const WriteLayout = async ({ children, params }) => {
     const { path } = params;
-    const session = await auth();
 
     if (path?.length === 2) {
-        const article = await getArticle(path[0], session?.user?.id);
+        const author = DecryptAuthorIdStudioCookie();
+        if (!author) {
+            redirect('/studio/content')
+        }
+
+        const article = await getArticle(path[0], author.id);
 
         if (!article) {
             redirect('/studio/content')
@@ -25,7 +30,7 @@ const WriteLayout = async ({ children, params }) => {
                             {children}
                         </div>
                     </div>
-                </div> </StudioWriteEditorWrapper> : <div className="max-w-7xl w-full mx-auto">
+                </div> </StudioWriteEditorWrapper> : <div className="max-w-7xl py-4 w-full mx-auto">
                     {children}
                 </div>}
             </StudioWriteLayoutWrapper>
@@ -39,12 +44,15 @@ const WriteLayout = async ({ children, params }) => {
     )
 }
 
-const getArticle = async (id, userId) => {
+const getArticle = async (id, authorId) => {
     try {
         const article = await prisma.post.findUnique({
             where: {
                 shortId: id,
                 isDeleted: false,
+                author: {
+                    id: authorId
+                }
             },
             select: {
                 shortId: true,

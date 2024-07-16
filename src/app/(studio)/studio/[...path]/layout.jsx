@@ -5,7 +5,7 @@ const StudioExpendedLayout = ({ children, params }) => {
 
     return (
         <StudioPathLayoutWrapper path={decodeURIComponent(path[0])} >
-            {children}
+                {children}
         </StudioPathLayoutWrapper>
     )
 }

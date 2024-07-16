@@ -30,7 +30,7 @@ const DecryptAuthorStudioCookie = async () => {
         if (author) {
             if (author?.image?.url) {
                 if (author?.image?.provider === 'cloudinary') {
-                    author.image = await getCImageUrl(author?.image?.url, { width: 100, height: 100, crop: 'fill', quality: 100  });
+                    author.image = await getCImageUrl(author?.image?.url, { width: 100, height: 100, crop: 'fill', quality: 100 });
                 }
             }
             if (author?.banner?.url) {
@@ -38,6 +38,29 @@ const DecryptAuthorStudioCookie = async () => {
                     author.banner = await getCImageUrl(author?.banner?.url, { width: 1300, height: 620, crop: 'auto', quality: 100 });
                 }
             }
+            return author;
+        }
+        else {
+            return null;
+        }
+    }
+    return null;
+}
+
+const DecryptAuthorIdStudioCookie = async () => {
+    let cookieData = cookies().get('__Secure-RSUAUD');
+    cookieData = await decrypt(cookieData?.value, process.env.COOKIE_SECRET);
+    if (cookieData) {
+        let author = await prisma.author.findUnique({
+            where: {
+                id: cookieData,
+                isDeleted: false,
+            },
+            select: {
+                id: true,
+            }
+        });
+        if (author) {
             return author;
         }
         else {
@@ -101,4 +124,4 @@ const SetCommunityStudioCookie = async (data) => {
     };
 };
 
-export { DecryptChannelStudioCookie, SetChannelStudioCookie, SetCommunityStudioCookie, DecryptCommunityStudioCookie, SetAuthorStudioCookie, DecryptAuthorStudioCookie };
+export { DecryptChannelStudioCookie, SetChannelStudioCookie, SetCommunityStudioCookie, DecryptCommunityStudioCookie, SetAuthorStudioCookie, DecryptAuthorStudioCookie, DecryptAuthorIdStudioCookie };

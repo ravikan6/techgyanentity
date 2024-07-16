@@ -100,7 +100,7 @@ const StudioContent = () => {
             header: 'Date',
             filterVariant: 'date',
             columnFilterModeOptions: ['date'],
-            Cell: ({ cell, row }) => <div className='flex flex-col text-center'><span className='text-center'>{formatDate(cell.getValue())}</span> <span className="opacity-80 text-center">{row?.original?.date?.label}</span></div>
+            Cell: ({ cell, row }) => <div className='flex flex-col text-center'><span className='text-center'>{formatDate(cell.getValue())}</span> <span className="opacity-70 text-center">{row?.original?.date?.label}</span></div>
         },
         {
             accessorKey: 'claps',
@@ -145,7 +145,7 @@ const StudioContent = () => {
         },
         enableGlobalFilterModes: true,
         globalFilterModeOptions: ['fuzzy', 'startsWith', 'date', 'contains', 'equals'],
-        paginationDisplayMode: 'default',
+        paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'head-overlay',
         muiSearchTextFieldProps: {
             size: 'small',
@@ -285,7 +285,7 @@ const SidePostView = ({ post, title, setPosts }) => {
                         <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
                         <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
                         <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
-                        <IconView Icon={RiLinkUnlinkM} onClick={() => router.push(`/post/${post?.slug}`)} tip='Read it on Post Page' />
+                        <IconView Icon={RiLinkUnlinkM} onClick={() => window.open(`/post/${post?.slug}`, '_blank')} tip='Read it on Post Page' />
                         <PostDetailsTableViewMenu url={post?.slug} data={{ id: post?.shortId, img: post?.image?.url, title: title, description: post?.description }} setPosts={setPosts} />
                     </div>
                 </div>
