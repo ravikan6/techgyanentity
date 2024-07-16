@@ -25,6 +25,7 @@ const WriteLayout = async ({ children, params }) => {
             if (!article) {
                 redirect('/studio/content')
             }
+            console.log(article)
             return (
                 <StudioWriteLayoutWrapper article={article} >
                     {path[1] === 'editor' ? <StudioWriteEditorWrapper> <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-[1000] bg-light dark:bg-dark">
@@ -54,12 +55,10 @@ const WriteLayout = async ({ children, params }) => {
 
 const getArticle = async (id, authorId) => {
     try {
-        const article = await prisma.post.findUnique({
+        const article = await prisma.post.findFirst({
             where: {
                 shortId: id,
-                author: {
-                    id: authorId
-                }
+                authorId: authorId
             },
             select: {
                 shortId: true,
@@ -88,7 +87,7 @@ const getArticle = async (id, authorId) => {
             article.image = await getCImageUrl(article?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
         }
         return article;
-    } catch(e) {
+    } catch (e) {
         console.log(e, '-----errror-from')
         return null;
     }

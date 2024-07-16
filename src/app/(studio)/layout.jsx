@@ -15,21 +15,14 @@ export default function StudioLayout({ children, studio_models, models }) {
     <>
       <html lang='en' suppressHydrationWarning>
         <head>
+          <link rel="preconnect" href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/" crossOrigin='true' />
           <link
-            rel="preload"
-            href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
-            as="style"
-          />
-          <link
-            rel="preload"
-            href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
-            as="style"
-          />
-          <link
+            fetchPriority='high'
             rel="stylesheet"
             href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
           />
           <link
+            fetchPriority='auto'
             rel="stylesheet"
             href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
           />

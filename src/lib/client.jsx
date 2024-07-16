@@ -184,11 +184,11 @@ const toastError = (erros) => {
 
 export const VariantPermanent = () => {
     const context = useContext(DrawerContext);
-    const width = useMediaQuery('(max-width:768px)');
+    const width = useMediaQuery('(min-width:768px)');
 
     useEffect(() => {
         if (context.variant !== 'permanent')
-            if (!width) context.setVariant('permanent'); context.setOpen(true);
+            if (width) context.setVariant('permanent'); context.setOpen(true);
     }, [context.variant, width]);
 };
 

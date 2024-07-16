@@ -45,7 +45,7 @@ const PostDetailsEditor = () => {
         setState({ ...state, canUndo: false, canSave: false })
     }
 
-    const publishHandler = async () => {
+    const publishHandler = async (doPublish) => {
         setLoading(true)
         try {
             const npstData = Object.assign({}, npst);
@@ -53,6 +53,9 @@ const PostDetailsEditor = () => {
             if (npst?.image && npst?.image?.provider === 'file') {
                 file.append('image', npst?.image?.url)
                 npstData.image.url = post?.image?.url;
+            }
+            if (doPublish) {
+                npstData.doPublish = true;
             }
             let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData, file: file })
             if (res?.status === 200 && res.data) {
@@ -67,7 +70,7 @@ const PostDetailsEditor = () => {
             }
             res?.errors.map((e) => toast.error(e.message))
         } catch (e) {
-            toast.error('Something went wrong while saving post details, Please try again.')
+            toast.error('Something went wrong while saving post details, Please try again. ')
         } finally { setLoading(false) }
     }
 
@@ -104,6 +107,12 @@ const PostDetailsEditor = () => {
 
     const handleImageData = (dt) => {
         setNpst({ ...npst, image: { ...npst?.image, ...dt } });
+    }
+
+    const handlePublishButton = async () => {
+        if (post?.published === false && !post?.publishedAt) {
+            await publishHandler(true);
+        }
     }
 
     useEffect(() => {
@@ -157,7 +166,7 @@ const PostDetailsEditor = () => {
                 </div>
 
                 <div className="flex items-start mt-5 justify-between flex-wrap">
-                    <div className="w-full md:w-8/12 min-w-[400px]">
+                    <div className="w-full lg:max-w-[calc(100%-320px)] md:max-w-[calc(100%-280px)] lg:min-w-[400px]">
                         <div className="flex flex-col space-y-8 mb-5">
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Title" desc={'The title of your post. Make it catchy and engaging to attract readers.'} tip={'The title of your post is the first thing that your readers will see.'} />
@@ -177,7 +186,7 @@ const PostDetailsEditor = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full md:w-3/12 min-w-[300px]">
+                    <div className="w-full lg:max-w-[300px] md:min-w-[250px] md:max-w-[250px] lg:min-w-[300px]">
                         <div className="flex flex-col space-y-8">
 
                             <FtImage img={npst?.image} handleImageData={handleImageData} handleUpdateNewPost={handleUpdateNewPost} />
@@ -191,8 +200,8 @@ const PostDetailsEditor = () => {
                                 </Select>
                             </div>
 
-                            {(npst?.published === false || npst?.published === false) ? <>
-                                <Button fullWidth disabled={loading} variant="contained" color="button" className="dark:text-black" onClick={() => { handleUpdateNewPost({ target: { value: true } }, 'doPublish'), publishHandler() }}>
+                            {((post?.published === false) && !post?.publishedAt) ? <>
+                                <Button fullWidth disabled={loading} variant="contained" color="button" className="dark:text-black" onClick={() => handlePublishButton()}>
                                     Publish
                                 </Button>
                             </> : null}
@@ -291,7 +300,7 @@ const TagInput = ({ tags, setTags }) => {
                     InputProps={{
                         disableUnderline: true,
                     }}
-                    focus={focus}
+                    focus={`${focus}`}
                 />
             </Box>
         </Box>
@@ -383,7 +392,7 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
                         <PostDetailsImageMenu disabled={loading} onFistClick={handleFeaturedImageUpload} />
                     </div>
                 </div> : <>
-                    <div onClick={handleFeaturedImageUpload} className="w-full h-[168px] rounded-lg border border-dashed flex justify-center items-center border-lightHead dark:border-darkHead">
+                    <div onClick={handleFeaturedImageUpload} className="w-full cursor-pointer h-[168px] rounded-lg border border-dashed flex justify-center items-center border-lightHead dark:border-darkHead">
                         <div className={`${loading ? 'text-lightButton/60 dark:text-darkButton/60' : 'text-lightButton dark:text-darkButton'}`}>{loading ? 'Loading...' : 'Upload Image'}</div>
                     </div>
                     {error.error && <span className=" mt-1 text-xs text-red-700 dark:text-red-500">

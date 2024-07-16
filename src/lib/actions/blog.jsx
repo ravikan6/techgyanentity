@@ -267,7 +267,14 @@ const getAuthorPosts = async (authorId) => {
                 _count: {
                     select: {
                         claps: true,
-                        comments: true,
+                        comments: {
+                            where: {
+                                parent: {
+                                    is: null,
+                                },
+                                isDeleted: false,
+                            }
+                        }
                     }
                 }
             },
@@ -307,12 +314,10 @@ const getArticleContent = async (id) => {
 const getArticledetails = async (id, authorId) => {
     let res = { data: null, status: 500, errors: [] };
     try {
-        const dt = await prisma.post.findUnique({
+        const dt = await prisma.post.findFirst({
             where: {
                 shortId: id,
-                author: {
-                    id: authorId,
-                },
+                authorId: authorId,
             },
             select: {
                 id: false,

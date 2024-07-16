@@ -10,9 +10,9 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
 export function Providers({ session, children }) {
 
-  const color = 'var(--rb-palette-button-main)';
+  const color = 'var(--rb-palette-accent-main)';
   const height = '1.7px';
-    const styles = `
+  const styles = `
     #nprogress {
       pointer-events: none;
     }
@@ -93,7 +93,7 @@ export function Providers({ session, children }) {
       <NextTheme disableTransitionOnChange attribute="class">
         <SessionProvider session={session}>
           {children}
-          <ProgressBar style={styles} options={{ showSpinner: false }} />
+          <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />
           <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={5} position='bottom-center' draggable autoClose={4000} hideProgressBar />
         </SessionProvider>
       </NextTheme>

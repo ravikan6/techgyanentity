@@ -166,7 +166,7 @@ const StudioContent = () => {
         },
         state: {
             showSkeletons: isMapping,
-            
+
         },
         muiTableBodyProps: {
             sx: (theme) => ({

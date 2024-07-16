@@ -28,25 +28,18 @@ export default async function RootLayout({ children, models }) {
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
-          <link
-            rel="preload"
-            href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
-            as="style"
-          />
-          <link
-            rel="preload"
-            href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
-            as="style"
-          />
-          <link
-            rel="stylesheet"
-            href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
-          />
-          <link
-            rel="stylesheet"
-            href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
-          />
-        </head>
+        <link rel="preconnect" href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/" crossOrigin='true' />
+        <link
+          fetchPriority='high'
+          rel="stylesheet"
+          href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/rb-fonts.css"
+        />
+        <link
+          fetchPriority='auto'
+          rel="stylesheet"
+          href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
+        />
+      </head>
       <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
         <Providers>
           <CssBaseline enableColorScheme />

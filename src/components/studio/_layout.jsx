@@ -47,6 +47,7 @@ const drawerWidth_get = (open, variant) => {
 
 const StudioLayout = ({ children, session }) => {
     const q = useMediaQuery('(max-width:768px)');
+    const q2 = useMediaQuery('(max-width:1024px)');
     let v = q ? 'persistent' : 'permanent';
     let o = q ? false : true;
     const [open, setOpen] = React.useState(o);
@@ -62,6 +63,16 @@ const StudioLayout = ({ children, session }) => {
         setOpen(o)
         setVariant(v)
     }, [q]);
+
+    React.useMemo(() => {
+        if (variant === 'permanent') {
+            if (q2) {
+                setOpen(false);
+            } else {
+                !open && setOpen(true);
+            }
+        }
+    }, [q2]);
 
     return (
         <DrawerContext.Provider value={{ open, setOpen, variant }}>

@@ -88,7 +88,14 @@ const getArticle = async (slug, id) => {
                 author: true,
                 _count: {
                     select: {
-                        comments: true,
+                        comments: {
+                            where: {
+                                parent: {
+                                    is: null,
+                                },
+                                isDeleted: false,
+                            }
+                        }
                     }
                 }
             }
