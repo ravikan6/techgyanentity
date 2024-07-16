@@ -128,6 +128,12 @@ export const updatePostDetailsAction = async (data) => {
     let setter = { ...data?.data };
     let file = data?.file ? data?.file : new FormData();
 
+    if (setter?.doPublish) {
+        setter.publishedAt = new Date();
+        setter.published = true;
+        delete setter.doPublish;
+    }
+
     if (file.has('image') && setter?.image?.provider === 'file') {
         let image = file.get('image')
         try {

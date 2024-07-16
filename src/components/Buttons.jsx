@@ -7,7 +7,7 @@ import { IoMdPeople } from 'react-icons/io';
 import { PiDotsThreeOutline, PiShareFat } from 'react-icons/pi';
 import { TbHeartHandshake, TbLockCheck } from 'react-icons/tb';
 import { BiChevronDown } from 'react-icons/bi';
-import { HiOutlineGlobe } from 'react-icons/hi';
+import { HiOutlineDotsVertical, HiOutlineGlobe } from 'react-icons/hi';
 import { AiOutlineClose } from 'react-icons/ai';
 import { IoCreateOutline } from 'react-icons/io5';
 import { ArticleReportModal } from '@/components/popup';
@@ -18,10 +18,15 @@ import { Btn } from './rui/_components';
 import { Button, IconButton, Tooltip, Menu, MenuItem } from '@/components/rui';
 import { DrawerContext } from './mainlayout';
 import { useRouter } from 'next/navigation';
-import { BsPatchQuestion } from 'react-icons/bs';
+import { BsPatchQuestion, BsTrash } from 'react-icons/bs';
 import { StudioContext } from '@/lib/context';
-import { handleCreatePostRedirectAction } from '@/lib/actions/blog';
+import { deletePostAction, handleCreatePostRedirectAction } from '@/lib/actions/blog';
 import { LuImagePlus } from "react-icons/lu";
+import { FiShare2 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
+import confirm from '@/lib/confirm';
+import { CldImage } from 'next-cloudinary';
+import { imgUrl } from '@/lib/helpers';
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -289,6 +294,104 @@ const PostDetailsImageMenu = ({ onFistClick, disabled }) => {
   );
 };
 
+
+const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const context = useContext(StudioContext);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const View = () => (
+    <div className='bg-lightHead dark:bg-darkHead rounded-xl p-2 flex space-x-4'>
+      <CldImage src={imgUrl(data?.img)} width='100' height='40' className='rounded-lg' />
+      <div className='flex flex-col'>
+        <span className='text-sm line-clamp-1 truncate font-semibold'>{data?.title}</span>
+        <span className='text-xs line-clamp-2 truncate mt-0.5'>{data?.description}</span>
+      </div>
+    </div>
+  )
+
+  const onDelete = async () => {
+    try {
+      if (await confirm(<View />, { title: 'Are you sure you want to delete this post?', okLabel: 'Delete', cancelLabel: 'Cancel' })) {
+        try {
+          context?.setLoading(true)
+          let res = await deletePostAction(data?.id)
+          if (res?.status === 200 && res.data) {
+            setPosts((prev) => prev.filter((post) => post.shortId !== data?.id))
+            toast.success('Post deleted successfully.')
+          } else {
+            throw new Error('Something went wrong while deleting post, Please try again.')
+          }
+        } catch (e) {
+          toast.error(e.message)
+        } finally {
+          context?.setLoading(false)
+        }
+      }
+
+    } catch (e) {
+      console.error('Error navigating:', e);
+    }
+  }
+
+  let list = [
+    {
+      label: 'Get Shareable Link',
+      icon: FiShare2,
+      onClick: () => {
+        navigator.clipboard.writeText(`${window.location.origin}/${context?.data?.data?.handle ? `@${context?.data?.data?.handle}` : 'post'}/${url}`).then(() => {
+          toast.success('Link copied to clipboard');
+        });
+      },
+    },
+    {
+      label: 'Delete Forever',
+      icon: BsTrash,
+      onClick: onDelete,
+    }
+  ]
+
+  return (
+    <>
+      <Tooltip disabled={disabled} title={'Manage Post'} placement='bottom'>
+        <IconButton disabled={disabled} onClick={handleClick} >
+          <HiOutlineDotsVertical className="w-5 h-5 text-black dark:text-white" />
+        </IconButton>
+      </Tooltip>
+      <Menu
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'post_details_action',
+        }}
+        sx={{ zIndex: '999' }} >
+        <MenuList>
+          {
+            list.map((item, index) => {
+              return (
+                <MenuItem key={index} onClick={item.onClick}>
+                  <ListItemIcon >
+                    <item.icon className='w-5 h-5' />
+                  </ListItemIcon>
+                  <span className='text-base font-semibold mr-1.5'>{item.label}</span>
+                </MenuItem>
+              )
+            })
+          }
+        </MenuList>
+      </Menu>
+    </>
+  );
+};
+
 const PostDetailsActionMenu = ({ list = [], disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -400,5 +503,5 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
   )
 }
 
-export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu };
+export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu, PostDetailsTableViewMenu };
 

@@ -20,11 +20,14 @@ import {
 } from 'material-react-table';
 import {
     Box,
+    darken,
     lighten,
+    useTheme,
 } from '@mui/material';
 import { DrawerContext } from '../mainlayout';
-import { PrivacyHandlerBtn } from '../Buttons';
-import { PiReadCvLogo } from 'react-icons/pi';
+import { PostDetailsTableViewMenu, PrivacyHandlerBtn } from '../Buttons';
+import { RiLinkUnlinkM } from 'react-icons/ri';
+import { imgUrl } from '@/lib/helpers';
 
 
 const StudioContent = () => {
@@ -34,6 +37,7 @@ const StudioContent = () => {
     const { data, setLoading, loading } = useContext(StudioContext);
 
     const { variant, open } = useContext(DrawerContext);
+    const theme = useTheme();
 
     useEffect(() => {
         setLoading(true);
@@ -117,6 +121,11 @@ const StudioContent = () => {
 
     ]);
 
+    const baseBackgroundColor =
+        theme.palette.mode === 'dark'
+            ? 'rgb(26, 45, 76, 1)'
+            : 'rgb(253, 236, 236, 0)';
+
     const table = useMaterialReactTable({
         columns,
         data: postData,
@@ -162,31 +171,43 @@ const StudioContent = () => {
         state: {
             showSkeletons: isMapping
         },
-        muiTableHeadCellProps: ({ column }) => ({
-            sx: ({ theme }) => ({
-                backgroundColor: column.getIsPinned() ? theme?.palette?.background?.default : theme?.palette?.background?.default,
-            }),
-            className: `${column.getIsPinned() && 'before:!shadow-none'}`
-        }),
-        muiTableBodyCellProps: ({ column }) => ({
-            sx: ({ theme }) => ({
-                backgroundColor: column.getIsPinned() ? theme?.palette?.background?.default : theme?.palette?.background?.default,
-            }),
-            className: `${column.getIsPinned() && 'before:!shadow-none'}`
-        }),
-        renderEmptyRowsFallback: ({ table }) => (
-            <div className="flex justify-center min-h-96 items-center">No Posts Found</div>
-        ),
-        muiTableFooterCellProps: ({ column }) => ({
-            sx: ({ theme }) => ({
-                backgroundColor: column.getIsPinned() ? theme?.palette?.background?.default : theme?.palette?.background?.default,
-            }),
-        }),
-        muiTableFooterProps: {
-            sx: ({ theme }) => ({
-                backgroundColor: theme?.palette?.background?.default || 'var(--rb-palette-background-default)',
+        muiTableBodyProps: {
+            sx: (theme) => ({
+                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td':
+                {
+                    backgroundColor: baseBackgroundColor,
+                },
+                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td':
+                {
+                    backgroundColor: darken(baseBackgroundColor, 0.2),
+                },
+                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td':
+                {
+                    backgroundColor: baseBackgroundColor,
+                },
+                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td':
+                {
+                    backgroundColor: darken(baseBackgroundColor, 0.2),
+                },
+                '& tr > td:not([data-pinned="false"])::before':
+                {
+                    backgroundColor: 'var(--rb-palette-background-default)',
+                },
+                '& tr > th:not([data-pinned="false"])::before':
+                {
+                    backgroundColor: 'var(--rb-palette-background-default)',
+                },
             }),
         },
+        muiTableContainerProps: {
+            sx: { maxHeight: 'calc(100vh - 210px) !important', height: 'calc(100vh - 210px)' },
+            style: { maxHeight: 'calc(100vh - 210px) !important' }
+        },
+        mrtTheme: (theme) => ({
+            baseBackgroundColor: baseBackgroundColor,
+            draggingBorderColor: theme.palette.secondary.main,
+            pinnedRowBackgroundColor: 'var(--rb-palette-background-default)',
+        }),
         renderTopToolbar: ({ table }) => {
             const handleDeactivate = () => {
                 table.getSelectedRowModel().flatRows.map((row) => {
@@ -196,7 +217,7 @@ const StudioContent = () => {
 
             return (
                 <>
-                    <div className="flex items-center justify-between w-full px-2 mb-1 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
+                    <div className="flex items-center justify-between w-full px-2 mb-1 pt-2 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                         {
                             [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
                                 return (
@@ -211,15 +232,15 @@ const StudioContent = () => {
                         sx={(theme) => ({
                             display: 'flex',
                             gap: '0.5rem',
-                            p: '8px',
+                            px: '8px',
                             justifyContent: 'space-between',
                         })}
                     >
                         <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                             <MRT_ToggleFiltersButton table={table} />
-                            <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null, classes: { notchedOutline: { border: 'none' }, root: { border: 'none' } } }} table={table} />
+                            <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null, disableUnderline: true }} table={table} />
                         </Box>
-                        <Box>
+                        {/* <Box>
                             <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                                 <Button
                                     color="button"
@@ -230,7 +251,7 @@ const StudioContent = () => {
                                     Delete
                                 </Button>
                             </Box>
-                        </Box>
+                        </Box> */}
                     </Box>
                 </>
             );
@@ -239,7 +260,7 @@ const StudioContent = () => {
 
     return (
         <div style={{ margin: (variant === 'permanent') && '0 -20px' }}>
-            <MaterialReactTable table={table} muiTableContainerProps={{ style: { height: 'calc(100vh - 230px) !important' } }} />
+            <MaterialReactTable table={table} />
         </div>
     );
 
@@ -251,7 +272,7 @@ const SidePostView = ({ post, title }) => {
     return (
         <div key={post?.shortId} className="flex items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
-                <CldImage width={100} height={56} src={post?.image?.url} alt={post?.image?.alt} className="rounded-lg bg-black/5 dark:bg-white/5" />
+                <CldImage width={100} height={56} src={imgUrl(post?.image?.url)} alt={post?.image?.alt} className="rounded-lg bg-black/5 dark:bg-white/5" />
             </div>
             <div className="flex flex-col flex-grow justify-start w-[calc(100%-100px)] items-start">
                 <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{title}</h3>
@@ -261,8 +282,8 @@ const SidePostView = ({ post, title }) => {
                         <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
                         <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
                         <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
-                        <IconView Icon={PiReadCvLogo} onClick={() => router.push(`/post/${post?.slug}`)} tip='Read on Main Page' />
-                        <IconView Icon={CiMenuKebab} onClick={() => router.push(`/studio/`)} tip='Menu' />
+                        <IconView Icon={RiLinkUnlinkM} onClick={() => router.push(`/post/${post?.slug}`)} tip='Read it on Post Page' />
+                        <PostDetailsTableViewMenu url={post?.slug} data={{ id: post?.shortId, img: post?.image?.url, title: title, description: post?.description }} setPosts={setPosts} />
                     </div>
                 </div>
             </div>
