@@ -14,6 +14,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { BiCommentDetail, BiSolidCommentDetail } from 'react-icons/bi';
 import { PiCopyrightFill } from 'react-icons/pi';
 import { imgUrl } from '@/lib/helpers';
+import { ArticleImage } from '../post/_client';
 
 const mainMenu = [
     {
@@ -192,7 +193,7 @@ const PostBox = ({ url, title, image, open }) => {
                 <a href={url} target="_blank" className={`${open ? '!w-[224px] !h-[127px]' : '!w-14 !h-8'} mx-auto rounded-full`}>
                     <Tooltip title={`Post Details: ${title}`} placement='right'>
                         <div className='flex flex-col group justify-center items-center'>
-                            <Image draggable={false} className={`${open ? '!w-[224px] !h-[127px] text-xs' : '!w-14 !h-8 text-base'} bg-black/5 dark:bg-white/5 rounded-md`} alt={title || 'Post image'} src={imgUrl(image)} width={224} height={127} />
+                            <ArticleImage image={{ url: image, alt: title }} title={title} width={224} height={127} className={`${open ? '!w-[224px] !h-[127px]' : '!w-14 !h-8'} !rounded-md`} />
                             <div className={`hidden ${open ? '!w-[224px] cheltenham !h-[127px] text-base' : '!w-14 !h-8'} rounded-md justify-center items-center group-hover:flex absolute bg-dark/50`}>
                                 <TbExternalLinkOff className={`${open ? 'w-6 h-6' : 'w-2 h-2'}`} />
                             </div>

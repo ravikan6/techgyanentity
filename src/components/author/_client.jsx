@@ -1,5 +1,6 @@
 "use client";
 
+import { CldImage } from "next-cloudinary";
 import { useEffect, useState } from "react";
 
 const AuthorBanner = ({ id }) => {
@@ -26,4 +27,10 @@ const AuthorBanner = ({ id }) => {
     )
 }
 
-export { AuthorBanner }
+const BannerImage = ({ banner, className, height, width }) => {
+    return (
+        <CldImage draggable={false} src={banner?.url} alt="Banner" className={className} height={height || 200} width={width || 1900} aspectRatio={'16:9'} />
+    )
+}
+
+export { AuthorBanner, BannerImage };

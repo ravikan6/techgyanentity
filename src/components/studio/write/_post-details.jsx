@@ -387,7 +387,7 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
         <div className="flex flex-col space-y-2">
             {imageUrl ?
                 <div className="relative">
-                    <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg" />
+                    <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg aspect-video" />
                     <div className="absolute top-2 right-2">
                         <PostDetailsImageMenu disabled={loading} onFistClick={handleFeaturedImageUpload} />
                     </div>

@@ -310,7 +310,7 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
   const View = () => (
     <>
       <div className='bg-light dark:bg-dark truncate rounded-xl p-2 flex space-x-4'>
-        <CldImage src={imgUrl(data?.img)} width='100' height='40' className='rounded-lg' />
+        <ArticleImage image={{ url: data?.img, alt: data?.title }} width={100} height={56} />
         <div className='flex flex-col max-w-[300px]'>
           <h3 className='text-sm line-clamp-1 text-black dark:text-white truncate text-wrap font-semibold'>{data?.title}</h3>
           <p className='text-xs line-clamp-2 text-gray-600 dark:text-gray-400 truncate text-wrap mt-0.5'>{data?.description}</p>

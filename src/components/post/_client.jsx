@@ -22,18 +22,21 @@ import { MdChevronRight, MdOutlineDeleteOutline, MdOutlineEdit, MdOutlineReport 
 import { FaHandsClapping } from "react-icons/fa6";
 import confirm from "@/lib/confirm";
 import { StudioContext } from "@/lib/context";
+import { imgUrl } from "@/lib/helpers";
 
-export const ArticleImage = ({ image, classes }) => {
+export const ArticleImage = ({ image, classes, height, width, className }) => {
     return <CldImage
-        src={image?.url}
+        draggable={false}
+        src={imgUrl(image?.url)}
         alt={image?.alt}
-        width={720}
-        height={480}
+        width={width || 720}
+        height={height || 405}
+        aspectRatio={'16:9'}
         sizes="100vw"
         loading='lazy'
         enhance
         sanitize
-        className={`rounded-2xl w-full h-auto ${classes}`}
+        className={`rounded-2xl h-auto ${classes} ${className}`}
     />
 }
 
