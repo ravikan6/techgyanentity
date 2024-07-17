@@ -34,7 +34,7 @@ const BannerImage = ({ banner, className, height, width }) => {
             src={banner?.url}
             alt="Banner"
             className={className}
-            // height={height || 200}
+            height={height || 200}
             width={width || 1900}
             aspectRatio="16:9"
             fill
