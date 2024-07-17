@@ -32,13 +32,12 @@ const BannerImage = ({ banner, className, height, width }) => {
         <CldImage
             draggable={false}
             src={banner?.url}
-            alt="Banner"
+            alt={banner?.alt || "Banner"}
             className={className}
-            height={height || 200}
-            width={width || 1900}
-            aspectRatio="16:9"
+            height={height || 188}
+            width={width || 1138}
+            crop={'fill'}
             fill
-            crop={'auto'}
             sanitize
             enhance
             sizes="100vw"

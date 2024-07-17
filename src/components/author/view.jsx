@@ -7,8 +7,8 @@ const AuthorSingleViewPage = ({ author }) => {
         <>
             <section>
                 <div className="w-full overflow-hidden" >
-                    <div className='block group/rb-banner relative w-full overflow-hidden rounded-xl bg-black/10 dark:bg-white/10 h-[16.5vw] min-[925px]:h-[calc((100vw-240px)/6.2-1px)]'>
-                        <BannerImage banner={author?.banner} className="w-full" />
+                    <div className='block group/rb-banner relative overflow-hidden rounded-xl bg-black/10 dark:bg-white/10 pt-[16.12%]'>
+                        <BannerImage banner={author?.banner} />
                         {/* {session?.user && <div className='absolute transition-all duration-700 hidden group-hover/rb-banner:block bg-gradient-to-br to-gray-800/20 from-transparent w-full h-full bottom-0 right-0 top-0 left-0'>
                             <Button sx={{ minWidth: '2rem', minHeight: '2rem', borderRadius: '100rem' }} className='!absolute !bottom-4 !right-4 shadow-md !bg-accentLight dark:!bg-accentDark !p-0'>
                                 <Link className='flex items-center justify-center' href={`/${process.env.CHANNEL_URL_PREFIX}/@${data?.handle}/edit`}>

@@ -277,7 +277,7 @@ const SidePostView = ({ post, title, setPosts }) => {
     return (
         <div key={post?.shortId} className="flex max-w-[370px] min-w-[370px] items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
-                <ArticleImage image={post?.image} width={100} height={56} className={'bg-black/5 dark:bg-white/5'} />
+                <ArticleImage image={post?.image} width={100} height={56} className={'bg-black/5 dark:bg-white/5 rounded'} />
             </div>
             <div className="flex flex-col flex-grow justify-start w-[calc(100%-100px)] items-start">
                 <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{title}</h3>
