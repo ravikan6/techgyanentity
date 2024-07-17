@@ -29,7 +29,20 @@ const AuthorBanner = ({ id }) => {
 
 const BannerImage = ({ banner, className, height, width }) => {
     return (
-        <CldImage draggable={false} src={banner?.url} alt="Banner" className={className} height={height || 200} width={width || 1900} aspectRatio={'16:9'} />
+        <CldImage
+            draggable={false}
+            src={banner?.url}
+            alt="Banner"
+            className={className}
+            // height={height || 200}
+            width={width || 1900}
+            aspectRatio="16:9"
+            fill
+            crop={'auto'}
+            sanitize
+            enhance
+            sizes="100vw"
+        />
     )
 }
 

@@ -30,11 +30,12 @@ export const ArticleImage = ({ image, classes, height, width, className }) => {
         src={imgUrl(image?.url)}
         alt={image?.alt}
         width={width || 720}
-        height={height || 405}
-        aspectRatio={'16:9'}
+        // height={height || 405}
+        aspectRatio="16:9"
         sizes="100vw"
         loading='lazy'
         enhance
+        crop={'fill'}
         sanitize
         className={`rounded-2xl h-auto ${classes} ${className}`}
     />
