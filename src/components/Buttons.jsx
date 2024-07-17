@@ -27,6 +27,7 @@ import { toast } from 'react-toastify';
 import confirm from '@/lib/confirm';
 import { CldImage } from 'next-cloudinary';
 import { imgUrl } from '@/lib/helpers';
+import { ArticleImage } from './post/_client';
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -310,7 +311,7 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
   const View = () => (
     <>
       <div className='bg-light dark:bg-dark truncate rounded-xl p-2 flex space-x-4'>
-        <ArticleImage image={{ url: data?.img, alt: data?.title }} width={100} height={56} />
+        <ArticleImage image={{ url: data?.img, alt: data?.title }} width={100} className={'!rounded-md'} />
         <div className='flex flex-col max-w-[300px]'>
           <h3 className='text-sm line-clamp-1 text-black dark:text-white truncate text-wrap font-semibold'>{data?.title}</h3>
           <p className='text-xs line-clamp-2 text-gray-600 dark:text-gray-400 truncate text-wrap mt-0.5'>{data?.description}</p>

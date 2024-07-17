@@ -13,7 +13,6 @@ import { MdDashboardCustomize, MdHistory, MdOutlineDashboardCustomize, MdOutline
 import { PiGameController, PiGameControllerFill } from 'react-icons/pi';
 import { CiGlobe } from 'react-icons/ci';
 import { FaGlobe } from 'react-icons/fa';
-// import { get_USER_DATA } from '@/lib/fetchers';
 import { Button, Tooltip } from '@/components/rui/_components';
 
 const userMenu = [
@@ -268,10 +267,10 @@ const MainSidebar = (props) => {
             <>
                 <div className="flex w-full items-center">
                     {session?.user ? <Link href={userData ? `/@${session?.user?.username}` : '#'} className={MenuBtnStyle(`/@${session?.user?.username}`)}>
-                        <Button fullWidth >
-                            <div className="flex py-0.5 px-2 w-full justify-start space-x-7 items-center">
+                        <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }}>
+                            <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
                                 <>{session?.user?.image ? <Image className='rounded' src={`${session?.user?.image}`} alt={session?.user?.username} width={20} height={20} /> : false ? <BiSolidUserRectangle className="w-5 text-black dark:text-white h-5" /> : <LuUserSquare2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                    <span className="text-base line-clamp-1 truncate dark:text-gray-100 text-gray-800 font-semibold">@{session?.user?.username}</span></>
+                                    <span className={`text-base line-clamp-1 truncate dark:text-gray-100 text-gray-800 font-semibold ${isSmall && 'w-0'}`}>@{session?.user?.username}</span></>
                             </div>
                         </Button>
                     </Link> : <>{MenuSkeleton(1)}</>}
@@ -285,7 +284,7 @@ const MainSidebar = (props) => {
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
                         <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
                             {showMore ? <BiChevronUp className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
-                            <span className={`${showMore ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{showMore ? 'Show less' : 'Show more'}</span>
+                            <span className={`${showMore ? '' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{showMore ? 'Show less' : 'Show more'}</span>
                         </div>
                     </Button>
                 </div>
@@ -401,6 +400,8 @@ const SmallSidebar = (props) => {
 const NonLoggedBox = ({ path, isSmall }) => {
     const [showTip, setShowTip] = useState(false);
 
+    const [state, setState] = useState({ dp: true, dh: true, shw: false }) // dev
+
     const staticMenu = [
         {
             name: 'Content studio',
@@ -435,7 +436,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
     const TheBox = () => {
         return (
             <div className="flex flex-col backdrop-blur-md p-2 items-center justify-center space-y-4">
-                <p className="text-xs cheltenham text-center text-slate-700 dark:text-slate-100">
+                <p className="text-xs cheltenham text-center dark:text-slate-800 text-slate-100">
                     Join us! Sign in to like and comment on articles, vote & answer community posts, subscribe to channels, join communities, and follow other users.
                 </p>
                 <div className='flex space-x-4 justify-end items-center'>
@@ -469,7 +470,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
                 <MenuItem key={index} menu={menu} path={path} />
             ))}
             <div className='my-2 flex w-full justify-center items-center'>
-                <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: true, }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
+                <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: state.dp }} onClose={boxCloser} disableFocusListener disableHoverListener={state.dh} disableTouchListener>
                     <Button
                         variant='outlined'
                         color="button"
@@ -479,6 +480,18 @@ const NonLoggedBox = ({ path, isSmall }) => {
                         <span className={`mt-0.5 ml-2 ${isSmall && 'hidden'}`}>Sign In</span>
                     </Button>
                 </Tooltip>
+            </div>
+            <div>
+                <p className='text-xs' onClick={() => setState({ ...state, shw: !state.shw })}>
+                    show
+                </p>
+                {
+                    state.shw && <div className='text-xs'>
+                        <p onClick={() => setState({ ...state, dp: !state.dp })}>dp: {state.dp ? 'true' : 'false'}</p>
+                        <p onClick={() => setState({ ...state, dh: !state.dh })}>dh: {state.dh ? 'true' : 'false'}</p>
+                        <p onClick={() => setShowTip(!showTip)}>showTip: {showTip ? 'true' : 'false'}</p>
+                    </div>
+                }
             </div>
             <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
         </>

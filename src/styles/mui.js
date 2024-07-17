@@ -28,7 +28,7 @@ const mui = extendTheme({
           main: '#fafafa'
         },
         bgSP: {
-          main: 'rgb(141, 155, 180)', // Bali Hai
+          main: 'rgb(89, 44, 59)' // Livid Brown
         },
         button: {
           main: 'rgb(213, 118, 108)', // Japonica
@@ -94,7 +94,8 @@ const mui = extendTheme({
           main: 'rgb(26, 45, 76)', // Big Stone
         },
         bgSP: {
-          main: 'rgb(89, 44, 59)' // Livid Brown
+          main: 'rgb(198, 215, 240)', // Spindle
+          // main: 'rgb(141, 155, 180)', // Bali Hai
         },
         switch: { main: '#fff', contrastText: '#000', accent: '#bb6eff' },
         Avatar: {

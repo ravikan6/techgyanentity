@@ -75,7 +75,7 @@ const RuiToolTip = styled(({ className, ...props }) =>
     '& .MuiTooltip-tooltip': {
         borderRadius: 12,
         backgroundColor: theme.palette?.bgSP?.main,
-        color: theme.palette.grey[100],
+        color: theme.palette?.ld.main,
         fontFamily: 'rb-cheltenham',
         fontWeight: 'bold',
         fontSize: '0.6rem',

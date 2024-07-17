@@ -30,7 +30,7 @@ export const PostView = async ({ article }) => {
                                             className="block mb-10 text-center break-inside-avoid-column"
                                         >
                                             <ArticleImage image={article.image} />
-                                            <figcaption className="z-10 mt-4 text-sm italic text-gray-600">
+                                            <figcaption className="mt-2 text-sm italic text-black/70 dark:text-white/70">
                                                 {article?.image?.caption}
                                             </figcaption>
                                         </figure>

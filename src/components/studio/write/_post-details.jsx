@@ -324,6 +324,8 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
             } else if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
                 setImageUrl(URL.createObjectURL(img?.url));
             }
+        } else {
+            setImageUrl(null)
         }
     }, [img])
 
@@ -387,7 +389,7 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
         <div className="flex flex-col space-y-2">
             {imageUrl ?
                 <div className="relative">
-                    <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg aspect-video" />
+                    <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg aspect-video bg-black/5 dark:bg-white/5" />
                     <div className="absolute top-2 right-2">
                         <PostDetailsImageMenu disabled={loading} onFistClick={handleFeaturedImageUpload} />
                     </div>

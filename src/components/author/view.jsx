@@ -18,9 +18,9 @@ const AuthorSingleViewPage = ({ author }) => {
                         </div>} */}
                     </div>
                 </div>
-                <div className={`flex flex-col w-full items-center ${author?.banner?.url && '-mt-20'}`}>
-                    <Avatar src={author?.image?.url} width={160} height={160} className="!w-40 !h-40 box-border border-4 border-light dark:border-dark" alt={author?.name} />
-                    <h2 className="text-xl karanak font-bold mt-2 mx-auto">{author?.name}</h2>
+                <div className={`flex flex-col w-full items-center ${author?.banner?.url && ''}`}>
+                    <Avatar src={author?.image?.url} width={160} height={160} className="!w-14 !h-14 md:!h-24 md:!w-24 lg:!w-40 lg:!h-40 box-border border-2 md:border-[3px] lg:border-4 border-light dark:border-dark" alt={author?.name} />
+                    <h2 className="text-xl karnak font-bold mt-2 mx-auto">{author?.name}</h2>
                     <span className="opacity-80 max-w-80 mx-auto line-clamp-3 truncate">{author?.bio}</span>
                 </div>
             </section>
