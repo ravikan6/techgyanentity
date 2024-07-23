@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button, Tooltip } from "../rui";
 import Image from "next/image";
 import { getFevicon } from '@/lib/utils';
+import Link from "next/link";
 
 const AuthorBanner = ({ id }) => {
     const [banner, setBanner] = useState(null);
