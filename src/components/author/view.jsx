@@ -1,7 +1,6 @@
 import { Avatar, Skeleton } from "@mui/material";
 import { AuthorBottomButtons, BannerImage } from "./_client";
 import Link from "next/link";
-import { getFevicon } from '@/lib/utils';
 import { GrContactInfo } from "react-icons/gr";
 
 const AuthorSingleViewPage = ({ author }) => {
@@ -59,7 +58,7 @@ const AuthorSingleViewPage = ({ author }) => {
                                             ))
                                         )
                                     }
-                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} Icon={GrContactInfo} tip={'Know more about this author'} />
+                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4 mr-3" />} tip={'Know more about this author'} />
                                 </div>
                             </div>
 
