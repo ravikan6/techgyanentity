@@ -85,7 +85,6 @@ const getArticle = async (slug, id) => {
                 ...id && {
                     authorId: id,
                 },
-                isDeleted: false,
             },
             include: {
                 author: true,
@@ -120,7 +119,6 @@ const getAuthor = async (handle) => {
         let author = await prisma.author.findFirst({
             where: {
                 handle: handle,
-                isDeleted: false,
             },
             select: {
                 handle: true,

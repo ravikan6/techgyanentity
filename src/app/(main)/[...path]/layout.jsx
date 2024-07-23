@@ -35,7 +35,6 @@ const getAuthor = async (handle) => {
         let author = await prisma.author.findFirst({
             where: {
                 handle: handle,
-                isDeleted: false,
             },
             select: {
                 handle: true,
