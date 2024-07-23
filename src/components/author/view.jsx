@@ -22,50 +22,47 @@ const AuthorSingleViewPage = ({ author, children }) => {
                         </div>} */}
                     </div>
                 </div>
-                <div className=' m-auto mt-4'>
-                    <div className='flex justify-between'>
-                        <div className='flex justify-start'>
-                            {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
-                                <Avatar
-                                    src={author?.image?.url}
-                                    quality={100}
-                                    alt={author?.name}
-                                    width={128}
-                                    height={128}
-                                    className='rounded-full !w-[128px] !h-[128px]'
-                                >{author?.name[0]}</Avatar>
-                            </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
-                            <div className='flex flex-col justify-evenly ml-5 md:ml-6 lg:ml-7'>
-                                <div className='mt-0'>
-                                    <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
-                                    <p className='text-sm lg:text-base karnak font-medium '>
-                                        {author?._count?.followers} Followers • {author?._count?.Post} Articles
+                <div className='flex m-auto mt-4 justify-between'>
+                    <div className='flex justify-start'>
+                        {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
+                            <Avatar
+                                src={author?.image?.url}
+                                quality={100}
+                                alt={author?.name}
+                                width={128}
+                                height={128}
+                                className='rounded-full !w-[128px] !h-[128px]'
+                            >{author?.name[0]}</Avatar>
+                        </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
+                        <div className='flex flex-col justify-evenly ml-5 md:ml-6 lg:ml-7'>
+                            <div className='mt-0'>
+                                <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
+                                <p className='text-sm lg:text-base karnak font-medium '>
+                                    {author?._count?.followers} Followers • {author?._count?.Post} Articles
+                                </p>
+                            </div>
+                            <div>
+                                <Link href={`/@${author?.handle}/about`} >
+                                    <p className='text-sm inline-flex items-center font-medium mt-1'>
+                                        {author?.bio && author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || 'More about this author'}
+                                        <span className='ml-2'> <BsChevronDoubleRight /></span>
                                     </p>
-                                </div>
-                                <div>
-                                    <Link href={`/@${author?.handle}/about`} >
-                                        <p className='text-sm inline-flex items-center font-medium mt-1'>
-                                            {author?.bio && author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || ''}
-                                            <span className='ml-2'> <BsChevronDoubleRight /></span>
-                                        </p>
-                                    </Link>
-                                    <div className='mt-0.5 flex items-center space-x-4' >
-                                        {
-                                            (author?.social && (author?.social?.length > 0)) && (
-                                                author?.social.slice(0, 3).map((link, index) => (
-                                                    <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} />
-                                                ))
-                                            )
-                                        }
-                                        <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4" />} tip={'Know more about this author'} />
-                                    </div>
+                                </Link>
+                                <div className='mt-0.5 flex items-center space-x-4' >
+                                    {
+                                        (author?.social && (author?.social?.length > 0)) && (
+                                            author?.social.slice(0, 3).map((link, index) => (
+                                                <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} />
+                                            ))
+                                        )
+                                    }
+                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4" />} tip={'Know more about this author'} />
                                 </div>
                             </div>
-
                         </div>
+
                     </div>
-                    <div className='flex mt-5 mr-4 justify-end'>
-                        {/* Follow Button */}
+                    <div className='flex mt-5 mr-4 justify-end self-start'>
                         <FollowButton authorId={author?.id} />
                     </div>
                 </div>

@@ -64,7 +64,7 @@ const AuthorBottomButtons = ({ url, title, isExt, icon, tip }) => {
 
     return (
         <Tooltip title={tip || title}>
-            <Button onClick={handleClick} variant="outlined" size="small" startIcon={icon ? icon : <Image src={getFevicon(url)} alt={title} width={16} height={16} />}>
+            <Button onClick={handleClick} variant="outlined" size="small" startIcon={icon ? icon : <Image src={getFevicon(url)} className="rounded" alt={title} width={16} height={16} />}>
                 {title}
             </Button>
         </Tooltip>

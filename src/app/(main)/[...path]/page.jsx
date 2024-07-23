@@ -1,3 +1,4 @@
+import AuthorPosts from '@/components/author/_posts';
 import { AuthorSingleViewPage } from '@/components/author/view';
 import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
@@ -67,7 +68,7 @@ const DynamicPages = async ({ params, searchParams }) => {
             } else if (route?.length === 2 && route[1] === 'about') {
                 return 'This is Author About Page';
             } else if (route?.length === 2 && route[1] === 'posts') {
-                return 'This is Author Posts Page';
+                return <AuthorPosts data={author} />
             }
             else if (route?.length === 2) {
                 const article = await getArticle(decodeURIComponent(route[1]), author.id)

@@ -579,9 +579,35 @@ const isPostAuthor = async (postId, userId) => {
     }
 }
 
+const getAuthorPosts = async (params) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let posts = await prisma.post.findMany({
+            where: {
+                author: {
+                    handle: params.handle,
+                },
+                published: true,
+                isDeleted: false,
+                privacy: 'PUBLIC'
+            },
+            orderBy: {
+                createdAt: params.orderBy || 'desc'
+            },
+            take: params.take || 10,
+            skip: params.skip || 0,
+        });
+        res.data = posts;
+        res.status = 200;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+    }
+    return res;
+}
+
 export const cloudinaryProvider = async (data) => {
     let provider = 'cloudinary';
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction, articleClapsList, articleClapsAction, checkBookmarkAction, bookmarkAction, isPostAuthor }
+export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction, articleClapsList, articleClapsAction, checkBookmarkAction, bookmarkAction, isPostAuthor, getAuthorPosts }
