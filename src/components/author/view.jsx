@@ -3,12 +3,13 @@ import { AuthorBottomButtons, AuthorLayoutNav, BannerImage } from "./_client";
 import Link from "next/link";
 import { GrContactInfo } from "react-icons/gr";
 import { BsChevronDoubleRight } from "react-icons/bs";
+import { FollowButton } from "./utils";
 
 const AuthorSingleViewPage = ({ author, children }) => {
 
     return (
         <>
-            <section>
+            <section className="mb-5">
                 <div className="w-full overflow-hidden" >
                     <div className='block group/rb-banner relative overflow-hidden rounded-xl bg-black/10 dark:bg-white/10 pt-[16.12%]'>
                         <BannerImage banner={author?.banner} />
@@ -65,6 +66,7 @@ const AuthorSingleViewPage = ({ author, children }) => {
                     </div>
                     <div className='flex mt-5 mr-4 justify-end'>
                         {/* Follow Button */}
+                        <FollowButton authorId={author?.id} />
                     </div>
                 </div>
                 <div className="mt-4" >

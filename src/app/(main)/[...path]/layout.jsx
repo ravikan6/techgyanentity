@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { getCImageUrl } from "@/lib/helpers";
 import { AuthorSingleViewPage } from "@/components/author/view";
 
-export const authorPageRoutes = ['about', 'followers', 'following', 'posts', ];
+export const authorPageRoutes = ['about', 'followers', 'following', 'posts',];
 
 const DynamicMainLayout = async ({ params, searchParams, children }) => {
     const route = params.path;
@@ -37,6 +37,7 @@ const getAuthor = async (handle) => {
                 handle: handle,
             },
             select: {
+                id: true,
                 handle: true,
                 name: true,
                 bio: true,

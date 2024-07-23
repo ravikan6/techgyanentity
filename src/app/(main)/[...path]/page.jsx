@@ -64,7 +64,12 @@ const DynamicPages = async ({ params, searchParams }) => {
                 return (
                     <span>This is Author Home Page</span>
                 )
-            } else if (route?.length === 2) {
+            } else if (route?.length === 2 && route[1] === 'about') {
+                return 'This is Author About Page';
+            } else if (route?.length === 2 && route[1] === 'posts') {
+                return 'This is Author Posts Page';
+            }
+            else if (route?.length === 2) {
                 const article = await getArticle(decodeURIComponent(route[1]), author.id)
                 if (article) {
                     return (

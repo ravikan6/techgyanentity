@@ -399,9 +399,6 @@ const SmallSidebar = (props) => {
 
 const NonLoggedBox = ({ path, isSmall }) => {
     const [showTip, setShowTip] = useState(false);
-
-    const [state, setState] = useState({ dp: true, dh: true, shw: false }) // dev
-
     const staticMenu = [
         {
             name: 'Content studio',
@@ -442,7 +439,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
                 <div className='flex space-x-4 justify-end items-center'>
                     <Button
                         variant='outlined'
-                        color="primary"
+                        color="ld"
                         size="small"
                         onClick={boxCloser}
                     >
@@ -470,7 +467,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
                 <MenuItem key={index} menu={menu} path={path} />
             ))}
             <div className='my-2 flex w-full justify-center items-center'>
-                <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: state.dp }} onClose={boxCloser} disableFocusListener disableHoverListener={state.dh} disableTouchListener>
+                <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: false }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
                     <Button
                         variant='outlined'
                         color="button"
@@ -480,18 +477,6 @@ const NonLoggedBox = ({ path, isSmall }) => {
                         <span className={`mt-0.5 ml-2 ${isSmall && 'hidden'}`}>Sign In</span>
                     </Button>
                 </Tooltip>
-            </div>
-            <div>
-                <p className='text-xs' onClick={() => setState({ ...state, shw: !state.shw })}>
-                    show
-                </p>
-                {
-                    state.shw && <div className='text-xs'>
-                        <p onClick={() => setState({ ...state, dp: !state.dp })}>dp: {state.dp ? 'true' : 'false'}</p>
-                        <p onClick={() => setState({ ...state, dh: !state.dh })}>dh: {state.dh ? 'true' : 'false'}</p>
-                        <p onClick={() => setShowTip(!showTip)}>showTip: {showTip ? 'true' : 'false'}</p>
-                    </div>
-                }
             </div>
             <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
         </>
