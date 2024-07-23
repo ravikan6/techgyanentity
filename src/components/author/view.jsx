@@ -1,10 +1,10 @@
 import { Avatar, Skeleton } from "@mui/material";
-import { AuthorBottomButtons, BannerImage } from "./_client";
+import { AuthorBottomButtons, AuthorLayoutNav, BannerImage } from "./_client";
 import Link from "next/link";
 import { GrContactInfo } from "react-icons/gr";
 import { BsChevronDoubleRight } from "react-icons/bs";
 
-const AuthorSingleViewPage = ({ author }) => {
+const AuthorSingleViewPage = ({ author, children }) => {
 
     return (
         <>
@@ -24,26 +24,26 @@ const AuthorSingleViewPage = ({ author }) => {
                 <div className=' m-auto mt-4'>
                     <div className='flex justify-between'>
                         <div className='flex justify-start'>
-                            {author ? <div className='lg:!w-[128px] lg:!h-[128px] !w-[78px] !h-[78px] md:!w-[96px] md:!h-[96px] rounded-full bg-transparent'>
+                            {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
                                 <Avatar
                                     src={author?.image?.url}
                                     quality={100}
                                     alt={author?.name}
                                     width={128}
                                     height={128}
-                                    className='rounded-full lg:!w-[128px] lg:!h-[128px] !w-[78px] !h-[78px] md:!w-[96px] md:!h-[96px]'
+                                    className='rounded-full !w-[128px] !h-[128px]'
                                 >{author?.name[0]}</Avatar>
-                            </div> : <Skeleton variant='cricle' className='lg:!w-[128px] lg:!h-[128px] !w-[78px] !h-[78px] md:!w-[96px] md:!h-[96px] block !p-0 !m-0 rounded-full' animation="wave" />}
+                            </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
                             <div className='flex flex-col justify-evenly ml-5 md:ml-6 lg:ml-7'>
                                 <div className='mt-0'>
-                                    <h2 className='text-lg md:text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
-                                    <p className='text-xs md:text-sm lg:text-base karnak font-medium '>
+                                    <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
+                                    <p className='text-sm lg:text-base karnak font-medium '>
                                         {author?._count?.followers} Followers • {author?._count?.Post} Articles
                                     </p>
                                 </div>
                                 <div>
                                     <Link href={`/@${author?.handle}/about`} >
-                                        <p className='text-xs md:text-sm inline-flex items-center font-medium mt-1'>
+                                        <p className='text-sm inline-flex items-center font-medium mt-1'>
                                             {author?.bio && author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || ''}
                                             <span className='ml-2'> <BsChevronDoubleRight /></span>
                                         </p>
@@ -67,24 +67,13 @@ const AuthorSingleViewPage = ({ author }) => {
                         {/* Follow Button */}
                     </div>
                 </div>
-                <div className='mt-4'>
-                    <div className='flex justify-between'>
-                        <div className='flex flex-col'>
-                            <h3 className='text-lg font-bold'>Articles</h3>
-                            <p className='text-sm font-medium'>All articles by this author</p>
-                        </div>
-                        <div className='flex items-center space-x-2'>
-                            <Link href={`/@${author?.handle}/articles`} >
-                                <p className='text-sm font-medium'>View All</p>
-                            </Link>
-                            <BsChevronDoubleRight className='w-4 h-4' />
-                        </div>
-                    </div>
-                    <div className='mt-4'>
-                        {/* Articles */}
-                    </div>
+                <div className="mt-4" >
+                    <AuthorLayoutNav data={{ handle: author?.handle }} />
                 </div>
             </section >
+            <section>
+                {children}
+            </section>
         </>
     )
 

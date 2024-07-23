@@ -1,7 +1,7 @@
 "use client";
 
 import { CldImage } from "next-cloudinary";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "../rui";
 import Image from "next/image";
@@ -70,5 +70,45 @@ const AuthorBottomButtons = ({ url, title, isExt, icon, tip }) => {
     )
 }
 
+const AuthorLayoutNav = ({ data }) => {
+    const path = usePathname();
 
-export { AuthorBanner, BannerImage, AuthorBottomButtons };
+    const tabs = [
+        {
+            url: '',
+            label: 'Feed',
+        },
+        {
+            url: '/posts',
+            label: 'Articles',
+        },
+        {
+            url: '/about',
+            label: 'About',
+        },
+    ];
+
+    return (
+        <>
+            <div className="m-auto py-2 rounded-full border border-gray-200 dark:border-zinc-900 bg-slate-100 dark:bg-zinc-900/50">
+                <div className="flex justify-center px-10 space-x-10 m-auto">
+                    {tabs.map((tab, index) => {
+                        const isActive = (path === `/${data?.handle}${tab.url}`) || (path === `/@${data?.handle}${tab.url}`);
+                        return (
+                            <div key={index} className="flex items-center justify-center">
+                                <Link
+                                    href={`/@${data?.handle}${tab.url}`}
+                                    className={`px-8 h-8 font-semibold text-sm rounded-full align-middle flex items-center ${isActive ? 'bg-accentLight/60 text-gray-100 dark:bg-accentDark/60' : 'bg-white text-zinc-700 dark:bg-dark dark:text-zinc-200 dark:hover:text-accentDark hover:text-accentLight'}`}
+                                >
+                                    {tab.label}
+                                </Link>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </>
+    );
+}
+
+export { AuthorBanner, BannerImage, AuthorBottomButtons, AuthorLayoutNav };

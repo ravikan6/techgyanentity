@@ -61,7 +61,9 @@ const DynamicPages = async ({ params, searchParams }) => {
         const author = await getAuthor(path)
         if (author) {
             if (route?.length === 1) {
-                return <AuthorSingleViewPage author={author} />
+                return (
+                    <span>This is Author Home Page</span>
+                )
             } else if (route?.length === 2) {
                 const article = await getArticle(decodeURIComponent(route[1]), author.id)
                 if (article) {
@@ -83,6 +85,7 @@ const getArticle = async (slug, id) => {
                 ...id && {
                     authorId: id,
                 },
+                isDeleted: false,
             },
             include: {
                 author: true,
@@ -117,6 +120,7 @@ const getAuthor = async (handle) => {
         let author = await prisma.author.findFirst({
             where: {
                 handle: handle,
+                isDeleted: false,
             },
             select: {
                 handle: true,
@@ -134,7 +138,7 @@ const getAuthor = async (handle) => {
                                 isDeleted: false,
                                 published: true,
                                 privacy: {
-                                    equals: 'public'
+                                    equals: 'PUBLIC',
                                 }
                             }
                         }
