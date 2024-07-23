@@ -126,6 +126,20 @@ const getAuthor = async (handle) => {
                 image: true,
                 banner: true,
                 isDeleted: true,
+                _count: {
+                    select: {
+                        followers: true,
+                        Post: {
+                            where: {
+                                isDeleted: false,
+                                published: true,
+                                privacy: {
+                                    equals: 'public'
+                                }
+                            }
+                        }
+                    }
+                }
             }
         })
 
