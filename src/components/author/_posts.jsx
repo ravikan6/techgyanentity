@@ -3,6 +3,8 @@ import { getAuthorPosts } from "@/lib/actions/author";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { ArticleImage } from "../post/_client";
+import { AuthorAvatar } from "./_client";
 
 const AuthorPosts = ({ data }) => {
     const [posts, setPosts] = useState({ data: [], meta: {} });
@@ -28,21 +30,30 @@ const AuthorPosts = ({ data }) => {
     return (
         loading ? (
             <div className="flex justify-center items-center h-48">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-lightButton dark:border-darkButton"></div>
             </div>
         ) : (
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {posts.data.map((post, index) => (
-                        <div key={index} className="bg-light dark:bg-dark shadow-md rounded-md p-4">
-                            <Link href={`/@${data.handle}/${post.slug}`}>
-                                <a>
-                                    <h2 className="text-xl font-bold">{post.title}</h2>
-                                </a>
-                            </Link>
-                            <p className="text-gray-600 text-sm mt-2">{post.description}</p>
-                        </div>
-                    ))}
+            <div className="mx-auto px-4">
+                <div className="grid xl:grid-cols-5 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
+                    {
+                        posts?.data?.map((post) => (
+                            <div key={post?.slug} className="text-left">
+                                <Link href={`/${post?.author?.handle}/${post.slug}`}>
+                                    <ArticleImage classes="rounded-lg" image={post?.image} />
+                                    <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
+                                </Link>
+                                <span className="flex mt-2 space-x-3 items-center">
+                                    <Link href={`/@${data?.handle}`} className="flex items-center space-x-3">
+                                        <AuthorAvatar data={{ url: data?.image.url }} className={'!w-10 !h-10'} />
+                                        <p className="text-base flex flex-col font-semibold">
+                                            {data?.name}
+                                            <span className="text-sm -mt-1.5 font-medium">{data?.handle}</span>
+                                        </p>
+                                    </Link>
+                                </span>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         )

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { ArticleImage } from "@/components/post/_client";
 import { VariantPermanent } from "@/lib/client";
+import { AuthorAvatar } from "@/components/author/_client";
 
 export default async function Home() {
   const session = await auth();
@@ -21,6 +22,7 @@ export default async function Home() {
           id: true,
           handle: true,
           name: true,
+          image: true
         },
       },
     },
@@ -43,7 +45,7 @@ export default async function Home() {
                 </Link>
                 <span className="flex mt-2 space-x-3 items-center">
                   <Link href={`/@${post?.author?.handle}`} className="flex items-center space-x-3">
-                    <span className="w-10 h-10 rounded-3xl bg-black/20 dark:bg-white/20 animate-pulse" />
+                    <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-10 !h-10'} />
                     <p className="text-base flex flex-col font-semibold">
                       {post?.author?.name}
                       <span className="text-sm -mt-1.5 font-medium">{post?.author?.handle}</span>

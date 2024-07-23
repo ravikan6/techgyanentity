@@ -1,12 +1,13 @@
 "use client";
 
-import { CldImage } from "next-cloudinary";
+import { CldImage, getCldImageUrl } from "next-cloudinary";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "../rui";
 import Image from "next/image";
 import { getFevicon } from '@/lib/utils';
 import Link from "next/link";
+import { Avatar } from "@mui/material";
 
 const AuthorBanner = ({ id }) => {
     const [banner, setBanner] = useState(null);
@@ -99,7 +100,7 @@ const AuthorLayoutNav = ({ data }) => {
                             <div key={index} className="flex items-center justify-center">
                                 <Link
                                     href={`/@${data?.handle}${tab.url}`}
-                                    className={`px-8 h-8 font-semibold text-sm rounded-full align-middle flex items-center ${isActive ? 'bg-lightButton text-white dark:bg-darkButton dark:text-black' : 'bg-light text-zinc-800 dark:bg-dark dark:text-zinc-100 dark:hover:text-darkButton hover:text-lightButton'}`}
+                                    className={`px-8 h-8 font-semibold text-sm rounded-full align-middle flex items-center ${isActive ? 'bg-lightButton dark:bg-darkButton text-black' : 'bg-light text-zinc-800 dark:bg-dark dark:text-zinc-100 dark:hover:text-darkButton hover:text-lightButton'}`}
                                 >
                                     {tab.label}
                                 </Link>
@@ -112,4 +113,11 @@ const AuthorLayoutNav = ({ data }) => {
     );
 }
 
-export { AuthorBanner, BannerImage, AuthorBottomButtons, AuthorLayoutNav };
+const AuthorAvatar = ({ data, className, width, height }) => {
+    let url = data?.url?.startsWith('http') ? data?.url : getCldImageUrl({ src: data?.url })
+    return (
+        <Avatar src={url} alt="Authro Avatar" className={`${className}`} />
+    )
+}
+
+export { AuthorBanner, BannerImage, AuthorBottomButtons, AuthorLayoutNav, AuthorAvatar };
