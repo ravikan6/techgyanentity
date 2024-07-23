@@ -41,6 +41,7 @@ const BannerImage = ({ banner, className, height, width }) => {
             sanitize
             enhance
             sizes="100vw"
+            gravity="center"
         />
     )
 }
