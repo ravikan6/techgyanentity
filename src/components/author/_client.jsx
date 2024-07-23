@@ -1,7 +1,11 @@
 "use client";
 
 import { CldImage } from "next-cloudinary";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button, Tooltip } from "../rui";
+import Image from "next/image";
+import { getFevicon } from '@/lib/utils';
 
 const AuthorBanner = ({ id }) => {
     const [banner, setBanner] = useState(null);
@@ -46,4 +50,25 @@ const BannerImage = ({ banner, className, height, width }) => {
     )
 }
 
-export { AuthorBanner, BannerImage };
+const AuthorBottomButtons = ({ url, title, isExt, Icon, tip }) => {
+    const router = useRouter();
+
+    const handleClick = () => {
+        if (isExt) {
+            window.open(url, '_blank');
+        } else {
+            router.push(url);
+        }
+    }
+
+    return (
+        <Tooltip title={tip || title}>
+            <Button onClick={handleClick} variant="outlined" size="small" startIcon={Icon ? <Icon className="w-4 h-4 mr-3" /> : <Image src={getFevicon(url)} alt={title} width={16} height={16} className="mr-3" />}>
+                {title}
+            </Button>
+        </Tooltip>
+    )
+}
+
+
+export { AuthorBanner, BannerImage, AuthorBottomButtons };

@@ -33,10 +33,10 @@ const getAuthorFirst = async (id) => {
     const author = await prisma.author.findFirst({
         where: {
             userId: id
-        }, 
+        },
         select: {
             id: true,
-        }, 
+        },
     })
 
     console.log(author, '______-Author____________-from_________getAuthorFirst_________');
@@ -253,8 +253,6 @@ function getDate(dateString) {
 }
 
 /**
- * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
- * Returns the URL for the favicon of a given domain.
  * @param {string} domain - The domain name for which to get the favicon.
  * @param {number} [size=40] - The size of the favicon to get. Defaults to 40.
  * @returns {string} The URL for the favicon.
