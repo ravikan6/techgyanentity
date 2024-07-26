@@ -1,10 +1,8 @@
 "use client";
 import { getAuthorPosts } from "@/lib/actions/author";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ArticleImage } from "../post/_client";
-import { AuthorAvatar } from "./_client";
+import { PostView_TIA } from "../post/_struct";
 
 const AuthorPosts = ({ data }) => {
     const [posts, setPosts] = useState({ data: [], meta: {} });
@@ -34,18 +32,7 @@ const AuthorPosts = ({ data }) => {
             </div>
         ) : (
             <div className="mx-auto px-4">
-                <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
-                    {
-                        posts?.data?.map((post) => (
-                            <div key={post?.slug} className="text-left">
-                                <Link href={`/${post?.author?.handle}/${post.slug}`}>
-                                    <ArticleImage classes="rounded-lg" image={post?.image} />
-                                    <h2 className="text-sm md:text-base xl:text-lg mt-2 font-bold cheltenham">{post.title}</h2>
-                                </Link>
-                            </div>
-                        ))
-                    }
-                </div>
+                <PostView_TIA data={{ list: posts?.data }} />
             </div>
         )
     )

@@ -85,13 +85,22 @@ const AuthorAbout = ({ author }) => {
     return (
         <>
             <div className='my-10'>
-                <div className='flex space-x-40 justify-between'>
-                    <div className='w-2/3'>
+                <div className='flex space-x-4 justify-between flex-col md:flex-row'>
+                    <div className='md:w-[calc(100%-250px)] w-full'>
                         <div className='max-w-2xl pb-5 border-b border-lightHead dark:border-darkHead'>
                             {/* <h2 className='text-xl mb-2 stymie-small font-bold'>Description</h2> */}
-                            <span className='text-gray-800 dark:text-gray-300 whitespace-break-spaces'>{author?.bio}</span>
+                            <pre className='text-gray-800 dark:text-gray-300'>{author?.bio}</pre>
+                            <div className='mt-2 flex items-center space-x-4 flex-wrap' >
+                                {
+                                    (author?.social && (author?.social?.length > 0)) && (
+                                        author?.social.map((link, index) => (
+                                            <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} />
+                                        ))
+                                    )
+                                }
+                            </div>
                         </div>
-                        <div className='max-w-2xl border-b border-lightHead dark:border-darkHead pb-5 pt-5'>
+                        {/* <div className='max-w-2xl border-b border-lightHead dark:border-darkHead pb-5 pt-5'>
                             <h2 className='mb-2 stymie-small font-bold'>Social Links</h2>
                             <div className='flex flex-row flex-wrap justify-between space-y-3'>
                                 {author?.social && author?.social?.map((link, index) => {
@@ -103,18 +112,18 @@ const AuthorAbout = ({ author }) => {
                                             <div className='flex flex-col'>
                                                 <p className='text-sm text-slate-950 dark:text-gray-200 cheltenham-small font-bold'>{link?.title}</p>
                                                 <a href={link?.url} className='text-accentLight dark:text-accentDark' target='_blank' rel='noreferrer'>
-                                                    {link?.url.replace(/^(https?:\/\/)?(www\.)?/i, '')}
+                                                    {link?.url.replace(/^(https?:\/\/)?(www\.)?/i, '').replace(/\/$/, '')}
                                                 </a>
                                             </div>
                                         </div>
                                     );
                                 })}
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
-                    <div className='w-1/3 m-auto'>
-                        <div className='w-[calc(100%-40px)] rounded-2xl border-t border-t-accentLight dark:border-t-accentDark p-5 m-auto mx-5 h-96 shadow-md dark:shadow-sm dark:shadow-accentDark/30'>
+                    <div className='w-full md:w-[250px] md:max-w-[250px] self-center md:self-end'>
+                        <div className='w-[calc(100%-40px)] rounded-2xl border-t border-t-accentLight dark:border-t-accentDark p-5 m-auto mx-5 md:h-96 shadow-md dark:shadow-sm dark:shadow-accentDark/30'>
                             <div className='mb-4 stymie-small text-center font-bold'>
                                 Stats
                             </div>
@@ -134,7 +143,7 @@ const AuthorAbout = ({ author }) => {
                                         <p className='text-base fact-display font-semibold pt-1'>Followers</p>
                                     </div>
                                 </div>
-                                <div className='w-1/2 my-1 py-1'>
+                                {/* <div className='w-1/2 my-1 py-1'>
                                     <div className='flex mx-2 justify-center h-24 rounded-xl border dark:bg-darkHead dark:border-darkHead bg-lightHead border-lightHead flex-col items-center'>
                                         <p className='text-sm font-semibold imperial italic'>N/A</p>
                                         <p className='text-base fact-display font-semibold pt-1'>Following</p>
@@ -145,7 +154,7 @@ const AuthorAbout = ({ author }) => {
                                         <p className='text-sm font-semibold imperial italic'>N/A</p>
                                         <p className='text-base fact-display font-semibold pt-1'>Views</p>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

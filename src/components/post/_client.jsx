@@ -231,7 +231,7 @@ export const PostDate = (props) => {
 }
 
 
-const PostDatePublished = ({ date, expanded }) => {
+export const PostDatePublished = ({ date, expanded }) => {
 
     return (
         <>
