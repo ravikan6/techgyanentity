@@ -4,10 +4,12 @@ import Link from "next/link";
 import { GrContactInfo } from "react-icons/gr";
 import { BsChevronDoubleRight } from "react-icons/bs";
 import { FollowButton } from "./utils";
-import { getFevicon } from "@/lib/utils";
-import Image from "next/image";
+import { CameraAlt } from "@mui/icons-material";
+import { Button } from "../rui";
+import { auth } from "@/lib/auth";
 
-const AuthorSingleViewPage = ({ author, children }) => {
+const AuthorSingleViewPage = async ({ author, children }) => {
+    const session = await auth();
 
     return (
         <>
@@ -15,13 +17,13 @@ const AuthorSingleViewPage = ({ author, children }) => {
                 <div className="w-full overflow-hidden" >
                     <div className='block group/rb-banner relative overflow-hidden rounded-xl bg-black/10 dark:bg-white/10 pt-[16.12%]'>
                         <BannerImage banner={author?.banner} />
-                        {/* {session?.user && <div className='absolute transition-all duration-700 hidden group-hover/rb-banner:block bg-gradient-to-br to-gray-800/20 from-transparent w-full h-full bottom-0 right-0 top-0 left-0'>
+                        {session.user && <div className='absolute transition-all duration-700 hidden group-hover/rb-banner:block bg-gradient-to-br to-gray-800/20 from-transparent w-full h-full bottom-0 right-0 top-0 left-0'>
                             <Button sx={{ minWidth: '2rem', minHeight: '2rem', borderRadius: '100rem' }} className='!absolute !bottom-4 !right-4 shadow-md !bg-accentLight dark:!bg-accentDark !p-0'>
-                                <Link className='flex items-center justify-center' href={`/${process.env.CHANNEL_URL_PREFIX}/@${data?.handle}/edit`}>
-                                    <CameraAltIcon className='text-white w-4 h-4 dark:text-gray-100' />
+                                <Link className='flex items-center justify-center' href={`/studio/edit`}>
+                                    <CameraAlt className='text-white w-4 h-4 dark:text-gray-100' />
                                 </Link>
                             </Button>
-                        </div>} */}
+                        </div>}
                     </div>
                 </div>
                 <div className='flex m-auto mt-4 justify-between'>
@@ -85,11 +87,11 @@ const AuthorAbout = ({ author }) => {
     return (
         <>
             <div className='my-10'>
-                <div className='flex space-x-4 justify-between flex-col md:flex-row'>
-                    <div className='md:w-[calc(100%-250px)] w-full'>
+                <div className='flex space-x-4 justify-between flex-col md:flex-row md:flex-wrap lg:flex-nowrap'>
+                    <div className='md:w-[calc(100%-300px)] w-full mb-5'>
                         <div className='max-w-2xl pb-5 border-b border-lightHead dark:border-darkHead'>
                             {/* <h2 className='text-xl mb-2 stymie-small font-bold'>Description</h2> */}
-                            <pre className='text-gray-800 dark:text-gray-300'>{author?.bio}</pre>
+                            <span className='text-gray-800 dark:text-gray-300 whitespace-break-spaces'>{author?.bio}</span>
                             <div className='mt-2 flex items-center space-x-4 flex-wrap' >
                                 {
                                     (author?.social && (author?.social?.length > 0)) && (
@@ -122,7 +124,7 @@ const AuthorAbout = ({ author }) => {
                         </div> */}
 
                     </div>
-                    <div className='w-full md:w-[250px] md:max-w-[250px] self-center md:self-end'>
+                    <div className='w-full md:w-[300px] md:max-w-[300px] self-center md:self-end'>
                         <div className='w-[calc(100%-40px)] rounded-2xl border-t border-t-accentLight dark:border-t-accentDark p-5 m-auto mx-5 md:h-96 shadow-md dark:shadow-sm dark:shadow-accentDark/30'>
                             <div className='mb-4 stymie-small text-center font-bold'>
                                 Stats
