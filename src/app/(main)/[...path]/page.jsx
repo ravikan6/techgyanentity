@@ -1,5 +1,5 @@
 import AuthorPosts from '@/components/author/_posts';
-import { AuthorSingleViewPage } from '@/components/author/view';
+import { AuthorAbout, AuthorSingleViewPage } from '@/components/author/view';
 import { PostView } from '@/components/post/view';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
@@ -66,7 +66,7 @@ const DynamicPages = async ({ params, searchParams }) => {
                     <span>This is Author Home Page</span>
                 )
             } else if (route?.length === 2 && route[1] === 'about') {
-                return 'This is Author About Page';
+                return <AuthorAbout author={author} />
             } else if (route?.length === 2 && route[1] === 'posts') {
                 return <AuthorPosts data={author} />
             }

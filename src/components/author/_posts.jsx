@@ -34,23 +34,14 @@ const AuthorPosts = ({ data }) => {
             </div>
         ) : (
             <div className="mx-auto px-4">
-                <div className="grid xl:grid-cols-5 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
+                <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
                     {
                         posts?.data?.map((post) => (
                             <div key={post?.slug} className="text-left">
                                 <Link href={`/${post?.author?.handle}/${post.slug}`}>
                                     <ArticleImage classes="rounded-lg" image={post?.image} />
-                                    <h2 className="text-xl mt-2 font-bold cheltenham">{post.title}</h2>
+                                    <h2 className="text-sm md:text-base xl:text-lg mt-2 font-bold cheltenham">{post.title}</h2>
                                 </Link>
-                                <span className="flex mt-2 space-x-3 items-center">
-                                    <Link href={`/@${data?.handle}`} className="flex items-center space-x-3">
-                                        <AuthorAvatar data={{ url: data?.image.url }} className={'!w-10 !h-10'} />
-                                        <p className="text-base flex flex-col font-semibold">
-                                            {data?.name}
-                                            <span className="text-sm -mt-1.5 font-medium">{data?.handle}</span>
-                                        </p>
-                                    </Link>
-                                </span>
                             </div>
                         ))
                     }

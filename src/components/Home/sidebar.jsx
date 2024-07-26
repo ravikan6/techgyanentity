@@ -280,7 +280,7 @@ const MainSidebar = (props) => {
                         <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
                     ))}
                 </div>
-                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all bg-transparent`}>
+                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all bg-transparent`}>
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
                         <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
                             {showMore ? <BiChevronUp className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
@@ -299,7 +299,7 @@ const MainSidebar = (props) => {
     }
 
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
