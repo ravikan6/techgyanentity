@@ -26,15 +26,9 @@ const AuthorPosts = ({ data }) => {
     }, [data?.handle]);
 
     return (
-        loading ? (
-            <div className="flex justify-center items-center h-48">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-lightButton dark:border-darkButton"></div>
-            </div>
-        ) : (
-            <div className="mx-auto px-4">
-                <PostView_TIA data={{ list: posts?.data }} />
-            </div>
-        )
+        <div className="mx-auto px-4">
+            <PostView_TIA data={{ list: posts?.data, loading: loading }} />
+        </div >
     )
 }
 

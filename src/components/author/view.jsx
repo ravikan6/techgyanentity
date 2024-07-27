@@ -92,7 +92,7 @@ const AuthorAbout = ({ author }) => {
                         <div className='max-w-2xl pb-5 border-b border-lightHead dark:border-darkHead'>
                             {/* <h2 className='text-xl mb-2 stymie-small font-bold'>Description</h2> */}
                             <span className='text-gray-800 dark:text-gray-300 whitespace-break-spaces'>{author?.bio}</span>
-                            <div className='mt-2 flex items-center space-x-4 flex-wrap' >
+                            <div className='mt-2 flex items-center space-x-4 space-y-4 flex-wrap' >
                                 {
                                     (author?.social && (author?.social?.length > 0)) && (
                                         author?.social.map((link, index) => (
