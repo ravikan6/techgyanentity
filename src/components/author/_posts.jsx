@@ -11,15 +11,14 @@ const AuthorPosts = ({ data, initialPosts }) => {
     const observer = useRef();
 
     useEffect(() => {
-        fetcher(cursor);
+        if (cursor) fetcher(cursor);
     }, [cursor]);
 
     const fetcher = async (cursor) => {
         setLoading(true);
-        const response = await getAuthorPosts({ handle: data.handle, cursor, skip: cursor && 1 });
+        const response = await getAuthorPosts({ handle: data.handle, cursor: cursor, skip: cursor && 1 });
         if (response.status === 200) {
             setPosts((prev) => ({
-                ...prev,
                 data: [...prev.data, ...response.data],
                 meta: { ...prev.meta, hasMore: response?.data?.length >= 5 }
             }));
@@ -36,7 +35,7 @@ const AuthorPosts = ({ data, initialPosts }) => {
         if (observer.current) observer.current.disconnect();
 
         observer.current = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
+            if (entries[0].isIntersecting && posts.meta.hasMore) {
                 setCursor(posts.data.at(-1)?.shortId);
             }
         });

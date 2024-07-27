@@ -37,7 +37,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                             className='rounded-full !w-[128px] !h-[128px]'
                         >{author?.name[0]}</Avatar>
                     </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
-                    <div className='ml-5 md:ml-6 lg:ml-7 flex md:justify-between flex-col md:flex-row'>
+                    <div className='ml-5 md:ml-6 lg:ml-7 flex md:justify-between items-start flex-col md:flex-row md:w-[calc(100%-150px)]'>
                         <div className='flex flex-col justify-evenly self-start'>
                             <div className='mt-0'>
                                 <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
@@ -47,7 +47,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                             </div>
                             <div>
                                 {author?.bio && <Link href={`/@${author?.handle}/about`} >
-                                    <p className='text-sm inline-flex items-center font-medium mt-1 line-clamp-1 text-ellipsis'>
+                                    <p className='text-sm items-center font-medium mt-1 line-clamp-1 text-ellipsis'>
                                         {author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || 'More about this author'}
                                         <span className='ml-2'> <BsChevronDoubleRight /></span>
                                     </p>
@@ -64,7 +64,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex mt-3 md:mt-5 md:mr-4 justify-end self-end'>
+                        <div className='flex mt-3 md:mt-5 md:mr-4 justify-end'>
                             <FollowButton authorId={author?.id} />
                         </div>
                     </div>
