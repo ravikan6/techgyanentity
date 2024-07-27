@@ -6,8 +6,8 @@ import { useState } from "react";
 import { IconButton, Menu } from "../rui";
 import { PiDotsThreeVertical } from "react-icons/pi";
 import { Skeleton } from "@mui/material";
-import { TbHeartHandshake } from "react-icons/tb";
 import { ListItemRdX } from "../Home/_profile-model";
+import { HeartBrokenOutlined } from "@mui/icons-material";
 
 
 const PostView_TIA = ({ data }) => {
@@ -82,10 +82,10 @@ const PostViewActions = ({ id }) => {
                         }
                     }
                 }}>
-                <ListItemRdX link={{ title: 'Share', url: '/share', icon: TbHeartHandshake }} />
-                <ListItemRdX link={{ title: 'Bookmark', url: '/bookmark', icon: TbHeartHandshake }} />
-                <ListItemRdX link={{ title: 'Report', url: '/report', icon: TbHeartHandshake }} />
-                <ListItemRdX link={{ title: 'Print Post', url: '/report', icon: TbHeartHandshake }} />
+                <ListItemRdX link={{ name: 'Share', url: '/share', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Bookmark', url: '/bookmark', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Report', url: '/report', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Print Post', url: '/report', icon: HeartBrokenOutlined }} />
             </Menu>
         </>
     );
@@ -95,13 +95,13 @@ const PostLoadingSkelton = ({ count }) => {
     return (
         Array(count).fill().map((_, index) => (
             <div key={index} className='w-full'>
-                <Skeleton variant='rounded' className='!w-full h-96 block rounded-xl' animation="wave" />
-                <div className='w-full mt-2 h-4 bg-lightHead dark:bg-darkHead animate-pulse rounded-xl'></div>
-                <div className='w-5/12 mt-1 h-4 bg-lightHead dark:bg-darkHead animate-pulse rounded-xl'></div>
+                <Skeleton variant='rounded' className='!w-full aspect-video !h-auto block rounded-xl' animation="wave" />
+                <Skeleton variant='text' className='mt-3' animation="wave" />
+                <Skeleton variant='text' className='mt-1 !w-7/12' animation="wave" />
                 <div className="mt-2 flex justify-start space-x-4 items-center">
-                    <div className='w-3/12 h-2.5 bg-lightHead dark:bg-darkHead animate-pulse rounded-xl'></div>
-                    <div className='w-1 h-1 bg-lightHead dark:bg-darkHead animate-pulse rounded-xl'></div>
-                    <div className='w-3/12 h-2.5 bg-lightHead dark:bg-darkHead animate-pulse rounded-xl'></div>
+                    <Skeleton variant='rounded' className='!w-3/12' animation="wave" />
+                    <Skeleton variant='circular' className='!w-1.5 !h-1.5' animation="wave" />
+                    <Skeleton variant='rounded' className='!w-3/12' animation="wave" />
                 </div>
             </div>
         ))

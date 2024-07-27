@@ -37,7 +37,7 @@ export const ArticleImage = ({ image, classes, height, width, className }) => {
         enhance
         crop={'fill'}
         sanitize
-        className={`rounded-2xl h-auto ${classes} ${className}`}
+        className={`rounded-2xl aspect-video h-auto ${classes} ${className}`}
     />
 }
 
