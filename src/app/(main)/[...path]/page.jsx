@@ -1,6 +1,7 @@
 import AuthorPosts from '@/components/author/_posts';
 import { AuthorAbout, AuthorSingleViewPage } from '@/components/author/view';
 import { PostView } from '@/components/post/view';
+import { getAuthorPosts } from '@/lib/actions/author';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { getCImageUrl } from '@/lib/helpers';
@@ -68,7 +69,8 @@ const DynamicPages = async ({ params, searchParams }) => {
             } else if (route?.length === 2 && route[1] === 'about') {
                 return <AuthorAbout author={author} />
             } else if (route?.length === 2 && route[1] === 'posts') {
-                return <AuthorPosts data={author} />
+                const response = await getAuthorPosts({ handle: author?.handle });
+                return <AuthorPosts data={author} initialPosts={response?.data} />
             }
             else if (route?.length === 2) {
                 const article = await getArticle(decodeURIComponent(route[1]), author.id)

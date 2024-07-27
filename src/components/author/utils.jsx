@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { Button } from "../rui";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { checkAuthorFollowAction, followAuthorAction } from "@/lib/actions/author";
 import { toast } from "react-toastify";
 
@@ -12,9 +12,9 @@ const FollowButton = ({ authorId }) => {
 
     const { data: session } = useSession();
 
-    useEffect(() => {
+    useMemo(() => {
         const checkAuthorFollow = async () => {
-            if (session) {
+            if (session?.user) {
                 const res = await checkAuthorFollowAction(authorId);
                 if (res?.data) {
                     setIsFollowing(res?.data);
@@ -25,7 +25,7 @@ const FollowButton = ({ authorId }) => {
             }
         };
         checkAuthorFollow();
-    }, [session]);
+    }, [session?.user]);
 
     const handleFollowSystem = async () => {
         setIsLoaded(false);
@@ -52,7 +52,7 @@ const FollowButton = ({ authorId }) => {
 
     return (
         <>
-            <Button disabled={!isLoaded || error} onClick={handleFollowSystem} variant="contained" color="primary" size="small" >
+            <Button disabled={!isLoaded || error} onClick={handleFollowSystem} variant="contained" color={isFollowing?.status ? "accent" : "primary"} size="small" >
                 {isFollowing?.status ? 'Following' : 'Follow'}
             </Button>
         </>

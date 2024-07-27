@@ -26,48 +26,47 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                         </div>}
                     </div>
                 </div>
-                <div className='flex m-auto mt-4 justify-between'>
-                    <div className='flex justify-start'>
-                        {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
-                            <Avatar
-                                src={author?.image?.url}
-                                quality={100}
-                                alt={author?.name}
-                                width={128}
-                                height={128}
-                                className='rounded-full !w-[128px] !h-[128px]'
-                            >{author?.name[0]}</Avatar>
-                        </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
-                        <div className='flex flex-col justify-evenly ml-5 md:ml-6 lg:ml-7'>
+                <div className='flex justify-start mt-4'>
+                    {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
+                        <Avatar
+                            src={author?.image?.url}
+                            quality={100}
+                            alt={author?.name}
+                            width={128}
+                            height={128}
+                            className='rounded-full !w-[128px] !h-[128px]'
+                        >{author?.name[0]}</Avatar>
+                    </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
+                    <div className='ml-5 md:ml-6 lg:ml-7 flex md:justify-between flex-col md:flex-row'>
+                        <div className='flex flex-col justify-evenly self-start'>
                             <div className='mt-0'>
                                 <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
                                 <p className='text-sm lg:text-base karnak font-medium '>
-                                    {author?._count?.followers} Followers • {author?._count?.Post} Articles
+                                    {author?._count?.followers} Followers • {author?._count?.Post} Posts
                                 </p>
                             </div>
                             <div>
-                                <Link href={`/@${author?.handle}/about`} >
-                                    <p className='text-sm inline-flex items-center font-medium mt-1'>
-                                        {author?.bio && author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || 'More about this author'}
+                                {author?.bio && <Link href={`/@${author?.handle}/about`} >
+                                    <p className='text-sm inline-flex items-center font-medium mt-1 line-clamp-1 text-ellipsis'>
+                                        {author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || 'More about this author'}
                                         <span className='ml-2'> <BsChevronDoubleRight /></span>
                                     </p>
-                                </Link>
+                                </Link>}
                                 <div className='mt-0.5 flex items-center space-x-4' >
                                     {
                                         (author?.social && (author?.social?.length > 0)) && (
                                             author?.social.slice(0, 3).map((link, index) => (
-                                                <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} />
+                                                <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} isNoWrap={true} />
                                             ))
                                         )
                                     }
-                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4" />} tip={'Know more about this author'} />
+                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4 max-[768px]:-mr-[0.8rem]" />} tip={'Know more about this author'} isNoWrap={true} />
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-                    <div className='flex mt-5 mr-4 justify-end self-start'>
-                        <FollowButton authorId={author?.id} />
+                        <div className='flex mt-3 md:mt-5 md:mr-4 justify-end self-end'>
+                            <FollowButton authorId={author?.id} />
+                        </div>
                     </div>
                 </div>
                 <div className="mt-4" >
@@ -92,11 +91,11 @@ const AuthorAbout = ({ author }) => {
                         <div className='max-w-2xl pb-5 border-b border-lightHead dark:border-darkHead'>
                             {/* <h2 className='text-xl mb-2 stymie-small font-bold'>Description</h2> */}
                             <span className='text-gray-800 dark:text-gray-300 whitespace-break-spaces'>{author?.bio}</span>
-                            <div className='mt-2 flex items-center space-x-4 space-y-4 flex-wrap' >
+                            <div className='mt-2 flex items-center space-x-4 flex-wrap' >
                                 {
                                     (author?.social && (author?.social?.length > 0)) && (
                                         author?.social.map((link, index) => (
-                                            <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} />
+                                            <AuthorBottomButtons key={index} url={link.url} title={link.title} isExt={true} className={'mt-2'} />
                                         ))
                                     )
                                 }

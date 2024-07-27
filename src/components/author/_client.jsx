@@ -52,7 +52,7 @@ const BannerImage = ({ banner, className, height, width }) => {
     )
 }
 
-const AuthorBottomButtons = ({ url, title, isExt, icon, tip }) => {
+const AuthorBottomButtons = ({ url, title, isExt, icon, tip, className, isNoWrap }) => {
     const router = useRouter();
 
     const handleClick = () => {
@@ -65,7 +65,7 @@ const AuthorBottomButtons = ({ url, title, isExt, icon, tip }) => {
 
     return (
         <Tooltip title={tip || `${title} (${url?.replace(/^(https?:\/\/)?(www\.)?/i, '').replace(/\/$/, '')})`}>
-            <Button onClick={handleClick} variant="outlined" size="small" startIcon={icon ? icon : <Image src={getFevicon(url)} className="rounded" alt={title} width={16} height={16} />}>
+            <Button onClick={handleClick} variant="outlined" size="small" className={`${isNoWrap && 'max-[768px]:!min-w-8 max-[768px]:!min-h-8 max-[768px]:!max-h-8 max-[768px]:!max-w-8 max-[768px]:!text-[0px]'}`} startIcon={icon ? icon : <Image src={getFevicon(url)} className={`rounded ${className} ${isNoWrap && 'max-[768px]:-mr-[0.8rem]'}`} alt={title} width={16} height={16} />}>
                 {title}
             </Button>
         </Tooltip>
