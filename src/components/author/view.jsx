@@ -26,7 +26,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                         </div>}
                     </div>
                 </div>
-                <div className='flex justify-start mt-4'>
+                <div className='flex justify-start mt-4 items-center'>
                     {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
                         <Avatar
                             src={author?.image?.url}
@@ -60,7 +60,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                                             ))
                                         )
                                     }
-                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4 max-[768px]:-mr-[0.8rem]" />} tip={'Know more about this author'} isNoWrap={true} />
+                                    <AuthorBottomButtons url={`/@${author?.handle}/about`} title={'About'} icon={<GrContactInfo className="w-4 h-4 max-[768px]:-mr-[0.6rem]" />} tip={'Know more about this author'} isNoWrap={true} />
                                 </div>
                             </div>
                         </div>

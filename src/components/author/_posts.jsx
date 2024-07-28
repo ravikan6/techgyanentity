@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { PostView_TIA } from "../post/_struct";
 
 const AuthorPosts = ({ data, initialPosts }) => {
-    const [posts, setPosts] = useState({ data: [...initialPosts], meta: { hasMore: initialPosts?.AuthorPostslength >= 5 } });
+    const [posts, setPosts] = useState({ data: [...initialPosts], meta: { hasMore: initialPosts?.length >= 5 } });
     const [cursor, setCursor] = useState(null);
     const [loading, setLoading] = useState(false);
     const observer = useRef();
@@ -45,7 +45,7 @@ const AuthorPosts = ({ data, initialPosts }) => {
 
     return (
         <div className="mx-auto px-4">
-            <PostView_TIA data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
+            <PostView_TIA data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore, author: { handle: data?.handle } }} />
         </div >
     )
 }
