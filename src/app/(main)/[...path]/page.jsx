@@ -1,7 +1,9 @@
 import AuthorPosts from '@/components/author/_posts';
 import { AuthorAbout, AuthorSingleViewPage } from '@/components/author/view';
+import { UserBookmarks, UserClappedPost } from '@/components/Home/_client';
 import { PostView } from '@/components/post/view';
 import { getAuthorPosts } from '@/lib/actions/author';
+import { getUserBookmarks, getUserClappedPost } from '@/lib/actions/user';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { getCImageUrl } from '@/lib/helpers';
@@ -57,6 +59,19 @@ const DynamicPages = async ({ params, searchParams }) => {
         if (article) {
             return (
                 <PostView article={article} />
+            )
+        }
+    } else if (path[0] === 'list') {
+        if ((query?.get('type') === 'bookmarks') && session?.user?.id) {
+            const res = await getUserBookmarks({ userId: session?.user?.id });
+            return (
+                <UserBookmarks data={session?.user} initialPosts={res?.data?.bookmarks} />
+            )
+        } else if ((query?.get('type') === 'clapped') && session?.user?.id) {
+            const res = await getUserClappedPost({ userId: session?.user?.id });
+            let dt = await res?.data?.map((post) => post?.post);
+            return (
+                <UserClappedPost data={session?.user} initialPosts={dt} />
             )
         }
     } else {

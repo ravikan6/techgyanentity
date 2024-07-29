@@ -262,4 +262,103 @@ const updateUserBasic = async (data) => {
   }
 }
 
-export { createUser, getUser, createAuthor, getUserAuthors, userImage, updateUserBasic };
+const getUserBookmarks = async (params) => {
+  let res = { data: null, status: 500, errors: [] };
+  try {
+    let posts = await prisma.user.findUnique({
+      where: {
+        id: params.userId,
+      },
+      select: {
+        bookmarks: {
+          where: {
+            isDeleted: false,
+            privacy: 'PUBLIC',
+            published: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: params?.take || 5,
+          skip: params?.skip || 0,
+          ...params?.cursor && {
+            cursor: {
+              shortId: params.cursor,
+            }
+          },
+          select: {
+            title: true,
+            slug: true,
+            shortId: true,
+            image: true,
+            publishedAt: true,
+            author: {
+              select: {
+                name: true,
+                handle: true,
+                image: true,
+              }
+            }
+          }
+        }
+      }
+    })
+    res.data = posts;
+    res.status = 200;
+  } catch (e) {
+    res.errors.push({ message: JSON.stringify(e) });
+  }
+  return res;
+}
+
+
+const getUserClappedPost = async (params) => {
+  let res = { data: null, status: 500, errors: [] };
+  try {
+    let posts = await prisma.postClap.findMany({
+      where: {
+        userId: params.userId,
+        post: {
+          isDeleted: false,
+          privacy: 'PUBLIC',
+          published: true,
+        }
+      },
+      orderBy: {
+        createdAt: params?.order || 'desc',
+      },
+      take: params?.take || 5,
+      skip: params?.skip || 0,
+      ...params?.cursor && {
+        cursor: {
+          postId: params.cursor,
+        }
+      },
+      select: {
+        post: {
+          select: {
+            title: true,
+            slug: true,
+            shortId: true,
+            image: true,
+            publishedAt: true,
+            author: {
+              select: {
+                name: true,
+                handle: true,
+                image: true,
+              }
+            }
+          }
+        }
+      }
+    })
+
+    res.data = posts[0];
+    res.status = 200;
+  } catch (e) {
+    res.errors.push({ message: JSON.stringify(e) });
+  }
+}
+
+export { createUser, getUser, createAuthor, getUserAuthors, userImage, updateUserBasic, getUserBookmarks, getUserClappedPost };

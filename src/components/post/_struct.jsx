@@ -18,7 +18,7 @@ const PostView_TIA = ({ data }) => {
                 {
                     data?.list?.map((post) => (
                         <div key={post?.slug} className="relative group/g_pst transition-opacity duration-300">
-                            <Link href={`/${post?.author?.handle}/${post.slug}`}>
+                            <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                 <ArticleImage className="rounded-xl" image={post?.image} />
                             </Link>
                             <div className="mt-2 h-20 flex flex-nowrap items-start justify-between">
@@ -38,7 +38,7 @@ const PostView_TIA = ({ data }) => {
                     ))
                 }
                 {
-                    data?.loading && <PostLoadingSkelton count={6} />
+                    data?.loading && <PostGridLoadingSkelton count={12} />
                 }
                 <span ref={data?.ref} ></span>
             </div>
@@ -59,6 +59,57 @@ const PostView_TIA = ({ data }) => {
         </>
     )
 }
+
+const PostListView_TIA = ({ data }) => {
+
+    return (
+        <>
+            <div className="w-full flex flex-col justify-start items-start flex-nowrap">
+                {
+                    data?.list?.map((post) => (
+                        <div key={post?.slug} className="relative mb-4 flex items-start space-x-4 group/g_pst transition-opacity duration-300">
+                            <Link className="max-w-[35%]" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
+                                <ArticleImage className="rounded-lg" image={post?.image} />
+                            </Link>
+                            <div className="h-20 flex max-w-[calc(65%-16px)] flex-nowrap items-start justify-between">
+                                <div className="w-[calc(100%-32px)] grow">
+                                    <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
+                                        <h2 className="text-base font-bold cheltenham line-clamp-2 text-ellipsis">{post.title}</h2>
+                                        <span className="mt-1.5 text-zinc-700 dark:text-zinc-300 text-sm imperial">
+                                            <time dateTime={post?.publishedAt}>{formatDate(post?.publishedAt)}</time> • 0 Views
+                                        </span>
+                                    </Link>
+                                </div>
+                                <div className="w-8 opacity-100">
+                                    <PostViewActions id={post?.id} />
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                }
+                {
+                    data?.loading && <PostListLoadingSkelton count={12} />
+                }
+                <span ref={data?.ref} ></span>
+            </div>
+            {
+                data?.list?.length === 0 && !data?.loading && (
+                    <div className="w-full flex justify-center items-center h-48">
+                        <p className="text-gray-500 dark:text-gray-400">No posts found</p>
+                    </div>
+                )
+            }
+            {
+                (!data?.hasMore && !data?.loading && data?.list?.length > 0) && (
+                    <div className="w-full flex justify-center items-center h-10">
+                        <p className="text-gray-500 dark:text-gray-400">Yah!, you reach the end.</p>
+                    </div>
+                )
+            }
+        </>
+    )
+}
+
 
 const PostViewActions = ({ id }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -100,7 +151,7 @@ const PostViewActions = ({ id }) => {
     );
 };
 
-const PostLoadingSkelton = ({ count }) => {
+const PostGridLoadingSkelton = ({ count }) => {
     return (
         Array(count).fill().map((_, index) => (
             <div key={index} className='w-full'>
@@ -117,4 +168,18 @@ const PostLoadingSkelton = ({ count }) => {
     )
 }
 
-export { PostViewActions, PostView_TIA };
+const PostListLoadingSkelton = ({ count }) => {
+    return (
+        Array(count).fill().map((_, index) => (
+            <div key={index} className='w-full flex items-start space-x-4 group/g_pst transition-opacity duration-300'>
+                <Skeleton variant='rounded' className='!w-35' animation="wave" />
+                <div className="h-20 flex max-w-[calc(65%-16px)] flex-nowrap items-start justify-between">
+                    <Skeleton variant='text' className='!w-9/12' animation="wave" />
+                    <Skeleton variant='text' className='!w-8' animation="wave" />
+                </div>
+            </div>
+        ))
+    )
+}
+
+export { PostViewActions, PostView_TIA, PostListView_TIA };

@@ -594,7 +594,7 @@ const getAuthorPosts = async (params) => {
             orderBy: {
                 createdAt: params.orderBy || 'desc'
             },
-            take: params?.take || 5,
+            take: params?.take || 12,
             skip: params?.skip || 0,
             ...params?.cursor && {
                 cursor: {

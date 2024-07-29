@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { PostView_TIA } from "../post/_struct";
 
 const AuthorPosts = ({ data, initialPosts }) => {
-    const [posts, setPosts] = useState({ data: [...initialPosts], meta: { hasMore: initialPosts?.length >= 5 } });
+    const [posts, setPosts] = useState({ data: [...initialPosts], meta: { hasMore: initialPosts?.length >= 12 } });
     const [cursor, setCursor] = useState(null);
     const [loading, setLoading] = useState(false);
     const observer = useRef();
@@ -20,7 +20,7 @@ const AuthorPosts = ({ data, initialPosts }) => {
         if (response.status === 200) {
             setPosts((prev) => ({
                 data: [...prev.data, ...response.data],
-                meta: { ...prev.meta, hasMore: response?.data?.length >= 5 }
+                meta: { ...prev.meta, hasMore: response?.data?.length >= 12 }
             }));
         } else {
             toast.error('Failed to fetch posts');
