@@ -45,10 +45,10 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                                     {author?._count?.followers} Followers • {author?._count?.Post} Posts
                                 </p>
                             </div>
-                            <div>
+                            <div className="mt-1">
                                 {author?.bio && <Link href={`/@${author?.handle}/about`} >
-                                    <p className='text-sm items-center font-medium mt-1 line-clamp-1 text-ellipsis'>
-                                        {author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio || 'More about this author'}
+                                    <p className='text-sm items-center font-medium line-clamp-1 text-ellipsis'>
+                                        {author?.bio?.length > 50 ? author?.bio.slice(0, 60) + "..." : author?.bio}
                                         <span className='ml-2'> <BsChevronDoubleRight /></span>
                                     </p>
                                 </Link>}

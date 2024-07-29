@@ -594,18 +594,18 @@ const getAuthorPosts = async (params) => {
             orderBy: {
                 createdAt: params.orderBy || 'desc'
             },
-            take: params.take || 5,
-            skip: params.skip || 0,
+            take: params?.take || 5,
+            skip: params?.skip || 0,
             ...params?.cursor && {
                 cursor: {
-                    shortId: cursor,
+                    shortId: params.cursor,
                 }
             },
         });
         res.data = posts;
         res.status = 200;
     } catch (e) {
-        res.errors.push({ message: e.message });
+        res.errors.push({ message: JSON.stringify(e) });
     }
     return res;
 }

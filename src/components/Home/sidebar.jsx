@@ -305,7 +305,7 @@ const MainSidebar = (props) => {
     return (
         <>
             <div className='w-full'>
-                <div className="flex flex-col p-3 items-start">
+                <div className={`flex flex-col p-3 ${isSmall ? "items-center" : "items-start"}`}>
                     {staticMenu.map((menu, index) => (
                         <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
                     ))}

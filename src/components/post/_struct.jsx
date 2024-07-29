@@ -50,7 +50,7 @@ const PostView_TIA = ({ data }) => {
                 )
             }
             {
-                (!data?.hasMore && !data?.loading) && (
+                (!data?.hasMore && !data?.loading && data?.list?.length > 0) && (
                     <div className="w-full flex justify-center items-center h-10">
                         <p className="text-gray-500 dark:text-gray-400">Yah!, you reach the end.</p>
                     </div>
@@ -91,10 +91,10 @@ const PostViewActions = ({ id }) => {
                         }
                     }
                 }}>
-                <ListItemRdX link={{ name: 'Share', url: '/share', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Bookmark', url: '/bookmark', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Add to Bookmark', url: '/share', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Report', url: '/report', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Print Post', url: '/report', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Say Thanks', url: '/bookmark', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Share', url: '/report', icon: HeartBrokenOutlined }} />
             </Menu>
         </>
     );
