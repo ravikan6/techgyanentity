@@ -32,7 +32,7 @@ const userMenu = [
         name: 'Read later',
         icon: AiOutlineRead,
         icon2: AiFillRead,
-        link: '/read-later'
+        link: '/list?type=bookmarks'
     },
     {
         name: 'Liked content',

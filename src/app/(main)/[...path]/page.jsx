@@ -14,17 +14,18 @@ export async function generateMetadata({ params, searchParams }) {
     const route = params.path;
     const path = decodeURIComponent(params?.path[0]);
     const query = searchParams;
+    const session = await auth();
 
     if (path.startsWith('post') && route?.length === 2) {
         const meta = await articleMeta(route[1]);
         return meta;
-    } else if (path[0] === 'list') {
-        if ((query?.get('type') === 'bookmarks') && session?.user?.id) {
+    } else if (path === 'list') {
+        if ((query?.type === 'bookmarks') && session?.user?.id) {
             return {
                 title: 'Bookmarks',
                 description: 'Your bookmarked posts',
             }
-        } else if ((query?.get('type') === 'clapped') && session?.user?.id) {
+        } else if ((query?.type === 'clapped') && session?.user?.id) {
             return {
                 title: 'Clapped Posts',
                 description: 'Posts you clapped',
@@ -74,7 +75,7 @@ const DynamicPages = async ({ params, searchParams }) => {
                 <PostView article={article} />
             )
         }
-    } else if (path[0] === 'list') {
+    } else if (path === 'list') {
         if ((query?.type === 'bookmarks') && session?.user?.id) {
             const res = await getUserBookmarks({ userId: session?.user?.id });
             return (
@@ -82,9 +83,10 @@ const DynamicPages = async ({ params, searchParams }) => {
             )
         } else if ((query?.type === 'clapped') && session?.user?.id) {
             const res = await getUserClappedPost({ userId: session?.user?.id });
+            console.log(res.data)
             let dt = await res?.data?.map((post) => post?.post);
             return (
-                <UserClappedPost data={session?.user} initialPosts={dt} />
+                <UserClappedPost data={session?.user} initialPosts={dt || []} />
             )
         }
     } else {

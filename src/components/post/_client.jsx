@@ -30,7 +30,7 @@ export const ArticleImage = ({ image, classes, height, width, className }) => {
         src={imgUrl(image?.url)}
         alt={image?.alt}
         width={width || 720}
-        // height={height || 405}
+        height={height || 405}
         aspectRatio="16:9"
         sizes="100vw"
         loading='lazy'

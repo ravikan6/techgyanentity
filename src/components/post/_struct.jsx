@@ -8,6 +8,7 @@ import { PiDotsThreeVertical } from "react-icons/pi";
 import { Skeleton } from "@mui/material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { HeartBrokenOutlined } from "@mui/icons-material";
+import { AuthorAvatar } from "../author/_client";
 
 
 const PostView_TIA = ({ data }) => {
@@ -68,21 +69,24 @@ const PostListView_TIA = ({ data }) => {
                 {
                     data?.list?.map((post) => (
                         <div key={post?.slug} className="relative mb-4 flex items-start space-x-4 group/g_pst transition-opacity duration-300">
-                            <Link className="max-w-[35%]" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
+                            <Link className=" w-3/12" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                 <ArticleImage className="rounded-lg" image={post?.image} />
                             </Link>
-                            <div className="h-20 flex max-w-[calc(65%-16px)] flex-nowrap items-start justify-between">
-                                <div className="w-[calc(100%-32px)] grow">
-                                    <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
-                                        <h2 className="text-base font-bold cheltenham line-clamp-2 text-ellipsis">{post.title}</h2>
-                                        <span className="mt-1.5 text-zinc-700 dark:text-zinc-300 text-sm imperial">
-                                            <time dateTime={post?.publishedAt}>{formatDate(post?.publishedAt)}</time> • 0 Views
-                                        </span>
-                                    </Link>
+                            <div className="w-[calc(75%-16px)] flex flex-col ">
+                                <div className="flex flex-nowrap items-start justify-between mb-3">
+                                    <div className="w-[calc(100%-32px)] grow ">
+                                        <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
+                                            <h2 className="text-base font-bold cheltenham line-clamp-2 text-ellipsis">{post.title}</h2>
+                                            <span className="mt-1.5 text-zinc-700 dark:text-zinc-300 text-sm imperial">
+                                                <time dateTime={post?.publishedAt}>{formatDate(post?.publishedAt)}</time> • 0 Views
+                                            </span>
+                                        </Link>
+                                    </div>
+                                    <div className="w-8 opacity-100">
+                                        <PostViewActions id={post?.id} />
+                                    </div>
                                 </div>
-                                <div className="w-8 opacity-100">
-                                    <PostViewActions id={post?.id} />
-                                </div>
+                                <PostAuthorView author={post?.author} />
                             </div>
                         </div>
                     ))
@@ -107,6 +111,21 @@ const PostListView_TIA = ({ data }) => {
                 )
             }
         </>
+    )
+}
+
+const PostAuthorView = ({ author }) => {
+    return (
+        <div className="flex items-center space-x-4">
+            <Link href={`/@${author?.handle}`}>
+                <AuthorAvatar data={{ url: author?.image?.url }} />
+            </Link>
+            <div>
+                <Link href={`/@${author?.handle}`}>
+                    <h3 className="text-base font-bold cheltenham">{author?.name}</h3>
+                </Link>
+            </div>
+        </div>
     )
 }
 

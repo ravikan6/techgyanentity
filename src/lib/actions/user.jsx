@@ -354,11 +354,12 @@ const getUserClappedPost = async (params) => {
       }
     })
 
-    res.data = posts[0];
+    res.data = posts;
     res.status = 200;
   } catch (e) {
     res.errors.push({ message: JSON.stringify(e) });
   }
+  return res;
 }
 
 export { createUser, getUser, createAuthor, getUserAuthors, userImage, updateUserBasic, getUserBookmarks, getUserClappedPost };
