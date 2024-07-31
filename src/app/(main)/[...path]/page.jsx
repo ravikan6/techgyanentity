@@ -75,12 +75,12 @@ const DynamicPages = async ({ params, searchParams }) => {
             )
         }
     } else if (path[0] === 'list') {
-        if ((query?.get('type') === 'bookmarks') && session?.user?.id) {
+        if ((query?.type === 'bookmarks') && session?.user?.id) {
             const res = await getUserBookmarks({ userId: session?.user?.id });
             return (
                 <UserBookmarks data={session?.user} initialPosts={res?.data?.bookmarks} />
             )
-        } else if ((query?.get('type') === 'clapped') && session?.user?.id) {
+        } else if ((query?.type === 'clapped') && session?.user?.id) {
             const res = await getUserClappedPost({ userId: session?.user?.id });
             let dt = await res?.data?.map((post) => post?.post);
             return (
