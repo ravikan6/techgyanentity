@@ -18,8 +18,19 @@ export async function generateMetadata({ params, searchParams }) {
     if (path.startsWith('post') && route?.length === 2) {
         const meta = await articleMeta(route[1]);
         return meta;
-    }
-    else {
+    } else if (path[0] === 'list') {
+        if ((query?.get('type') === 'bookmarks') && session?.user?.id) {
+            return {
+                title: 'Bookmarks',
+                description: 'Your bookmarked posts',
+            }
+        } else if ((query?.get('type') === 'clapped') && session?.user?.id) {
+            return {
+                title: 'Clapped Posts',
+                description: 'Posts you clapped',
+            }
+        }
+    } else {
         const author = await getAuthor(path)
         if (author) {
             if (route?.length === 1) {
@@ -44,6 +55,8 @@ export async function generateMetadata({ params, searchParams }) {
             } else if (route?.length === 2) {
                 return await articleMeta(route[1]);
             }
+        } else {
+            return { title: 'Not Found', description: 'Page not found' }
         }
     }
 }
