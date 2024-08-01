@@ -187,7 +187,7 @@ function readTime(content, wordsPerMinute = 300) {
  * @param {string} dateString - The date string to format.
  * @returns {string} The formatted date string.
  */
-function formatDateToString(dateString) {
+function _formatDateToString(dateString) {
     const date = new Date(dateString);
     const now = new Date();
 
@@ -350,7 +350,7 @@ export {
     getStrapiURL,
     getMedia,
     readTime,
-    formatDateToString as formatDate,
+    _formatDateToString as formatDate,
     pLink,
     uiAvtar,
     getDate,
