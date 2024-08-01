@@ -24,7 +24,7 @@ import confirm from "@/lib/confirm";
 import { StudioContext } from "@/lib/context";
 import { imgUrl } from "@/lib/helpers";
 
-export const ArticleImage = ({ image, classes, height, width, className }) => {
+export const ArticleImage = ({ image, classes, height, width, className, style }) => {
     return <CldImage
         draggable={false}
         src={imgUrl(image?.url)}
@@ -38,6 +38,7 @@ export const ArticleImage = ({ image, classes, height, width, className }) => {
         crop={'fill'}
         sanitize
         className={`rounded-2xl aspect-video h-auto ${classes} ${className}`}
+        style={style}
     />
 }
 

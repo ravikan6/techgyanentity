@@ -1,7 +1,7 @@
 "use client";
 import { getUserBookmarks, getUserClappedPost } from "@/lib/actions/user";
 import { useEffect, useRef, useState } from "react";
-import { PostListView_TIA } from "../post/_struct";
+import { PostListView2, PostListView_TIA } from "../post/_struct";
 
 
 const UserBookmarks = ({ data, initialPosts }) => {
@@ -94,8 +94,8 @@ const UserClappedPost = ({ data, initialPosts }) => {
 
     return (
         <div className="mx-auto px-4">
-            <PostListView_TIA data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
-        </div >
+            <PostListView2 data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
+        </div>
     )
 }
 

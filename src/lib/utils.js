@@ -43,11 +43,54 @@ const getAuthorFirst = async (id) => {
     return author;
 }
 
+function formatDateToString(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    const timeDifference = now - date;
+    const secondsDifference = Math.floor(timeDifference / 1000);
+    const minutesDifference = Math.floor(secondsDifference / 60);
+    const hoursDifference = Math.floor(minutesDifference / 60);
+    const daysDifference = Math.floor(hoursDifference / 24);
+    const weeksDifference = Math.floor(daysDifference / 7);
+    const monthsDifference = Math.floor(daysDifference / 30); // Approximate month length
+    const yearsDifference = now.getFullYear() - date.getFullYear();
+
+    // Short format
+    let shortFormat;
+    if (secondsDifference < 60) {
+        shortFormat = `${secondsDifference}s ago`;
+    } else if (minutesDifference < 60) {
+        shortFormat = `${minutesDifference}m ago`;
+    } else if (hoursDifference < 24) {
+        shortFormat = `${hoursDifference}h ago`;
+    } else if (daysDifference < 7) {
+        shortFormat = `${daysDifference} day${daysDifference === 1 ? '' : 's'}`;
+    } else if (daysDifference < 30) {
+        shortFormat = `${weeksDifference} week${weeksDifference === 1 ? '' : 's'}`;
+    } else if (daysDifference < 365) {
+        shortFormat = `${monthsDifference} month${monthsDifference === 1 ? '' : 's'}`;
+    } else {
+        shortFormat = null; // Fallback to long format if over a year
+    }
+
+    // Long format
+    const optionsLong = { day: 'numeric', month: 'long', year: 'numeric' };
+    const longFormat = date.toLocaleDateString(undefined, optionsLong);
+
+    // Return the object with both formats
+    return {
+        short: shortFormat || longFormat,
+        long: longFormat
+    };
+}
+
 export {
     encrypt,
     decrypt,
     generateDisplayNameOptions,
-    getAuthorFirst
+    getAuthorFirst,
+    formatDateToString
 }
 
 /**
@@ -144,7 +187,7 @@ function readTime(content, wordsPerMinute = 300) {
  * @param {string} dateString - The date string to format.
  * @returns {string} The formatted date string.
  */
-function formatDate(dateString) {
+function formatDateToString(dateString) {
     const date = new Date(dateString);
     const now = new Date();
 
@@ -307,7 +350,7 @@ export {
     getStrapiURL,
     getMedia,
     readTime,
-    formatDate,
+    formatDateToString as formatDate,
     pLink,
     uiAvtar,
     getDate,
