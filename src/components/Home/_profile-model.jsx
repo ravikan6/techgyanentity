@@ -93,14 +93,14 @@ export const UserProfileModel = ({ user }) => {
                     </MenuItem>
                 </Box>
 
-                {(data?.user?.Author?.length === 0) && <Box className="bg-lightHead dark:bg-darkHead overflow-hidden" sx={{ borderRadius: '14px', py: 2, px: 1, mx: '4px', boxShadow: null, mb: 2, mt: 1 }}>
+                {/* {(data?.user?.Author?.length === 0) && <Box className="bg-lightHead dark:bg-darkHead overflow-hidden" sx={{ borderRadius: '14px', py: 2, px: 1, mx: '4px', boxShadow: null, mb: 2, mt: 1 }}>
                     <div className='flex flex-col max-w-[230px] mx-auto items-center'>
                         <p className='text-sm mb-2 text-slate-600 text-center dark:text-slate-300'>Become an author and start publishing your articles.</p>
                         <Link href='/setup/author'>
                             <Button variant='outlined' size='small' sx={{ minWidth: '80px' }} startIcon={<TbUserPlus />}>Become Author</Button>
                         </Link>
                     </div>
-                </Box>}
+                </Box>} */}
 
                 <Box elevation={0} className="bg-lightHead group/menu_box dark:bg-darkHead" sx={{ borderRadius: '24px', py: 2, px: 1, mx: '4px', boxShadow: null }}>
                     <ListItemRdX link={{

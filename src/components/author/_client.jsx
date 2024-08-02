@@ -40,9 +40,9 @@ const BannerImage = ({ banner, className, height, width }) => {
             src={banner?.url}
             alt={banner?.alt || "Banner"}
             className={className}
-            height={height || 188}
-            width={width || 1138}
-            crop={'fill'}
+            crop={{
+                type: 'fill', height: height || 188, width: width || 1138, gravity: 'center'
+            }}
             fill
             sanitize
             enhance

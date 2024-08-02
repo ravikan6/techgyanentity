@@ -121,7 +121,7 @@ const PostListView2 = ({ data }) => {
             {data?.list?.map((post) => (
 
                 <>
-                    <article key={post?.slug} className="w-full first-of-type:border-t-0 lg:!border border-t border-transparent rounded-none lg:rounded-2xl pt-5 bg-lightHead dark:bg-darkHead flex flex-col gap-4 md:gap-5 md:pt-8 lg:p-6 lg:pb-5">
+                    <article key={post?.slug} className="w-full first-of-type:border-t-0 lg:!border border-t border-transparent rounded-none lg:rounded-2xl pt-5 lg:bg-lightHead dark:lg:bg-darkHead flex flex-col gap-4 md:gap-5 md:pt-8 lg:p-6 lg:pb-5">
                         <section className="flex flex-col gap-2 sm:gap-4">
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-row items-center justify-between">

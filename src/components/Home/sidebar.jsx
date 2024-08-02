@@ -35,10 +35,10 @@ const userMenu = [
         link: '/list?type=bookmarks'
     },
     {
-        name: 'Liked content',
+        name: 'Clapped content',
         icon: AiOutlineLike,
         icon2: AiTwotoneLike,
-        link: '/list?list=liked'
+        link: '/list?type=clapped'
     },
     {
         name: 'Create Author',

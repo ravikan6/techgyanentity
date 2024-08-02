@@ -29,3 +29,19 @@ export async function POST(request) {
         return Response.json({})
     }
 }
+
+
+// const url = headers().get('origin') || process.env.APP_URL;
+// let fdata = new FormData();
+// fdata.append('id', token.id);
+// const res = await fetch(`${url}/api/user`, {
+//     method: 'POST',
+//     headers: {
+//         'Accept': 'application/json',
+//     },
+//     body: fdata,
+//     next: {
+//         revalidate: 10,
+//     }
+// });
+// const response = await res.json();
