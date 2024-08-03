@@ -292,13 +292,26 @@ const getUserBookmarks = async (params) => {
             shortId: true,
             image: true,
             publishedAt: true,
+            description: true,
             author: {
               select: {
                 name: true,
                 handle: true,
                 image: true,
               }
-            }
+            },
+            _count: {
+              select: {
+                claps: true,
+                comments: {
+                  where: {
+                    parent: null,
+                    isDeleted: false,
+                  }
+                }
+              }
+            },
+            tags: true,
           }
         }
       }
@@ -342,13 +355,26 @@ const getUserClappedPost = async (params) => {
             shortId: true,
             image: true,
             publishedAt: true,
+            description: true,
             author: {
               select: {
                 name: true,
                 handle: true,
                 image: true,
               }
-            }
+            },
+            _count: {
+              select: {
+                claps: true,
+                comments: {
+                  where: {
+                    parent: null,
+                    isDeleted: false,
+                  }
+                }
+              }
+            },
+            tags: true,
           }
         }
       }

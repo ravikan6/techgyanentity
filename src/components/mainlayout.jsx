@@ -15,8 +15,16 @@ const drawerWidthClose = 80;
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shouldForwardProp: (prop) => prop !== 'variant' })(
     ({ theme, open, variant }) => ({
         flexGrow: 1,
-        padding: theme.spacing(3),
+        [theme.breakpoints.down('sm')]: {
+            paddingLeft: '12px',
+            paddingRight: '12px',
+        },
+        [theme.breakpoints.up('sm')]: {
+            paddingLeft: theme.spacing(3),
+            paddingRight: theme.spacing(3),
+        },
         marginLeft: 0,
+        paddingTop: '54px',
         width: `calc(100% - ${drawerWidth_get(open, variant)}px)`,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -65,7 +73,6 @@ const MainLayout = ({ children, session }) => {
     return (
         <DrawerContext.Provider value={{ open, setOpen, setVariant, variant }}>
             <Box sx={{ display: 'flex' }}>
-
                 <Drawer
                     sx={{
                         width: drawerWidth_get(open, variant),
@@ -101,7 +108,7 @@ const MainLayout = ({ children, session }) => {
                             onClick={handleDrawerOpen}
                             edge="start"
                         > <CgMenuLeft /> </IconButton>
-                        <MainLogo className={'ml-4'} />
+                        <MainLogo className={'sm:ml-4 ml-3'} />
                     </div></>}
                     <MainSidebar session={session} variant={variant} open={open} />
                 </Drawer>

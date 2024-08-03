@@ -48,7 +48,7 @@ const Header = async () => {
         <>
             <header className='w-full fixed z-[999] max-w-full top-0 left-0 '>
                 <div className="min-h-[54px] max-h-[54px] overflow-hidden bg-light/85 dark:bg-dark/45 backdrop-blur-2xl border-b-slate-200 dark:border-b-slate-700 ">
-                    <div id="header" className='px-5'>
+                    <div id="header" className='px-3 sm:px-5'>
                         <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
                             <div className='flex justify-start items-center logo w-3/12'>
                                 <DrawerBtn />

@@ -486,7 +486,9 @@ const checkBookmarkAction = async (id) => {
             id: session.user.id,
             bookmarks: {
                 some: {
-                    id: id
+                    OR: [
+                        { id: id }, { shortId: id }
+                    ]
                 }
             }
         }

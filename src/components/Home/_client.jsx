@@ -45,8 +45,8 @@ const UserBookmarks = ({ data, initialPosts }) => {
     }, [loading]);
 
     return (
-        <div className="mx-auto px-4">
-            <PostListView_TIA data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
+        <div className="mx-auto sm:px-4">
+            <PostListView2 data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
         </div >
     )
 }
@@ -93,7 +93,7 @@ const UserClappedPost = ({ data, initialPosts }) => {
     }, [loading]);
 
     return (
-        <div className="mx-auto px-4">
+        <div className="mx-auto sm:px-4">
             <PostListView2 data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
         </div>
     )

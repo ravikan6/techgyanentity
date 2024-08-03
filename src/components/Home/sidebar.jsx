@@ -321,11 +321,11 @@ const MainSidebar = (props) => {
                         <>
                             <UserMenu />
                             <NavBorder />
-                            {!isSmall && <><UserChannels />
+                            {/* {!isSmall && <><UserChannels />
                                 <span className='w-full border-slate-200 dark:border-zinc-800 border-b my-2 h-0.5' ></span>
                                 <UserCommunities />
                                 <NavBorder />
-                            </>}
+                            </>} */}
                         </>
                     }
 
