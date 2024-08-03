@@ -35,7 +35,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                     <AuthorActions id={id} authorId={article?.author?.id} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
-                    <Bookmark id={id} />
+                    <Bookmark id={article?.shortId} />
                     <BtnWithMenu id={id} />
                 </div>
             </div>

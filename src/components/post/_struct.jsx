@@ -10,6 +10,8 @@ import { HeartBrokenOutlined } from "@mui/icons-material";
 import { AuthorAvatar } from "../author/_client";
 import { BsThreeDots } from "react-icons/bs";
 import { Bookmark } from "./postActions";
+import { PiHandsClappingLight } from "react-icons/pi";
+import { AiOutlineComment } from "react-icons/ai";
 
 
 const PostView_TIA = ({ data }) => {
@@ -118,68 +120,65 @@ const PostListView_TIA = ({ data }) => {
 const PostListView2 = ({ data }) => {
 
     return (
-        <div className="flex flex-col items-center gap-3 max-w-2xl">
+        <div className="flex flex-col gap-5 items-center max-w-2xl">
             {data?.list?.map((post) => (
 
                 <>
-                    <article key={post?.slug} className="w-full flex flex-col gap-4 md:gap-5 md:pt-8 lg:p-6 lg:pb-5">
-                        <section className="flex flex-col gap-2 sm:gap-4">
-                            <div className="flex flex-col gap-6">
-                                <div className="flex flex-row items-center justify-between">
-                                    <div className="flex flex-row items-center justify-start gap-3">
-                                        <Link href={`/@${post?.author?.handle || data?.author?.handle}`}>
-                                            <div className="flex items-center cursor-pointer space-x-3">
-                                                <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
-                                                <span className="font-semibold text-slate-700 dark:text-slate-200">{post?.author?.name || data?.author?.name}</span>
-                                            </div>
-                                        </Link>
+                    <article key={post?.slug} className="w-full flex flex-col py-2">
+                        <section className="flex flex-col gap-1.5 sm:gap-2.5">
+                            <div className="flex justify-between items-center">
+                                <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
+                                    <div className="flex items-center cursor-pointer space-x-3">
+                                        <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
+                                        <span className="font-semibold cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
                                     </div>
-                                </div>
+                                </Link>
+                                <PostViewActions id={post?.id} />
                             </div>
 
-                            <div className="w-full flex flex-col md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
+                            <div className="w-full flex flex-row gap-3 items-center sm:gap-4 md:gap-6 justify-between">
                                 <div>
                                     <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <div>
-                                            <h1 className="Karnak text-base sm:text-xl font-semibold sm:font-bold  text-slate-700 dark:text-slate-200 cursor-pointer">{post?.title}</h1>
+                                            <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer">{post?.title}</h1>
                                         </div>
-                                        <div className="hidden md:block">
-                                            <span className="text-base hidden font-normal text-slate-500 dark:text-slate-400 cursor-pointer md:line-clamp-2">
+                                        <div className="">
+                                            <span className="franklin text-[14px] leading-[18px] font-normal text-slate-500 dark:text-slate-400 cursor-pointer line-clamp-2">
                                                 {post?.description}
                                             </span>
                                         </div>
                                     </Link>
                                 </div>
-                                <div className="w-full rounded-xl md:rounded-lg relative cursor-pointer md:basis-[180px] md:h-[108px] md:shrink-0">
-                                    <Link className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                        <ArticleImage image={post?.image} className="rounded-xl" style={{ objectFit: "cover" }} />
+                                <div className="rounded-md md:rounded-lg relative cursor-pointer min-w-[33%] w-[33%] md:basis-[180px] md:h-[108px] shrink-0">
+                                    <Link className="block w-full h-full overflow-hidden rounded-md md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
+                                        <ArticleImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
                                     </Link>
                                 </div>
                             </div>
                         </section>
                         <section className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
-                            <div className="flex flex-row items-center justify-start gap-2">
+                            <div className="flex flex-row items-center justify-start gap-3">
                                 <p>{formatDateToString(post?.publishedAt).short}</p>
-                                <p className="font-bold text-slate-400 dark:text-slate-500">·</p>
-                                <p>{post?._count?.claps} Claps</p>
-                                <p className="font-bold text-slate-400 dark:text-slate-500">·</p>
-                                <p>{post?._count?.comments} Comments</p>
+                                <div className="flex space-x-2 items-center">
+                                    <PiHandsClappingLight className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <p>{post?._count?.claps}</p>
+                                </div>
+                                <div className="flex space-x-2 items-center">
+                                    <AiOutlineComment className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <p>{post?._count?.comments}</p>
+                                </div>
                             </div>
                             <div className="flex-row items-center flex gap-1">
-                                <div className="hidden sm:flex gap-2 items-center">
+                                <div className="flex gap-2 items-center">
                                     <Link href={`/tags/${post?.tags?.at(0)}?source=tags_feed_article`}>
-                                        <div className="flex justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-light hover:bg-slate-200 dark:bg-dark dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
+                                        <div className="flex stymie justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-lightHead hover:bg-slate-200 dark:bg-darkHead dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
                                             <span className="truncate">{post?.tags?.at(0)}</span>
                                         </div>
                                     </Link>
-                                    <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-slate-200 dark:bg-slate-800">
+                                    <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead">
                                     </div>
                                 </div>
-                                <button className="bookmark-button" aria-label="Bookmark post" data-state="closed">
-                                    <span className="text-slate-500 dark:text-slate-400 group-hover:text-blue-600">
-                                        <Bookmark id={post?.shortId} />
-                                    </span>
-                                </button>
+                                <Bookmark id={post?.shortId} />
                             </div>
                         </section>
                     </article>
