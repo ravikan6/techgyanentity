@@ -21,24 +21,34 @@ const PostView_TIA = ({ data }) => {
             <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
                 {
                     data?.list?.map((post) => (
-                        <div key={post?.slug} className="relative group/g_pst transition-opacity duration-300">
-                            <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                <ArticleImage className="rounded-xl" image={post?.image} />
-                            </Link>
-                            <div className="mt-2 h-20 flex flex-nowrap items-start justify-between">
-                                <div className="grow">
-                                    <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
-                                        <h2 className="text-base font-bold cheltenham line-clamp-2 text-ellipsis">{post.title}</h2>
-                                    </Link>
-                                    <div className="flex justify-between items-center opacity-100">
-                                        <span className="mt-1.5 text-zinc-700 dark:text-zinc-300 text-sm imperial">
-                                            <time dateTime={post?.publishedAt}>{formatDateToString(post?.publishedAt).short}</time> • 0 Views
-                                        </span>
-                                        <PostViewActions id={post?.id} />
+                        <article key={post?.slug}>
+                            <div className="relative group/g_pst transition-opacity duration-300">
+                                <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
+                                    <ArticleImage className="rounded-xl" image={post?.image} />
+                                </Link>
+                                <div className="mt-2 h-20 flex flex-nowrap items-start justify-between">
+                                    <div className="grow">
+                                        <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
+                                            <h2 className="text-xl md:text-base lg:text-xl font-bold karnak line-clamp-2 text-ellipsis">{post.title}</h2>
+                                        </Link>
+                                        <div className="flex justify-between mt-1.5 items-center opacity-100">
+                                            <div className="flex flex-row items-center justify-start gap-3">
+                                                <p>{formatDateToString(post?.publishedAt).short}</p>
+                                                <div className="flex space-x-2 items-center">
+                                                    <PiHandsClappingLight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                                    <p>{post?._count?.claps}</p>
+                                                </div>
+                                                <div className="flex space-x-2 items-center">
+                                                    <AiOutlineComment className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                                    <p>{post?._count?.comments}</p>
+                                                </div>
+                                            </div>
+                                            <PostViewActions id={post?.id} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     ))
                 }
                 {
@@ -124,23 +134,23 @@ const PostListView2 = ({ data }) => {
             {data?.list?.map((post) => (
 
                 <>
-                    <article key={post?.slug} className="w-full flex flex-col py-2">
-                        <section className="flex flex-col gap-1.5 sm:gap-2.5">
+                    <article key={post?.slug} className="w-full flex flex-col gap-1.5 sm:gap-2">
+                        <section className="flex flex-col gap-1.5 sm:gap-2">
                             <div className="flex justify-between items-center">
                                 <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
                                     <div className="flex items-center cursor-pointer space-x-3">
                                         <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
-                                        <span className="font-semibold cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
+                                        <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
                                     </div>
                                 </Link>
                                 <PostViewActions id={post?.id} />
                             </div>
 
-                            <div className="w-full flex flex-row gap-3 items-center sm:gap-4 md:gap-6 justify-between">
+                            <div className="w-full flex flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
                                 <div>
                                     <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <div>
-                                            <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer">{post?.title}</h1>
+                                            <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer line-clamp-2 text-ellipsis">{post?.title}</h1>
                                         </div>
                                         <div className="">
                                             <span className="franklin text-[14px] leading-[18px] font-normal text-slate-500 dark:text-slate-400 cursor-pointer line-clamp-2">
@@ -149,7 +159,7 @@ const PostListView2 = ({ data }) => {
                                         </div>
                                     </Link>
                                 </div>
-                                <div className="rounded-md md:rounded-lg relative cursor-pointer min-w-[33%] w-[33%] md:basis-[180px] md:h-[108px] shrink-0">
+                                <div className="rounded-md md:rounded-lg relative cursor-pointer min-w-[33%] w-[33%] md:basis-[180px] md:h-[108px] shrink-0 self-center">
                                     <Link className="block w-full h-full overflow-hidden rounded-md md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <ArticleImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
                                     </Link>
@@ -160,16 +170,16 @@ const PostListView2 = ({ data }) => {
                             <div className="flex flex-row items-center justify-start gap-3">
                                 <p>{formatDateToString(post?.publishedAt).short}</p>
                                 <div className="flex space-x-2 items-center">
-                                    <PiHandsClappingLight className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <PiHandsClappingLight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                                     <p>{post?._count?.claps}</p>
                                 </div>
                                 <div className="flex space-x-2 items-center">
-                                    <AiOutlineComment className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <AiOutlineComment className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                                     <p>{post?._count?.comments}</p>
                                 </div>
                             </div>
                             <div className="flex-row items-center flex gap-1">
-                                <div className="flex gap-2 items-center">
+                                {post?.tags && <div className="flex gap-2 items-center">
                                     <Link href={`/tags/${post?.tags?.at(0)}?source=tags_feed_article`}>
                                         <div className="flex stymie justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-lightHead hover:bg-slate-200 dark:bg-darkHead dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
                                             <span className="truncate">{post?.tags?.at(0)}</span>
@@ -177,7 +187,7 @@ const PostListView2 = ({ data }) => {
                                     </Link>
                                     <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead">
                                     </div>
-                                </div>
+                                </div>}
                                 <Bookmark id={post?.shortId} />
                             </div>
                         </section>
@@ -221,7 +231,7 @@ const PostViewActions = ({ id }) => {
     return (
         <>
             <IconButton size='small' onClick={handleClick}>
-                <BsThreeDots className="w-6 h-6" />
+                <BsThreeDots className="w-6 h-6 text-slate-500 dark:text-slate-400" />
             </IconButton>
             <Menu
                 anchorEl={anchorEl}
