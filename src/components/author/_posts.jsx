@@ -45,7 +45,7 @@ const AuthorPosts = ({ data, initialPosts }) => {
 
     return (
         <div className="mx-auto px-4">
-            <PostView_TIA data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore, author: { handle: data?.handle } }} />
+            <PostView_TIA data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore, author: { handle: data?.handle } }} hidden={{ author: true }} />
         </div >
     )
 }

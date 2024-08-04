@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react';
 import { FaHandsClapping } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { StudioContext } from '@/lib/context';
+import { ShareView } from '../Home/_client';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
@@ -35,6 +36,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                     <AuthorActions id={id} authorId={article?.author?.id} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
+                    <ShareView />
                     <Bookmark id={article?.shortId} />
                     <BtnWithMenu id={id} />
                 </div>

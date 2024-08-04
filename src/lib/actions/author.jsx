@@ -591,6 +591,26 @@ const getAuthorPosts = async (params) => {
                 isDeleted: false,
                 privacy: 'PUBLIC'
             },
+            select: {
+                title: true,
+                slug: true,
+                shortId: true,
+                image: true,
+                publishedAt: true,
+                description: true,
+                _count: {
+                    select: {
+                        claps: true,
+                        comments: {
+                            where: {
+                                parent: null,
+                                isDeleted: false,
+                            }
+                        }
+                    }
+                },
+                tags: true,
+            },
             orderBy: {
                 createdAt: params.orderBy || 'desc'
             },

@@ -14,11 +14,11 @@ import { PiHandsClappingLight } from "react-icons/pi";
 import { AiOutlineComment } from "react-icons/ai";
 
 
-const PostView_TIA = ({ data }) => {
+const PostView_TIA = ({ data, hidden, className }) => {
 
     return (
         <>
-            <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
+            <div className={`grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full ${className}`}>
                 {
                     data?.list?.map((post) => (
                         <article key={post?.slug}>
@@ -31,7 +31,10 @@ const PostView_TIA = ({ data }) => {
                                         <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
                                             <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{post.title}</h2>
                                         </Link>
-                                        <div className="flex justify-between mt-1.5 items-center opacity-100">
+                                        {!hidden?.author && <div className="mt-1.5">
+                                            <PostAuthorView author={post?.author} />
+                                        </div>}
+                                        <div className="flex text-sm justify-between mt-1 items-center opacity-100">
                                             <PostMetaView data={post} />
                                             <PostViewActions id={post?.id} />
                                         </div>
@@ -56,7 +59,7 @@ const PostView_TIA = ({ data }) => {
             {
                 (!data?.hasMore && !data?.loading && data?.list?.length > 0) && (
                     <div className="w-full flex justify-center items-center h-10">
-                        <p className="text-gray-500 dark:text-gray-400">Yah!, you reach the end.</p>
+                        <p className="text-gray-500 dark:text-gray-400">...</p>
                     </div>
                 )
             }
@@ -136,7 +139,7 @@ const PostListView2 = ({ data, hidden }) => {
                                 <PostViewActions id={post?.id} />
                             </div>
 
-                            <div className="w-full flex flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
+                            <div className="w-full flex flex-col-reverse md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
                                 <div>
                                     <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <div>
@@ -144,14 +147,14 @@ const PostListView2 = ({ data, hidden }) => {
                                                 <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer line-clamp-2 text-ellipsis">{post?.title}</h1>
                                             </Tooltip>
                                         </div>
-                                        <div className="">
+                                        <div className="hidden md:block">
                                             <span className="franklin text-[14px] leading-[18px] font-normal text-slate-500 dark:text-slate-400 cursor-pointer line-clamp-2">
                                                 {post?.description}
                                             </span>
                                         </div>
                                     </Link>
                                 </div>
-                                <div className="rounded-md md:rounded-lg relative cursor-pointer min-w-[33%] w-[33%] md:basis-[180px] md:h-[108px] shrink-0 self-center">
+                                <div className="rounded-md md:rounded-lg relative cursor-pointer w-full md:basis-[180px] md:h-[108px] shrink-0 self-center">
                                     <Link className="block w-full h-full overflow-hidden rounded-md md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <ArticleImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
                                     </Link>
@@ -211,9 +214,9 @@ const PostMetaView = ({ data }) => {
 
 const PostAuthorView = ({ author }) => {
     return (
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-3">
             <Link href={`/@${author?.handle}`}>
-                <AuthorAvatar data={{ url: author?.image?.url }} />
+                <AuthorAvatar data={{ url: author?.image?.url }} className={'!w-8 !h-8'} />
             </Link>
             <div>
                 <Link href={`/@${author?.handle}`}>

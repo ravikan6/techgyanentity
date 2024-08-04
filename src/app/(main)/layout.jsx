@@ -46,9 +46,9 @@ export default async function RootLayout({ children, models }) {
           <AuthorProvider session={session} authorData={authorData}>
             <MainLayout session={session} >
               <Header lang='en' />
-              <main className="mt-[54px]">
+              <section>
                 {children}
-              </main>
+              </section>
               {models}
             </MainLayout>
           </AuthorProvider>
