@@ -1,6 +1,6 @@
 'use client'
-import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles';
-import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
+import { Experimental_CssVarsProvider as CssVarsProvider, getInitColorSchemeScript } from '@mui/material/styles';
+// import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { ThemeProvider as NextTheme } from 'next-themes'
 import { SessionProvider } from "next-auth/react"
 import { ToastContainer } from 'react-toastify';
@@ -86,7 +86,10 @@ export function Providers({ session, children }) {
 
   return (
     <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
-      <InitColorSchemeScript defaultMode='system' />
+      {getInitColorSchemeScript({
+        defaultMode: 'system'
+      })}
+      {/* <InitColorSchemeScript defaultMode='system' /> */}
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">
