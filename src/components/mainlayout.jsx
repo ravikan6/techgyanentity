@@ -32,8 +32,8 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
         }),
         ...((open && variant == 'permanent') && {
             transition: theme.transitions.create('margin', {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
             }),
         }),
         ...((open && variant == 'persistent') && {
@@ -80,7 +80,7 @@ const MainLayout = ({ children, session }) => {
 
                         transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
                             easing: theme.transitions.easing.sharp,
-                            duration: theme.transitions.duration.enteringScreen,
+                            duration: theme.transitions.duration.short,
                         }),
 
                         '& .MuiDrawer-paper': {
@@ -91,7 +91,7 @@ const MainLayout = ({ children, session }) => {
                             border: 'none',
                             transition: (theme) => theme.transitions.create('width', {
                                 easing: theme.transitions.easing.sharp,
-                                duration: theme.transitions.duration.enteringScreen,
+                                duration: theme.transitions.duration.short,
                             }),
                         },
                         zIndex: variant === 'persistent' ? (theme) => theme.zIndex.drawer + 1 : 1,

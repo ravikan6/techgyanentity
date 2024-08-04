@@ -512,7 +512,7 @@ const bookmarkAction = async (id) => {
             id: session.user.id,
             bookmarks: {
                 some: {
-                    id: id
+                    shortId: id
                 }
             }
         }
@@ -526,7 +526,7 @@ const bookmarkAction = async (id) => {
             data: {
                 bookmarks: {
                     disconnect: {
-                        id: id
+                        shortId: id
                     }
                 }
             }
@@ -540,7 +540,7 @@ const bookmarkAction = async (id) => {
             data: {
                 bookmarks: {
                     connect: {
-                        id: id
+                        shortId: id
                     }
                 }
             }

@@ -117,7 +117,7 @@ const PostListView_TIA = ({ data }) => {
     )
 }
 
-const PostListView2 = ({ data }) => {
+const PostListView2 = ({ data, hidden }) => {
 
     return (
         <div className="flex flex-col gap-5 items-center max-w-2xl">
@@ -170,7 +170,7 @@ const PostListView2 = ({ data }) => {
                                     <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead">
                                     </div>
                                 </div>}
-                                <Bookmark id={post?.shortId} variant="text" />
+                                {!hidden?.bookmark && <Bookmark id={post?.shortId} variant="text" />}
                             </div>
                         </section>
                     </article>

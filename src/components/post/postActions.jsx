@@ -73,7 +73,7 @@ export const Bookmark = ({ id, variant }) => {
                 }
             })
         } catch (error) {
-            console.error(error);
+            toast.error('Something Went Wrong While fetcing resources.')
         } finally {
             setIsLoading(false);
         }

@@ -96,7 +96,7 @@ export function Providers({ session, children }) {
         <SessionProvider session={session}>
           {children}
           <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />
-          <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={5} position='bottom-center' draggable autoClose={4000} hideProgressBar />
+          <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={10} position='bottom-center' draggable autoClose={4000} hideProgressBar />
         </SessionProvider>
       </NextTheme>
       {/* </AppRouterCacheProvider> */}

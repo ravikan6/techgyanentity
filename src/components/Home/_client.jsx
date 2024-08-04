@@ -69,7 +69,7 @@ const UserBookmarks = ({ data, initialPosts }) => {
 
     return (
         <div className="mx-auto sm:px-4">
-            <PostListView2 data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
+            <PostListView2 data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} hidden={{ bookmark: true }} />
         </div >
     )
 }
@@ -126,11 +126,11 @@ const UserClappedPost = ({ data, initialPosts }) => {
 const SidebarView = () => {
     return (
         <>
-            <div>
+            <div className="w-full">
                 <h2 className="text-xl karnak">
                     Recommanded
                 </h2>
-                <div className="mt-2 flex flex-col gap-4">
+                <div className="mt-2 flex flex-col gap-4 w-full">
                     <Skeleton />
                     <Skeleton />
                     <Skeleton />
