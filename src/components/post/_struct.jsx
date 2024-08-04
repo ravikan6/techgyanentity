@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArticleImage } from "./_client";
 import { formatDate, formatDateToString } from "@/lib/utils";
 import { useState } from "react";
-import { IconButton, Menu } from "../rui";
+import { IconButton, Menu, Tooltip } from "../rui";
 import { Skeleton } from "@mui/material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { HeartBrokenOutlined } from "@mui/icons-material";
@@ -29,20 +29,10 @@ const PostView_TIA = ({ data }) => {
                                 <div className="mt-2 h-20 flex flex-nowrap items-start justify-between">
                                     <div className="grow">
                                         <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
-                                            <h2 className="text-xl md:text-base lg:text-xl font-bold karnak line-clamp-2 text-ellipsis">{post.title}</h2>
+                                            <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{post.title}</h2>
                                         </Link>
                                         <div className="flex justify-between mt-1.5 items-center opacity-100">
-                                            <div className="flex flex-row items-center justify-start gap-3">
-                                                <p>{formatDateToString(post?.publishedAt).short}</p>
-                                                <div className="flex space-x-2 items-center">
-                                                    <PiHandsClappingLight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                                                    <p>{post?._count?.claps}</p>
-                                                </div>
-                                                <div className="flex space-x-2 items-center">
-                                                    <AiOutlineComment className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                                                    <p>{post?._count?.comments}</p>
-                                                </div>
-                                            </div>
+                                            <PostMetaView data={post} />
                                             <PostViewActions id={post?.id} />
                                         </div>
                                     </div>
@@ -150,7 +140,9 @@ const PostListView2 = ({ data }) => {
                                 <div>
                                     <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <div>
-                                            <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer line-clamp-2 text-ellipsis">{post?.title}</h1>
+                                            <Tooltip title={post?.title}>
+                                                <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer line-clamp-2 text-ellipsis">{post?.title}</h1>
+                                            </Tooltip>
                                         </div>
                                         <div className="">
                                             <span className="franklin text-[14px] leading-[18px] font-normal text-slate-500 dark:text-slate-400 cursor-pointer line-clamp-2">
@@ -167,17 +159,7 @@ const PostListView2 = ({ data }) => {
                             </div>
                         </section>
                         <section className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
-                            <div className="flex flex-row items-center justify-start gap-3">
-                                <p>{formatDateToString(post?.publishedAt).short}</p>
-                                <div className="flex space-x-2 items-center">
-                                    <PiHandsClappingLight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                                    <p>{post?._count?.claps}</p>
-                                </div>
-                                <div className="flex space-x-2 items-center">
-                                    <AiOutlineComment className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                                    <p>{post?._count?.comments}</p>
-                                </div>
-                            </div>
+                            <PostMetaView data={post} />
                             <div className="flex-row items-center flex gap-1">
                                 {post?.tags && <div className="flex gap-2 items-center">
                                     <Link href={`/tags/${post?.tags?.at(0)}?source=tags_feed_article`}>
@@ -188,7 +170,7 @@ const PostListView2 = ({ data }) => {
                                     <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead">
                                     </div>
                                 </div>}
-                                <Bookmark id={post?.shortId} />
+                                <Bookmark id={post?.shortId} variant="text" />
                             </div>
                         </section>
                     </article>
@@ -199,6 +181,32 @@ const PostListView2 = ({ data }) => {
             <span ref={data?.ref}></span>
         </div>
     );
+}
+
+const PostMetaView = ({ data }) => {
+    return (
+        <div className="flex flex-row items-center justify-start gap-3">
+            <Tooltip title={formatDateToString(data?.publishedAt).long}>
+                <p>{formatDateToString(data?.publishedAt).short}</p>
+            </Tooltip>
+            {data?._count?.claps &&
+                <Tooltip title={`${data?._count?.claps} Claps`}>
+                    <div className="flex space-x-2 items-center">
+                        <PiHandsClappingLight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <p>{data?._count?.claps}</p>
+                    </div>
+                </Tooltip>
+            }
+            {data?._count?.comments &&
+                <Tooltip title={`${data?._count?.comments} Comments`}>
+                    <div className="flex space-x-2 items-center">
+                        <AiOutlineComment className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <p>{data?._count?.comments}</p>
+                    </div>
+                </Tooltip>
+            }
+        </div>
+    )
 }
 
 const PostAuthorView = ({ author }) => {
@@ -231,7 +239,7 @@ const PostViewActions = ({ id }) => {
     return (
         <>
             <IconButton size='small' onClick={handleClick}>
-                <BsThreeDots className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+                <BsThreeDots className="w-5 h-5 text-slate-500 dark:text-slate-400" />
             </IconButton>
             <Menu
                 anchorEl={anchorEl}

@@ -275,7 +275,7 @@ const MainSidebar = (props) => {
                         </Button>
                     </Link> : <>{MenuSkeleton(1)}</>}
                 </div>
-                <div className="w-full transition-all h-auto duration-500">
+                <div className="w-full transition-colors h-auto duration-500">
                     {userMenu.slice(0, showMore ? userMenu.length : 3).map((menu, index) => (
                         <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
                     ))}
@@ -299,7 +299,7 @@ const MainSidebar = (props) => {
     }
 
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center mx-auto' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-colors ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -347,7 +347,7 @@ const MainSidebar = (props) => {
 
 const MenuItem = ({ menu, path, isSmall }) => {
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-all ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 self-center mx-auto' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-colors ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -419,7 +419,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
         if (dt === null) {
             setTimeout(() => {
                 setShowTip(true)
-            }, 3000)
+            }, 5000)
         } else {
             setShowTip(false)
         }

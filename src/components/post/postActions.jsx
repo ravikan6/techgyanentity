@@ -60,7 +60,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
     );
 }
 
-export const Bookmark = ({ id }) => {
+export const Bookmark = ({ id, variant }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -95,7 +95,7 @@ export const Bookmark = ({ id }) => {
     }
 
     return (
-        <BookmarkBtn isLoading={isLoading} onClick={handleBookmarkClick} bookmarked={isBookmarked} />
+        <BookmarkBtn variant={variant} isLoading={isLoading} onClick={handleBookmarkClick} bookmarked={isBookmarked} />
     );
 }
 

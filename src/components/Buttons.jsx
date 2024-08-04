@@ -170,7 +170,7 @@ const BookmarkBtn = (props) => {
   const cliCk = props.onClick ? props.onClick : () => { };
   return (
     <div className={` ${clasS}`}>
-      <Button disabled={props.isLoading} size='small' variant='outlined' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={cliCk}>
+      <Button disabled={props.isLoading} size='small' variant={props?.variant || 'outlined'} sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={cliCk}>
         {bookMarked ? <MdBookmarkAdded className=' w-4 h-4' /> : <MdOutlineBookmarkAdd className='w-4 h-4' />}
       </Button>
     </div>

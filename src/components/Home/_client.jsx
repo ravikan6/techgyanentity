@@ -2,6 +2,29 @@
 import { getUserBookmarks, getUserClappedPost } from "@/lib/actions/user";
 import { useEffect, useRef, useState } from "react";
 import { PostListView2, PostListView_TIA } from "../post/_struct";
+import { Skeleton } from "@mui/material";
+import { Button } from "../rui";
+import { toast } from "react-toastify";
+
+
+export const TestToastify = () => {
+    return (
+        <div>
+            <Button variant="outlined" onClick={() => toast.info('This is toast with info')} >
+                Toast Info
+            </Button>
+            <Button variant="outlined" onClick={() => toast.error('This is toast with Error')} >
+                Toast Error
+            </Button>
+            <Button variant="outlined" onClick={() => toast.warn('This is toast with Warn')} >
+                Toast Warn
+            </Button>
+            <Button variant="outlined" onClick={() => toast.success('This is toast with Success')} >
+                Toast Success
+            </Button>
+        </div>
+    )
+}
 
 
 const UserBookmarks = ({ data, initialPosts }) => {
@@ -93,9 +116,28 @@ const UserClappedPost = ({ data, initialPosts }) => {
     }, [loading]);
 
     return (
-        <div className="mx-auto sm:px-4">
+        <div className="mx-auto flex justify-between sm:px-4 max-w-5xl">
             <PostListView2 data={{ list: posts?.data, loading: loading, ref: lastItemRef, hasMore: posts.meta?.hasMore }} />
+            <SidebarView />
         </div>
+    )
+}
+
+const SidebarView = () => {
+    return (
+        <>
+            <div>
+                <h2 className="text-xl karnak">
+                    Recommanded
+                </h2>
+                <div className="mt-2 flex flex-col gap-4">
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                </div>
+            </div>
+        </>
     )
 }
 

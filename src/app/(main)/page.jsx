@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArticleImage } from "@/components/post/_client";
 import { VariantPermanent } from "@/lib/client";
 import { AuthorAvatar } from "@/components/author/_client";
+import { TestToastify } from "@/components/Home/_client";
 
 export default async function Home() {
   const session = await auth();
@@ -55,6 +56,9 @@ export default async function Home() {
               </div>
             ))
           }
+        </div>
+        <div className="mt-5">
+          <TestToastify />
         </div>
       </div>
     </>
