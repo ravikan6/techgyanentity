@@ -1,15 +1,14 @@
 "use client";
 import { getUserBookmarks, getUserClappedPost } from "@/lib/actions/user";
 import { useEffect, useRef, useState } from "react";
-import { PostListView2, PostListView_TIA } from "../post/_struct";
+import { PostListView2 } from "../post/_struct";
 import { Skeleton, useMediaQuery } from "@mui/material";
-import { Button, Dialog, IconButton, SwipeableDrawer, Tooltip } from "../rui";
+import { Button, Dialog, IconButton, SwipeableDrawer, TextField, Tooltip } from "../rui";
 import { toast } from "react-toastify";
-import { PiShareFat } from "react-icons/pi";
-import { FacebookOutlined, LinkOutlined, Telegram, WarningAmber, WhatshotOutlined } from "@mui/icons-material";
-import { BsTwitterX } from "react-icons/bs";
-import { ShareButton } from "../Buttons";
+import { ChevronLeft, ChevronRight, FacebookOutlined, LinkOutlined, Telegram, WarningAmber, WhatsApp, X } from "@mui/icons-material";
+import { CloseBtn, ShareButton } from "../Buttons";
 import { CldImage } from "next-cloudinary";
+import { ListItemRdX } from "./_profile-model";
 
 
 export const TestToastify = () => {
@@ -135,7 +134,7 @@ const SidebarView = () => {
                 <h2 className="text-xl karnak">
                     Recommanded
                 </h2>
-                <div className="mt-2 flex flex-col gap-4 w-full">
+                <div className="mt-2 mx-2 flex flex-col gap-4 w-full">
                     <Skeleton />
                     <Skeleton />
                     <Skeleton />
@@ -153,7 +152,7 @@ const ShareView = ({ component, data, meta }) => {
 
     return (
         <>
-            {(component && component?.button) ? <component.button onClick={() => setIsOpen(true)} {...component.props} /> : <ShareButton onClick={() => setIsOpen(true)} />}
+            {(component && component?.button) ? <component.button onClick={() => { setIsOpen(true); component?.onClick() }} {...component.props} /> : <ShareButton onClick={() => setIsOpen(true)} />}
             {
                 isUnderWidth ? <ShareSwiper isOpen={isOpen} setIsOpen={setIsOpen} data={data} meta={meta} /> : <ShareModal isOpen={isOpen} setIsOpen={setIsOpen} data={data} meta={meta} />
             }
@@ -168,38 +167,77 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
         <Dialog
             open={isOpen}
             onClose={() => setIsOpen(false)}
+            sx={{ maxWidth: '420px', width: 'full', }}
         >
-            <div className="py-5 px-5">
-                <ShareContentPreview data={data} />
-                <ShareViewContent meta={meta} />
+            <div className="my-5 px-4 relative">
+                <div className="absolute top-2 right-2">
+                    <CloseBtn onClick={() => setIsOpen(false)} />
+                </div>
+                <div className="flex flex-col gap-4">
+                    <h2 className="text-lg karnak">
+                        Share
+                    </h2>
+                    <ShareContentPreview data={data} />
+                    <ShareViewContent meta={meta} />
+                    <div>
+                        <TextField variant="outlined" value={meta?.url} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full -mr-5" color="button" size="small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
+                    </div>
+                </div>
             </div>
         </Dialog>
     )
 }
 
 const ShareViewContent = ({ meta }) => {
+    const [slideIndex, setSlideIndex] = useState(0);
+    const visibleButtons = 4;
+
     const shareOptions = [
         { name: 'Facebook', icon: FacebookOutlined, color: 'blue', onClick: () => window.open('https://www.facebook.com/sharer/sharer.php?u=https://www.google.com', '_blank') },
-        { name: 'Twitter', icon: BsTwitterX, color: 'black', onClick: () => window.open('https://twitter.com/intent/tweet?text=Hello%20world&url=https://www.google.com', '_blank') },
-        { name: 'Whatsapp', icon: WhatshotOutlined, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
+        { name: 'Twitter', icon: X, color: 'black', onClick: () => window.open('https://twitter.com/intent/tweet?text=Hello%20world&url=https://www.google.com', '_blank') },
+        { name: 'Whatsapp', icon: WhatsApp, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
         { name: 'Telegram', icon: Telegram, color: 'blue', onClick: () => window.open('https://t.me/share/url?url=https://www.google.com', '_blank') },
         { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`) },
     ]
 
+    const handlePrevClick = () => {
+        setSlideIndex(Math.max(0, slideIndex - visibleButtons));
+    };
+
+    const handleNextClick = () => {
+        setSlideIndex(Math.min(shareOptions.length - visibleButtons, slideIndex + visibleButtons));
+    };
+
     return (
         <>
-            <div className="flex items-center justify-center gap-5">
-                {
-                    shareOptions.map((item) => (
+            <div className='flex justify-between items-center'>
+                <div className='w-8 mr-2 md:mr-4 min-w-[32px]'>
+                    {shareOptions.length > visibleButtons && (
                         <>
+                            <IconButton className={`${slideIndex > 0 ? 'opacity-100 text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead' : 'opacity-40 cursor-not-allowed'} shadow-sm transition-colors rounded-full h-8 w-8`} onClick={handlePrevClick}>
+                                <ChevronLeft />
+                            </IconButton>
+                        </>
+                    )}</div>
+                <div className='flex flex-wrap justify-center gap-5 items-center'>
+                    {shareOptions.slice(slideIndex, slideIndex + visibleButtons).map((item, index) => (
+                        <span key={index}>
                             <Tooltip title={item.name}>
                                 <IconButton className="!w-14 !h-14 p-3 flex items-center justify-center bg-lightButton dark:bg-darkButton" onClick={item?.onClick}>
                                     <item.icon className="w-10 h-10 dark:text-dark text-zinc-800" />
                                 </IconButton>
                             </Tooltip>
+                        </span>
+                    ))}
+                </div>
+                <div className='w-8 ml-2 md:ml-0 min-w-[32px]'>
+                    {shareOptions.length > visibleButtons && (
+                        <>
+                            <IconButton className={`${slideIndex + visibleButtons < shareOptions.length ? 'opacity-100 text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead' : 'opacity-40 cursor-not-allowed'} shadow-sm transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
+                                <ChevronRight />
+                            </IconButton>
                         </>
-                    ))
-                }
+                    )}</div>
             </div>
         </>
     )
@@ -230,9 +268,14 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
             container={document?.body}
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
         >
-            <div className="px-4 py-2">
+            <div className="my-2">
+                <h2 className="text-lg karnak">
+                    Share
+                </h2>
                 <ShareContentPreview data={data} />
                 <ShareViewContent meta={meta} />
+                <hr className="my-2"></hr>
+                <ListItemRdX link={{ name: 'Copy Link', icon: LinkOutlined, onClick: () => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`) }} />
             </div>
         </SwipeableDrawer>
     )

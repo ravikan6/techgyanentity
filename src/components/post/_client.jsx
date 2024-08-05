@@ -58,7 +58,6 @@ const SidebarContext = createContext();
 export const ArticleSidebar = ({ article }) => {
     let width = useMediaQuery('(min-width:1024px)');
     const [open, setOpen] = useState(false);
-    const context = useContext(DrawerContext);
 
     return (
         <>
@@ -67,10 +66,6 @@ export const ArticleSidebar = ({ article }) => {
                     <div className={`fixed h-[calc(100%-66px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
                         {width && <section id="rb_sidebar_comp" className="relative h-[calc(100%-1px)] overflow-hidden">
                             <SidebarContent article={article} />
-                            <Button onClick={() => { (context.variant === 'persistent') ? context.setVariant('permanent') : context.setVariant('persistent') }} variant="outlined" sx={{ px: 2 }} color="button" size="small">
-                                SetVariant
-                            </Button> 
-                            {/* Will Removed ^^^ */}
                         </section>}
                     </div>
                 </div>
@@ -87,7 +82,7 @@ const SidebarContent = ({ article }) => {
     const handleDescription = () => {
         setOpen(true);
     }
-
+    const context = useContext(DrawerContext);
     return (
         <>
             <div className="h-[calc(100%-0px)] p-4 overflow-x-hidden">
@@ -98,6 +93,10 @@ const SidebarContent = ({ article }) => {
                         <PostActions id={article.id} commentCount={article?._count?.comments} isExpanded article={article} />
                     </div>
                 </div>
+                <Button onClick={() => (context.variant === 'persistent') ? context.setVariant('permanent') : context.setVariant('persistent')} variant="outlined" sx={{ px: 2 }} color="button" size="small">
+                    SetVariant
+                </Button>
+                {/* Will Removed ^^^ */}
                 <ArticleComments articleId={article.id} article={article} />
             </div>
             <Description article={article} publishedAt={publishedAt} updatedAt={updatedAt} open={open} setOpen={setOpen} />
@@ -871,8 +870,8 @@ export const VariantpPersistentClient = () => {
             context.setVariant('persistent')
             context.setOpen(false)
         };
-    }, [context.variant]);
-
+    }, []);
+    // ^^ context.variant
     useEffect(() => {
         const styleTag = document.getElementById('r_tt');
         if (styleTag && context.variant === 'persistent') {

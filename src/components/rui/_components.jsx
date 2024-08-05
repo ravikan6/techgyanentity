@@ -243,16 +243,19 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
 const RuiSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
     '& .MuiDrawer-paper': {
         backgroundColor: theme.palette?.background?.paper,
-        borderRadius: '24px 24px 0 0',
+        borderRadius: '20px 20px 0 0',
         padding: '12px',
         position: 'absolute',
         maxHeight: 'calc(100% - 40px)',
         bottom: 0,
         top: 'auto',
+        marginRight: '8px',
+        marginLeft: '8px',
         // width: 'calc(100% - 40px)',
         // // maxWidth: '400px',
         // right: '20px',
         // left: '20px',
+
     },
     '& .MuiBackdrop-root': {
         position: 'absolute',

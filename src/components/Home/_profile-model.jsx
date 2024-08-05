@@ -366,27 +366,33 @@ export const NavMenu = () => {
 const ListItemRdX = ({ link, onClick = () => { } }) => {
     return (
         <MenuItem key={link.name} onClick={onClick} >
-            <Link className='w-full' href={link?.url || '#'}>
-                <Tooltip title={link?.helpText || link.name} placement="left" slotProps={{
-                    popper: {
-                        modifiers: [
-                            {
-                                name: 'offset',
-                                options: {
-                                    offset: [0, 20],
-                                },
+            <Tooltip title={link?.helpText || link.name} placement="left" slotProps={{
+                popper: {
+                    modifiers: [
+                        {
+                            name: 'offset',
+                            options: {
+                                offset: [0, 20],
                             },
-                        ],
-                    },
-                }} >
+                        },
+                    ],
+                },
+            }} >
+                {link?.url ? <Link className='w-full' href={link?.url || '#'}>
                     <Box component="a" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%', textDecoration: 'none', color: 'inherit' }}>
                         <ListItemIcon>
                             <link.icon fontSize='small' />
                         </ListItemIcon>
                         <Typography variant="inherit">{link?.name}</Typography>
                     </Box>
-                </Tooltip>
-            </Link>
+                </Link> :
+                    <Box component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%', textDecoration: 'none', color: 'inherit' }}>
+                        <ListItemIcon>
+                            <link.icon fontSize='small' />
+                        </ListItemIcon>
+                        <Typography variant="inherit">{link?.name}</Typography>
+                    </Box>}
+            </Tooltip>
         </MenuItem>
     )
 }

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { IconButton, Menu, Tooltip } from "../rui";
 import { Skeleton } from "@mui/material";
 import { ListItemRdX } from "../Home/_profile-model";
-import { HeartBrokenOutlined } from "@mui/icons-material";
+import { HeartBrokenOutlined, ShareOutlined } from "@mui/icons-material";
 import { AuthorAvatar } from "../author/_client";
 import { BsNutFill, BsThreeDots } from "react-icons/bs";
 import { Bookmark } from "./postActions";
@@ -262,7 +262,7 @@ const PostViewActions = ({ id, post }) => {
                 <ListItemRdX link={{ name: 'Add to Bookmark', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Report', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Say Thanks', icon: HeartBrokenOutlined }} />
-                <ShareView data={{ image: post?.image?.url, title: post?.title, info: post?.description }} meta={{ url: `/@${post?.author?.handle}/${post?.slug}` }} component={{ button: ListItemRdX, props: { link: { name: 'Share', icon: HeartBrokenOutlined } } }} />
+                <ShareView data={{ image: post?.image?.url, title: post?.title, info: post?.description }} meta={{ url: `/@${post?.author?.handle}/${post?.slug}` }} component={{ button: ListItemRdX, props: { link: { name: 'Share', icon: ShareOutlined } }, onClick: handleClose }} />
             </Menu>
         </>
     );
