@@ -170,17 +170,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
             onClose={() => setIsOpen(false)}
         >
             <div className="py-5 px-5">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-16 h-16 min-w-16 min-h-16 relative rounded-full overflow-hidden">
-                        <CldImage src={data?.image} fill className="rounded-full" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
-                            {data?.title}
-                        </h2>
-                        <p className="line-clamp-1 text-ellipsis franklin text-sm">{data?.info}</p>
-                    </div>
-                </div>
+                <ShareContentPreview data={data} />
                 <ShareViewContent meta={meta} />
             </div>
         </Dialog>
@@ -215,6 +205,22 @@ const ShareViewContent = ({ meta }) => {
     )
 }
 
+const ShareContentPreview = ({ data }) => {
+    return (
+        <div className="flex items-center gap-3 mb-4">
+            <div className="w-16 h-16 min-w-16 min-h-16 relative rounded-full overflow-hidden">
+                <CldImage src={data?.image} fill className="rounded-full" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+                <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
+                    {data?.title}
+                </h2>
+                <p className="line-clamp-1 text-ellipsis franklin text-sm">{data?.info}</p>
+            </div>
+        </div>
+    )
+}
+
 const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
     return (
         <SwipeableDrawer
@@ -225,17 +231,7 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
         >
             <div className="px-4 py-2">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-16 h-16 rounded-full">
-                        <CldImage src={data?.image} fill />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
-                            {data?.title}
-                        </h2>
-                        <p className="line-clamp-1 text-ellipsis franklin text-sm">{data?.info}</p>
-                    </div>
-                </div>
+                <ShareContentPreview data={data} />
                 <ShareViewContent meta={meta} />
             </div>
         </SwipeableDrawer>

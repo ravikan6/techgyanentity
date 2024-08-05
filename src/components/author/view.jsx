@@ -26,21 +26,21 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                         </div>}
                     </div>
                 </div>
-                <div className='flex flex-col md:flex-row justify-center md:justify-start mt-4 items-center'>
-                    {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
+                <div className='flex flex-row justify-start mt-4 items-center'>
+                    {author ? <div className='md:!w-[128px] md:!h-[128px] !w-24 !h-24 rounded-full bg-transparent'>
                         <Avatar
                             src={author?.image?.url}
                             quality={100}
                             alt={author?.name}
                             width={128}
                             height={128}
-                            className='rounded-full !w-[128px] !h-[128px]'
+                            className='rounded-full md:!w-[128px] md:!h-[128px] !w-24 !h-24'
                         >{author?.name[0]}</Avatar>
-                    </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
-                    <div className='w-full md:ml-6 lg:ml-7 flex md:justify-between items-start flex-col md:flex-row md:w-[calc(100%-150px)]'>
+                    </div> : <Skeleton variant='cricle' className='md:!w-[128px] md:!h-[128px] !w-24 !h-24 block !p-0 !m-0 rounded-full' animation="wave" />}
+                    <div className='w-full ml-5 md:ml-6 lg:ml-7 flex md:justify-between items-start flex-col md:flex-row md:w-[calc(100%-150px)]'>
                         <div className='flex flex-col justify-evenly self-start'>
                             <div className='mt-0'>
-                                <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
+                                <h2 className='text-lg md:text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>
                                 <p className='text-sm lg:text-base karnak font-medium '>
                                     {author?._count?.followers} Followers • {author?._count?.Post} Posts
                                 </p>
@@ -52,7 +52,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                                         <span className='ml-2'> <BsChevronDoubleRight /></span>
                                     </p>
                                 </Link>}
-                                <div className='mt-0.5 flex items-center space-x-4' >
+                                <div className='mt-0.5 flex items-center gap-4' >
                                     {
                                         (author?.social && (author?.social?.length > 0)) && (
                                             author?.social.slice(0, 3).map((link, index) => (

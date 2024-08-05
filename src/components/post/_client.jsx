@@ -306,7 +306,7 @@ const ArticleAuthor = ({ article }) => {
                 <div className="flex items-center py-1">
                     <Link href={`/@${article?.author?.handle}`} className="">
                         <div className="flex items-center cursor-pointer gap-3">
-                            <AuthorAvatar data={{ url: article?.author?.image?.url }} className={'!w-6 !h-6'} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
+                            <AuthorAvatar data={{ url: article?.author?.image?.url }} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
                             <div className="flex flex-col justify-around">
                                 <p className="text-sm cheltenham-small mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
                                     {article?.author?.name}
@@ -317,9 +317,6 @@ const ArticleAuthor = ({ article }) => {
                             </div>
                         </div>
                     </Link>
-                    {/* <div className="flex-shrink-0">
-                        <Avatar src={article?.author?.image?.url}  alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
-                    </div> */}
                 </div>
                 <div className="flex items-center space-x-4">
                     <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >

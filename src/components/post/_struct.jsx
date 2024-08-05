@@ -259,10 +259,10 @@ const PostViewActions = ({ id, post }) => {
                         }
                     }
                 }}>
-                <ListItemRdX link={{ name: 'Add to Bookmark', url: '/share', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Report', url: '/report', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Say Thanks', url: '/bookmark', icon: HeartBrokenOutlined }} />
-                <ShareView data={{ image: post?.image?.url, title: post?.title, info: post?.description }} meta={{ url: `/@${post?.author?.handle}/${post?.slug}` }} component={{ button: ListItemRdX, props: { link: { name: 'Share', url: '/report', icon: HeartBrokenOutlined } } }} />
+                <ListItemRdX link={{ name: 'Add to Bookmark', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Report', icon: HeartBrokenOutlined }} />
+                <ListItemRdX link={{ name: 'Say Thanks', icon: HeartBrokenOutlined }} />
+                <ShareView data={{ image: post?.image?.url, title: post?.title, info: post?.description }} meta={{ url: `/@${post?.author?.handle}/${post?.slug}` }} component={{ button: ListItemRdX, props: { link: { name: 'Share', icon: HeartBrokenOutlined } } }} />
             </Menu>
         </>
     );

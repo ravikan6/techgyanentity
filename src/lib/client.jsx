@@ -188,7 +188,10 @@ export const VariantPermanent = () => {
 
     useEffect(() => {
         if (context.variant !== 'permanent')
-            if (width) context.setVariant('permanent'); context.setOpen(true);
+            if (width) {
+                context.setVariant('permanent')
+                context.setOpen(true)
+            };
     }, [context.variant, width]);
 };
 
