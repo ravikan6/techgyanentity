@@ -167,7 +167,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
         <Dialog
             open={isOpen}
             onClose={() => setIsOpen(false)}
-            sx={{ maxWidth: '420px', width: 'full', }}
+            sx={{ maxWidth: '480px', width: 'full', mx: 'auto' }}
         >
             <div className="my-5 px-4 relative">
                 <div className="absolute top-2 right-2">
@@ -180,7 +180,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
                     <ShareContentPreview data={data} />
                     <ShareViewContent meta={meta} />
                     <div>
-                        <TextField variant="outlined" value={meta?.url} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full -mr-5" color="button" size="small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
+                        <TextField variant="outlined" value={`${window.location.origin}${meta?.url}`} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full dark:!text-black" color="button" size="small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
                     </div>
                 </div>
             </div>
@@ -211,7 +211,7 @@ const ShareViewContent = ({ meta }) => {
     return (
         <>
             <div className='flex justify-between items-center'>
-                <div className='w-8 mr-2 md:mr-4 min-w-[32px]'>
+                <div className='w-8 min-w-[32px]'>
                     {shareOptions.length > visibleButtons && (
                         <>
                             <IconButton className={`${slideIndex > 0 ? 'opacity-100 text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead' : 'opacity-40 cursor-not-allowed'} shadow-sm transition-colors rounded-full h-8 w-8`} onClick={handlePrevClick}>
@@ -230,7 +230,7 @@ const ShareViewContent = ({ meta }) => {
                         </span>
                     ))}
                 </div>
-                <div className='w-8 ml-2 md:ml-0 min-w-[32px]'>
+                <div className='w-8 min-w-[32px]'>
                     {shareOptions.length > visibleButtons && (
                         <>
                             <IconButton className={`${slideIndex + visibleButtons < shareOptions.length ? 'opacity-100 text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead' : 'opacity-40 cursor-not-allowed'} shadow-sm transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
@@ -269,7 +269,7 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
         >
             <div className="my-2">
-                <h2 className="text-lg karnak">
+                <h2 className="text-lg karnak mb-3">
                     Share
                 </h2>
                 <ShareContentPreview data={data} />
