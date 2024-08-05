@@ -3,11 +3,12 @@ import { getUserBookmarks, getUserClappedPost } from "@/lib/actions/user";
 import { useEffect, useRef, useState } from "react";
 import { PostListView2, PostListView_TIA } from "../post/_struct";
 import { Skeleton, useMediaQuery } from "@mui/material";
-import { Button, Dialog, IconButton, SwipeableDrawer } from "../rui";
+import { Button, Dialog, IconButton, SwipeableDrawer, Tooltip } from "../rui";
 import { toast } from "react-toastify";
 import { PiShareFat } from "react-icons/pi";
 import { FacebookOutlined, LinkOutlined, Telegram, WarningAmber, WhatshotOutlined } from "@mui/icons-material";
 import { BsTwitterX } from "react-icons/bs";
+import { ShareButton } from "../Buttons";
 
 
 export const TestToastify = () => {
@@ -144,17 +145,14 @@ const SidebarView = () => {
     )
 }
 
-const ShareView = () => {
+const ShareView = ({ ButtonComp }) => {
     const [isOpen, setIsOpen] = useState(false)
     let isUnderWidth = useMediaQuery('(max-width:600px)');
 
 
     return (
         <>
-            <IconButton onClick={() => setIsOpen(true)} >
-                <PiShareFat className="w-5 h-5" />
-            </IconButton>
-
+            {ButtonComp ? <ButtonComp onClick={() => setIsOpen(true)} /> : <ShareButton onClick={() => setIsOpen(true)} />}
             {
                 isUnderWidth ? <ShareSwiper isOpen={isOpen} setIsOpen={setIsOpen} /> : <ShareModal isOpen={isOpen} setIsOpen={setIsOpen} />
             }

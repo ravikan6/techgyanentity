@@ -177,6 +177,14 @@ const BookmarkBtn = (props) => {
   )
 }
 
+const ShareButton = ({ onClick }) => {
+  return (
+    <Button variant="outlined" size='small' sx={{ ...btnSx, minWidth: '32px', minHeight: '32px', p: 0 }} onClick={onClick}>
+      <PiShareFat className="w-4 h-4" />
+    </Button>
+  )
+}
+
 const PostEditButton = ({ classes, disabled, show = true, href }) => {
   const router = useRouter();
   const handleClick = () => {
@@ -520,5 +528,5 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
   )
 }
 
-export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu, PostDetailsTableViewMenu };
+export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu, PostDetailsTableViewMenu, ShareButton };
 

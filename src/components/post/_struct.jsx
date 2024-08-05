@@ -8,7 +8,7 @@ import { Skeleton } from "@mui/material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { HeartBrokenOutlined } from "@mui/icons-material";
 import { AuthorAvatar } from "../author/_client";
-import { BsThreeDots } from "react-icons/bs";
+import { BsNutFill, BsThreeDots } from "react-icons/bs";
 import { Bookmark } from "./postActions";
 import { PiHandsClappingLight } from "react-icons/pi";
 import { AiOutlineComment } from "react-icons/ai";
@@ -26,7 +26,7 @@ const PostView_TIA = ({ data, hidden, className }) => {
                                 <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                     <ArticleImage className="rounded-xl" image={post?.image} />
                                 </Link>
-                                <div className="mt-2 h-20 flex flex-nowrap items-start justify-between">
+                                <div className="mt-2 flex flex-nowrap items-start justify-between">
                                     <div className="grow">
                                         <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`} className="w-full">
                                             <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{post.title}</h2>
@@ -164,14 +164,13 @@ const PostListView2 = ({ data, hidden }) => {
                         <section className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
                             <PostMetaView data={post} />
                             <div className="flex-row items-center flex gap-1">
-                                {post?.tags && <div className="flex gap-2 items-center">
+                                {(post?.tags && post?.tags?.length > 0) && <div className="flex gap-2 items-center">
                                     <Link href={`/tags/${post?.tags?.at(0)}?source=tags_feed_article`}>
                                         <div className="flex stymie justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-lightHead hover:bg-slate-200 dark:bg-darkHead dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
                                             <span className="truncate">{post?.tags?.at(0)}</span>
                                         </div>
                                     </Link>
-                                    <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead">
-                                    </div>
+                                    {!hidden?.bookmark && <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead" />}
                                 </div>}
                                 {!hidden?.bookmark && <Bookmark id={post?.shortId} variant="text" />}
                             </div>
@@ -192,21 +191,21 @@ const PostMetaView = ({ data }) => {
             <Tooltip title={formatDateToString(data?.publishedAt).long}>
                 <p>{formatDateToString(data?.publishedAt).short}</p>
             </Tooltip>
-            {data?._count?.claps &&
+            {data?._count?.claps ?
                 <Tooltip title={`${data?._count?.claps} Claps`}>
                     <div className="flex space-x-2 items-center">
                         <PiHandsClappingLight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <p>{data?._count?.claps}</p>
                     </div>
-                </Tooltip>
+                </Tooltip> : null
             }
-            {data?._count?.comments &&
+            {data?._count?.comments ?
                 <Tooltip title={`${data?._count?.comments} Comments`}>
                     <div className="flex space-x-2 items-center">
                         <AiOutlineComment className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <p>{data?._count?.comments}</p>
                     </div>
-                </Tooltip>
+                </Tooltip> : null
             }
         </div>
     )
