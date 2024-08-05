@@ -125,7 +125,19 @@ const getArticle = async (slug, id) => {
                 },
             },
             include: {
-                author: true,
+                author: {
+                    select: {
+                        handle: true,
+                        name: true,
+                        image: true,
+                        id: true,
+                        _count: {
+                            select: {
+                                followers: true,
+                            }
+                        }
+                    }
+                },
                 _count: {
                     select: {
                         comments: {
@@ -135,7 +147,7 @@ const getArticle = async (slug, id) => {
                                 },
                                 isDeleted: false,
                             }
-                        }
+                        },
                     }
                 }
             }

@@ -23,6 +23,7 @@ import { FaHandsClapping } from "react-icons/fa6";
 import confirm from "@/lib/confirm";
 import { StudioContext } from "@/lib/context";
 import { imgUrl } from "@/lib/helpers";
+import { AuthorAvatar } from "../author/_client";
 
 export const ArticleImage = ({ image, classes, height, width, className, style }) => {
     return <CldImage
@@ -303,17 +304,22 @@ const ArticleAuthor = ({ article }) => {
         <>
             <div className="flex justify-between hover:bg-black/10 dark:hover:bg-white/10 py-1 px-1 rounded-md space-x-2 items-center mb-5 border-y-slate-500">
                 <div className="flex items-center py-1">
-                    <div className="flex-shrink-0">
-                        <Avatar src={article?.author?.image?.url} sx={{ width: 40, height: 40, borderRadius: 1000 }} alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
-                    </div>
-                    <div className="flex flex-col justify-around ml-3">
-                        <p className="text-sm karnak mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
-                            {article?.author?.name}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-300">
-                            2k followers
-                        </p>
-                    </div>
+                    <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
+                        <div className="flex items-center cursor-pointer gap-3">
+                            <AuthorAvatar data={{ url: article?.author?.image?.url }} className={'!w-6 !h-6'} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
+                            <div className="flex flex-col justify-around">
+                                <p className="text-sm cheltenham-small mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
+                                    {article?.author?.name}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-300">
+                                    {article?.author?._count?.followers} Followers
+                                </p>
+                            </div>
+                        </div>
+                    </Link>
+                    {/* <div className="flex-shrink-0">
+                        <Avatar src={article?.author?.image?.url}  alt={article?.author?.name} >{article?.author?.name.slice(0, 1)}</Avatar>
+                    </div> */}
                 </div>
                 <div className="flex items-center space-x-4">
                     <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >

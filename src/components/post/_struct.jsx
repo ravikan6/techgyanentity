@@ -12,6 +12,7 @@ import { BsNutFill, BsThreeDots } from "react-icons/bs";
 import { Bookmark } from "./postActions";
 import { PiHandsClappingLight } from "react-icons/pi";
 import { AiOutlineComment } from "react-icons/ai";
+import { ShareView } from "../Home/_client";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -36,7 +37,7 @@ const PostView_TIA = ({ data, hidden, className }) => {
                                         </div>}
                                         <div className="flex text-sm justify-between mt-1 items-center opacity-100">
                                             <PostMetaView data={post} />
-                                            <PostViewActions id={post?.id} />
+                                            <PostViewActions id={post?.id} post={post} />
                                         </div>
                                     </div>
                                 </div>
@@ -136,7 +137,7 @@ const PostListView2 = ({ data, hidden }) => {
                                         <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
                                     </div>
                                 </Link>
-                                <PostViewActions id={post?.id} />
+                                <PostViewActions id={post?.id} post={post} />
                             </div>
 
                             <div className="w-full flex flex-col-reverse md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
@@ -227,7 +228,7 @@ const PostAuthorView = ({ author }) => {
 }
 
 
-const PostViewActions = ({ id }) => {
+const PostViewActions = ({ id, post }) => {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
@@ -261,7 +262,7 @@ const PostViewActions = ({ id }) => {
                 <ListItemRdX link={{ name: 'Add to Bookmark', url: '/share', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Report', url: '/report', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Say Thanks', url: '/bookmark', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Share', url: '/report', icon: HeartBrokenOutlined }} />
+                <ShareView data={{ image: post?.image?.url, title: post?.title, info: post?.description }} meta={{ url: `/@${post?.author?.handle}/${post?.slug}` }} component={{ button: ListItemRdX, props: { link: { name: 'Share', url: '/report', icon: HeartBrokenOutlined } } }} />
             </Menu>
         </>
     );

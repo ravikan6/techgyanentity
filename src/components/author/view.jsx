@@ -15,9 +15,9 @@ const AuthorSingleViewPage = async ({ author, children }) => {
         <>
             <section className="mb-5">
                 <div className="w-full overflow-hidden" >
-                    <div className='block group/rb-banner relative overflow-hidden rounded-xl bg-black/10 dark:bg-white/10 pt-[16.12%]'>
+                    <div className='block group/rb-banner relative overflow-hidden rounded-lg md:rounded-xl bg-black/10 dark:bg-white/10 pt-[16.12%]'>
                         <BannerImage banner={author?.banner} />
-                        {session.user && <div className='absolute transition-all duration-700 hidden group-hover/rb-banner:block bg-gradient-to-br to-gray-800/20 from-transparent w-full h-full bottom-0 right-0 top-0 left-0'>
+                        {session?.user && <div className='absolute transition-all duration-700 hidden group-hover/rb-banner:block bg-gradient-to-br to-gray-800/20 from-transparent w-full h-full bottom-0 right-0 top-0 left-0'>
                             <Button sx={{ minWidth: '2rem', minHeight: '2rem', borderRadius: '100rem' }} className='!absolute !bottom-4 !right-4 shadow-md !bg-accentLight dark:!bg-accentDark !p-0'>
                                 <Link className='flex items-center justify-center' href={`/studio/edit`}>
                                     <CameraAlt className='text-white w-4 h-4 dark:text-gray-100' />
@@ -26,7 +26,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                         </div>}
                     </div>
                 </div>
-                <div className='flex justify-start mt-4 items-center'>
+                <div className='flex flex-col md:flex-row justify-center md:justify-start mt-4 items-center'>
                     {author ? <div className='!w-[128px] !h-[128px] rounded-full bg-transparent'>
                         <Avatar
                             src={author?.image?.url}
@@ -37,7 +37,7 @@ const AuthorSingleViewPage = async ({ author, children }) => {
                             className='rounded-full !w-[128px] !h-[128px]'
                         >{author?.name[0]}</Avatar>
                     </div> : <Skeleton variant='cricle' className='!w-[128px] !h-[128px] block !p-0 !m-0 rounded-full' animation="wave" />}
-                    <div className='ml-5 md:ml-6 lg:ml-7 flex md:justify-between items-start flex-col md:flex-row md:w-[calc(100%-150px)]'>
+                    <div className='w-full md:ml-6 lg:ml-7 flex md:justify-between items-start flex-col md:flex-row md:w-[calc(100%-150px)]'>
                         <div className='flex flex-col justify-evenly self-start'>
                             <div className='mt-0'>
                                 <h2 className='text-xl lg:text-2xl stymie-small font-bold'>{author?.name}</h2>

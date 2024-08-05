@@ -113,10 +113,10 @@ const AuthorLayoutNav = ({ data }) => {
     );
 }
 
-const AuthorAvatar = ({ data, className, width, height }) => {
+const AuthorAvatar = ({ data, className, width, height, sx }) => {
     let url = data?.url?.startsWith('http') ? data?.url : getCldImageUrl({ src: data?.url })
     return (
-        <Avatar src={url} alt="Authro Avatar" className={`${className}`} />
+        <Avatar src={url} alt="Authro Avatar" className={`${className}`} sx={sx} />
     )
 }
 

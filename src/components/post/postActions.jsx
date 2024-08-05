@@ -27,7 +27,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
 
     return (
         <>
-            <div className={`flex my-2 h-8 overflow-hidden ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
+            <div className={`flex my-2 h-8 overflow-y-hidden overflow-x-auto ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
                 <div className={`justify-start flex items-center space-x-6`}>
                     <ClapPost id={id} />
                     {!isExpanded && <Button
@@ -36,7 +36,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                     <AuthorActions id={id} authorId={article?.author?.id} />
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
-                    <ShareView />
+                    <ShareView data={{ image: article?.image?.url, title: article?.title, info: article?.description }} meta={{ url: `/@${article?.author?.handle}/${article?.slug}` }} />
                     <Bookmark id={article?.shortId} />
                     <BtnWithMenu id={id} />
                 </div>
@@ -121,11 +121,10 @@ const ClapPost = ({ id }) => {
 
     useEffect(() => {
         if (claps) {
-            claps.forEach((clap) => {
-                if (clap?.userId == session?.user?.id) {
-                    setIsClapped({ is: true, clappedId: clap?.id });
-                }
-            });
+            let clap = claps.find((clap) => clap?.userId == session?.user?.id);
+            if (clap) {
+                setIsClapped({ is: true, clappedId: clap?.id });
+            }
         }
     }, [claps])
 

@@ -9,6 +9,7 @@ import { PiShareFat } from "react-icons/pi";
 import { FacebookOutlined, LinkOutlined, Telegram, WarningAmber, WhatshotOutlined } from "@mui/icons-material";
 import { BsTwitterX } from "react-icons/bs";
 import { ShareButton } from "../Buttons";
+import { CldImage } from "next-cloudinary";
 
 
 export const TestToastify = () => {
@@ -145,23 +146,23 @@ const SidebarView = () => {
     )
 }
 
-const ShareView = ({ ButtonComp }) => {
+const ShareView = ({ component, data, meta }) => {
     const [isOpen, setIsOpen] = useState(false)
     let isUnderWidth = useMediaQuery('(max-width:600px)');
 
 
     return (
         <>
-            {ButtonComp ? <ButtonComp onClick={() => setIsOpen(true)} /> : <ShareButton onClick={() => setIsOpen(true)} />}
+            {(component && component?.button) ? <component.button onClick={() => setIsOpen(true)} {...component.props} /> : <ShareButton onClick={() => setIsOpen(true)} />}
             {
-                isUnderWidth ? <ShareSwiper isOpen={isOpen} setIsOpen={setIsOpen} /> : <ShareModal isOpen={isOpen} setIsOpen={setIsOpen} />
+                isUnderWidth ? <ShareSwiper isOpen={isOpen} setIsOpen={setIsOpen} data={data} meta={meta} /> : <ShareModal isOpen={isOpen} setIsOpen={setIsOpen} data={data} meta={meta} />
             }
 
         </>
     )
 }
 
-const ShareModal = ({ isOpen, setIsOpen }) => {
+const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
 
     return (
         <Dialog
@@ -169,19 +170,30 @@ const ShareModal = ({ isOpen, setIsOpen }) => {
             onClose={() => setIsOpen(false)}
         >
             <div className="py-5 px-5">
-                <ShareViewContent />
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 rounded-full">
+                        <CldImage src={data?.image} fill />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                        <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
+                            {data?.title}
+                        </h2>
+                        <p className="line-clamp-1 text-ellipsis franklin text-sm">{data?.info}</p>
+                    </div>
+                </div>
+                <ShareViewContent meta={meta} />
             </div>
         </Dialog>
     )
 }
 
-const ShareViewContent = () => {
+const ShareViewContent = ({ meta }) => {
     const shareOptions = [
         { name: 'Facebook', icon: FacebookOutlined, color: 'blue', onClick: () => window.open('https://www.facebook.com/sharer/sharer.php?u=https://www.google.com', '_blank') },
         { name: 'Twitter', icon: BsTwitterX, color: 'black', onClick: () => window.open('https://twitter.com/intent/tweet?text=Hello%20world&url=https://www.google.com', '_blank') },
         { name: 'Whatsapp', icon: WhatshotOutlined, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
         { name: 'Telegram', icon: Telegram, color: 'blue', onClick: () => window.open('https://t.me/share/url?url=https://www.google.com', '_blank') },
-        { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => navigator.clipboard.writeText('https://www.google.com') },
+        { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`) },
     ]
 
     return (
@@ -191,8 +203,8 @@ const ShareViewContent = () => {
                     shareOptions.map((item) => (
                         <>
                             <Tooltip title={item.name}>
-                                <IconButton className="!w-14 !h-14 flex items-center justify-center" style={{ backgroundColor: item.color }} onClick={item?.onClick}>
-                                    <item.icon className="w-10 h-10" />
+                                <IconButton className="!w-14 !h-14 p-3 flex items-center justify-center bg-lightButton dark:bg-darkButton" onClick={item?.onClick}>
+                                    <item.icon className="w-10 h-10 dark:text-dark text-zinc-800" />
                                 </IconButton>
                             </Tooltip>
                         </>
@@ -203,7 +215,7 @@ const ShareViewContent = () => {
     )
 }
 
-const ShareSwiper = ({ isOpen, setIsOpen }) => {
+const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
     return (
         <SwipeableDrawer
             minFlingVelocity={500}
@@ -213,7 +225,18 @@ const ShareSwiper = ({ isOpen, setIsOpen }) => {
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
         >
             <div className="px-4 py-2">
-                <ShareViewContent />
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 rounded-full">
+                        <CldImage src={data?.image} fill />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                        <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
+                            {data?.title}
+                        </h2>
+                        <p className="line-clamp-1 text-ellipsis franklin text-sm">{data?.info}</p>
+                    </div>
+                </div>
+                <ShareViewContent meta={meta} />
             </div>
         </SwipeableDrawer>
     )
