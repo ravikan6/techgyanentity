@@ -58,6 +58,7 @@ const SidebarContext = createContext();
 export const ArticleSidebar = ({ article }) => {
     let width = useMediaQuery('(min-width:1024px)');
     const [open, setOpen] = useState(false);
+    const context = useContext(DrawerContext);
 
     return (
         <>
@@ -66,6 +67,10 @@ export const ArticleSidebar = ({ article }) => {
                     <div className={`fixed h-[calc(100%-66px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
                         {width && <section id="rb_sidebar_comp" className="relative h-[calc(100%-1px)] overflow-hidden">
                             <SidebarContent article={article} />
+                            <Button onClick={() => { (context.variant === 'persistent') ? context.setVariant('permanent') : context.setVariant('persistent') }} variant="outlined" sx={{ px: 2 }} color="button" size="small">
+                                SetVariant
+                            </Button> 
+                            {/* Will Removed ^^^ */}
                         </section>}
                     </div>
                 </div>
@@ -862,15 +867,17 @@ export const VariantpPersistentClient = () => {
     const context = useContext(DrawerContext);
 
     useEffect(() => {
-        if (context.variant !== 'persistent')
-            context.setVariant('persistent'); context.setOpen(false);
+        if (context.variant !== 'persistent') {
+            context.setVariant('persistent')
+            context.setOpen(false)
+        };
     }, [context.variant]);
 
     useEffect(() => {
         const styleTag = document.getElementById('r_tt');
-        if (styleTag) {
+        if (styleTag && context.variant === 'persistent') {
             styleTag.remove();
         }
-    }, []);
+    }, [context.variant]);
     return null;
 }
