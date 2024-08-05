@@ -366,8 +366,8 @@ export const NavMenu = () => {
 const ListItemRdX = ({ link, onClick = () => { } }) => {
     return (
         <MenuItem key={link.name} onClick={onClick} >
-            <Link className='w-full' href={link.url}>
-                <Tooltip title={link.helpText || link.name} placement="left" slotProps={{
+            <Link className='w-full' href={link?.url || '#'}>
+                <Tooltip title={link?.helpText || link.name} placement="left" slotProps={{
                     popper: {
                         modifiers: [
                             {
@@ -383,7 +383,7 @@ const ListItemRdX = ({ link, onClick = () => { } }) => {
                         <ListItemIcon>
                             <link.icon fontSize='small' />
                         </ListItemIcon>
-                        <Typography variant="inherit">{link.name}</Typography>
+                        <Typography variant="inherit">{link?.name}</Typography>
                     </Box>
                 </Tooltip>
             </Link>

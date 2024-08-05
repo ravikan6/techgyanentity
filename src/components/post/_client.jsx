@@ -304,7 +304,7 @@ const ArticleAuthor = ({ article }) => {
         <>
             <div className="flex justify-between hover:bg-black/10 dark:hover:bg-white/10 py-1 px-1 rounded-md space-x-2 items-center mb-5 border-y-slate-500">
                 <div className="flex items-center py-1">
-                    <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
+                    <Link href={`/@${article?.author?.handle}`} className="">
                         <div className="flex items-center cursor-pointer gap-3">
                             <AuthorAvatar data={{ url: article?.author?.image?.url }} className={'!w-6 !h-6'} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
                             <div className="flex flex-col justify-around">

@@ -140,7 +140,7 @@ const PostListView2 = ({ data, hidden }) => {
                                 <PostViewActions id={post?.id} post={post} />
                             </div>
 
-                            <div className="w-full flex flex-col-reverse md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
+                            <div className="wauto-full flex flex-col-reverse md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
                                 <div>
                                     <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
                                         <div>

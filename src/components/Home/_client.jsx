@@ -171,8 +171,8 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
         >
             <div className="py-5 px-5">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-16 h-16 rounded-full">
-                        <CldImage src={data?.image} fill />
+                    <div className="w-16 h-16 min-w-16 min-h-16 relative rounded-full overflow-hidden">
+                        <CldImage src={data?.image} fill className="rounded-full" />
                     </div>
                     <div className="flex flex-col gap-0.5">
                         <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
@@ -198,7 +198,7 @@ const ShareViewContent = ({ meta }) => {
 
     return (
         <>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center justify-center gap-5">
                 {
                     shareOptions.map((item) => (
                         <>
