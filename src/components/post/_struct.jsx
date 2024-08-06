@@ -127,57 +127,55 @@ const PostListView2 = ({ data, hidden }) => {
         <div className="flex flex-col gap-5 items-center max-w-2xl">
             {data?.list?.map((post) => (
 
-                <>
-                    <article key={post?.slug} className="w-full flex flex-col gap-1.5 sm:gap-2">
-                        <section className="flex flex-col gap-1.5 sm:gap-2">
-                            <div className="flex justify-between items-center">
-                                <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
-                                    <div className="flex items-center cursor-pointer space-x-3">
-                                        <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
-                                        <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
+                <article key={post?.slug} className="w-full flex flex-col gap-1.5 sm:gap-2">
+                    <section className="flex flex-col gap-1.5 sm:gap-2">
+                        <div className="flex justify-between items-center">
+                            <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
+                                <div className="flex items-center cursor-pointer space-x-3">
+                                    <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
+                                    <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
+                                </div>
+                            </Link>
+                            <PostViewActions id={post?.id} post={post} />
+                        </div>
+
+                        <div className="wauto-full flex flex-col-reverse md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
+                            <div>
+                                <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
+                                    <div>
+                                        <Tooltip title={post?.title}>
+                                            <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer line-clamp-2 text-ellipsis">{post?.title}</h1>
+                                        </Tooltip>
+                                    </div>
+                                    <div className="hidden md:block">
+                                        <span className="franklin text-[14px] leading-[18px] font-normal text-slate-500 dark:text-slate-400 cursor-pointer line-clamp-2">
+                                            {post?.description}
+                                        </span>
                                     </div>
                                 </Link>
-                                <PostViewActions id={post?.id} post={post} />
                             </div>
-
-                            <div className="wauto-full flex flex-col-reverse md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
-                                <div>
-                                    <Link className="flex flex-col gap-1" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                        <div>
-                                            <Tooltip title={post?.title}>
-                                                <h1 className="karnak text-xl font-semibold sm:font-bold  text-zinc-900 dark:text-slate-100 cursor-pointer line-clamp-2 text-ellipsis">{post?.title}</h1>
-                                            </Tooltip>
-                                        </div>
-                                        <div className="hidden md:block">
-                                            <span className="franklin text-[14px] leading-[18px] font-normal text-slate-500 dark:text-slate-400 cursor-pointer line-clamp-2">
-                                                {post?.description}
-                                            </span>
-                                        </div>
-                                    </Link>
-                                </div>
-                                <div className="rounded-md md:rounded-lg relative cursor-pointer w-full md:basis-[180px] md:h-[108px] shrink-0 self-center">
-                                    <Link className="block w-full h-full overflow-hidden rounded-md md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                        <ArticleImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
-                                    </Link>
-                                </div>
+                            <div className="rounded-md md:rounded-lg relative cursor-pointer w-full md:basis-[180px] md:h-[108px] shrink-0 self-center">
+                                <Link className="block w-full h-full overflow-hidden rounded-md md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
+                                    <ArticleImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
+                                </Link>
                             </div>
-                        </section>
-                        <section className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
-                            <PostMetaView data={post} />
-                            <div className="flex-row items-center flex gap-1">
-                                {(post?.tags && post?.tags?.length > 0) && <div className="flex gap-2 items-center">
-                                    <Link href={`/tags/${post?.tags?.at(0)}?source=tags_feed_article`}>
-                                        <div className="flex stymie justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-lightHead hover:bg-slate-200 dark:bg-darkHead dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
-                                            <span className="truncate">{post?.tags?.at(0)}</span>
-                                        </div>
-                                    </Link>
-                                    {!hidden?.bookmark && <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead" />}
-                                </div>}
-                                {!hidden?.bookmark && <Bookmark id={post?.shortId} variant="text" />}
-                            </div>
-                        </section>
-                    </article>
-                </>
+                        </div>
+                    </section>
+                    <section className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
+                        <PostMetaView data={post} />
+                        <div className="flex-row items-center flex gap-1">
+                            {(post?.tags && post?.tags?.length > 0) && <div className="flex gap-2 items-center">
+                                <Link href={`/tags/${post?.tags?.at(0)}?source=tags_feed_article`}>
+                                    <div className="flex stymie justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-lightHead hover:bg-slate-200 dark:bg-darkHead dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
+                                        <span className="truncate">{post?.tags?.at(0)}</span>
+                                    </div>
+                                </Link>
+                                {!hidden?.bookmark && <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead" />}
+                            </div>}
+                            {!hidden?.bookmark && <Bookmark id={post?.shortId} variant="text" />}
+                        </div>
+                    </section>
+                </article>
             ))
             }
             {data?.loading && <PostListLoadingSkelton count={12} />}

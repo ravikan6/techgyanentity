@@ -83,7 +83,6 @@ const SidebarContent = ({ article }) => {
     const handleDescription = () => {
         setOpen(true);
     }
-    const context = useContext(DrawerContext);
     return (
         <>
             <div className="h-[calc(100%-0px)] p-4 overflow-x-hidden">
@@ -94,10 +93,6 @@ const SidebarContent = ({ article }) => {
                         <PostActions id={article.id} commentCount={article?._count?.comments} isExpanded article={article} />
                     </div>
                 </div>
-                <Button onClick={() => (context.variant === 'persistent') ? context.setVariant('permanent') : context.setVariant('persistent')} variant="outlined" sx={{ px: 2 }} color="button" size="small">
-                    SetVariant
-                </Button>
-                {/* Will Removed ^^^ */}
                 <ArticleComments articleId={article.id} article={article} />
             </div>
             <Description article={article} publishedAt={publishedAt} updatedAt={updatedAt} open={open} setOpen={setOpen} />

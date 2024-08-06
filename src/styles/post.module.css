@@ -15,7 +15,7 @@
 }
 
 .paragraph {
-    @apply text-base 2xl:text-lg mb-4 text-start;
+    @apply text-base 2xl:text-lg mb-4 text-justify;
 }
 
 .code {

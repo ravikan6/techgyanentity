@@ -154,7 +154,7 @@ const ShareView = ({ component, data, meta }) => {
 
     return (
         <>
-            {(component && component?.button) ? <component.button onClick={() => { setIsOpen(true); component?.onClick() }} {...component.props} /> : <ShareButton onClick={() => setIsOpen(true)} />}
+            {(component && component?.button) ? <component.button onClick={() => { setIsOpen(true); (component?.onClick && component?.onClick()) }} {...component.props} /> : <ShareButton onClick={() => setIsOpen(true)} />}
             {
                 isUnderWidth ? <ShareSwiper isOpen={isOpen} setIsOpen={setIsOpen} data={data} meta={meta} /> : <ShareModal isOpen={isOpen} setIsOpen={setIsOpen} data={data} meta={meta} />
             }
@@ -169,7 +169,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
         <Dialog
             open={isOpen}
             onClose={() => setIsOpen(false)}
-            sx={{ maxWidth: '480px', width: 'full', mx: 'auto' }}
+            sx={{ maxWidth: '480px', width: '100%', mx: 'auto' }}
         >
             <div className="my-5 px-4 relative">
                 <div className="absolute -top-2 right-2">

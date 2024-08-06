@@ -58,6 +58,7 @@ const FollowButton = ({ authorId }) => {
             setError(error);
         } finally {
             setIsLoaded(true);
+            handleMenuClose();
         }
     }
 
