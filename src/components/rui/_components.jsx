@@ -1,6 +1,8 @@
 'use client'
 import React, { forwardRef, useState } from 'react'
 import { Menu, alpha, styled, Button, MenuItem, Tooltip, Zoom, tooltipClasses, Dialog, TextField, Box, Snackbar, IconButton, ToggleButtonGroup, ToggleButton, Switch, SwipeableDrawer } from "@mui/material";
+import { Puller } from '../post/_client';
+import { CloseBtn } from '../Buttons';
 
 
 const RuiMenu = styled(React.forwardRef((props, ref) => (
@@ -240,11 +242,26 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
-const RuiSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
+
+const RuiSwipeableDrawer = ({ children, puller = true, showClose = true, ...props }) => {
+
+    return (
+        <RuiSwipeableDrawerStyled {...props}>
+            {puller && <Puller className="block sm:hidden" />}
+            {showClose && <div className='absolute right-1.5 top-1.5 sm:block hidden'>
+                <CloseBtn onClick={props?.onClose} />
+            </div>}
+            <div className={`max-h-[calc(100%-14px)] overflow-y-auto mt-3 p-3`}>
+                {children}
+            </div>
+        </RuiSwipeableDrawerStyled>
+    )
+}
+
+const RuiSwipeableDrawerStyled = styled(SwipeableDrawer)(({ theme }) => ({
     '& .MuiDrawer-paper': {
         backgroundColor: theme.palette?.background?.paper,
         borderRadius: '20px 20px 0 0',
-        padding: '12px',
         position: 'absolute',
         maxHeight: 'calc(100% - 40px)',
         bottom: 0,

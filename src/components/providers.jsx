@@ -3,7 +3,7 @@ import { Experimental_CssVarsProvider as CssVarsProvider, getInitColorSchemeScri
 // import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { ThemeProvider as NextTheme } from 'next-themes'
 import { SessionProvider } from "next-auth/react"
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, Zoom } from 'react-toastify';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import CssBaseline from '@mui/material/CssBaseline';
 import mui from '@/styles/mui';
@@ -96,7 +96,7 @@ export function Providers({ session, children }) {
         <SessionProvider session={session}>
           {children}
           <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />
-          <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={10} position='bottom-center' draggable autoClose={4000} hideProgressBar />
+          <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={10} position='bottom-center' draggable autoClose={4000} hideProgressBar transition={Zoom} />
         </SessionProvider>
       </NextTheme>
       {/* </AppRouterCacheProvider> */}

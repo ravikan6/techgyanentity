@@ -272,16 +272,13 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
             sx={{ zIndex: 1500 }}
             keepMounted={false}
         >
-            <Puller />
-            <div className="my-2">
-                <h2 className="text-lg karnak mb-3">
-                    Share
-                </h2>
-                <ShareContentPreview data={data} />
-                <ShareViewContent meta={meta} show={3} />
-                <hr className="my-2"></hr>
-                <ListItemRdX link={{ name: 'Copy Link', icon: LinkOutlined, onClick: () => copyText(`${window.location.origin}${meta?.url}`) }} />
-            </div>
+            <h2 className="text-lg karnak mb-3">
+                Share
+            </h2>
+            <ShareContentPreview data={data} />
+            <ShareViewContent meta={meta} show={3} />
+            <hr className="my-2"></hr>
+            <ListItemRdX link={{ name: 'Copy Link', icon: LinkOutlined, }} onClick={() => copyText(`${window.location.origin}${meta?.url}`)} />
         </SwipeableDrawer>
     )
 }

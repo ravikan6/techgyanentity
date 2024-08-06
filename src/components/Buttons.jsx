@@ -230,13 +230,20 @@ const BtnWithMenu = (props) => {
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
           onClose={handleClose}
+          open={!!anchorEl}
           MenuListProps={{
-            'aria-labelledby': 'basic-button',
+            'aria-labelledby': 'Post Actions',
           }}
-          sx={{ zIndex: '999' }} >
-          <MenuList className='min-w-48'>
+          slotProps={{
+            paper: {
+              sx: {
+                borderRadius: '12px !important',
+                minWidth: '180px'
+              }
+            }
+          }}>
+          <MenuList className=''>
             {/* <MenuItem>
               <ListItemIcon />
               <span className='stymie text-base'>Follow</span>

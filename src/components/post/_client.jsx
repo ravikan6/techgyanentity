@@ -51,6 +51,7 @@ export const Puller = styled('div')(({ theme }) => ({
     position: 'absolute',
     top: 4,
     left: 'calc(50% - 20px)',
+
 }));
 
 const SidebarContext = createContext();
@@ -116,10 +117,7 @@ const Description = ({ article, open, setOpen }) => {
                     style: { position: 'absolute', left: 0, right: 0, bottom: 0, top: 0 },
                     disablePortal: true,
                 }} anchor="bottom" open={open} onClose={() => setOpen(false)} onOpen={() => setOpen(true)}>
-                <div className="visible relative">
-                    <Puller />
-                    <DescriptionContent article={article} onClose={() => setOpen(false)} />
-                </div>
+                <DescriptionContent article={article} onClose={() => setOpen(false)} />
             </SwipeableDrawer>
         </>
     );
@@ -132,7 +130,6 @@ const DescriptionContent = ({ article, onClose }) => {
                 <h2 className="text-lg font-bold ">
                     About
                 </h2>
-                <CloseBtn onClick={onClose} />
             </div>
             <div className="py-2 overflow-x-hidde pb-14">
                 <div className="">
@@ -409,10 +406,7 @@ export const ArticleTopMeta = ({ article }) => {
                                 ModalProps={{
                                     keepMounted: true,
                                 }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
-                                <div className="visible">
-                                    <Puller />
-                                    <DescriptionContent article={article} onClose={() => setDrawable(false)} />
-                                </div>
+                                <DescriptionContent article={article} onClose={() => setDrawable(false)} />
                             </SwipeableDrawer>
                         </div>, metaContent)
                     }
