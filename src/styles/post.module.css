@@ -15,11 +15,12 @@
 }
 
 .paragraph {
-    @apply text-base 2xl:text-lg mb-4;
+    @apply text-base 2xl:text-lg mb-4 text-start;
 }
 
 .code {
-    @apply text-sm font-mono bg-lightHead dark:bg-darkHead p-2 rounded-md;
+    @apply text-sm font-mono px-2 py-px rounded-md;
+    background-color: var(--rb-palette-head-main);
 }
 
 .link {

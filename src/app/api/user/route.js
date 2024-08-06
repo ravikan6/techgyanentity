@@ -31,6 +31,7 @@ export async function POST(request) {
 }
 
 
+// #1 - Get user data using Fetch API
 // const url = headers().get('origin') || process.env.APP_URL;
 // let fdata = new FormData();
 // fdata.append('id', token.id);
@@ -45,3 +46,20 @@ export async function POST(request) {
 //     }
 // });
 // const response = await res.json();
+
+// #2 - Get user data using Prisma
+// const response = await prisma.user.findUnique({
+//     where: {
+//         id: token.id,
+//     },
+//     include: {
+//         Author: {
+//             select: {
+//                 id: true,
+//             }
+//         }
+//     }
+// });
+// if (response?.image?.url) {
+//     response.image = `https://res.cloudinary.com/raviblog/image/upload/f_auto/q_auto/v1/${response.image.url}`;
+// }

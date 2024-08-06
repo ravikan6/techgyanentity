@@ -18,6 +18,7 @@ const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
     const [post, setPost] = useState({})
     const [npst, setNpst] = useState({})
+    const [categories, setCategories] = useState([])
 
     const router = useRouter();
 
@@ -26,10 +27,11 @@ const PostDetailsEditor = () => {
     useEffect(() => {
         const dtHandler = async () => {
             !loading && setLoading(true)
-            let dt = await getArticledetails(data?.article?.shortId, data?.data?.id);
+            let dt = await getArticledetails(data?.article?.shortId, data?.data?.id, true);
             if (dt?.data) {
                 setPost(dt.data)
-                setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, published: dt.data?.published })
+                setCategories(dt.categories)
+                setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, published: dt.data?.published, category: dt.data?.category })
             } else {
                 toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.')
                 router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
@@ -41,7 +43,7 @@ const PostDetailsEditor = () => {
     let ref = useRef(null);
 
     const undoHandler = () => {
-        setNpst({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published })
+        setNpst({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published, category: post?.category })
         setState({ ...state, canUndo: false, canSave: false })
     }
 
@@ -103,6 +105,11 @@ const PostDetailsEditor = () => {
                 }
             }
         }
+    }
+
+    const handleSetCategory = ({ target }) => {
+        let cat = categories.find((c) => c.slug === target.value);
+        setNpst({ ...npst, category: cat });
     }
 
     const handleImageData = (dt) => {
@@ -187,7 +194,7 @@ const PostDetailsEditor = () => {
                         </div>
                     </div>
                     <div className="w-full lg:max-w-[300px] md:min-w-[250px] md:max-w-[250px] lg:min-w-[300px]">
-                        <div className="flex flex-col space-y-8">
+                        <div className="flex flex-col gap-7">
 
                             <FtImage img={npst?.image} handleImageData={handleImageData} handleUpdateNewPost={handleUpdateNewPost} />
 
@@ -197,6 +204,15 @@ const PostDetailsEditor = () => {
                                     <MenuItem value="PUBLIC">Public</MenuItem>
                                     <MenuItem value="PRIVATE">Private</MenuItem>
                                     <MenuItem value="UNLISTED">Unlisted</MenuItem>
+                                </Select>
+                            </div>
+
+                            <div className="flex flex-col space-y-3">
+                                <InputHeader label={'Category'} desc={'Choose the category for your post. You can select a category from the list of available categories.'} tip={'Choose the category for your post.'} />
+                                <Select size="small" className="!rounded-full" value={npst?.category?.slug} label="" onChange={handleSetCategory} disabled={loading}>
+                                    {categories?.map((cat, index) => (
+                                        <MenuItem key={index} value={cat?.slug}>{cat?.name}</MenuItem>
+                                    ))}
                                 </Select>
                             </div>
 

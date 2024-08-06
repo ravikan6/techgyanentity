@@ -79,11 +79,11 @@ export const handleCreatePostRedirectAction = async (authorId) => {
             }
         });
         if (p.shortId)
-           return {status: 200, url: `/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor`};
+            return { status: 200, url: `/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor` };
         else throw new Error('An error occurred while creating the post. Please try again later.');
     } catch (error) {
         console.error("Error creating post:", error);
-        return {status: 500, message: error.message};
+        return { status: 500, message: error.message };
     }
 }
 
@@ -165,7 +165,12 @@ export const updatePostDetailsAction = async (data) => {
                 isDeleted: false,
             },
             data: {
-                ...setter
+                ...setter,
+                category: {
+                    connect: {
+                        slug: setter?.category?.slug,
+                    }
+                }
             },
             select: {
                 id: false,
@@ -182,7 +187,13 @@ export const updatePostDetailsAction = async (data) => {
                 deletedAt: true,
                 isDeleted: true,
                 tags: true,
-                image: true
+                image: true,
+                category: {
+                    select: {
+                        name: true,
+                        slug: true,
+                    }
+                }
             },
         });
         res = { ...res, data: updatedPost, status: 200 };
@@ -311,8 +322,8 @@ const getArticleContent = async (id) => {
     }
 }
 
-const getArticledetails = async (id, authorId) => {
-    let res = { data: null, status: 500, errors: [] };
+const getArticledetails = async (id, authorId, alsoCat) => {
+    let res = { data: null, status: 500, errors: [], categories: [] };
     try {
         const dt = await prisma.post.findFirst({
             where: {
@@ -334,10 +345,26 @@ const getArticledetails = async (id, authorId) => {
                 deletedAt: true,
                 isDeleted: true,
                 tags: true,
-                image: true
+                image: true,
+                category: {
+                    select: {
+                        name: true,
+                        slug: true,
+                    }
+                }
             },
         });
+
         if (dt && !dt.isDeleted) {
+            if (alsoCat) {
+                const cats = await prisma.category.findMany({
+                    select: {
+                        name: true,
+                        slug: true,
+                    }
+                });
+                res = { ...res, categories: cats };
+            }
             res = { ...res, data: dt, status: 200 };
         }
         return res;

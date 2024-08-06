@@ -404,11 +404,11 @@ export const InputHeader = ({ label, desc, tip }) => {
         <div className="flex flex-col mb-1">
             <h2 className="text-base stymie mb-0.5 font-semibold">{label}</h2>
             {desc && <p className="text-[13px] text-slate-600 dark:text-slate-400">
-                {desc} {tip && <Tooltip sx={{ ml: 1 }} enterDelay={0} title={<p className='p-1 text-[12px] max-w-[200px]'>{tip}</p>} placement="right-end">
+                {desc} {tip && <Tooltip sx={{ ml: 1 }} enterDelay={0} title={<p className='p-1 text-[12px] max-w-[200px]'>{tip}</p>}>
                     <span className='ml-1'><BsPatchQuestion /></span>
                 </Tooltip>}</p>
             }
-        </div>
+        </div >
     );
 };
 

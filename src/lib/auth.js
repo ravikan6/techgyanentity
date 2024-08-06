@@ -94,25 +94,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             }
             if (token.id) {
                 try {
-                    const response = await prisma.user.findUnique({
-                        where: {
-                            id: token.id,
+                    const url = headers().get('origin') || process.env.APP_URL;
+                    let fdata = new FormData();
+                    fdata.append('id', token.id);
+                    const res = await fetch(`${url}/api/user`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
                         },
-                        include: {
-                            Author: {
-                                select: {
-                                    id: true,
-                                }
-                            }
+                        body: fdata,
+                        next: {
+                            revalidate: 10,
                         }
                     });
-                    if (response?.image?.url) {
-                        response.image = `https://res.cloudinary.com/raviblog/image/upload/f_auto/q_auto/v1/${response.image.url}`;
-                    }
+                    const response = await res.json();
                     token = { ...token, ...response };
                     delete token.password;
                 } catch (error) {
-                    console.log("Server Error:", error?.message) //TODO: Will be removed in production
+                    console.log("Error from auth callback:", JSON.stringify(error)) //TODO: Will be removed in production
                 }
             }
             return Promise.resolve(token)

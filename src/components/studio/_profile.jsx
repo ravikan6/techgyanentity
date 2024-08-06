@@ -106,7 +106,7 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
                 <div className='px-2'>
                     <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
                         <div className="flex my-4 flex-col items-center justify-center">
-                            <Avatar alt='Avatar' className="w-20 h-20 rounded-full" src={currentData?.image}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                            <Avatar alt='Avatar' className="!w-20 !h-20 rounded-full" src={currentData?.image}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                             <span className="mt-2 text-xl max-w-60 truncate font-medium cheltenham">Hi, {currentData?.name}</span>
                         </div>
                         <Tooltip title="Manage your Account">
@@ -183,7 +183,7 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
 const ListGridItem = ({ link, link2 }) => {
     return (
         <div key={link.name} className='flex justify-center space-x-1'>
-            <MenuItem className="bg-lightHead w-1/2 dark:bg-darkHead rounded-r-2xl rounde-l-none" >
+            <MenuItem className="!bg-lightHead w-1/2 dark:!bg-darkHead rounded-r-2xl rounde-l-none" >
                 <Tooltip title={link.helpText || link.name} placement="bottom-start">
                     <Link onClick={link?.onClick} className='w-full' href={link.url}>
                         <Box component="a" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%', textDecoration: 'none', color: 'inherit' }}>
@@ -195,7 +195,7 @@ const ListGridItem = ({ link, link2 }) => {
                     </Link>
                 </Tooltip>
             </MenuItem>
-            <MenuItem className="bg-lightHead w-1/2 dark:bg-darkHead rounded-l-2xl rounde-r-none" >
+            <MenuItem className="!bg-lightHead w-1/2 dark:!bg-darkHead rounded-l-2xl rounde-r-none" >
                 <Tooltip title={link2.helpText || link2.name} placement="bottom-start">
                     <Link onClick={link2?.onClick} className='w-full' href={link2.url}>
                         <Box component="a" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%', textDecoration: 'none', color: 'inherit' }}>
@@ -313,16 +313,16 @@ const SwitchAccount = ({ state, context }) => {
             </div>
         )
     }
-    let newComp = useMemo(() => {
-        return <Component />
-    }, [context?.data?.data?.id, pageInfo]);
+    // let newComp = useMemo(() => {
+    //     return <Component />
+    // }, [context?.data?.data?.id, pageInfo]);
 
     return (
         <ListInsideModel link={{
             name: `Switch ${pageInfo?.serviceName}`,
             icon: Person4Outlined,
         }} data={{
-            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: newComp
+            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: Component
         }} state={state} />
     )
 }
@@ -336,20 +336,6 @@ const SIgnOutMenuBtn = () => {
                         <Logout fontSize='small' />
                     </ListItemIcon>
                     <Typography variant="inherit truncate">Sign Out</Typography>
-                </Box>
-            </Tooltip>
-        </MenuItem>
-    )
-}
-const CreateChannelBtn = () => {
-    return (
-        <MenuItem className="bg-lightHead w-full dark:bg-darkHead " >
-            <Tooltip title="Click here to sign out">
-                <Box onClick={() => { }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%', textDecoration: 'none', color: 'inherit' }}>
-                    <ListItemIcon>
-                        <Person4Outlined fontSize='small' />
-                    </ListItemIcon>
-                    <Typography variant="inherit truncate">Add Channel</Typography>
                 </Box>
             </Tooltip>
         </MenuItem>

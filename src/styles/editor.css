@@ -588,6 +588,18 @@
     -moz-osx-font-smoothing: grayscale
 }
 
+.bn-default-styles p {
+    text-align: justify;
+}
+
+.bn-inline-content code {
+    border-radius: .375rem;
+    background-color: var(--rb-palette-head-main);
+    padding: 1px .5rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    margin: 0 2px;
+}
+
 .bn-table-drop-cursor {
     position: absolute;
     z-index: 20;
