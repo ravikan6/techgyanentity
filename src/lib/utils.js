@@ -68,10 +68,10 @@ function formatDateToString(dateString) {
         shortFormat = `${daysDifference} day${daysDifference === 1 ? '' : 's'}`;
     } else if (daysDifference < 30) {
         shortFormat = `${weeksDifference} week${weeksDifference === 1 ? '' : 's'}`;
-    } else if (daysDifference < 365) {
-        shortFormat = `${monthsDifference} month${monthsDifference === 1 ? '' : 's'}`;
+    } else if (yearsDifference === 0) {
+        shortFormat = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     } else {
-        shortFormat = null; // Fallback to long format if over a year
+        shortFormat = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
     // Long format

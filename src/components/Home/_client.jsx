@@ -9,6 +9,8 @@ import { ChevronLeft, ChevronRight, FacebookOutlined, LinkOutlined, Telegram, Wa
 import { CloseBtn, ShareButton } from "../Buttons";
 import { CldImage } from "next-cloudinary";
 import { ListItemRdX } from "./_profile-model";
+import { copyText } from "@/lib/helpers";
+import { Puller } from "../post/_client";
 
 
 export const TestToastify = () => {
@@ -170,7 +172,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
             sx={{ maxWidth: '480px', width: 'full', mx: 'auto' }}
         >
             <div className="my-5 px-4 relative">
-                <div className="absolute top-2 right-2">
+                <div className="absolute -top-2 right-2">
                     <CloseBtn onClick={() => setIsOpen(false)} />
                 </div>
                 <div className="flex flex-col gap-4">
@@ -180,7 +182,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
                     <ShareContentPreview data={data} />
                     <ShareViewContent meta={meta} />
                     <div>
-                        <TextField variant="outlined" value={`${window.location.origin}${meta?.url}`} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full dark:!text-black" color="button" size="small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
+                        <TextField fullWidth variant="outlined" value={`${window.location.origin}${meta?.url}`} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full dark:!text-black font-semibold -mr-2" color="button" size="small" onClick={() => copyText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
                     </div>
                 </div>
             </div>
@@ -188,16 +190,16 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
     )
 }
 
-const ShareViewContent = ({ meta }) => {
+const ShareViewContent = ({ meta, show }) => {
     const [slideIndex, setSlideIndex] = useState(0);
-    const visibleButtons = 4;
+    const visibleButtons = show || 4;
 
     const shareOptions = [
         { name: 'Facebook', icon: FacebookOutlined, color: 'blue', onClick: () => window.open('https://www.facebook.com/sharer/sharer.php?u=https://www.google.com', '_blank') },
         { name: 'Twitter', icon: X, color: 'black', onClick: () => window.open('https://twitter.com/intent/tweet?text=Hello%20world&url=https://www.google.com', '_blank') },
         { name: 'Whatsapp', icon: WhatsApp, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
         { name: 'Telegram', icon: Telegram, color: 'blue', onClick: () => window.open('https://t.me/share/url?url=https://www.google.com', '_blank') },
-        { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`) },
+        { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => copyText(`${window.location.origin}${meta?.url}`) },
     ]
 
     const handlePrevClick = () => {
@@ -247,7 +249,7 @@ const ShareContentPreview = ({ data }) => {
     return (
         <div className="flex items-center gap-3 mb-4">
             <div className="w-16 h-16 min-w-16 min-h-16 relative rounded-full overflow-hidden">
-                <CldImage src={data?.image} crop={'fill'} fill className="rounded-full" />
+                <CldImage src={data?.image} crop={'fill'} width={64} height={64} className="rounded-full" />
             </div>
             <div className="flex flex-col gap-0.5">
                 <h2 className="line-clamp-1 text-ellipsis karnak text-base font-bold">
@@ -267,15 +269,18 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
             swipeAreaWidth={40}
             container={document?.body}
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
+            sx={{ zIndex: 1500 }}
+            keepMounted={false}
         >
+            <Puller />
             <div className="my-2">
                 <h2 className="text-lg karnak mb-3">
                     Share
                 </h2>
                 <ShareContentPreview data={data} />
-                <ShareViewContent meta={meta} />
+                <ShareViewContent meta={meta} show={3} />
                 <hr className="my-2"></hr>
-                <ListItemRdX link={{ name: 'Copy Link', icon: LinkOutlined, onClick: () => navigator.clipboard.writeText(`${window.location.origin}${meta?.url}`) }} />
+                <ListItemRdX link={{ name: 'Copy Link', icon: LinkOutlined, onClick: () => copyText(`${window.location.origin}${meta?.url}`) }} />
             </div>
         </SwipeableDrawer>
     )

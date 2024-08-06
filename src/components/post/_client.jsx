@@ -43,7 +43,7 @@ export const ArticleImage = ({ image, classes, height, width, className, style }
     />
 }
 
-const Puller = styled('div')(({ theme }) => ({
+export const Puller = styled('div')(({ theme }) => ({
     width: 40,
     height: 5,
     backgroundColor: theme.palette?.accent?.main,
