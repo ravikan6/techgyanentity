@@ -217,8 +217,8 @@ const SwitchAccount = ({ state, context }) => {
     const [pageInfo, setPageInfo] = useState({
         serviceName: 'Author',
         createUrl: '/setup/author',
-        des: 'Comming soon...',
-        disabled: true,
+        des: 'Add new Creator Profile',
+        // disabled: true,
     });
 
     const updateContextCookie = (data) => {
@@ -313,16 +313,17 @@ const SwitchAccount = ({ state, context }) => {
             </div>
         )
     }
-    // let newComp = useMemo(() => {
-    //     return <Component />
-    // }, [context?.data?.data?.id, pageInfo]);
+
+    let newComp = useMemo(() => {
+        return <Component />
+    }, []); // context?.data?.data?.id, pageInfo
 
     return (
         <ListInsideModel link={{
             name: `Switch ${pageInfo?.serviceName}`,
             icon: Person4Outlined,
         }} data={{
-            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: Component
+            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: newComp, isJsx: true,
         }} state={state} />
     )
 }

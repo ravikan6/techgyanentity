@@ -868,7 +868,7 @@ const CommentsLoader = ({ count }) => {
                             <div id="comment_body">
                                 <Skeleton variant="text" width={'100%'} />
                                 {
-                                    count % 2 === 0 ? (
+                                    ((count % 2) === 0) ? (
                                         <>
                                             <Skeleton variant="text" width={'100%'} />
                                             <Skeleton variant="text" width={'40%'} />

@@ -213,7 +213,7 @@ export const SecondaryMenu = ({ insiderData, insiderRun, handleBack, modern = tr
             </Box>
             <div className='w-full rb_sss mt-10'>
                 <p className='text-sm py-2 px-4 text-wrap mx-auto text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
-                {(insiderData?.component) ? insiderData?.component
+                {(insiderData?.isJsx) ? insiderData?.component
                     : insiderData?.options.map((option, index) => (
                         <MenuItem onClick={() => insiderRun(option.value)} key={index} >
                             <ListItemIcon>
