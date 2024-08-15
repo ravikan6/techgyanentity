@@ -104,7 +104,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         },
                         body: fdata,
                         next: {
-                            revalidate: 10,
+                            revalidate: 20,
                         }
                     });
                     const response = await res.json();

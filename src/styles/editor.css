@@ -592,6 +592,15 @@
     text-align: justify;
 }
 
+.bn-inline-content a {
+    color: var(--rb-palette-button-main);
+    text-decoration-line: underline;
+    text-underline-offset: 2px;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+    transition-duration: .15s;
+}
+
 .bn-inline-content code {
     border-radius: .375rem;
     background-color: var(--rb-palette-head-main);

@@ -37,33 +37,51 @@
   .scrollbar-m::-webkit-scrollbar {
     @apply w-4;
   }
-}
 
-.rb_SideBar_ScrollBar:hover .MuiDrawer-paper::-webkit-scrollbar-thumb {
-  @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
-  @apply transition-all duration-500 opacity-100;
-}
 
-.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  border: 3px solid transparent;
-  border-radius: 8px;
-  box-shadow: none;
-  min-height: 50px;
-  transition: background-color 0.2s ease-in-out;
-  @apply bg-transparent dark:bg-transparent opacity-0;
-}
+  .rb-scrollbar::-webkit-scrollbar {
+    @apply w-2 bg-white dark:bg-slate-800;
+  }
 
-.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar {
-  @apply w-2.5;
-}
+  .rb-scrollbar::-webkit-scrollbar-track {
+    @apply w-2 bg-transparent;
+  }
 
-.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-thumb:hover {
-  border: 2px solid transparent;
-}
+  .rb-scrollbar::-webkit-scrollbar-thumb {
+    @apply w-2 bg-gray-300 border-solid border-[3px] border-white dark:border-zinc-800 rounded dark:bg-slate-600;
+  }
 
-.rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-track {
-  @apply mt-[60px] mb-2 border-0 bg-transparent;
+  .rb-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply border-2 bg-slate-700 dark:bg-slate-400;
+  }
+
+
+  .rb_SideBar_ScrollBar:hover .MuiDrawer-paper::-webkit-scrollbar-thumb {
+    @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
+    @apply transition-all duration-500 opacity-100;
+  }
+
+  .rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    box-shadow: none;
+    min-height: 50px;
+    transition: background-color 0.2s ease-in-out;
+    @apply bg-transparent dark:bg-transparent opacity-0;
+  }
+
+  .rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar {
+    @apply w-2.5;
+  }
+
+  .rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-thumb:hover {
+    border: 2px solid transparent;
+  }
+
+  .rb_SideBar_ScrollBar .MuiDrawer-paper::-webkit-scrollbar-track {
+    @apply mt-[60px] mb-2 border-0 bg-transparent;
+  }
 }
 
 /* ******************************************* */
@@ -93,21 +111,6 @@
 
 /************************************************************/
 
-.rb-scrollbar::-webkit-scrollbar {
-  @apply w-2 bg-white dark:bg-slate-800;
-}
-
-.rb-scrollbar::-webkit-scrollbar-track {
-  @apply w-2 bg-transparent;
-}
-
-.rb-scrollbar::-webkit-scrollbar-thumb {
-  @apply w-2 bg-gray-300 border-solid border-[3px] border-white dark:border-zinc-800 rounded dark:bg-slate-600;
-}
-
-.rb-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply border-2 bg-slate-700 dark:bg-slate-400;
-}
 
 .nav-up {
   top: -65px !important;

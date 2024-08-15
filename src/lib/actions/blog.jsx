@@ -62,25 +62,28 @@ export const handleCreatePostRedirectAction = async (authorId) => {
         redirect('/setup/author');
     }
     try {
-
-        let sId = generateUniqueId(12);
-        const p = await prisma.post.create({
-            data: {
-                title: 'Untitled',
-                author: {
-                    connect: {
-                        id: authorId,
+        if (session?.user?.Author?.find((a) => a.id === authorId)) {
+            let sId = generateUniqueId(12);
+            const p = await prisma.post.create({
+                data: {
+                    title: 'Untitled',
+                    author: {
+                        connect: {
+                            id: authorId,
+                        },
                     },
-                },
-                slug: `post-${sId}`,
-                published: false,
-                content: [],
-                shortId: sId,
-            }
-        });
-        if (p.shortId)
-            return { status: 200, url: `/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor` };
-        else throw new Error('An error occurred while creating the post. Please try again later.');
+                    slug: `post-${sId}`,
+                    published: false,
+                    content: [],
+                    shortId: sId,
+                }
+            });
+            if (p.shortId)
+                return { status: 200, url: `/${process.env.STUDIO_URL_PREFIX}/p/${p.shortId}/editor` };
+            else throw new Error('An error occurred while creating the post. Please try again later.');
+        } else {
+            throw new Error('Unauthorized');
+        }
     } catch (error) {
         console.error("Error creating post:", error);
         return { status: 500, message: error.message };

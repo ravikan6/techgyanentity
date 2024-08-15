@@ -466,7 +466,7 @@ export const ArticleComments = ({ articleId, article }) => {
                 </div>
                 <CommentForm onAddComment={handleAddComment} article={article} />
                 {loading ? (
-                    <BetaLoader />
+                    <CommentsLoader count={3} />
                 ) : (
                     comments?.map((comment, index) => {
                         return (
@@ -833,7 +833,7 @@ const RepliesView = ({ commentId, toReplay, handleAddReply, count, article }) =>
                     </div>
                 );
             }) : <div className="text-sm text-gray-500 dark:text-gray-300">No replies found</div>) :
-                <BetaLoader />
+                <CommentsLoader count={1} />
             }
         </>
     )
@@ -848,6 +848,42 @@ const BetaLoader = () => {
             </span>
         </div>
     )
+}
+
+const CommentsLoader = ({ count }) => {
+
+    return (
+        <div className="flex flex-col gap-6">
+            {
+                new Array(count).fill().map((_, index) => (
+                    <div key={index} className="flex items-start space-x-4">
+                        <Skeleton variant="circular" width={24} height={24} />
+                        <div className="flex flex-col grow">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                    <Skeleton variant="text" width={100} />
+                                    <Skeleton variant="text" width={70} />
+                                </div>
+                            </div>
+                            <div id="comment_body">
+                                <Skeleton variant="text" width={'100%'} />
+                                {
+                                    count % 2 === 0 ? (
+                                        <>
+                                            <Skeleton variant="text" width={'100%'} />
+                                            <Skeleton variant="text" width={'40%'} />
+                                        </>
+                                    ) : (
+                                        <Skeleton variant="text" width={'100%'} />
+                                    )
+                                }
+                            </div>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+    );
 }
 
 

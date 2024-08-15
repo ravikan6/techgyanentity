@@ -23,7 +23,7 @@ export async function POST(request) {
         }
         const data = { ...response, password: null };
 
-        return Response.json({ data })
+        return Response.json(data)
     } catch (error) {
         console.error(error); //TODO: Will be removed in production
         return Response.json({})
