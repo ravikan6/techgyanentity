@@ -283,4 +283,9 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
     )
 }
 
-export { UserBookmarks, UserClappedPost, ShareView };
+const DrawerSetter = ({state}) => {
+    localStorage.setItem('isDrawerHidden', `${state}`);
+    return null;
+}
+
+export { UserBookmarks, UserClappedPost, ShareView, DrawerSetter };

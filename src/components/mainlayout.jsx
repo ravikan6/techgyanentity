@@ -8,6 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MainLogo } from '@/lib/client';
 import { CgMenuLeft } from 'react-icons/cg';
+import { toast } from 'react-toastify';
+import { usePathname } from 'next/navigation';
 
 const drawerWidth = 240;
 const drawerWidthClose = 80;
@@ -25,7 +27,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
         },
         marginLeft: 0,
         paddingTop: '54px',
-        width: `calc(100% - ${drawerWidth_get(open, variant)}px)`,
+        width: `calc(100% - ${(variant === 'permanent') ? drawerWidth_get(open, variant) : 0}px)`,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -36,10 +38,6 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
                 duration: theme.transitions.duration.leavingScreen,
             }),
         }),
-        ...((open && variant == 'persistent') && {
-            transition: null,
-            marginLeft: `-${drawerWidth}px`,
-        }),
     }),
 );
 
@@ -47,28 +45,39 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
 export const DrawerContext = React.createContext();
 
 const drawerWidth_get = (open, variant) => {
-    if (variant === 'persistent') {
-        return open ? drawerWidth : 0;
-    } else {
+    if (variant === 'permanent') {
         return open ? drawerWidth : drawerWidthClose;
-    }
+    } else return drawerWidth;
 }
 
 const MainLayout = ({ children, session }) => {
     let q = useMediaQuery('(max-width:768px)');
-    let v = q ? 'persistent' : 'permanent';
-    let o = q ? false : true;
+    let v = !q && 'permanent';
+    let o = !q && true;
     const [open, setOpen] = React.useState(o);
     const [variant, setVariant] = React.useState(v);
 
+    const path = usePathname();
+
     const handleDrawerOpen = () => {
         setOpen(!open);
-    }
+    };
 
-    React.useMemo(() => {
-        setOpen(o)
-        setVariant(v)
-    }, [q]);
+    React.useEffect(() => {
+        const drawerElement = document.getElementById('_drawer#');
+        if (drawerElement) {
+            setOpen(false);
+            setVariant('temporary');
+            // const statusValue = drawerElement.getAttribute('data-status');
+            const styleTag = document.getElementById('r_tt');
+            if (styleTag && variant !== 'permanent') {
+                styleTag.remove();
+            }
+        } else {
+            setOpen(o)
+            setVariant(v)
+        }
+    }, [q, path, variant]);
 
     return (
         <DrawerContext.Provider value={{ open, setOpen, setVariant, variant }}>
@@ -85,25 +94,25 @@ const MainLayout = ({ children, session }) => {
 
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(open, variant),
-                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette?.modelBG?.main : 'transparent',
+                            backgroundColor: (theme) => variant !== 'permanent' ? theme.palette?.modelBG?.main : 'transparent',
                             mt: variant === 'persistent' ? 0 : 0, // '54px'
-                            pt: variant === 'persistent' ? 0 : '54px',
+                            pt: variant !== 'permanent' ? 0 : '54px',
                             border: 'none',
                             // transition: (theme) => theme.transitions.create('width', {
                             //     easing: theme.transitions.easing.sharp,
                             //     duration: theme.transitions.duration.short,
                             // }),
                         },
-                        zIndex: variant === 'persistent' ? (theme) => theme.zIndex.drawer + 1 : 1,
+                        zIndex: variant !== 'permanent' ? (theme) => theme.zIndex.drawer + 1 : 1,
                     }}
                     variant={variant}
                     anchor="left"
+                    keepMounted={false}
                     open={open}
                     className={(variant === 'permanent' ? '!hidden md:!block' : '') + ' rb_SideBar_ScrollBar rb_tt'}
                 >
-                    {variant === 'persistent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
+                    {variant !== 'permanent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
                         <IconButton
-                            // color="inherit"
                             aria-label="open drawer"
                             onClick={handleDrawerOpen}
                             edge="start"
@@ -113,10 +122,6 @@ const MainLayout = ({ children, session }) => {
                     <MainSidebar session={session} variant={variant} open={open} />
                 </Drawer>
                 <Main open={open} variant={variant}>
-                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer }}
-                        open={open && variant === 'persistent'}
-                        onClick={handleDrawerOpen}
-                    > </Backdrop>
                     {children}
                 </Main>
             </Box>

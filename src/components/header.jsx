@@ -99,7 +99,8 @@ export const VariantPersistent = () => {
                     display: none !important;
                 }
              `}</style>
-            <VariantpPersistentClient />
+            <div id="_drawer#"></div>
+            {/* <VariantpPersistentClient /> */}
         </>
     )
 }

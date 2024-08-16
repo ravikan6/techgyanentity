@@ -59,7 +59,6 @@ const SidebarContext = createContext();
 export const ArticleSidebar = ({ article }) => {
     let width = useMediaQuery('(min-width:1024px)');
     const [open, setOpen] = useState(false);
-
     return (
         <>
             <SidebarContext.Provider value={{ open, setOpen }}>
