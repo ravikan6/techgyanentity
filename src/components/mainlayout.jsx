@@ -60,7 +60,13 @@ const MainLayout = ({ children, session }) => {
     const path = usePathname();
 
     const handleDrawerOpen = () => {
-        setOpen(!open);
+        setOpen((open) => !open);
+    };
+
+    const handleTempDrawer = () => {
+        if (variant !== 'permanent') {
+            setOpen(false);
+        }
     };
 
     React.useEffect(() => {
@@ -87,10 +93,10 @@ const MainLayout = ({ children, session }) => {
                         width: drawerWidth_get(open, variant),
                         flexShrink: 0,
 
-                        // transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
-                        //     easing: theme.transitions.easing.sharp,
-                        //     duration: theme.transitions.duration.short,
-                        // }),
+                        transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.short,
+                        }),
 
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(open, variant),
@@ -98,17 +104,17 @@ const MainLayout = ({ children, session }) => {
                             mt: variant === 'persistent' ? 0 : 0, // '54px'
                             pt: variant !== 'permanent' ? 0 : '54px',
                             border: 'none',
-                            // transition: (theme) => theme.transitions.create('width', {
-                            //     easing: theme.transitions.easing.sharp,
-                            //     duration: theme.transitions.duration.short,
-                            // }),
+                            transition: (theme) => theme.transitions.create('width', {
+                                easing: theme.transitions.easing.sharp,
+                                duration: theme.transitions.duration.short,
+                            }),
                         },
                         zIndex: variant !== 'permanent' ? (theme) => theme.zIndex.drawer + 1 : 1,
                     }}
                     variant={variant}
                     anchor="left"
-                    keepMounted={false}
                     open={open}
+                    onClose={handleDrawerOpen}
                     className={(variant === 'permanent' ? '!hidden md:!block' : '') + ' rb_SideBar_ScrollBar rb_tt'}
                 >
                     {variant !== 'permanent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
@@ -116,10 +122,10 @@ const MainLayout = ({ children, session }) => {
                             aria-label="open drawer"
                             onClick={handleDrawerOpen}
                             edge="start"
-                        > <CgMenuLeft /> </IconButton>
+                        > <CgMenuLeft className='w-5 h-5' /> </IconButton>
                         <MainLogo className={'sm:ml-4 ml-3'} />
                     </div></>}
-                    <MainSidebar session={session} variant={variant} open={open} />
+                    <MainSidebar session={session} variant={variant} open={open} onMenuClick={handleTempDrawer} />
                 </Drawer>
                 <Main open={open} variant={variant}>
                     {children}

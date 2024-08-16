@@ -7,7 +7,7 @@
 import { AiOutlineComment } from 'react-icons/ai';
 import { PiHandsClappingLight } from 'react-icons/pi';
 import { BookmarkBtn, BtnWithMenu, PostEditButton } from '../Buttons';
-import { Button, SwipeableDrawer } from '../rui';
+import { Button, SwipeableDrawer, Tooltip } from '../rui';
 import { ArticleComments } from './_client';
 import { useState, useEffect, useContext } from 'react';
 import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkAction, isPostAuthor } from '@/lib/actions/author';
@@ -16,6 +16,7 @@ import { FaHandsClapping } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { StudioContext } from '@/lib/context';
 import { ShareView } from '../Home/_client';
+import { BiSolidUserCircle } from 'react-icons/bi';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
@@ -24,12 +25,13 @@ import { ShareView } from '../Home/_client';
  */
 export const PostActions = ({ id, className, modern, commentCount, isExpanded, article }) => {
     const [drawable, setDrawable] = useState(false);
+    const { data: session } = useSession();
 
     return (
         <>
             <div className={`flex my-2 h-8 overflow-y-hidden overflow-x-auto ${modern ? 'justify-between' : 'justify-start'} space-x-6 items-center flex-row ${className}`}>
                 <div className={`justify-start flex items-center space-x-6`}>
-                    <ClapPost id={id} />
+                    <ClapPost id={id} session={session} />
                     {!isExpanded && <Button
                         onClick={() => setDrawable(true)}
                         sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<AiOutlineComment />} endIcon={<><span className='!text-xs'>{(commentCount == null || commentCount == undefined) ? '--' : commentCount}</span></>} />}
@@ -37,7 +39,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
                     <ShareView data={{ image: article?.image?.url, title: article?.title, info: article?.description }} meta={{ url: `/@${article?.author?.handle}/${article?.slug}` }} />
-                    <Bookmark id={article?.shortId} />
+                    <Bookmark id={article?.shortId} session={session} />
                     <BtnWithMenu id={id} />
                 </div>
             </div>
@@ -62,11 +64,15 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
     );
 }
 
-export const Bookmark = ({ id, variant }) => {
+export const Bookmark = ({ id, variant, session }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        if (!session?.user) {
+            setIsLoading(false);
+            return;
+        }
         setIsLoading(true);
         try {
             checkBookmarkAction(id).then((res) => {
@@ -82,6 +88,10 @@ export const Bookmark = ({ id, variant }) => {
     }, []);
 
     const handleBookmarkClick = async () => {
+        if (!session?.user) {
+            toast.error('You need to be logged in to bookmark');
+            return;
+        }
         setIsLoading(true);
         try {
             let res = await bookmarkAction(id)
@@ -97,16 +107,17 @@ export const Bookmark = ({ id, variant }) => {
     }
 
     return (
-        <BookmarkBtn variant={variant} isLoading={isLoading} onClick={handleBookmarkClick} bookmarked={isBookmarked} />
+        <UnAuthorizedActionWrapper description={'Sign in to bookmark'}>
+            <BookmarkBtn variant={variant} isLoading={isLoading} onClick={handleBookmarkClick} bookmarked={isBookmarked} />
+        </UnAuthorizedActionWrapper>
     );
 }
 
-const ClapPost = ({ id }) => {
+const ClapPost = ({ id, session }) => {
     const [claps, setClaps] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isClapped, setIsClapped] = useState({ is: false, clappedId: null });
     const [clapsCount, setClapsCount] = useState(0);
-    const { data: session } = useSession();
 
     useEffect(() => {
         articleClapsList(id).then((res) => {
@@ -120,7 +131,7 @@ const ClapPost = ({ id }) => {
     }, [id])
 
     useEffect(() => {
-        if (claps) {
+        if (claps && session?.user) {
             let clap = claps.find((clap) => clap?.userId == session?.user?.id);
             if (clap) {
                 setIsClapped({ is: true, clappedId: clap?.id });
@@ -129,6 +140,10 @@ const ClapPost = ({ id }) => {
     }, [claps])
 
     const handleClap = async () => {
+        if (!session?.user) {
+            toast.error('You need to be logged in to clap');
+            return;
+        }
         setIsLoading(true);
         try {
             if (isClapped.is && isClapped.clappedId) {
@@ -156,7 +171,14 @@ const ClapPost = ({ id }) => {
     }
 
     return (
-        <Button disabled={isLoading} sx={{ px: 2, height: '32px' }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
+        session?.user ?
+            <Tooltip title={isClapped?.is ? 'Unclap' : 'Clap'} placement='top'>
+                <Button disabled={isLoading} sx={{ px: 2, height: '32px' }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
+            </Tooltip>
+            :
+            <UnAuthorizedActionWrapper description={'Sign in to clap'}>
+                <Button sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
+            </UnAuthorizedActionWrapper>
     );
 }
 
@@ -169,4 +191,56 @@ const AuthorActions = ({ id, authorId }) => {
             <PostEditButton href={`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${id}/edit`} />
         );
     }
+}
+
+const UnAuthorizedActionWrapper = ({ children, description }) => {
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const TheComp = () => {
+        return (
+            <>
+                <div className='max-w-72 p-2'>
+                    <p className='italic text-xs cheltenham-small dark:text-zinc-800 text-gray-100 mb-3'>
+                        {description}
+                    </p>
+                    <div className='flex justify-end items-center'>
+                        <Button
+                            variant='outlined'
+                            color="head"
+                            size="small"
+                            onClick={
+                                () => {
+                                    setOpen(false);
+                                }
+                            }
+                        >
+                            <BiSolidUserCircle className='w-5 h-5 mr-2' />
+                            <span >Sign In</span>
+                        </Button>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
+    return (
+        <Tooltip
+            disableHoverListener
+            disableTouchListener
+            open={open} onClose={handleClose} onOpen={handleOpen}
+            title={<TheComp />}
+            placement='top'>
+            <span onClick={handleOpen}>
+                {children}
+            </span>
+        </Tooltip>
+    );
 }

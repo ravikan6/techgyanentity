@@ -111,156 +111,156 @@ const discoverMenu = [
 const MainSidebar = (props) => {
     const path = usePathname();
     const session = props?.session;
+    const onMenuClick = props?.onMenuClick;
     const isSmall = props?.variant === 'permanent' && !props?.open;
     const [userData, setUserData] = useState(null);
-    const [channelData, setchannelData] = useState(null);
     const [showMore, setShowMore] = useState(false);
 
 
-    const UserChannels = () => {
-        const isPathMatching2 = false;
-        const Channels = userData?.channels?.edges;
-        const [showMore, setShowMore] = useState(false);
+    // const UserChannels = () => {
+    //     const isPathMatching2 = false;
+    //     const Channels = userData?.channels?.edges;
+    //     const [showMore, setShowMore] = useState(false);
 
-        return (
-            <>
-                <rb-channel-menu class='block w-full'>
-                    <div className='mb-3 w-full cheltenham text-sm'>
-                        <h3 className='truncate text-gray-800 dark:text-gray-100 '>Your Channels</h3>
-                    </div>
-                    <rb-channel-list class='block mb-2 relative w-full rounded-xl py-2 bg-lightHead dark:bg-darkHead'>
-                        {Channels ?
-                            <>
-                                {Channels?.length > 0 ? <div className="relative w-full">
-                                    <div >
-                                        {Channels.map((item, index) => {
-                                            return (
-                                                <div key={index} className="flex items-center">
-                                                    <div className={`flex items-center ${isSmall ? 'justify-center' : 'w-full'}`}>
-                                                        <Tooltip title={item?.node?.name} placement="right" slotProps={{
-                                                            popper: {
-                                                                modifiers: [
-                                                                    {
-                                                                        name: 'offset',
-                                                                        options: {
-                                                                            offset: [0, 20],
-                                                                        },
-                                                                    },
-                                                                ],
-                                                            },
-                                                        }}>
-                                                            <Link href={`/${process.env.CHANNEL_URL_PREFIX}/@${item?.node?.handle}`} className={`h-10 backdrop-blur-xl transition-colors w-full ${isPathMatching2 ? 'bg-accentLight/20 dark:bg-accentDark/20' : 'bg-transparent'}`}>
-                                                                <Button sx={{ borderRadius: 0 }} className={`${isSmall ? '' : ''}`} fullWidth={!isSmall} >
-                                                                    <div className={`flex py-0.5 ${isSmall ? '' : 'px-2'} w-full space-x-7 items-center`}>
-                                                                        <Avatar width={20} height={20} className="h-5 w-5 rounded-full uppercase text-xs overflow-hidden" src={item?.node?.logo + '/?rounded=true'} alt={item?.node?.name} ></Avatar>
-                                                                        {!isSmall && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold">{item?.node?.name}</span>}
-                                                                    </div>
-                                                                </Button>
-                                                            </Link>
-                                                        </Tooltip>
-                                                    </div>
-                                                </div>)
-                                        })}
-                                    </div>
-                                </div> : <>
-                                    <div className='px-3 my-2 text-slate-600 dark:text-gray-300 text-xs text-center'>
-                                        You haven't created any channels yet.
-                                        <Link href={`/setup/channel`} className='text-accent dark:text-accentDark underline'>Create a channel</Link>
+    //     return (
+    //         <>
+    //             <rb-channel-menu class='block w-full'>
+    //                 <div className='mb-3 w-full cheltenham text-sm'>
+    //                     <h3 className='truncate text-gray-800 dark:text-gray-100 '>Your Channels</h3>
+    //                 </div>
+    //                 <rb-channel-list class='block mb-2 relative w-full rounded-xl py-2 bg-lightHead dark:bg-darkHead'>
+    //                     {Channels ?
+    //                         <>
+    //                             {Channels?.length > 0 ? <div className="relative w-full">
+    //                                 <div >
+    //                                     {Channels.map((item, index) => {
+    //                                         return (
+    //                                             <div key={index} className="flex items-center">
+    //                                                 <div className={`flex items-center ${isSmall ? 'justify-center' : 'w-full'}`}>
+    //                                                     <Tooltip title={item?.node?.name} placement="right" slotProps={{
+    //                                                         popper: {
+    //                                                             modifiers: [
+    //                                                                 {
+    //                                                                     name: 'offset',
+    //                                                                     options: {
+    //                                                                         offset: [0, 20],
+    //                                                                     },
+    //                                                                 },
+    //                                                             ],
+    //                                                         },
+    //                                                     }}>
+    //                                                         <Link href={`/${process.env.CHANNEL_URL_PREFIX}/@${item?.node?.handle}`} className={`h-10 backdrop-blur-xl transition-colors w-full ${isPathMatching2 ? 'bg-accentLight/20 dark:bg-accentDark/20' : 'bg-transparent'}`}>
+    //                                                             <Button sx={{ borderRadius: 0 }} className={`${isSmall ? '' : ''}`} fullWidth={!isSmall} >
+    //                                                                 <div className={`flex py-0.5 ${isSmall ? '' : 'px-2'} w-full space-x-7 items-center`}>
+    //                                                                     <Avatar width={20} height={20} className="h-5 w-5 rounded-full uppercase text-xs overflow-hidden" src={item?.node?.logo + '/?rounded=true'} alt={item?.node?.name} ></Avatar>
+    //                                                                     {!isSmall && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold">{item?.node?.name}</span>}
+    //                                                                 </div>
+    //                                                             </Button>
+    //                                                         </Link>
+    //                                                     </Tooltip>
+    //                                                 </div>
+    //                                             </div>)
+    //                                     })}
+    //                                 </div>
+    //                             </div> : <>
+    //                                 <div className='px-3 my-2 text-slate-600 dark:text-gray-300 text-xs text-center'>
+    //                                     You haven't created any channels yet.
+    //                                     <Link href={`/setup/channel`} className='text-accent dark:text-accentDark underline'>Create a channel</Link>
 
-                                    </div>
-                                </>}
-                            </>
-                            : <>
-                                {MenuSkeleton(5)}
-                            </>}
+    //                                 </div>
+    //                             </>}
+    //                         </>
+    //                         : <>
+    //                             {MenuSkeleton(5)}
+    //                         </>}
 
-                        {Channels?.length > 5 && <>
-                            <div className='h-4'>
-                                <div onClick={() => setShowMore(!showMore)} className={` transition-all left-1/2 -translate-x-1/2 absolute -bottom-3 rounded-full bg-slate-200 dark:bg-zinc-800`}>
-                                    <Button sx={{ borderRadius: 100 }} >
-                                        <div className="flex px-2 w-full space-x-1 items-center">
-                                            {showMore ? <BiChevronUp className="w-3 text-black dark:text-white h-3" /> : <BiChevronDown className="w-3 dark:text-gray-200 text-gray-700 h-3" />}
-                                            <span className="text-xs dark:text-gray-100 text-gray-800 truncate">{showMore ? 'Show less' : 'Show More'}</span>
-                                        </div>
-                                    </Button>
-                                </div>
-                            </div>
-                        </>}
-                    </rb-channel-list>
-                </rb-channel-menu>
-            </>
-        );
-    }
+    //                     {Channels?.length > 5 && <>
+    //                         <div className='h-4'>
+    //                             <div onClick={() => setShowMore(!showMore)} className={` transition-all left-1/2 -translate-x-1/2 absolute -bottom-3 rounded-full bg-slate-200 dark:bg-zinc-800`}>
+    //                                 <Button sx={{ borderRadius: 100 }} >
+    //                                     <div className="flex px-2 w-full space-x-1 items-center">
+    //                                         {showMore ? <BiChevronUp className="w-3 text-black dark:text-white h-3" /> : <BiChevronDown className="w-3 dark:text-gray-200 text-gray-700 h-3" />}
+    //                                         <span className="text-xs dark:text-gray-100 text-gray-800 truncate">{showMore ? 'Show less' : 'Show More'}</span>
+    //                                     </div>
+    //                                 </Button>
+    //                             </div>
+    //                         </div>
+    //                     </>}
+    //                 </rb-channel-list>
+    //             </rb-channel-menu>
+    //         </>
+    //     );
+    // }
 
-    const UserCommunities = () => {
-        const isPathMatching2 = path === '/feed/you';
-        const Communities = userData?.communities?.edges;
-        const [showMore, setShowMore] = useState(false);
+    // const UserCommunities = () => {
+    //     const isPathMatching2 = path === '/feed/you';
+    //     const Communities = userData?.communities?.edges;
+    //     const [showMore, setShowMore] = useState(false);
 
-        return (
-            <>
-                <rb-community-menu class='block w-full'>
-                    <div className='mb-3 w-full cheltenham text-sm'>
-                        <h3 className='truncate text-gray-800 dark:text-gray-100 '>Your Communities</h3>
-                    </div>
-                    <rb-community-list class='block relative mb-2 w-full rounded-lg py-2 bg-lightHead dark:bg-darkHead'>
-                        {Communities ?
-                            <> {Communities?.length > 0 ? <div className="relative w-full">
-                                {Communities.map((item, index) => {
-                                    return (
-                                        <div key={index} className="flex w-full items-center">
-                                            <div className="flex w-full items-center">
-                                                <Tooltip title={item?.node?.name} placement="right" arrow slotProps={{
-                                                    popper: {
-                                                        modifiers: [
-                                                            {
-                                                                name: 'offset',
-                                                                options: {
-                                                                    offset: [0, 20],
-                                                                },
-                                                            },
-                                                        ],
-                                                    },
-                                                }}>
-                                                    <Link href={`/${process.env.COMMUNITY_URL_PREFIX}/${item?.node?.handle}`} className={`h-10 backdrop-blur-xl transition-colors w-full ${isPathMatching2 ? 'bg-accentLight/20 dark:bg-accentDark/20' : 'bg-transparent'}`}>
-                                                        <Button sx={{ borderRadius: 0 }} fullWidth >
-                                                            <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
-                                                                <Avatar width={20} height={20} className="h-5 w-5 rounded-full text-xs overflow-hidden" src={item?.node?.avatar + '/?rounded=true'} alt={item?.node?.name} />
-                                                                <span className="text-base dark:text-gray-100 text-gray-800 font-semibold line-clamp-1 truncate">{item?.node?.name}</span>
-                                                            </div>
-                                                        </Button>
-                                                    </Link>
-                                                </Tooltip>
-                                            </div>
-                                        </div>)
-                                })}
-                            </div> :
-                                <>
-                                    <div className='px-3 my-2 text-slate-600 dark:text-gray-300 text-xs text-center'>
-                                        You haven't created any communities yet.
-                                        <Link href={`/setup/community`} className='text-accent dark:text-accentDark underline'>Create a Community</Link>
-                                    </div>
-                                </>
-                            } </> : <> {MenuSkeleton(5)} </>
-                        }
+    //     return (
+    //         <>
+    //             <rb-community-menu class='block w-full'>
+    //                 <div className='mb-3 w-full cheltenham text-sm'>
+    //                     <h3 className='truncate text-gray-800 dark:text-gray-100 '>Your Communities</h3>
+    //                 </div>
+    //                 <rb-community-list class='block relative mb-2 w-full rounded-lg py-2 bg-lightHead dark:bg-darkHead'>
+    //                     {Communities ?
+    //                         <> {Communities?.length > 0 ? <div className="relative w-full">
+    //                             {Communities.map((item, index) => {
+    //                                 return (
+    //                                     <div key={index} className="flex w-full items-center">
+    //                                         <div className="flex w-full items-center">
+    //                                             <Tooltip title={item?.node?.name} placement="right" arrow slotProps={{
+    //                                                 popper: {
+    //                                                     modifiers: [
+    //                                                         {
+    //                                                             name: 'offset',
+    //                                                             options: {
+    //                                                                 offset: [0, 20],
+    //                                                             },
+    //                                                         },
+    //                                                     ],
+    //                                                 },
+    //                                             }}>
+    //                                                 <Link href={`/${process.env.COMMUNITY_URL_PREFIX}/${item?.node?.handle}`} className={`h-10 backdrop-blur-xl transition-colors w-full ${isPathMatching2 ? 'bg-accentLight/20 dark:bg-accentDark/20' : 'bg-transparent'}`}>
+    //                                                     <Button sx={{ borderRadius: 0 }} fullWidth >
+    //                                                         <div className="flex py-0.5 px-2 w-full space-x-7 items-center">
+    //                                                             <Avatar width={20} height={20} className="h-5 w-5 rounded-full text-xs overflow-hidden" src={item?.node?.avatar + '/?rounded=true'} alt={item?.node?.name} />
+    //                                                             <span className="text-base dark:text-gray-100 text-gray-800 font-semibold line-clamp-1 truncate">{item?.node?.name}</span>
+    //                                                         </div>
+    //                                                     </Button>
+    //                                                 </Link>
+    //                                             </Tooltip>
+    //                                         </div>
+    //                                     </div>)
+    //                             })}
+    //                         </div> :
+    //                             <>
+    //                                 <div className='px-3 my-2 text-slate-600 dark:text-gray-300 text-xs text-center'>
+    //                                     You haven't created any communities yet.
+    //                                     <Link href={`/setup/community`} className='text-accent dark:text-accentDark underline'>Create a Community</Link>
+    //                                 </div>
+    //                             </>
+    //                         } </> : <> {MenuSkeleton(5)} </>
+    //                     }
 
-                        {Communities?.length > 5 && <>
-                            <div className='h-4'>
-                                <div onClick={() => setShowMore(!showMore)} className={` transition-all left-1/2 -translate-x-1/2 absolute -bottom-3 rounded-full bg-slate-200 dark:bg-zinc-800`}>
-                                    <Button sx={{ borderRadius: 100 }} >
-                                        <div className="flex px-2 w-full space-x-1 items-center">
-                                            {showMore ? <BiChevronUp className="w-3 text-black dark:text-white h-3" /> : <BiChevronDown className="w-3 dark:text-gray-200 text-gray-700 h-3" />}
-                                            <span className="text-xs dark:text-gray-100 text-gray-800 truncate">{showMore ? 'Show less' : 'Show More'}</span>
-                                        </div>
-                                    </Button>
-                                </div>
-                            </div>
-                        </>}
-                    </rb-community-list>
-                </rb-community-menu>
-            </>
-        );
-    }
+    //                     {Communities?.length > 5 && <>
+    //                         <div className='h-4'>
+    //                             <div onClick={() => setShowMore(!showMore)} className={` transition-all left-1/2 -translate-x-1/2 absolute -bottom-3 rounded-full bg-slate-200 dark:bg-zinc-800`}>
+    //                                 <Button sx={{ borderRadius: 100 }} >
+    //                                     <div className="flex px-2 w-full space-x-1 items-center">
+    //                                         {showMore ? <BiChevronUp className="w-3 text-black dark:text-white h-3" /> : <BiChevronDown className="w-3 dark:text-gray-200 text-gray-700 h-3" />}
+    //                                         <span className="text-xs dark:text-gray-100 text-gray-800 truncate">{showMore ? 'Show less' : 'Show More'}</span>
+    //                                     </div>
+    //                                 </Button>
+    //                             </div>
+    //                         </div>
+    //                     </>}
+    //                 </rb-community-list>
+    //             </rb-community-menu>
+    //         </>
+    //     );
+    // }
 
     const UserMenu = () => {
         return (
@@ -277,7 +277,7 @@ const MainSidebar = (props) => {
                 </div>
                 <div className="w-full transition-colors h-auto duration-500">
                     {userMenu.slice(0, showMore ? userMenu.length : 3).map((menu, index) => (
-                        <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
+                        <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} onClick={onMenuClick} />
                     ))}
                 </div>
                 <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all bg-transparent`}>
@@ -307,13 +307,13 @@ const MainSidebar = (props) => {
             <div className='w-full'>
                 <div className={`flex flex-col p-3 ${isSmall ? "items-center" : "items-start"}`}>
                     {staticMenu.map((menu, index) => (
-                        <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
+                        <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} onClick={onMenuClick} />
                     ))}
                     <NavBorder />
                     {(!session && !session?.user?.id) &&
                         <>
                             <Suspense fallback={<div>Loading...</div>}>
-                                <NonLoggedBox path={path} isSmall={isSmall} />
+                                <NonLoggedBox path={path} isSmall={isSmall} onMenuClick={onMenuClick} />
                             </Suspense>
                         </>
                     }
@@ -335,7 +335,7 @@ const MainSidebar = (props) => {
                         </div>
                         <div className='w-full'>
                             {discoverMenu.map((menu, index) => (
-                                <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} />
+                                <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} onClick={onMenuClick} />
                             ))}
                         </div>
                     </div>
@@ -345,9 +345,9 @@ const MainSidebar = (props) => {
     );
 };
 
-const MenuItem = ({ menu, path, isSmall }) => {
+const MenuItem = ({ menu, path, isSmall, onClick = () => { } }) => {
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1 self-center mx-auto' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-colors ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 self-center mx-auto' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-all duration-300 ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -364,11 +364,11 @@ const MenuItem = ({ menu, path, isSmall }) => {
                     ],
                 },
             }}>
-                <Link href={menu.link} >
+                <Link onClick={onClick} href={menu.link} >
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
-                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
+                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-300`}>
                             {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
-                            <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{menu.name}</span>
+                            <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-300`}>{menu.name}</span>
                         </div>
                     </Button>
                 </Link>
@@ -397,7 +397,7 @@ const SmallSidebar = (props) => {
     );
 }
 
-const NonLoggedBox = ({ path, isSmall }) => {
+const NonLoggedBox = ({ path, isSmall, onMenuClick }) => {
     const [showTip, setShowTip] = useState(false);
     const staticMenu = [
         {
@@ -464,7 +464,7 @@ const NonLoggedBox = ({ path, isSmall }) => {
     return (
         <>
             {staticMenu.map((menu, index) => (
-                <MenuItem key={index} menu={menu} path={path} />
+                <MenuItem key={index} menu={menu} path={path} onClick={onMenuClick} />
             ))}
             <div className='my-2 flex w-full justify-center items-center'>
                 <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: false }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>

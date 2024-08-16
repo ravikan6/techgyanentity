@@ -69,7 +69,7 @@ const RuiToolTip = styled(({ className, ...props }) =>
         TransitionComponent={Zoom}
         {...props}
         classes={{ popper: className }}
-        enterTouchDelay={0}
+        enterTouchDelay={400}
     />
 )(({ theme }) => ({
     '& .MuiTooltip-tooltip': {

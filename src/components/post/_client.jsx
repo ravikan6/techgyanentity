@@ -64,15 +64,17 @@ export const ArticleSidebar = ({ article }) => {
             <SidebarContext.Provider value={{ open, setOpen }}>
                 <div className={`overflow-hidden mr-1 lg:block relative w-[400px]`}>
                     <div className={`fixed h-[calc(100%-66px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
-                        {width && <section id="rb_sidebar_comp" className="relative h-[calc(100%-1px)] overflow-hidden">
+                        {width && <section id="rb_sidebar_comp" className="relative h-full overflow-hidden">
                             <SidebarContent article={article} />
                         </section>}
                     </div>
                 </div>
+
             </SidebarContext.Provider>
         </>
     );
 }
+
 
 const SidebarContent = ({ article }) => {
     const publishedAt = getDate(article?.createdAt);
@@ -84,7 +86,7 @@ const SidebarContent = ({ article }) => {
     }
     return (
         <>
-            <div className="h-[calc(100%-0px)] p-4 overflow-x-hidden">
+            <div className="h-full p-4 overflow-x-hidden">
                 <ArticleTop article={article} onClick={handleDescription} />
                 <div className="mb-2">
                     <div className="mb-4">
@@ -103,8 +105,7 @@ const Description = ({ article, open, setOpen }) => {
 
     return (
         <>
-            <SwipeableDrawer disableSwipeToOpen={false}
-                swipeAreaWidth={40}
+            <SwipeableDrawer disableSwipeToOpen
                 height="100%"
                 sx={{ height: '100%' }}
                 ModalProps={{
@@ -367,6 +368,7 @@ export const ArticleTopMeta = ({ article }) => {
             if (meta_container) {
                 while (meta_container.firstChild) {
                     meta_container.firstChild.remove();
+
                 }
                 setMetaContent(meta_container);
             }
@@ -783,7 +785,7 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
     return (
         <div className="mt-2">
             <div className="flex items-center justify-start space-x-4 mt-1">
-                <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-accentDark fill-accentLight" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
+                <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
                 <Button onClick={() => setShowForm(true)} sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
             </div>
             {showForm && <div className="mt-1">
@@ -867,7 +869,7 @@ const CommentsLoader = ({ count }) => {
                             <div id="comment_body">
                                 <Skeleton variant="text" width={'100%'} />
                                 {
-                                    ((count % 2) === 0) ? (
+                                    ((_ % 2) === 0) ? (
                                         <>
                                             <Skeleton variant="text" width={'100%'} />
                                             <Skeleton variant="text" width={'40%'} />

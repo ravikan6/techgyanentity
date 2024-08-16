@@ -239,12 +239,14 @@ const SwitchAccount = ({ state, context }) => {
     const Component = () => {
         const [thisData, setThisData] = useState(null);
         let page = context?.data?.page;
-        useMemo(async () => {
-            try {
-                const fdata = await getUserAuthors();
-                setThisData(fdata?.data);
-            } catch (error) {
-                toast.error('An error occurred while fetching data. Please try again.');
+        useEffect(async () => {
+            if (state?.insiderOpen) {
+                try {
+                    const fdata = await getUserAuthors();
+                    setThisData(fdata?.data);
+                } catch (error) {
+                    toast.error('An error occurred while fetching data. Please try again.');
+                }
             }
         }, [session, state?.insiderOpen]);
 
