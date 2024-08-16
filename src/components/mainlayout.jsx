@@ -78,10 +78,10 @@ const MainLayout = ({ children, session }) => {
                         width: drawerWidth_get(open, variant),
                         flexShrink: 0,
 
-                        transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
-                            easing: theme.transitions.easing.sharp,
-                            duration: theme.transitions.duration.short,
-                        }),
+                        // transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
+                        //     easing: theme.transitions.easing.sharp,
+                        //     duration: theme.transitions.duration.short,
+                        // }),
 
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(open, variant),
@@ -89,10 +89,10 @@ const MainLayout = ({ children, session }) => {
                             mt: variant === 'persistent' ? 0 : 0, // '54px'
                             pt: variant === 'persistent' ? 0 : '54px',
                             border: 'none',
-                            transition: (theme) => theme.transitions.create('width', {
-                                easing: theme.transitions.easing.sharp,
-                                duration: theme.transitions.duration.short,
-                            }),
+                            // transition: (theme) => theme.transitions.create('width', {
+                            //     easing: theme.transitions.easing.sharp,
+                            //     duration: theme.transitions.duration.short,
+                            // }),
                         },
                         zIndex: variant === 'persistent' ? (theme) => theme.zIndex.drawer + 1 : 1,
                     }}

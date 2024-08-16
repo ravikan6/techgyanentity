@@ -213,8 +213,8 @@ export const SecondaryMenu = ({ insiderData, insiderRun, handleBack, modern = tr
             </Box>
             <div className='w-full rb_sss mt-10'>
                 <p className='text-sm py-2 px-4 text-wrap mx-auto text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
-                {(insiderData?.isJsx) ? insiderData?.component
-                    : insiderData?.options.map((option, index) => (
+                {(insiderData?.isJsx) ? <insiderData.component />
+                    : insiderData?.options?.map((option, index) => (
                         <MenuItem onClick={() => insiderRun(option.value)} key={index} >
                             <ListItemIcon>
                                 {option.value === insiderData?.selected ? <Check fontSize="small" /> : null}
@@ -452,13 +452,15 @@ const ThemeSelect = ({ state }) => {
         }
     }, []);
 
+    const TheThemeChanger = () => (<ThemeSwitch setThemeName={setTheme} />);
+
     return (
         <ListInsideModel link={{
             name: `Appearance`,
             selected: `${theme.slice(0, 1).toUpperCase() + theme.slice(1)} ${ /*theme === 'system' ? 'Theme' : ''*/ 'Theme'}`,
             icon: themeIcon,
         }} data={{
-            title: 'Appearance', selected: theme, message: 'The settings only apply to the current browser.', component: <ThemeSwitch setThemeName={setTheme} />
+            title: 'Appearance', selected: theme, message: 'The settings only apply to the current browser.', component: TheThemeChanger, isJsx: true,
         }} state={state} />
     )
 }

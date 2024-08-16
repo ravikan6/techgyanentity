@@ -314,16 +314,16 @@ const SwitchAccount = ({ state, context }) => {
         )
     }
 
-    let newComp = useMemo(() => {
-        return <Component />
-    }, []); // context?.data?.data?.id, pageInfo
+    // let newComp = useMemo(() => {
+    //     return <Component />
+    // }, []); // context?.data?.data?.id, pageInfo
 
     return (
         <ListInsideModel link={{
             name: `Switch ${pageInfo?.serviceName}`,
             icon: Person4Outlined,
         }} data={{
-            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: newComp, isJsx: true,
+            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: Component, isJsx: true,
         }} state={state} />
     )
 }
