@@ -212,7 +212,7 @@ const ShareViewContent = ({ meta, show }) => {
 
     return (
         <>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between gap-3 items-center'>
                 <div className='w-8 min-w-[32px]'>
                     {shareOptions.length > visibleButtons && (
                         <>
@@ -283,7 +283,7 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
     )
 }
 
-const DrawerSetter = ({state}) => {
+const DrawerSetter = ({ state }) => {
     localStorage.setItem('isDrawerHidden', `${state}`);
     return null;
 }

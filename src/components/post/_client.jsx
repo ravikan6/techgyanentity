@@ -3,7 +3,7 @@ import { CldImage, getCldImageUrl } from "next-cloudinary";
 import { DrawerContext } from "../mainlayout";
 import { useContext, useEffect, useState, createContext, useMemo } from "react";
 import { getDate, formatDate } from "@/lib/utils";
-import { PostActions } from "./postActions";
+import { PostActions, UnAuthorizedActionWrapper } from "./postActions";
 import { Avatar, ListItemIcon, MenuList, Skeleton, styled, useMediaQuery } from "@mui/material";
 import { Button, IconButton, Menu, MenuItem, TextField, Tooltip, SwipeableDrawer } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
@@ -143,9 +143,9 @@ const DescriptionContent = ({ article, onClose }) => {
                         <PostDatePublished date={article?.createdAt} expanded />
                     </div>
                 </div>
-                <div className="my-4">
+                {article?.description && <div className="my-4">
                     <h4 className="text-sm mx-1 bg-lightHead dark:bg-darkHead p-3 rounded-md font-medium dark:text-gray-300 text-gray-700">{article.description}</h4>
-                </div>
+                </div>}
                 <div className="flex justify-between items-center mb-5 border-y-slate-500">
                     <div className="flex items-center py-1">
                         <div className="flex-shrink-0">
@@ -338,7 +338,7 @@ export const ArticleTop = ({ article, onClick = () => { }, hSize = 'text-xl' }) 
                     </div>
                     <PostDatePublished date={article?.createdAt} />
                 </div>
-                <h4 className="text-sm font-medium dark:text-gray-300 text-gray-700">{article.description?.slice(0, 100) + ((article.description?.length > 50) && '...')}<span className="font-bold">more</span></h4>
+                <h4 className="text-sm line-clamp-2 truncate font-medium dark:text-gray-300 text-gray-700">{article?.description?.slice(0, 150)}</h4>
             </div>
         </>
     )
@@ -429,6 +429,7 @@ export const ArticleComments = ({ articleId, article }) => {
     }, [articleId]);
 
     const handleAddReply = async (commentId, reply) => {
+        if (!session?.user || !reply || (reply === '')) return;
         let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
         const res = await articleCommentAction({ postId: articleId, body: reply, parentId: commentId, ...aId && { authorId: aId } })
         if (res?.status === 200) {
@@ -444,13 +445,14 @@ export const ArticleComments = ({ articleId, article }) => {
     };
 
     const handleAddComment = async (comment) => {
+        if (!session?.user || !comment || (comment === '')) return;
         let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
         const res = await articleCommentAction({ postId: articleId, body: comment, ...aId && { authorId: aId } })
         if (res?.status === 200) {
             if (res.status === 200) {
                 let newRes = await articleCommentsListAction(articleId)
                 if (newRes?.status === 200) {
-                    setComments((comments) => [...newRes?.data, ...comments]);
+                    setComments(newRes?.data);
                 }
             }
         }
@@ -488,6 +490,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
     const commentId = comment?.id;
 
     const handleUpdateComment = async (comment) => {
+        if (!session?.user || !comment || (comment === '')) return;
         const res = await articleCommentAction({ id: commentId, body: comment });
         if (res?.status === 200) {
             commentState?.setComments((comments) => {
@@ -502,6 +505,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
     }
 
     const handleDeleteComment = async () => {
+        if (!session?.user) return;
         const res = await articleCommentDeleteAction({ id: commentId }, 'delete');
         if (res?.status === 200) {
             let newComments = commentState?.comments?.filter(comment => comment.id !== commentId);
@@ -575,7 +579,7 @@ const CommentMenu = ({ id, isOwn, onEdit, onDelete, authorId }) => {
 
     const handleDelete = async () => {
         try {
-            if (await confirm('Are you sure you want to delete this comment?')) {
+            if (await confirm('Are you sure you want to delete this comment?', { okLabel: 'Yes', cancelLabel: 'No' })) {
                 setIsLoading(true);
                 try {
                     await onDelete();
@@ -594,11 +598,13 @@ const CommentMenu = ({ id, isOwn, onEdit, onDelete, authorId }) => {
     return (
         <>
             <div className={` w-8`}>
-                {isLoading ? <BetaLoader /> :
-                    <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} onClick={handleClick}>
-                        <PiDotsThreeOutlineVertical className="w-4 h-4" />
-                    </IconButton>
-                }
+                <span onClick={handleClick}>
+                    {isLoading ? <BetaLoader /> :
+                        <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} >
+                            <PiDotsThreeOutlineVertical className="w-4 h-4" />
+                        </IconButton>
+                    }
+                </span>
             </div>
             {open && (
                 <Menu
@@ -703,7 +709,7 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
     }
 
     return (
-        <div className="">
+        session?.user ? <div className="">
             <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
                 <Avatar src={currentUser?.image} sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={currentUser?.username} >{currentUser?.username?.slice(0, 1)}</Avatar>
                 <TextField
@@ -714,7 +720,7 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
                     size="small"
                     fullWidth
                     autoFocus={showButtons}
-                    placeholder="Say something..."
+                    placeholder="Add a comment"
                     sx={{
                         ...!showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
                         ...!isMc && { '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '1', height: '30px', padding: '0px' } }
@@ -733,7 +739,27 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
                     {toReply ? 'Reply' : commentText ? 'Update' : 'Comment'}
                 </Button>
             </div>}
-        </div>
+        </div> :
+            <UnAuthorizedActionWrapper description={'You need to be logged in to comment'} >
+                <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
+                    <Avatar sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={'User Image'} />
+                    <TextField
+                        required
+                        multiline
+                        variant="standard"
+                        size="small"
+                        fullWidth
+                        readOnly
+                        placeholder="Add a comment"
+                        sx={{
+                            ...!showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
+                            ...!isMc && { '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '1', height: '30px', padding: '0px' } }
+                        }}
+                        value={''}
+                        className="text-sm"
+                    ></TextField>
+                </div>
+            </UnAuthorizedActionWrapper>
     )
 }
 
@@ -747,15 +773,18 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
 
     useEffect(() => {
         setTimeout(() => {
-            let clapped = claps?.find(clap => clap?.user?.id === currentUser?.id);
-            if (clapped) {
-                setIsClapped({ is: true, commentId: commentId, id: clapped?.id });
+            if (currentUser) {
+                let clapped = claps?.find(clap => clap?.user?.id === currentUser?.id);
+                if (clapped) {
+                    setIsClapped({ is: true, commentId: commentId, id: clapped?.id });
+                }
             }
             setClapsCount(clapsCount);
         }, 1000);
     }, [claps, clapsCount]);
 
     const handleClap = async () => {
+        if (!currentUser) return;
         setIsLoading(true);
         try {
             if (isClapped.is && isClapped.id) {
@@ -785,8 +814,21 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
     return (
         <div className="mt-2">
             <div className="flex items-center justify-start space-x-4 mt-1">
-                <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
-                <Button onClick={() => setShowForm(true)} sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
+                {currentUser ?
+                    <>
+                        <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
+                        <Button onClick={() => setShowForm(true)} sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
+                    </>
+                    :
+                    <>
+                        <UnAuthorizedActionWrapper description={'You need to be logged in to clap the comment'} >
+                            <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
+                        </UnAuthorizedActionWrapper>
+                        <UnAuthorizedActionWrapper description={'You need to be logged in to reply the comment'} >
+                            <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
+                        </UnAuthorizedActionWrapper>
+                    </>
+                }
             </div>
             {showForm && <div className="mt-1">
                 <CommentFormField article={article} showButtons={true} setShowButtons={setShowForm} onSubmit={onAddReply} toReply={toReplay} />
@@ -869,7 +911,7 @@ const CommentsLoader = ({ count }) => {
                             <div id="comment_body">
                                 <Skeleton variant="text" width={'100%'} />
                                 {
-                                    ((_ % 2) === 0) ? (
+                                    (((index + 1) % 2) === 0) ? (
                                         <>
                                             <Skeleton variant="text" width={'100%'} />
                                             <Skeleton variant="text" width={'40%'} />

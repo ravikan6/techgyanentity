@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { HeartBrokenOutlined } from "@mui/icons-material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { BiChevronDown } from "react-icons/bi";
+import { UnAuthorizedActionWrapper } from "../post/postActions";
 
 const FollowButton = ({ authorId }) => {
     const [isFollowing, setIsFollowing] = useState({ status: false, id: null });
@@ -40,6 +41,7 @@ const FollowButton = ({ authorId }) => {
 
     const handleFollowSystem = async () => {
         setIsLoaded(false);
+        handleMenuClose();
         try {
             if (session) {
                 let res = await followAuthorAction(authorId)
@@ -58,34 +60,39 @@ const FollowButton = ({ authorId }) => {
             setError(error);
         } finally {
             setIsLoaded(true);
-            handleMenuClose();
         }
     }
 
     return (
-        <>
-            <Button disabled={!isLoaded || error} onClick={isFollowing?.status ? handleMenuOpen : handleFollowSystem} variant="contained" color={isFollowing?.status ? "rbSlate" : "primary"} size="small" endIcon={isFollowing.status && <BiChevronDown />} >
-                {isFollowing?.status ? 'Following' : 'Follow'}
-            </Button>
-            <Menu
-                anchorEl={anchorEl}
-                open={!!anchorEl}
-                onClose={handleMenuClose}
-                MenuListProps={{
-                    'aria-labelledby': 'Author Follow Menu',
-                }}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            borderRadius: '12px !important',
+        session?.user ?
+            <>
+                <Button disabled={!isLoaded || error} onClick={isFollowing?.status ? handleMenuOpen : handleFollowSystem} variant="contained" color={isFollowing?.status ? "divider" : "primary"} size="small" endIcon={isFollowing.status && <BiChevronDown />} >
+                    {isFollowing?.status ? 'Following' : 'Follow'}
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={!!anchorEl}
+                    onClose={handleMenuClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'Author Follow Menu',
+                    }}
+                    slotProps={{
+                        paper: {
+                            sx: {
+                                borderRadius: '12px !important',
+                            }
                         }
-                    }
-                }}>
-                <ListItemRdX link={{ name: 'Notify all', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Don\'t Notify', icon: HeartBrokenOutlined }} />
-                <ListItemRdX link={{ name: 'Unfollow', icon: HeartBrokenOutlined }} onClick={handleFollowSystem} />
-            </Menu>
-        </>
+                    }}>
+                    <ListItemRdX link={{ name: 'Notify all', icon: HeartBrokenOutlined }} />
+                    <ListItemRdX link={{ name: 'Don\'t Notify', icon: HeartBrokenOutlined }} />
+                    <ListItemRdX link={{ name: 'Unfollow', icon: HeartBrokenOutlined }} onClick={handleFollowSystem} />
+                </Menu>
+            </> :
+            <UnAuthorizedActionWrapper description={'Login to follow this author'} >
+                <Button variant="contained" color="primary" size="small" >
+                    Follow
+                </Button>
+            </UnAuthorizedActionWrapper>
     )
 }
 

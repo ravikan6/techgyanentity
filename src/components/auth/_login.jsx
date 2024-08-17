@@ -11,8 +11,8 @@ const AuthLogin = ({ params, searchParams }) => {
                             <>
                                 <div className="mt-1">
                                     <div className="text-sm px-5 w-80 fixed left-5">
-                                        <p className="text-sm kippenberger-con text-gray-200"> Welcome back to our platform!</p>
-                                        <p className="text-sm italic mt-0.5 text-slate-300 cheltenham"> If you don't have an account yet, you can create one by clicking the "Create Account" button below.</p>
+                                        <p className="text-sm kippenberger-con dark:text-gray-200"> Welcome back to our platform!</p>
+                                        <p className="text-sm italic mt-0.5 dark:text-slate-300 cheltenham"> If you don't have an account yet, you can create one by clicking the "Create Account" button below.</p>
                                     </div>
                                 </div>
                                 <div className="mx-auto w-full flex justify-center">

@@ -38,7 +38,7 @@ const Confirmation = ({
                     <div className='opacity-90 mb-5'>
                         {confirmation}
                     </div>
-                    <div className='flex gap-10 p-4'>
+                    <div className='flex gap-10 p-4 justify-end'>
                         <Button
                             variant="text"
                             size="small"
@@ -51,6 +51,7 @@ const Confirmation = ({
                             size="small"
                             color="button"
                             onClick={proceed}
+                            className='dark:!text-black'
                         >
                             {okLabel}
                         </Button>

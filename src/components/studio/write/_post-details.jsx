@@ -123,7 +123,7 @@ const PostDetailsEditor = () => {
     }
 
     useEffect(() => {
-        if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published })) {
+        if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published, category: post?.category })) {
             setState({ ...state, canSave: true, canUndo: true })
         } else {
             setState({ ...state, canSave: false, canUndo: false })
@@ -209,7 +209,7 @@ const PostDetailsEditor = () => {
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Category'} desc={'Choose the category for your post. You can select a category from the list of available categories.'} tip={'Choose the category for your post.'} />
-                                <Select size="small" className="!rounded-full" value={npst?.category?.slug} label="" onChange={handleSetCategory} disabled={loading}>
+                                <Select size="small" className="!rounded-full" defaultValue={npst?.category?.slug} label="" onChange={handleSetCategory} disabled={loading}>
                                     {categories?.map((cat, index) => (
                                         <MenuItem key={index} value={cat?.slug}>{cat?.name}</MenuItem>
                                     ))}

@@ -193,7 +193,7 @@ const AuthorActions = ({ id, authorId }) => {
     }
 }
 
-const UnAuthorizedActionWrapper = ({ children, description }) => {
+export const UnAuthorizedActionWrapper = ({ children, description }) => {
     const [open, setOpen] = useState(false);
 
     const handleClose = () => {
@@ -207,11 +207,11 @@ const UnAuthorizedActionWrapper = ({ children, description }) => {
     const TheComp = () => {
         return (
             <>
-                <div className='max-w-72 p-2'>
-                    <p className='italic text-xs cheltenham-small dark:text-zinc-800 text-gray-100 mb-3'>
+                <div className='max-w-72 p-4'>
+                    <p className='italic text-xs cheltenham-small dark:text-zinc-800 text-gray-100 mb-5'>
                         {description}
                     </p>
-                    <div className='flex justify-end items-center'>
+                    <div className='flex justify-start items-center'>
                         <Button
                             variant='outlined'
                             color="head"

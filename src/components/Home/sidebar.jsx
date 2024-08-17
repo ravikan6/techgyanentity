@@ -275,16 +275,16 @@ const MainSidebar = (props) => {
                         </Button>
                     </Link> : <>{MenuSkeleton(1)}</>}
                 </div>
-                <div className="w-full transition-colors h-auto duration-500">
+                <div className="w-full transition-all h-auto duration-500">
                     {userMenu.slice(0, showMore ? userMenu.length : 3).map((menu, index) => (
                         <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} onClick={onMenuClick} />
                     ))}
                 </div>
-                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all bg-transparent`}>
+                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all duration-500 bg-transparent`}>
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
-                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
-                            {showMore ? <BiChevronUp className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
-                            <span className={`${showMore ? '' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate`}>{showMore ? 'Show less' : 'Show more'}</span>
+                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-500`}>
+                            {showMore ? <BiChevronUp className="w-5 dark:text-gray-100 text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
+                            <span className={`${showMore ? '' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-500`}>{showMore ? 'Show less' : 'Show more'}</span>
                         </div>
                     </Button>
                 </div>
@@ -299,7 +299,7 @@ const MainSidebar = (props) => {
     }
 
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center mx-auto' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-colors ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center mx-auto' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all duration-500 ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -347,7 +347,7 @@ const MainSidebar = (props) => {
 
 const MenuItem = ({ menu, path, isSmall, onClick = () => { } }) => {
     const MenuBtnStyle = (link) => {
-        return `h-10 ${isSmall ? 'w-10 mb-1 self-center mx-auto' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-all duration-300 ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
+        return `h-10 ${isSmall ? 'w-10 mb-1 self-center mx-auto' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-all duration-500 ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
 
     return (
@@ -366,9 +366,9 @@ const MenuItem = ({ menu, path, isSmall, onClick = () => { } }) => {
             }}>
                 <Link onClick={onClick} href={menu.link} >
                     <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
-                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-300`}>
+                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-500`}>
                             {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
-                            <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-300`}>{menu.name}</span>
+                            <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-500`}>{menu.name}</span>
                         </div>
                     </Button>
                 </Link>

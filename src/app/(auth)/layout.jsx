@@ -26,7 +26,7 @@ export default async function RootLayout({ children }) {
                     href="https://rb-fonts-ravikantsaini047-dc0ad04cad6ed45f64763192ab88a4e9b16cc.gitlab.io/data/v2/css/toastify.css"
                 />
             </head>
-            <body className='dark:bg-dark bg-light'>
+            <body className='dark:bg-dark bg-light text-black dark:text-white'>
                 <Providers>
                     <CssBaseline />
                     <rb-auth-body-wrapper>
