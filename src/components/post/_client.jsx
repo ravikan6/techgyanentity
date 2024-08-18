@@ -59,6 +59,7 @@ const SidebarContext = createContext();
 export const ArticleSidebar = ({ article }) => {
     let width = useMediaQuery('(min-width:1024px)');
     const [open, setOpen] = useState(false);
+
     return (
         <>
             <SidebarContext.Provider value={{ open, setOpen }}>
@@ -338,7 +339,7 @@ export const ArticleTop = ({ article, onClick = () => { }, hSize = 'text-xl' }) 
                     </div>
                     <PostDatePublished date={article?.createdAt} />
                 </div>
-                <h4 className="text-sm line-clamp-2 truncate font-medium dark:text-gray-300 text-gray-700">{article?.description?.slice(0, 150)}</h4>
+                <h4 className="text-sm line-clamp-2 text-ellipsis font-medium dark:text-gray-300 text-gray-700">{article?.description?.slice(0, 150)}</h4>
             </div>
         </>
     )
@@ -346,23 +347,12 @@ export const ArticleTop = ({ article, onClick = () => { }, hSize = 'text-xl' }) 
 }
 
 export const ArticleTopMeta = ({ article }) => {
-    const [sContainer, setSContainer] = useState(null);
     const [metaContent, setMetaContent] = useState(null);
     const [drawable, setDrawable] = useState(false);
 
-    let width = useMediaQuery('(min-width:1024px)');
     let belowWidth = useMediaQuery('(max-width:1024px)');
 
     useEffect(() => {
-        if (width) {
-            let s_container = document.getElementById('article_sidebar');
-            if (s_container) {
-                while (s_container.firstChild) {
-                    s_container.firstChild.remove();
-                }
-                setSContainer(s_container);
-            }
-        } else setSContainer(null);
         if (belowWidth) {
             let meta_container = document.getElementById('article_topMeta');
             if (meta_container) {
@@ -378,9 +368,6 @@ export const ArticleTopMeta = ({ article }) => {
     return (
         <>
             <div className="">
-                {sContainer &&
-                    createPortal(<><ArticleSidebar article={article} /></>, sContainer)
-                }
                 <div className="pb-4 lg:hidden pt-4">
                     <ArticleTop article={article} onClick={() => setDrawable(!drawable)} hSize="text-xl sm:text-2xl md:text-3xl" />
                     {metaContent &&
