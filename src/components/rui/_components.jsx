@@ -258,6 +258,7 @@ const RuiSwipeableDrawer = ({ children, puller = true, showClose = true, ...prop
     )
 }
 
+
 const RuiSwipeableDrawerStyled = styled(SwipeableDrawer)(({ theme }) => ({
     '& .MuiDrawer-paper': {
         backgroundColor: theme.palette?.background?.paper,

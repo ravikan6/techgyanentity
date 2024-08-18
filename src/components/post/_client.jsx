@@ -1,7 +1,7 @@
 "use client";
 import { CldImage, getCldImageUrl } from "next-cloudinary";
 import { DrawerContext } from "../mainlayout";
-import { useContext, useEffect, useState, createContext, useMemo } from "react";
+import { useContext, useEffect, useState, createContext, useMemo, useRef, Suspense } from "react";
 import { getDate, formatDate } from "@/lib/utils";
 import { PostActions, UnAuthorizedActionWrapper } from "./postActions";
 import { Avatar, ListItemIcon, MenuList, Skeleton, styled, useMediaQuery } from "@mui/material";
@@ -65,9 +65,16 @@ export const ArticleSidebar = ({ article }) => {
             <SidebarContext.Provider value={{ open, setOpen }}>
                 <div className={`overflow-hidden mr-1 lg:block relative w-[400px]`}>
                     <div className={`fixed h-[calc(100%-66px)] mr-1 max-w-[410px] overflow-hidden z-[998]  rounded-xl border dark:border-slate-600 border-gray-300 w-full mt-[64px] top-0 bottom-0`}>
-                        {width && <section id="rb_sidebar_comp" className="relative h-full overflow-hidden">
+                        {width ? <section id="rb_sidebar_comp" className="relative h-full overflow-hidden">
                             <SidebarContent article={article} />
-                        </section>}
+                        </section> :
+                            <div className="flex flex-col w-full p-2">
+                                <Skeleton className="mb-4" variant="rounded" height={200} />
+                                <Skeleton variant="text" height={40} />
+                                <Skeleton variant="text" height={40} width={'80%'} />
+                                <Skeleton variant="text" height={40} width={'30%'} />
+                            </div>
+                        }
                     </div>
                 </div>
 
@@ -109,6 +116,7 @@ const Description = ({ article, open, setOpen }) => {
             <SwipeableDrawer disableSwipeToOpen
                 height="100%"
                 sx={{ height: '100%' }}
+                transitionDuration={1}
                 ModalProps={{
                     style: { position: 'absolute', left: 0, right: 0, bottom: 0, top: 0 },
                     disablePortal: true,
@@ -179,57 +187,6 @@ const DescriptionContent = ({ article, onClose }) => {
     )
 }
 
-export const PostDate = (props) => {
-    const publishedAt = props.publishedAt;
-    const updatedAt = props.updatedAt;
-
-    return (
-        <>
-            <div className="group relative transition-all duration-500">
-                <time dateTime={props.date}>{formatDate(props?.date)}</time>
-                <div className="hidden opacity-0 transition-all duration-500 group-hover:opacity-100 p-5 group-hover:block absolute -right-4 top-8 border rounded-xl shadow-dark/20 z-[2] dark:border-darkHead dark:shadow-light/20 shadow-md border-t-2 dark:bg-dark border-t-accentLight dark:border-t-accentDark bg-light">
-                    <table className="table-auto">
-                        <thead className="text-slate-800 dark:text-gray-200">
-                            <tr>
-                                <th className="px-4 py-2">Type</th>
-                                <th className="px-4 py-2">Published At</th>
-                                <th className="px-4 py-2">Updated At</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-gray-800 dark:text-gray-300">
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">Date</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.date}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.date}</td>
-                            </tr>
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">time</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.time}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.time}</td>
-                            </tr>
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">ISO</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.ISO}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.ISO}</td>
-                            </tr>
-                            <tr>
-                                <td className="border text-black dark:text-white font-bold border-secondary dark:border-secondaryDark px-4 py-2">Day</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{publishedAt.dayOfWeek}</td>
-                                <td className="border border-secondary dark:border-secondaryDark px-4 py-2">{updatedAt.dayOfWeek}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div className="text-sm text-center text-gray-500 mt-2">
-                        {publishedAt.diff}
-                    </div>
-                </div>
-            </div>
-
-        </>
-    );
-}
-
-
 export const PostDatePublished = ({ date, expanded }) => {
 
     return (
@@ -242,58 +199,6 @@ export const PostDatePublished = ({ date, expanded }) => {
             </Tooltip>
         </>
     )
-}
-
-export const PostWrapper = ({ children, article }) => {
-    let width = useMediaQuery('(min-width:945px)');
-    const mediaWidth = useQuery('(min-width:945px)');
-    const [drawable, setDrawable] = useState(false);
-
-    const container = undefined;
-
-    return (
-        <>
-            <section className={`flex xl:flex-row space-x-14 justify-center md:px-0 mx-auto ${mediaWidth == 'undefined' && 'hidden'}`}>
-                <div className={`max-w-xl w-full py-6`}>
-                    <div className='mb-2'>
-                        {article?.image && (
-                            <figure
-                                key={article?.url}
-                                className="block mb-10 text-center break-inside-avoid-column"
-                            >
-                                <ArticleImage image={article.image} />
-                                {/* <figcaption className="z-10 mt-4 text-sm italic text-gray-600">
-                                    {article?.caption}
-                                </figcaption> */}
-                            </figure>
-                        )}
-                    </div>
-                    {!width && (
-                        <>
-                            <div className="mt-5 mb-10">
-                                <ArticleTop article={article} onClick={() => setDrawable(!drawable)} hSize="text-2xl mb-4" />
-                                <ArticleAuthor article={article} />
-                                <div className="mt-4">
-                                    <PostActions modern id={article.id} commentCount={article?._count?.comments} />
-                                </div>
-                            </div>
-                            <SwipeableDrawer container={container} minFlingVelocity={500} disableSwipeToOpen={false}
-                                swipeAreaWidth={40}
-                                ModalProps={{
-                                    keepMounted: true,
-                                }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
-                                <DescriptionContent article={article} onClose={() => setDrawable(false)} />
-                            </SwipeableDrawer>
-                        </>
-                    )}
-                    {children}
-                </div>
-                {width && (
-                    <ArticleSidebar article={article} />
-                )}
-            </section>
-        </>
-    );
 }
 
 const ArticleAuthor = ({ article }) => {
@@ -363,7 +268,7 @@ export const ArticleTopMeta = ({ article }) => {
                 setMetaContent(meta_container);
             }
         } else setMetaContent(null);
-    }, [width, belowWidth]);
+    }, [belowWidth]);
 
     return (
         <>

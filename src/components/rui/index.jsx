@@ -11,4 +11,4 @@ export { RuiSnakBar as Snackbar };
 export { RuiToggleButtonGroup as ToggleButtonGroup };
 export { RuiToggleButton as ToggleButton };
 export { RuiSwitch as Switch };
-export {RuiSwipeableDrawer as SwipeableDrawer};
+export { RuiSwipeableDrawer as SwipeableDrawer };

@@ -66,7 +66,7 @@ const FollowButton = ({ authorId }) => {
     return (
         session?.user ?
             <>
-                <Button disabled={!isLoaded || error} onClick={isFollowing?.status ? handleMenuOpen : handleFollowSystem} variant="contained" color={isFollowing?.status ? "divider" : "primary"} size="small" endIcon={isFollowing.status && <BiChevronDown />} >
+                <Button disabled={!isLoaded || error} onClick={isFollowing?.status ? handleMenuOpen : handleFollowSystem} variant="contained" sx={isFollowing?.status && { backgroundColor: (theme) => theme.palette.divider }} color={isFollowing?.status ? "divider" : "primary"} size="small" endIcon={isFollowing.status && <BiChevronDown />} >
                     {isFollowing?.status ? 'Following' : 'Follow'}
                 </Button>
                 <Menu

@@ -3,6 +3,7 @@ import React from 'react';
 import { VariantPersistent } from "../header";
 import { ArticleImage, ArticleSidebar, ArticleTopMeta } from "./_client";
 import styles from '@/styles/post.module.css';
+import { Skeleton } from '@mui/material';
 
 export const PostView = async ({ article }) => {
     if (article?.id) {
@@ -38,7 +39,32 @@ export const PostView = async ({ article }) => {
                                 </div>
                                 <ArticleTopMeta article={article} />
                                 <div id="article_topMeta" className="mb-6 pb-4 border-b block lg:hidden border-gray-500 border-t pt-4">
+                                    <div className="">
+                                        <div className="flex items-center w-full">
+                                            <div className="mr-2">
+                                                <Skeleton variant="circular" width={40} height={40} />
+                                            </div>
+                                            <div>
+                                                <Skeleton variant="text" width={100} height={24} />
+                                            </div>
+                                            <div className="ml-auto">
+                                                <Skeleton variant="text" width={100} height={40} />
+                                            </div>
+                                        </div>
+                                        <div className='flex items-center justify-between'>
+                                            <div className='flex items-center mt-3 gap-3'>
+                                                {new Array(3).fill(0).map((_, index) => (
+                                                    <Skeleton key={index} variant="circular" width={32} height={32} />
+                                                ))}
+                                            </div>
 
+                                            <div className='flex items-center mt-3 gap-3'>
+                                                {new Array(2).fill(0).map((_, index) => (
+                                                    <Skeleton key={index} variant="circular" width={32} height={32} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className={`pb-7 ${styles.container}`}>
                                     {article?.content && <RenderBlock blocks={article?.content} />}
