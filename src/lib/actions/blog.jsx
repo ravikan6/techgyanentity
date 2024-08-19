@@ -131,7 +131,8 @@ export const updatePostDetailsAction = async (data) => {
 
     let setter = { ...data?.data };
     let file = data?.file ? data?.file : new FormData();
-
+    let cat = setter?.category;
+    delete setter.category;
     if (setter?.doPublish) {
         setter.publishedAt = new Date();
         setter.published = true;
@@ -169,9 +170,11 @@ export const updatePostDetailsAction = async (data) => {
             },
             data: {
                 ...setter,
-                category: {
-                    connect: {
-                        slug: setter?.category?.slug,
+                ...cat?.slug && {
+                    category: {
+                        connect: {
+                            slug: cat?.slug,
+                        }
                     }
                 }
             },

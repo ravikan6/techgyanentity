@@ -10,12 +10,11 @@ import { CloseBtn, ShareButton } from "../Buttons";
 import { CldImage } from "next-cloudinary";
 import { ListItemRdX } from "./_profile-model";
 import { copyText } from "@/lib/helpers";
-import { Puller } from "../post/_client";
 
 
 export const TestToastify = () => {
     return (
-        <div className="flex items-center gap-7">
+        <div className="flex items-center gap-7 my-10">
             <Button variant="outlined" onClick={() => toast.info('This is toast with info')} >
                 Toast Info
             </Button>
@@ -190,9 +189,8 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
     )
 }
 
-const ShareViewContent = ({ meta, show }) => {
-    const [slideIndex, setSlideIndex] = useState(0);
-    const visibleButtons = show || 4;
+const ShareViewContent = ({ meta }) => {
+    let container = useRef()
 
     const shareOptions = [
         { name: 'Facebook', icon: FacebookOutlined, color: 'blue', onClick: () => window.open('https://www.facebook.com/sharer/sharer.php?u=https://www.google.com', '_blank') },
@@ -203,27 +201,19 @@ const ShareViewContent = ({ meta, show }) => {
     ]
 
     const handlePrevClick = () => {
-        setSlideIndex(Math.max(0, slideIndex - visibleButtons));
+        container.current.scrollLeft -= container.current.offsetWidth;
     };
 
     const handleNextClick = () => {
-        setSlideIndex(Math.min(shareOptions.length - visibleButtons, slideIndex + visibleButtons));
+        container.current.scrollLeft += container.current.offsetWidth
     };
 
     return (
         <>
-            <div className='flex justify-between gap-3 items-center'>
-                <div className='w-8 min-w-[32px]'>
-                    {shareOptions.length > visibleButtons && (
-                        <>
-                            <IconButton className={`${slideIndex > 0 ? 'opacity-100 text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead' : 'opacity-40 cursor-not-allowed'} shadow-sm transition-colors rounded-full h-8 w-8`} onClick={handlePrevClick}>
-                                <ChevronLeft />
-                            </IconButton>
-                        </>
-                    )}</div>
-                <div className='flex flex-wrap justify-center gap-5 items-center'>
-                    {shareOptions.slice(slideIndex, slideIndex + visibleButtons).map((item, index) => (
-                        <span key={index}>
+            <div className='relative mx-4'>
+                <div ref={container} className='block overflow-hidden whitespace-nowrap'>
+                    {shareOptions.map((item, index) => (
+                        <span key={index} className="inline-block mr-5">
                             <Tooltip title={item.name}>
                                 <IconButton className="!w-14 !h-14 p-3 flex items-center justify-center bg-lightButton dark:bg-darkButton" onClick={item?.onClick}>
                                     <item.icon className="w-10 h-10 dark:text-dark text-zinc-800" />
@@ -232,14 +222,20 @@ const ShareViewContent = ({ meta, show }) => {
                         </span>
                     ))}
                 </div>
-                <div className='w-8 min-w-[32px]'>
-                    {shareOptions.length > visibleButtons && (
-                        <>
-                            <IconButton className={`${slideIndex + visibleButtons < shareOptions.length ? 'opacity-100 text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead' : 'opacity-40 cursor-not-allowed'} shadow-sm transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
-                                <ChevronRight />
-                            </IconButton>
-                        </>
-                    )}</div>
+                {container.current && container.current?.scrollLeft > 0 &&
+                    <div className='w-8 h-8 rounded-full shadow-md absolute -left-4 top-3'>
+                        <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead  transition-colors rounded-full h-8 w-8`} onClick={handlePrevClick}>
+                            <ChevronLeft />
+                        </IconButton>
+                    </div>
+                }
+                {container.current && container.current?.scrollLeft < container.current?.scrollWidth - container.current?.offsetWidth &&
+                    <div className='w-8 h-8 rounded-full shadow-md absolute -right-4 top-3'>
+                        <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
+                            <ChevronRight />
+                        </IconButton>
+                    </div>
+                }
             </div>
         </>
     )
@@ -283,6 +279,11 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
     )
 }
 
+/**
+ * @deprecated - Will be removed in future
+ * @param {*} param
+ * @returns 
+ */
 const DrawerSetter = ({ state }) => {
     localStorage.setItem('isDrawerHidden', `${state}`);
     return null;

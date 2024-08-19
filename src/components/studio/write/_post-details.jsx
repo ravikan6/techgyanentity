@@ -172,7 +172,7 @@ const PostDetailsEditor = () => {
                     </div>
                 </div>
 
-                <div className="flex items-start mt-5 justify-between flex-wrap">
+                <div className="flex items-start my-5 justify-between flex-wrap">
                     <div className="w-full lg:max-w-[calc(100%-320px)] md:max-w-[calc(100%-280px)] lg:min-w-[400px]">
                         <div className="flex flex-col space-y-8 mb-5">
                             <div className="flex flex-col space-y-3">
@@ -180,8 +180,11 @@ const PostDetailsEditor = () => {
                                 <TextField disabled={loading} size="small" required helperText={''} counter inputProps={{ maxLength: 150 }} label="Title" value={npst?.title || ''} onChange={(e) => handleUpdateNewPost(e, 'title')} />
                             </div>
                             <div className="flex flex-col space-y-3">
-                                <InputHeader label="Slug" desc={'The slug is the URL of your post. It is automatically generated based on the title of your post, but you can customize it.'} tip={'The slug is the URL of your post.'} />
-                                <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} label="Slug" value={npst?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
+                                <InputHeader label="Slug" desc={((post?.published === false) && !post?.publishedAt) ? 'The slug is the URL of your post. It is automatically generated based on the title of your post, but you can customize it.' : 'You cannot change the slug of a published post.'} tip={'The slug is the URL of your post.'} />
+                                {((post?.published === false) && !post?.publishedAt) ?
+                                    <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} label="Slug" value={npst?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
+                                    : <TextField disabled={true} readOnly size="small" helperText={''} InputProps={{ endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} value={npst?.slug || ''} />
+                                }
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Description" desc={'The description provides a summary of your post and helps readers understand what it is about. Make it engaging, informative, and concise.'} tip={'The description of your post is a brief summary of what your post is about.'} />
@@ -209,7 +212,7 @@ const PostDetailsEditor = () => {
 
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Category'} desc={'Choose the category for your post. You can select a category from the list of available categories.'} tip={'Choose the category for your post.'} />
-                                <Select size="small" className="!rounded-full" defaultValue={npst?.category?.slug} label="" onChange={handleSetCategory} disabled={loading}>
+                                <Select size="small" className="!rounded-full" value={npst?.category?.slug || ''} label="" onChange={handleSetCategory} disabled={loading}>
                                     {categories?.map((cat, index) => (
                                         <MenuItem key={index} value={cat?.slug}>{cat?.name}</MenuItem>
                                     ))}
@@ -245,7 +248,7 @@ const TagInput = ({ tags, setTags }) => {
 
     const handleAddTag = (event) => {
         if (event.key === 'Enter' && inputValue.trim() !== '') {
-            let value = inputValue?.trim()?.replaceAll(' ', '')
+            let value = inputValue?.trim()
             setTags([...tags, value]);
             setInputValue('');
         }
@@ -284,10 +287,10 @@ const TagInput = ({ tags, setTags }) => {
 
     const handleOnChange = (e) => {
         let value = e.target?.value;
-        value = value?.replaceAll(' ', '')
+        value = value?.trim()
         if (value && value.includes(',')) {
             let arr = value.split(',')
-            setTags([...tags, ...arr.filter((a) => { if (a?.length >= 3) { return a } })])
+            setTags([...tags, ...arr.filter((a) => { if (a?.trim()?.length >= 3) { return a?.trim() } })])
             setInputValue('')
         } else setInputValue(e.target.value)
     }

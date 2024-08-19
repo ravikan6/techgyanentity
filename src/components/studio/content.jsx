@@ -221,7 +221,7 @@ const StudioContent = () => {
 
             return (
                 <>
-                    <div className="flex items-center justify-between w-full px-2 mb-1 pt-2 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
+                    <div className="flex items-center justify-between w-full px-7 md:px-2 mb-1 pt-2 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                         {
                             [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
                                 return (
@@ -263,7 +263,7 @@ const StudioContent = () => {
     });
 
     return (
-        <div className={`${(variant === 'permanent') && 'md:-mx-5'}`}>
+        <div className={`${(variant === 'permanent') ? 'md:-mx-5' : 'md:mx-0'} -mx-6`}>
             <MaterialReactTable table={table} />
         </div>
     );
