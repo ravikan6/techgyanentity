@@ -420,7 +420,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
     return (
         !showForm ? (
             <div className="flex items-start space-x-4 ">
-                <Avatar onClick={comment?.author ? router.push(`/@${username}`) : null} src={avatar} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={`@${username}`} >{username.slice(0, 1)}</Avatar>
+                <Avatar onClick={comment?.author ? () => router.push(`/@${username}`) : null} src={avatar} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={`@${username}`} >{username.slice(0, 1)}</Avatar>
                 <div className="flex flex-col grow">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">

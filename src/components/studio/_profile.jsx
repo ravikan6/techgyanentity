@@ -212,7 +212,6 @@ const ListGridItem = ({ link, link2 }) => {
 };
 
 const SwitchAccount = ({ state, context }) => {
-    const { data: session } = useSession();
 
     const [pageInfo, setPageInfo] = useState({
         serviceName: 'Author',
@@ -221,12 +220,43 @@ const SwitchAccount = ({ state, context }) => {
         // disabled: true,
     });
 
+    return (
+        <ListInsideModel link={{
+            name: `Switch ${pageInfo?.serviceName}`,
+            icon: Person4Outlined,
+        }} data={{
+            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: AccountProfilesSwitcherView, isJsx: true, componentProps: { state: state, pageInfo: pageInfo },
+        }} state={state} />
+    )
+}
+
+const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
+    const { data: session } = useSession();
+    const [thisData, setThisData] = useState(null);
+
+    const context = useContext(StudioContext);
+    let page = context?.data?.page;
+
+    useEffect(() => {
+        async function fetch() {
+            try {
+                const fdata = await getUserAuthors();
+                setThisData(fdata?.data);
+            } catch (error) {
+                toast.error('An error occurred while fetching data. Please try again.');
+            }
+        }
+        if (state?.insiderOpen) {
+            fetch()
+        }
+    }, [session, state?.insiderOpen]);
+
     const updateContextCookie = (data) => {
         try {
             SetAuthorStudioCookie(data?.id).then((res) => {
                 if (res) {
                     state.handleInsiderClose();
-                    window.location.reload();
+                    // window.location.reload();
                     context.setData({ ...context.data, data: data }); // Commented because it is usefull while reloading the page
                 }
             });
@@ -236,102 +266,72 @@ const SwitchAccount = ({ state, context }) => {
         }
     };
 
-    const Component = () => {
-        const [thisData, setThisData] = useState(null);
-        let page = context?.data?.page;
-        useEffect(() => {
-            async function fetch() {
-                try {
-                    const fdata = await getUserAuthors();
-                    setThisData(fdata?.data);
-                } catch (error) {
-                    toast.error('An error occurred while fetching data. Please try again.');
-                }
-            }
-            if (state?.insiderOpen) {
-                fetch()
-            }
-        }, [session, state?.insiderOpen]);
-
-        return (
-            <div className='mb-2'>
-                <div className='mx-4 my-2'>
-                    <h3 className='text-sm cheltenham font-semibold'>{session?.user?.name}</h3>
-                    <p className='text-xs'>{session?.user?.email}</p>
-                </div>
-                <Divider />
-                <List className='mx-1 max-w-[320px]'>
-                    {thisData ? thisData?.map((item, index) => {
-                        item = { ...item, image: item?.image || item?.logo };
-                        return (
-                            <Fragment key={index} >
-                                <MenuItem onClick={() => { !(context?.data?.data?.id === item?.id) && updateContextCookie(item) }}>
-                                    <Tooltip title={`${item?.name} (${item?.handle})`}>
-                                        <div className="flex items-center space-x-2 justify-between w-full">
-                                            <ListItemIcon>
-                                                <Avatar src={item?.image} className='uppercase font-semibold' sx={{ width: 40, height: 40 }}>{item?.name?.slice(0, 1)}</Avatar>
-                                            </ListItemIcon>
-                                            <div className="flex-1 flex-col ml-6 w-[calc(100%-80px)]">
-                                                <h3 className='truncate text-base ml-0.5 font-semibold'>{item?.name}</h3>
-                                                <p className='truncate text-sm' >@{item?.handle}</p>
-                                            </div>
-                                            <div className='w-5 flex justify-center items-center'>
-                                                {context?.data?.data?.id === item?.id ? <Check className='text-accentLight dark:text-accentDark' fontSize="small" /> : null}
-                                            </div>
-                                        </div>
-                                    </Tooltip>
-                                </MenuItem>
-                            </Fragment>
-                        )
-                    }) :
-                        [1, 2].map((_, index) => (
-                            <MenuItem key={index} sx={{ my: 1 }} >
-                                <div className="flex items-center space-x-2 justify-between w-full">
-                                    <Skeleton variant="circular" width={32} height={32} animation='wave' />
-                                    <div className="flex-1 flex-col ml-5 w-[calc(100%-80px)]">
-                                        <Skeleton variant="text" width={100} height={20} animation='wave' />
-                                        <Skeleton variant="text" width={50} height={15} animation='wave' />
-                                    </div>
-                                    <div className='w-5 flex justify-center items-center'>
-                                        <Skeleton variant="circular" width={20} height={20} animation='wave' />
-                                    </div>
-                                </div>
-                            </MenuItem>
-                        ))
-                    }
-                </List>
-                <Divider />
-                <div className='mx-4 mt-2 flex flex-col space-y-3'>
-                    <ListGridItem link={{
-                        name: `Add ${pageInfo?.serviceName}`,
-                        url: `${pageInfo?.createUrl}`,
-                        icon: Person4Outlined,
-                        helpText: pageInfo?.des,
-                    }} link2={{
-                        name: `Sign Out`,
-                        url: '#',
-                        icon: Logout,
-                        onClick: () => signOut(),
-                        helpText: 'Click here to sign out',
-                    }} />
-                </div>
-            </div>
-        )
-    }
-
-    // let newComp = useMemo(() => {
-    //     return <Component />
-    // }, []); // context?.data?.data?.id, pageInfo
-
     return (
-        <ListInsideModel link={{
-            name: `Switch ${pageInfo?.serviceName}`,
-            icon: Person4Outlined,
-        }} data={{
-            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: Component, isJsx: true,
-        }} state={state} />
+        <div className='mb-2'>
+            <div className='mx-4 my-2'>
+                <h3 className='text-sm cheltenham font-semibold'>{session?.user?.name}</h3>
+                <p className='text-xs'>{session?.user?.email}</p>
+            </div>
+            <Divider />
+            <List className='mx-1 max-w-[320px]'>
+                {thisData ? thisData?.map((item, index) => {
+                    item = { ...item, image: item?.image || item?.logo };
+                    return (
+                        <Fragment key={index} >
+                            <MenuItem onClick={() => { !(context?.data?.data?.id === item?.id) ? updateContextCookie(item) : null }}>
+                                <Tooltip title={`${item?.name} (${item?.handle})`}>
+                                    <div className="flex items-center space-x-2 justify-between w-full">
+                                        <ListItemIcon>
+                                            <Avatar src={item?.image} className='uppercase font-semibold' sx={{ width: 40, height: 40 }}>{item?.name?.slice(0, 1)}</Avatar>
+                                        </ListItemIcon>
+                                        <div className="flex-1 flex-col ml-6 w-[calc(100%-80px)]">
+                                            <h3 className='truncate text-base ml-0.5 font-semibold'>{item?.name}</h3>
+                                            <p className='truncate text-sm' >@{item?.handle}</p>
+                                        </div>
+                                        <div className='w-5 flex justify-center items-center'>
+                                            {context?.data?.data?.id === item?.id ? <Check className='text-accentLight dark:text-accentDark' fontSize="small" /> : null}
+                                        </div>
+                                    </div>
+                                </Tooltip>
+                            </MenuItem>
+                        </Fragment>
+                    )
+                }) :
+                    [1, 2].map((_, index) => (
+                        <MenuItem key={index} sx={{ my: 1 }} >
+                            <div className="flex items-center space-x-2 justify-between w-full">
+                                <Skeleton variant="circular" width={32} height={32} animation='wave' />
+                                <div className="flex-1 flex-col ml-5 w-[calc(100%-80px)]">
+                                    <Skeleton variant="text" width={100} height={20} animation='wave' />
+                                    <Skeleton variant="text" width={50} height={15} animation='wave' />
+                                </div>
+                                <div className='w-5 flex justify-center items-center'>
+                                    <Skeleton variant="circular" width={20} height={20} animation='wave' />
+                                </div>
+                            </div>
+                        </MenuItem>
+                    ))
+                }
+            </List>
+            <Divider />
+            <div className='mx-4 mt-2 flex flex-col space-y-3'>
+                <ListGridItem link={{
+                    name: `Add ${pageInfo?.serviceName}`,
+                    url: `${pageInfo?.createUrl}`,
+                    icon: Person4Outlined,
+                    helpText: pageInfo?.des,
+                }} link2={{
+                    name: `Sign Out`,
+                    url: '#',
+                    icon: Logout,
+                    onClick: () => signOut(),
+                    helpText: 'Click here to sign out',
+                }} />
+            </div>
+        </div>
     )
 }
+
 
 const SIgnOutMenuBtn = () => {
     return (
