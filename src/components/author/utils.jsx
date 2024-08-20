@@ -120,8 +120,8 @@ const AuthorTipView = ({ shortId }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await getAuthorForTip(shortId);
-                if (res?.data) {
+                const res = await getAuthorForTip({ shortId });
+                if (res?.data && res?.data?.shortId === shortId) {
                     setData(res?.data);
                 }
             }
@@ -134,10 +134,10 @@ const AuthorTipView = ({ shortId }) => {
 
     return (
         data ? <>
-            <section className="px-4 py-2 max-w-72">
+            <section className="px-4 py-2 max-w-72 relative">
                 <div className="flex items-center justify-between">
                     <AuthorAvatar data={data?.image} sx={{ width: '40px', height: '40px' }} />
-                    <div className="mx-3">
+                    <div className="ml-3 mr-1">
                         <FollowButton authorId={data?.id} />
                     </div>
                 </div>
@@ -150,7 +150,7 @@ const AuthorTipView = ({ shortId }) => {
                 </div>
             </section>
         </> :
-            <section className="px-4 py-2 w-73 max-w-72">
+            <section className="px-4 py-2 w-72 max-w-72">
                 <Skeleton variant="circular" width={40} height={40} />
                 <Skeleton variant="text" width={120} height={20} />
                 <Skeleton variant="text" width={100} height={18} />

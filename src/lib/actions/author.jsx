@@ -633,9 +633,10 @@ const getAuthorPosts = async (params) => {
 const getAuthorForTip = async (params) => {
     let res = { data: null, status: 500, errors: [] };
     try {
-        let author = await prisma.author.findFirst({
+        let author = await prisma.author.findUnique({
             where: {
                 shortId: params.shortId,
+                isDeleted: false,
             },
             select: {
                 id: true,

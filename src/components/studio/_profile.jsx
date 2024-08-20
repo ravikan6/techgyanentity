@@ -239,14 +239,17 @@ const SwitchAccount = ({ state, context }) => {
     const Component = () => {
         const [thisData, setThisData] = useState(null);
         let page = context?.data?.page;
-        useEffect(async () => {
-            if (state?.insiderOpen) {
+        useEffect(() => {
+            async function fetch() {
                 try {
                     const fdata = await getUserAuthors();
                     setThisData(fdata?.data);
                 } catch (error) {
                     toast.error('An error occurred while fetching data. Please try again.');
                 }
+            }
+            if (state?.insiderOpen) {
+                fetch()
             }
         }, [session, state?.insiderOpen]);
 

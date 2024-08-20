@@ -39,7 +39,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                 </div>
                 <div className={`${modern ? ' justify-end' : ' justify-start'} flex items-center space-x-6`}>
                     <ShareView data={{ image: article?.image?.url, title: article?.title, info: article?.description }} meta={{ url: `/@${article?.author?.handle}/${article?.slug}` }} />
-                    <Bookmark id={article?.shortId} session={session} />
+                    <Bookmark id={article?.shortId} />
                     <BtnWithMenu id={id} />
                 </div>
             </div>
@@ -58,9 +58,10 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
     );
 }
 
-export const Bookmark = ({ id, variant, session }) => {
+export const Bookmark = ({ id, variant }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const { data: session } = useSession();
 
     useEffect(() => {
         if (!session?.user) {
@@ -114,7 +115,7 @@ const ClapPost = ({ id, session }) => {
     const [claps, setClaps] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isClapped, setIsClapped] = useState({ is: false, clappedId: null });
-    const [clapsCount, setClapsCount] = useState(0);
+    const [clapsCount, setClapsCount] = useState(null);
 
     useEffect(() => {
         articleClapsList(id).then((res) => {
@@ -170,11 +171,11 @@ const ClapPost = ({ id, session }) => {
     return (
         session?.user ?
             <Tooltip title={isClapped?.is ? 'Unclap' : 'Clap'} placement='top'>
-                <Button disabled={isLoading} sx={{ px: 2, height: '32px' }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
+                <Button disabled={isLoading} sx={{ px: 2, height: '32px', ...clapsCount == 0 && { width: '32px', minWidth: '32px' } }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className={`w-4 h-4 ${clapsCount == 0 ? 'ml-2.5' : null} `} />} endIcon={clapsCount == 0 ? null : <span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span>} />
             </Tooltip>
             :
             <UnAuthorizedActionWrapper description={'Sign in to clap'}>
-                <Button sx={{ px: 2, height: '32px' }} size='small' variant='outlined' color='primary' startIcon={<PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span></>} />
+                <Button sx={{ px: 2, height: '32px', ...clapsCount == 0 && { width: '32px', minWidth: '32px' } }} size='small' variant='outlined' color='primary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${clapsCount == 0 ? 'ml-2.5' : null} `} />} endIcon={clapsCount == 0 ? null : <span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span>} />
             </UnAuthorizedActionWrapper>
     );
 }

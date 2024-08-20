@@ -13,6 +13,7 @@ import { Bookmark } from "./postActions";
 import { PiHandsClappingLight } from "react-icons/pi";
 import { AiOutlineComment } from "react-icons/ai";
 import { ShareView } from "../Home/_client";
+import { AuthorTipWrapper } from "../author/utils";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -131,10 +132,12 @@ const PostListView2 = ({ data, hidden }) => {
                     <section className="flex flex-col gap-1.5 sm:gap-2">
                         <div className="flex justify-between items-center">
                             <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
-                                <div className="flex items-center cursor-pointer space-x-3">
-                                    <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
-                                    <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
-                                </div>
+                                <AuthorTipWrapper shortId={post?.author?.shortId}>
+                                    <div className="flex items-center cursor-pointer space-x-3">
+                                        <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
+                                        <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
+                                    </div>
+                                </AuthorTipWrapper>
                             </Link>
                             <PostViewActions id={post?.id} post={post} />
                         </div>
@@ -212,16 +215,18 @@ const PostMetaView = ({ data }) => {
 
 const PostAuthorView = ({ author }) => {
     return (
-        <div className="flex items-center gap-3">
-            <Link href={`/@${author?.handle}`}>
-                <AuthorAvatar data={{ url: author?.image?.url }} className={'!w-8 !h-8'} />
-            </Link>
-            <div>
+        <AuthorTipWrapper shortId={author?.shortId}>
+            <div className="flex items-center gap-3">
                 <Link href={`/@${author?.handle}`}>
-                    <h3 className="text-base font-bold cheltenham">{author?.name}</h3>
+                    <AuthorAvatar data={{ url: author?.image?.url }} className={'!w-8 !h-8'} />
                 </Link>
+                <div>
+                    <Link href={`/@${author?.handle}`}>
+                        <h3 className="text-base font-bold cheltenham">{author?.name}</h3>
+                    </Link>
+                </div>
             </div>
-        </div>
+        </AuthorTipWrapper>
     )
 }
 

@@ -5,7 +5,7 @@ import { PostListView2 } from "../post/_struct";
 import { Skeleton, useMediaQuery } from "@mui/material";
 import { Button, Dialog, IconButton, SwipeableDrawer, TextField, Tooltip } from "../rui";
 import { toast } from "react-toastify";
-import { ChevronLeft, ChevronRight, FacebookOutlined, LinkOutlined, Telegram, WarningAmber, WhatsApp, X } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, FacebookOutlined, LinkOutlined, Reddit, StackedBarChartOutlined, Telegram, WarningAmber, WhatsApp, X } from "@mui/icons-material";
 import { CloseBtn, ShareButton } from "../Buttons";
 import { CldImage } from "next-cloudinary";
 import { ListItemRdX } from "./_profile-model";
@@ -199,6 +199,8 @@ const ShareViewContent = ({ meta }) => {
         { name: 'Whatsapp', icon: WhatsApp, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
         { name: 'Telegram', icon: Telegram, color: 'blue', onClick: () => window.open('https://t.me/share/url?url=https://www.google.com', '_blank') },
         { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => copyText(`${window.location.origin}${meta?.url}`) },
+        { name: 'Reddit', icon: Reddit, color: 'red', onClick: () => { } },
+        { name: 'Stack Overflow', icon: StackedBarChartOutlined, color: 'blue', onClick: () => { } }
     ];
 
     const handlePrevClick = () => {
@@ -229,10 +231,10 @@ const ShareViewContent = ({ meta }) => {
 
     return (
         <>
-            <div className='relative mx-4'>
+            <div className='relative mx-2'>
                 <div id="#_share_options" className='block scroll-smooth overflow-hidden whitespace-nowrap'>
                     {shareOptions.map((item, index) => (
-                        <span key={index} className="inline-block mr-5">
+                        <span key={index} className={`inline-block ${shareOptions.length === (index + 1) ? '' : 'mr-5'}`}>
                             <Tooltip title={item.name}>
                                 <IconButton className="!w-14 !h-14 p-3 flex items-center justify-center bg-lightButton dark:bg-darkButton" onClick={item?.onClick}>
                                     <item.icon className="w-10 h-10 dark:text-dark text-zinc-800" />

@@ -366,7 +366,7 @@ export const ArticleComments = ({ articleId, article }) => {
                 <CommentForm onAddComment={handleAddComment} article={article} />
                 {loading ? (
                     <CommentsLoader count={3} />
-                ) : (
+                ) : (comments.length > 0) ? (
                     comments?.map((comment, index) => {
                         return (
                             <div key={index} className="mb-2">
@@ -374,7 +374,9 @@ export const ArticleComments = ({ articleId, article }) => {
                             </div>
                         );
                     })
-                )}
+                ) :
+                    <div className="text-sm text-center text-gray-500 dark:text-gray-300 my-4">No Comments Found</div>
+                }
             </div>
         </>
     );
@@ -422,7 +424,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
                 <div className="flex flex-col grow">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                            <h4 onClick={comment?.author ? router.push(`/@${username}`) : null} className={`text-sm font-bold ${comment?.author ? 'dark:text-accentDark text-accentLight' : 'dark:text-slate-100 text-gray-900'}`}>{`@${username}`}</h4>
+                            <h4 onClick={comment?.author ? () => router.push(`/@${username}`) : null} className={`text-sm font-bold ${comment?.author ? 'dark:text-accentDark text-accentLight' : 'dark:text-slate-100 text-gray-900'}`}>{`@${username}`}</h4>
                             {/* <Link href={"#"}> */}
                             <Tooltip title={<>{new Date(comment?.createdAt).toUTCString()}</>} placement="top" arrow>
                                 <time dateTime={comment?.createdAt} className="text-xs font-semibold dark:text-slate-200 text-gray-800">{formatDate(comment?.createdAt)}</time>
