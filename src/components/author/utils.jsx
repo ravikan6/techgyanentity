@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { Button, Menu, Tooltip } from "../rui";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { checkAuthorFollowAction, followAuthorAction, getAuthorForTip } from "@/lib/actions/author";
 import { toast } from "react-toastify";
 import { HeartBrokenOutlined } from "@mui/icons-material";
@@ -101,7 +101,9 @@ const FollowButton = ({ authorId, buttonProps }) => {
 const AuthorTipWrapper = ({ children, shortId }) => {
     return (
         <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={800} leaveDelay={300}>
-            {children}
+            <span>
+                {children}
+            </span>
         </Tooltip>
     )
 }
@@ -110,7 +112,7 @@ const AuthorTipWrapper = ({ children, shortId }) => {
 const AuthorTipView = ({ shortId }) => {
     const [data, setData] = useState(null);
 
-    useMemo(() => {
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await getAuthorForTip(shortId);
@@ -128,29 +130,28 @@ const AuthorTipView = ({ shortId }) => {
     return (
         data ? <>
             <section className="px-4 py-2 max-w-72">
-                <div className="flex items-center">
-                    <AuthorAvatar data={data?.image} sx={{ width: '80px', height: '80px' }} />
-                    <div className="ml-4">
-                        <h3 className="text-lg karnak font-bold">{data?.name}</h3>
-                        <p className="text-sm mt-0.5 stymie italic text-gray-500">{data?._count?.followers} Followers</p>
+                <div className="flex items-center justify-between">
+                    <AuthorAvatar data={data?.image} sx={{ width: '40px', height: '40px' }} />
+                    <div className="mx-3">
+                        <FollowButton authorId={data?.id} />
                     </div>
                 </div>
+                <div className="mt-1">
+                    <h3 className="text-lg karnak font-bold text-white dark:text-black">{data?.name}</h3>
+                    <p className="text-sm mt-0.5 text-zinc-200 dark:text-zinc-800">{data?._count?.followers} Followers</p>
+                </div>
                 <div className="mt-4">
-                    <FollowButton authorId={data?.id} buttonProps={{ fullWidth: true }} />
+                    <p className="text-xs text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{data?.bio}</p>
                 </div>
             </section>
         </> :
             <section className="px-4 py-2 max-w-72">
-                <div className="flex items-center">
-                    <Skeleton variant="circular" width={80} height={80} />
-                    <div className="ml-4">
-                        <Skeleton variant="text" width={120} height={20} />
-                        <Skeleton variant="text" width={80} height={20} />
-                    </div>
-                </div>
-                <div className="mt-4">
-                    <Skeleton variant="rounded" height={40} />
-                </div>
+                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="text" width={120} height={20} />
+                <Skeleton variant="text" width={100} height={18} />
+                <Skeleton variant="text" width={'100%'} className="mt-3" height={16} />
+                <Skeleton variant="text" width={'100%'} height={16} />
+                <Skeleton variant="text" width={'40%'} height={16} />
             </section>
     )
 

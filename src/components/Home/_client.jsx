@@ -214,12 +214,12 @@ const ShareViewContent = ({ meta }) => {
             setScroll(container.current.scrollLeft);
         };
 
-        container.current.addEventListener('scroll', handleScroll);
+        container?.current && container.current.addEventListener('scroll', handleScroll);
 
         return () => {
-            container.current.removeEventListener('scroll', handleScroll);
+            container?.current && container.current.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [container?.current]);
 
     return (
         <>

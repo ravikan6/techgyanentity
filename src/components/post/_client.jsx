@@ -438,7 +438,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
                                 )
                             }
                         </div>
-                        {session.user ? <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} authorId={comment?.author?.id} /> : null}
+                        {session?.user ? <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} authorId={comment?.author?.id} /> : null}
                     </div>
                     <div id="comment_body">
                         <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
@@ -497,7 +497,7 @@ const CommentMenu = ({ id, isOwn, onEdit, onDelete, authorId }) => {
                 <span onClick={handleClick}>
                     {isLoading ? <BetaLoader /> :
                         <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} >
-                            <MoreVert />
+                            <MoreVert className="w-4 h-4" />
                         </IconButton>
                     }
                 </span>
@@ -712,7 +712,7 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
             <div className="flex items-center justify-start space-x-4 mt-1">
                 {currentUser ?
                     <>
-                        <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span> : null} />
+                        <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? null : <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span>} />
                         <Button onClick={() => setShowForm(true)} sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
                     </>
                     :

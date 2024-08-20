@@ -643,6 +643,7 @@ const getAuthorForTip = async (params) => {
                 handle: true,
                 shortId: true,
                 image: true,
+                bio: true,
                 _count: {
                     select: {
                         followers: true,
