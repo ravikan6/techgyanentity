@@ -100,7 +100,12 @@ const FollowButton = ({ authorId, buttonProps }) => {
 
 const AuthorTipWrapper = ({ children, shortId }) => {
     return (
-        <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={800} leaveDelay={300}>
+        <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={1500} leaveDelay={300}
+            PopperProps={{
+                onClick(e) {
+                    e.stopPropagation();
+                }
+            }}>
             <span>
                 {children}
             </span>
@@ -141,11 +146,11 @@ const AuthorTipView = ({ shortId }) => {
                     <p className="text-sm mt-0.5 text-zinc-200 dark:text-zinc-800">{data?._count?.followers} Followers</p>
                 </div>
                 <div className="mt-4">
-                    <p className="text-xs text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{data?.bio}</p>
+                    <p className="text-xs font-normal text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{data?.bio}</p>
                 </div>
             </section>
         </> :
-            <section className="px-4 py-2 max-w-72">
+            <section className="px-4 py-2 w-full max-w-72">
                 <Skeleton variant="circular" width={40} height={40} />
                 <Skeleton variant="text" width={120} height={20} />
                 <Skeleton variant="text" width={100} height={18} />

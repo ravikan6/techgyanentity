@@ -208,16 +208,16 @@ const ShareViewContent = ({ meta }) => {
     const handleNextClick = () => {
         container.current.scrollLeft += container.current.offsetWidth;
     };
-
+    console.log(scroll, container?.current?.scrollLeft, container?.current, '____________ from Client Comp')
     useEffect(() => {
         const handleScroll = () => {
             setScroll(container.current.scrollLeft);
         };
 
-        container?.current && container.current.addEventListener('scroll', handleScroll);
+        container.current?.addEventListener('scroll', handleScroll);
 
         return () => {
-            container?.current && container.current.removeEventListener('scroll', handleScroll);
+            container.current?.removeEventListener('scroll', handleScroll);
         };
     }, [container?.current]);
 

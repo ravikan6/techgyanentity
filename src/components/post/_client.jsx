@@ -206,23 +206,23 @@ const ArticleAuthor = ({ article }) => {
         <>
             <div className="flex justify-between hover:bg-black/10 dark:hover:bg-white/10 py-1 px-1 rounded-md space-x-2 items-center mb-5 border-y-slate-500">
                 <div className="flex items-center py-1">
-                    <Link href={`/@${article?.author?.handle}`} className="">
+                    <AuthorTipWrapper shortId={article?.author?.shortId} >
                         <div className="flex items-center cursor-pointer gap-3">
-                            <AuthorTipWrapper shortId={article?.author?.shortId} >
+                            <Link href={`/@${article?.author?.handle}`}>
                                 <AuthorAvatar data={{ url: article?.author?.image?.url }} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
-                            </AuthorTipWrapper>
+                            </Link>
                             <div className="flex flex-col justify-around">
-                                <AuthorTipWrapper shortId={article?.author?.shortId} >
+                                <Link href={`/@${article?.author?.handle}`}>
                                     <p className="text-sm cheltenham-small mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
                                         {article?.author?.name}
                                     </p>
-                                </AuthorTipWrapper>
+                                </Link>
                                 <p className="text-xs text-gray-500 dark:text-gray-300">
                                     {article?.author?._count?.followers} Followers
                                 </p>
                             </div>
                         </div>
-                    </Link>
+                    </AuthorTipWrapper>
                 </div>
                 <div className="flex items-center space-x-4">
                     <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
@@ -718,7 +718,7 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
                     :
                     <>
                         <UnAuthorizedActionWrapper description={'You need to be logged in to clap the comment'} >
-                            <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span> : null} />
+                            <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? null : <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span>} />
                         </UnAuthorizedActionWrapper>
                         <UnAuthorizedActionWrapper description={'You need to be logged in to reply the comment'} >
                             <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
