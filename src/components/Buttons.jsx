@@ -382,7 +382,7 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
     <>
       <Tooltip disabled={disabled} title={'Manage Post'} placement='bottom'>
         <IconButton disabled={disabled} onClick={handleClick} >
-          <HiOutlineDotsVertical className="w-5 h-5 text-black dark:text-white" />
+          <MoreVert className="w-5 h-5" />
         </IconButton>
       </Tooltip>
       <Menu

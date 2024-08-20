@@ -6,15 +6,15 @@ import { getDate, formatDate } from "@/lib/utils";
 import { PostActions, UnAuthorizedActionWrapper } from "./postActions";
 import { Avatar, ListItemIcon, MenuList, Skeleton, styled, useMediaQuery } from "@mui/material";
 import { Button, IconButton, Menu, MenuItem, TextField, Tooltip, SwipeableDrawer } from "../rui";
-import { EmailRounded } from "@mui/icons-material";
+import { EmailRounded, MoreVert } from "@mui/icons-material";
 import { LuUser } from "react-icons/lu";
 import { createPortal } from 'react-dom';
-import { FollowButton } from "../author/utils";
+import { AuthorTipWrapper, FollowButton } from "../author/utils";
 import { articleCommentAction, articleCommentClapAction, articleCommentDeleteAction, articleCommentRepliesListAction, articleCommentsListAction } from "@/lib/actions/author";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { PiDotsThreeOutlineVertical, PiHandsClappingLight } from "react-icons/pi";
+import { PiHandsClappingLight } from "react-icons/pi";
 import { BsReply } from "react-icons/bs";
 import { MdChevronRight, MdOutlineDeleteOutline, MdOutlineEdit, MdOutlineReport } from "react-icons/md";
 import { FaHandsClapping } from "react-icons/fa6";
@@ -22,6 +22,8 @@ import confirm from "@/lib/confirm";
 import { StudioContext } from "@/lib/context";
 import { imgUrl } from "@/lib/helpers";
 import { AuthorAvatar } from "../author/_client";
+import { useRouter } from "next/navigation";
+import { Router } from "next/router";
 
 export const ArticleImage = ({ image, classes, height, width, className, style }) => {
     return <CldImage
@@ -206,11 +208,15 @@ const ArticleAuthor = ({ article }) => {
                 <div className="flex items-center py-1">
                     <Link href={`/@${article?.author?.handle}`} className="">
                         <div className="flex items-center cursor-pointer gap-3">
-                            <AuthorAvatar data={{ url: article?.author?.image?.url }} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
+                            <AuthorTipWrapper shortId={article?.author?.shortId} >
+                                <AuthorAvatar data={{ url: article?.author?.image?.url }} sx={{ width: 40, height: 40, borderRadius: 1000 }} />
+                            </AuthorTipWrapper>
                             <div className="flex flex-col justify-around">
-                                <p className="text-sm cheltenham-small mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
-                                    {article?.author?.name}
-                                </p>
+                                <AuthorTipWrapper shortId={article?.author?.shortId} >
+                                    <p className="text-sm cheltenham-small mb-0.5 font-semibold dark:text-slate-100 text-gray-900">
+                                        {article?.author?.name}
+                                    </p>
+                                </AuthorTipWrapper>
                                 <p className="text-xs text-gray-500 dark:text-gray-300">
                                     {article?.author?._count?.followers} Followers
                                 </p>
@@ -379,6 +385,8 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
     const [showForm, setShowForm] = useState(false);
     const commentId = comment?.id;
 
+    const router = useRouter();
+
     const handleUpdateComment = async (comment) => {
         if (!session?.user || !comment || (comment === '')) return;
         const res = await articleCommentAction({ id: commentId, body: comment });
@@ -410,15 +418,13 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
     return (
         !showForm ? (
             <div className="flex items-start space-x-4 ">
-                <Link href='#' className="flex space-x-4">
+                <span onClick={comment?.author ? router.push(`/@${username}`) : null}>
                     <Avatar src={avatar} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={`@${username}`} >{username.slice(0, 1)}</Avatar>
-                </Link>
+                </span>
                 <div className="flex flex-col grow">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                            <Link href='#'>
-                                <h4 className={`text-sm font-bold ${comment?.author ? 'dark:text-accentDark text-accentLight' : 'dark:text-slate-100 text-gray-900'}`}>{`@${username}`}</h4>
-                            </Link>
+                            <h4 onClick={comment?.author ? router.push(`/@${username}`) : null} className={`text-sm font-bold ${comment?.author ? 'dark:text-accentDark text-accentLight' : 'dark:text-slate-100 text-gray-900'}`}>{`@${username}`}</h4>
                             {/* <Link href={"#"}> */}
                             <Tooltip title={<>{new Date(comment?.createdAt).toUTCString()}</>} placement="top" arrow>
                                 <time dateTime={comment?.createdAt} className="text-xs font-semibold dark:text-slate-200 text-gray-800">{formatDate(comment?.createdAt)}</time>
@@ -432,7 +438,7 @@ const CommentView = ({ comment, handleAddReply, toReplay, commentState, article 
                                 )
                             }
                         </div>
-                        <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} authorId={comment?.author?.id} />
+                        {session.user ? <CommentMenu id={comment?.id} onEdit={() => setShowForm(true)} onDelete={handleDeleteComment} isOwn={session?.user?.id === comment?.user?.id} authorId={comment?.author?.id} /> : null}
                     </div>
                     <div id="comment_body">
                         <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
@@ -491,7 +497,7 @@ const CommentMenu = ({ id, isOwn, onEdit, onDelete, authorId }) => {
                 <span onClick={handleClick}>
                     {isLoading ? <BetaLoader /> :
                         <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} >
-                            <PiDotsThreeOutlineVertical className="w-4 h-4" />
+                            <MoreVert />
                         </IconButton>
                     }
                 </span>
@@ -630,7 +636,7 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
                 </Button>
             </div>}
         </div> :
-            <UnAuthorizedActionWrapper description={'You need to be logged in to comment'} >
+            <UnAuthorizedActionWrapper description={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} link={'#'} >
                 <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
                     <Avatar sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={'User Image'} />
                     <TextField
@@ -706,13 +712,13 @@ const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCou
             <div className="flex items-center justify-start space-x-4 mt-1">
                 {currentUser ?
                     <>
-                        <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
+                        <Button disabled={isLoading} sx={{ px: 1.5, height: '28px' }} onClick={handleClap} size='small' variant='outlined' color='secondary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4 dark:fill-darkButton fill-accentLight" /> : <PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span> : null} />
                         <Button onClick={() => setShowForm(true)} sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
                     </>
                     :
                     <>
                         <UnAuthorizedActionWrapper description={'You need to be logged in to clap the comment'} >
-                            <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className="w-4 h-4" />} endIcon={<><span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span></>} />
+                            <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span> : null} />
                         </UnAuthorizedActionWrapper>
                         <UnAuthorizedActionWrapper description={'You need to be logged in to reply the comment'} >
                             <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
@@ -766,7 +772,7 @@ const RepliesView = ({ commentId, toReplay, handleAddReply, count, article }) =>
                     </div>
                 );
             }) : <div className="text-sm text-gray-500 dark:text-gray-300">No replies found</div>) :
-                <CommentsLoader count={1} />
+                <CommentsLoader count={(count >= 10) ? 10 : count} />
             }
         </>
     )

@@ -9,7 +9,7 @@ import { PiHandsClappingLight } from 'react-icons/pi';
 import { BookmarkBtn, BtnWithMenu, PostEditButton } from '../Buttons';
 import { Button, SwipeableDrawer, Tooltip } from '../rui';
 import { ArticleComments } from './_client';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, Suspense } from 'react';
 import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkAction, isPostAuthor } from '@/lib/actions/author';
 import { useSession } from 'next-auth/react';
 import { FaHandsClapping } from 'react-icons/fa6';
@@ -43,21 +43,15 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                     <BtnWithMenu id={id} />
                 </div>
             </div>
-            {!isExpanded && <SwipeableDrawer disableSwipeToOpen={false}
+            {!isExpanded && <SwipeableDrawer
                 container={document?.body}
-                slotProps={{
-                    root: {
-                        style: {
-                            height: '100%',
-                            borderRadius: '20px 20px 0 0'
-                        }
-                    }
-                }}
                 ModalProps={{
                     keepMounted: false,
                 }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
-                <div className="">
-                    <ArticleComments articleId={id} article={article} />
+                <div>
+                    <Suspense fallback={'Loading...'}>
+                        <ArticleComments articleId={id} article={article} />
+                    </Suspense>
                 </div>
             </SwipeableDrawer>}
         </>
@@ -107,9 +101,12 @@ export const Bookmark = ({ id, variant, session }) => {
     }
 
     return (
-        <UnAuthorizedActionWrapper description={'Sign in to bookmark'}>
+        session?.user ?
             <BookmarkBtn variant={variant} isLoading={isLoading} onClick={handleBookmarkClick} bookmarked={isBookmarked} />
-        </UnAuthorizedActionWrapper>
+            :
+            <UnAuthorizedActionWrapper description={'Sign in to bookmark'}>
+                <BookmarkBtn variant={variant} isLoading={false} bookmarked={false} />
+            </UnAuthorizedActionWrapper>
     );
 }
 
@@ -193,7 +190,7 @@ const AuthorActions = ({ id, authorId }) => {
     }
 }
 
-export const UnAuthorizedActionWrapper = ({ children, description }) => {
+export const UnAuthorizedActionWrapper = ({ children, description, link }) => {
     const [open, setOpen] = useState(false);
 
     const handleClose = () => {
@@ -207,11 +204,23 @@ export const UnAuthorizedActionWrapper = ({ children, description }) => {
     const TheComp = () => {
         return (
             <>
-                <div className='max-w-72 p-4'>
-                    <p className='italic text-xs cheltenham-small dark:text-zinc-800 text-gray-100 mb-5'>
+                <div className='max-w-56 p-1'>
+                    <p className='italic text-xs cheltenham-small dark:text-zinc-800 text-gray-100 mb-5 px-3 py-1'>
                         {description}
                     </p>
-                    <div className='flex justify-start items-center'>
+                    <div className='flex justify-between items-center w-full'>
+                        {link ? <Button
+                            variant='text'
+                            color="head"
+                            size="small"
+                            onClick={
+                                () => {
+                                    setOpen(false);
+                                }
+                            }
+                        >
+                            <span >Learn More</span>
+                        </Button> : null}
                         <Button
                             variant='outlined'
                             color="head"

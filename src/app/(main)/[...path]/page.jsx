@@ -131,6 +131,7 @@ const getArticle = async (slug, id) => {
                         name: true,
                         image: true,
                         id: true,
+                        shortId: true,
                         _count: {
                             select: {
                                 followers: true,
@@ -171,6 +172,7 @@ const getAuthor = async (handle) => {
                 handle: handle,
             },
             select: {
+                shortId: true,
                 handle: true,
                 name: true,
                 bio: true,

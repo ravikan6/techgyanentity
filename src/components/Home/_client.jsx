@@ -190,7 +190,8 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
 }
 
 const ShareViewContent = ({ meta }) => {
-    let container = useRef()
+    let container = useRef();
+    const [scroll, setScroll] = useState(0);
 
     const shareOptions = [
         { name: 'Facebook', icon: FacebookOutlined, color: 'blue', onClick: () => window.open('https://www.facebook.com/sharer/sharer.php?u=https://www.google.com', '_blank') },
@@ -198,15 +199,27 @@ const ShareViewContent = ({ meta }) => {
         { name: 'Whatsapp', icon: WhatsApp, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
         { name: 'Telegram', icon: Telegram, color: 'blue', onClick: () => window.open('https://t.me/share/url?url=https://www.google.com', '_blank') },
         { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => copyText(`${window.location.origin}${meta?.url}`) },
-    ]
+    ];
 
     const handlePrevClick = () => {
         container.current.scrollLeft -= container.current.offsetWidth;
     };
 
     const handleNextClick = () => {
-        container.current.scrollLeft += container.current.offsetWidth
+        container.current.scrollLeft += container.current.offsetWidth;
     };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScroll(container.current.scrollLeft);
+        };
+
+        container.current.addEventListener('scroll', handleScroll);
+
+        return () => {
+            container.current.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     return (
         <>
@@ -222,14 +235,14 @@ const ShareViewContent = ({ meta }) => {
                         </span>
                     ))}
                 </div>
-                {container.current && container.current?.scrollLeft > 0 &&
+                {scroll > 0 &&
                     <div className='w-8 h-8 rounded-full shadow-md absolute -left-4 top-3'>
                         <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead  transition-colors rounded-full h-8 w-8`} onClick={handlePrevClick}>
                             <ChevronLeft />
                         </IconButton>
                     </div>
                 }
-                {container.current && container.current?.scrollLeft < container.current?.scrollWidth - container.current?.offsetWidth &&
+                {scroll < container.current?.scrollWidth - container.current?.offsetWidth &&
                     <div className='w-8 h-8 rounded-full shadow-md absolute -right-4 top-3'>
                         <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
                             <ChevronRight />
@@ -238,8 +251,8 @@ const ShareViewContent = ({ meta }) => {
                 }
             </div>
         </>
-    )
-}
+    );
+};
 
 const ShareContentPreview = ({ data }) => {
     return (

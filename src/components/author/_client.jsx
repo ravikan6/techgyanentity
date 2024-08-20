@@ -93,14 +93,14 @@ const AuthorLayoutNav = ({ data }) => {
     return (
         <>
             <div className="m-auto py-2 rounded-full bg-lightHead dark:bg-darkHead">
-                <div className="flex items-center px-10 space-x-10 m-auto">
+                <div className="flex items-center px-4 md:px-10 space-x-3 md:space-x-10 m-auto">
                     {tabs.map((tab, index) => {
                         const isActive = (path === `/${data?.handle}${tab.url}`) || (path === `/@${data?.handle}${tab.url}`);
                         return (
                             <div key={index} className="flex items-center justify-center">
                                 <Link
                                     href={`/@${data?.handle}${tab.url}`}
-                                    className={`px-8 h-8 font-semibold text-sm rounded-full align-middle flex items-center ${isActive ? 'bg-lightButton dark:bg-darkButton text-black' : 'bg-light text-zinc-800 dark:bg-dark dark:text-zinc-100 dark:hover:text-darkButton hover:text-lightButton'}`}
+                                    className={`px-3 md:px-8 h-8 font-semibold text-sm rounded-full align-middle flex items-center ${isActive ? 'bg-lightButton dark:bg-darkButton text-black' : 'bg-light text-zinc-800 dark:bg-dark dark:text-zinc-100 dark:hover:text-darkButton hover:text-lightButton'}`}
                                 >
                                     {tab.label}
                                 </Link>

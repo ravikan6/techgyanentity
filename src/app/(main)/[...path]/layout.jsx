@@ -38,6 +38,7 @@ const getAuthor = async (handle) => {
             },
             select: {
                 id: true,
+                shortId: true,
                 handle: true,
                 name: true,
                 bio: true,
