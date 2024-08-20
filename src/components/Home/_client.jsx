@@ -190,41 +190,47 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
 }
 
 const ShareViewContent = ({ meta }) => {
-    let container = useRef();
+    let [container, setContainer] = useState();
     const [scroll, setScroll] = useState(0);
 
     const shareOptions = [
         { name: 'Facebook', icon: FacebookOutlined, color: 'blue', onClick: () => window.open('https://www.facebook.com/sharer/sharer.php?u=https://www.google.com', '_blank') },
-        { name: 'Twitter', icon: X, color: 'black', onClick: () => window.open('https://twitter.com/intent/tweet?text=Hello%20world&url=https://www.google.com', '_blank') },
+        { name: 'TwitteEntityr', icon: X, color: 'black', onClick: () => window.open('https://twitter.com/intent/tweet?text=Hello%20world&url=https://www.google.com', '_blank') },
         { name: 'Whatsapp', icon: WhatsApp, color: 'green', onClick: () => window.open('https://api.whatsapp.com/send?text=Hello%20world%20https://www.google.com', '_blank') },
         { name: 'Telegram', icon: Telegram, color: 'blue', onClick: () => window.open('https://t.me/share/url?url=https://www.google.com', '_blank') },
         { name: 'Copy Link', icon: LinkOutlined, color: 'black', onClick: () => copyText(`${window.location.origin}${meta?.url}`) },
     ];
 
     const handlePrevClick = () => {
-        container.current.scrollLeft -= container.current.offsetWidth;
+        if (container)
+            container.scrollLeft -= container.offsetWidth;
     };
 
     const handleNextClick = () => {
-        container.current.scrollLeft += container.current.offsetWidth;
+        if (container)
+            container.scrollLeft += container.offsetWidth;
     };
-    console.log(scroll, container?.current?.scrollLeft, container?.current, '____________ from Client Comp')
+
     useEffect(() => {
         const handleScroll = () => {
-            setScroll(container.current.scrollLeft);
+            setScroll(container.scrollLeft);
         };
-
-        container.current?.addEventListener('scroll', handleScroll);
+        if (container) container.addEventListener('scroll', handleScroll);
 
         return () => {
-            container.current?.removeEventListener('scroll', handleScroll);
+            if (container) container.removeEventListener('scroll', handleScroll);
         };
-    }, [container?.current]);
+    }, [container]);
+
+    useEffect(() => {
+        let cont = document.getElementById('#_share_options');
+        if (cont) setContainer(cont);
+    }, []);
 
     return (
         <>
             <div className='relative mx-4'>
-                <div ref={container} className='block overflow-hidden whitespace-nowrap'>
+                <div id="#_share_options" className='block scroll-smooth overflow-hidden whitespace-nowrap'>
                     {shareOptions.map((item, index) => (
                         <span key={index} className="inline-block mr-5">
                             <Tooltip title={item.name}>
@@ -242,7 +248,7 @@ const ShareViewContent = ({ meta }) => {
                         </IconButton>
                     </div>
                 }
-                {scroll < container.current?.scrollWidth - container.current?.offsetWidth &&
+                {scroll < container?.scrollWidth - container?.offsetWidth &&
                     <div className='w-8 h-8 rounded-full shadow-md absolute -right-4 top-3'>
                         <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
                             <ChevronRight />

@@ -150,7 +150,7 @@ const AuthorTipView = ({ shortId }) => {
                 </div>
             </section>
         </> :
-            <section className="px-4 py-2 w-full max-w-72">
+            <section className="px-4 py-2 w-73 max-w-72">
                 <Skeleton variant="circular" width={40} height={40} />
                 <Skeleton variant="text" width={120} height={20} />
                 <Skeleton variant="text" width={100} height={18} />
