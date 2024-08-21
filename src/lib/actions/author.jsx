@@ -636,7 +636,6 @@ const getAuthorForTip = async (params) => {
         let author = await prisma.author.findFirst({
             where: {
                 shortId: params.shortId,
-                isDeleted: false,
             },
             select: {
                 id: true,
@@ -655,10 +654,11 @@ const getAuthorForTip = async (params) => {
         });
         res.data = author;
         res.status = 200;
+        return res;
     } catch (e) {
         res.errors.push({ message: JSON.stringify(e) });
+        return res;
     }
-    return res;
 }
 
 export const cloudinaryProvider = async (data) => {

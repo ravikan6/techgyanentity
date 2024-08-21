@@ -225,7 +225,7 @@ const SwitchAccount = ({ state, context }) => {
             name: `Switch ${pageInfo?.serviceName}`,
             icon: Person4Outlined,
         }} data={{
-            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: AccountProfilesSwitcherView, isJsx: true, componentProps: { state: state, pageInfo: pageInfo },
+            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: AccountProfilesSwitcherView, isJsx: true, componentProps: { pageInfo: pageInfo },
         }} state={state} />
     )
 }
@@ -237,8 +237,8 @@ const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
     const context = useContext(StudioContext);
     let page = context?.data?.page;
 
-    useEffect(() => {
-        async function fetch() {
+    useMemo(async () => {
+        if (state?.insiderOpen) {
             try {
                 const fdata = await getUserAuthors();
                 setThisData(fdata?.data);
@@ -246,11 +246,8 @@ const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
                 toast.error('An error occurred while fetching data. Please try again.');
             }
         }
-        if (state?.insiderOpen) {
-            fetch()
-        }
     }, [session, state?.insiderOpen]);
-
+    console.log(thisData, 'thisData', state);
     const updateContextCookie = (data) => {
         try {
             SetAuthorStudioCookie(data?.id).then((res) => {

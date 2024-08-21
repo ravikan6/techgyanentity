@@ -121,7 +121,7 @@ const AuthorTipView = ({ shortId }) => {
         const fetchData = async () => {
             try {
                 const res = await getAuthorForTip({ shortId });
-                if (res?.data && res?.data?.shortId === shortId) {
+                if (res?.data && (res?.data?.shortId === shortId)) {
                     setData(res?.data);
                 }
             }

@@ -191,7 +191,7 @@ export const UserProfileModel = ({ user }) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} />
+                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} state={state} />
 
             </Menu>
 
@@ -199,7 +199,7 @@ export const UserProfileModel = ({ user }) => {
     );
 }
 
-export const SecondaryMenu = ({ insiderData, insiderRun, handleBack, modern = true }) => {
+export const SecondaryMenu = ({ insiderData, insiderRun, handleBack, modern = true, state }) => {
 
     return (
         <>
@@ -213,7 +213,7 @@ export const SecondaryMenu = ({ insiderData, insiderRun, handleBack, modern = tr
             </Box>
             <div className='w-full rb_sss mt-10'>
                 <p className='text-sm py-2 px-4 text-wrap mx-auto text-slate-600 dark:text-slate-300' >{insiderData?.message}</p>
-                {(insiderData?.isJsx) ? <insiderData.component {...insiderData?.componentProps} />
+                {(insiderData?.isJsx) ? <insiderData.component {...insiderData?.componentProps} state={state} />
                     : insiderData?.options?.map((option, index) => (
                         <MenuItem onClick={() => insiderRun(option.value)} key={index} >
                             <ListItemIcon>
