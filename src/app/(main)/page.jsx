@@ -120,7 +120,7 @@ const getCommunityPosts = async () => {
               select: {
                 votes: true
               }
-            }
+            },
           },
         });
         post.content = p.question;
@@ -161,7 +161,7 @@ const Poll = ({ post }) => {
           post?.typeContent?.options?.map((option, index) => (
             <div key={index} className="flex items-center">
               <input type="radio" name={`poll-${post.id}`} id={`poll-${post.id}-${index}`} />
-              <label htmlFor={`poll-${post.id}-${index}`} className="ml-2">{option}</label>
+              <label htmlFor={`poll-${post.id}-${index}`} className="ml-2">{option?.text}</label>
             </div>
           ))
         }

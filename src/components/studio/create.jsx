@@ -128,13 +128,27 @@ const MicroPostPoll = ({ setter, getter, onCancle }) => {
                         }
                     }
                     return (
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 w-full">
                             <IconButton size="small" onClick={() => { onRemove() }}>
                                 <CloseRounded fontSize="small" />
                             </IconButton>
-                            <span className="rounded-full overflow-hidden bg-lightHead/70 dark:bg-darkHead/70 px-2 w-3/4 max-w-max" key={i}>
-                                <MicroPostTextField onChange={onChange} value={v} placeholder="Add Option..." length={65} />
-                            </span>
+                            <div className="rounded-full overflow-hidden bg-lightHead/70 dark:bg-darkHead/70 px-2 w-3/4 max-w-max flex items-center h-10" key={i}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Add Option..."
+                                    value={v}
+                                    onChange={(e) => onChange(e)}
+                                    sx={{ '& .MuiInputBase-root': { '& .MuiInputBase-input': { padding: '0px 10px !important' }, padding: 0 }, margin: '0px !important' }}
+                                    fullWidth
+                                    variant="standard"
+                                    counter={true}
+                                    multiline
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        maxLength: 65
+                                    }}
+                                />
+                            </div>
                         </div>
                     )
                 })}
@@ -162,7 +176,7 @@ const MicroPostArticle = ({ setter, getter }) => {
     )
 }
 
-const MicroPostTextField = ({ value, onChange, length, counter, placeholder }) => {
+const MicroPostTextField = ({ value, onChange, length, counter, placeholder, fieldProps }) => {
     return (
         <TextField
             size="small"
@@ -179,6 +193,7 @@ const MicroPostTextField = ({ value, onChange, length, counter, placeholder }) =
                 disableUnderline: true,
                 maxLength: length || 500
             }}
+            {...fieldProps}
         />)
 }
 

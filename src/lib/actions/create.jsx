@@ -23,10 +23,16 @@ const createMicroPost = async (data) => {
                     res.errors.push({ message: 'No options provided' })
                     return res
                 }
+                let options = data.content.options.map((o, i) => {
+                    return {
+                        id: i,
+                        text: o
+                    }
+                })
                 const poll = await prisma.poll.create({
                     data: {
                         question: data.content.title,
-                        options: data.content.options,
+                        options: options,
                     }
                 })
                 objectId = poll.id
