@@ -210,18 +210,6 @@ export const UnAuthorizedActionWrapper = ({ children, description, link }) => {
                         {description}
                     </p>
                     <div className='flex justify-between items-center w-full'>
-                        {link ? <Button
-                            variant='text'
-                            color="head"
-                            size="small"
-                            onClick={
-                                () => {
-                                    setOpen(false);
-                                }
-                            }
-                        >
-                            <span >Learn More</span>
-                        </Button> : null}
                         <Button
                             variant='outlined'
                             color="head"
@@ -235,6 +223,18 @@ export const UnAuthorizedActionWrapper = ({ children, description, link }) => {
                             <BiSolidUserCircle className='w-5 h-5 mr-2' />
                             <span >Sign In</span>
                         </Button>
+                        {link ? <Button
+                            variant='text'
+                            color="head"
+                            size="small"
+                            onClick={
+                                () => {
+                                    setOpen(false);
+                                }
+                            }
+                        >
+                            <span >Learn More</span>
+                        </Button> : null}
                     </div>
                 </div>
             </>

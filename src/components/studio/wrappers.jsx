@@ -46,6 +46,18 @@ const StudioPathLayoutWrapper = ({ children, path }) => {
     );
 }
 
+const StudioCreateLayoutWrapper = ({ children }) => {
+    const context = React.useContext(StudioContext);
+
+    useEffect(() => {
+        context.setData({ ...context.data, page: 'create' })
+    }, [path]);
+
+    return (
+        children
+    );
+}
+
 const StudioWriteLayoutWrapper = ({ children, article }) => {
     const { data, setData } = useContext(StudioContext);
 
@@ -80,4 +92,4 @@ const StudioWriteEditorWrapper = ({ children }) => {
     );
 }
 
-export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper, StudioMainLayoutWrapper as AuthorProvider, StudioPathLayoutWrapper, StudioWriteEditorWrapper }
+export { StudioMainLayoutWrapper, StudioWriteLayoutWrapper, StudioMainLayoutWrapper as AuthorProvider, StudioPathLayoutWrapper, StudioWriteEditorWrapper, StudioCreateLayoutWrapper }
