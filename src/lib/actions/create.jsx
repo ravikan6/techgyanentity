@@ -1,4 +1,5 @@
 "use server";
+import { nanoid } from "nanoid";
 import { prisma } from "../db";
 
 const createMicroPost = async (data) => {
@@ -7,10 +8,11 @@ const createMicroPost = async (data) => {
         res.errors.push({ message: 'No data provided' })
         return res
     }
+    let shortId = nanoid(25)
     try {
         const post = await prisma.microPost.create({
             data: {
-                title: data?.title,
+                content: data?.title,
                 type: data.type,
                 author: {
                     connect: {
@@ -18,12 +20,14 @@ const createMicroPost = async (data) => {
                     }
                 },
                 published: true,
+                shortId: shortId
             }
         })
-
+        console.log(post)
         res.data = post
         res.status = 200
     } catch (e) {
+        console.log(e)
         res.errors.push({ message: JSON.stringify(e) })
     }
     return res;

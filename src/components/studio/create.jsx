@@ -1,19 +1,24 @@
 "use client";
 import { StudioContext } from "@/lib/context";
 import { Avatar, Box, Chip } from "@mui/material";
-import { useContext, useState } from "react";
-import { Button } from "../rui";
+import { useContext, useEffect, useState } from "react";
+import { Button, TextField } from "../rui";
 import { createMicroPost } from "@/lib/actions/create";
 import { toast } from "react-toastify";
+import { ImageRounded, LinkRounded, Paragliding, Poll, TextFields } from "@mui/icons-material";
 
 const MicroPostCreate = () => {
     const [type, setType] = useState('TEXT')
     const [content, setContent] = useState({ title: '' })
     const [loading, setLoading] = useState(false)
 
-    const { data } = useContext(StudioContext);
+    const { data, setLoading: contextLoading } = useContext(StudioContext);
 
-    const types = ['TEXT', 'IMAGE', 'POLL', 'LINK', 'ARTICLE']
+    const types = [{ t: 'TEXT', i: <TextFields fontSize="small" /> }, { t: 'IMAGE', i: <ImageRounded fontSize="small" /> }, { t: 'POLL', i: <Poll fontSize="small" /> }, { t: 'LINK', i: <LinkRounded fontSize="small" /> }, { t: 'ARTICLE', i: <Paragliding fontSize="small" /> }]
+
+    useEffect(() => {
+        contextLoading(false)
+    }, [])
 
     const onSubmit = async () => {
         if (content?.title && type) {
@@ -43,14 +48,14 @@ const MicroPostCreate = () => {
                 <div className="my-2">
                     <MicroPostEditor type={type} setter={setContent} getter={content} />
                 </div>
-                <div className="flex justify-end items-center">
-                    <Button disabled={loading} variant="outlined" color="primary" onClick={() => { setContent({ title: '' }), setType('TEXT') }}>Cancle</Button>
-                    <Button disabled={loading} variant="contained" color="accent" onClick={() => onSubmit()}>Post</Button>
+                <div className="flex justify-end items-center gap-4">
+                    <Button size="small" disabled={loading} variant="outlined" color="primary" onClick={() => { setContent({ title: '' }), setType('TEXT') }}>Cancle</Button>
+                    <Button size="small" disabled={loading} variant="contained" color="button" className={`${loading ? null : 'dark:!text-black'}`} onClick={() => onSubmit()}>Post</Button>
                 </div>
             </Box>
             {(type.toLowerCase() === 'text') ? <div className="flex gap-2 mt-4">
-                {types.map((t, i) => (
-                    <Chip key={i} variant={type === t ? "filled" : "outlined"} color={type === t ? "accent" : "primary"} onClick={() => setType(t)}>{t}</Chip>
+                {types.map(({ t, i: iconComp }, l) => (
+                    <Chip key={l} variant={type === t ? "filled" : "outlined"} color={type === t ? "accent" : "primary"} icon={<span className="mr-3">{iconComp}</span>} label={t.slice(0, 1).concat(t.slice(1).toLowerCase())} onClick={() => setType(t)} sx={{ px: 1.2 }} />
                 ))}
             </div> : null}
         </>
@@ -77,7 +82,22 @@ const MicroPostEditor = ({ type, setter, getter }) => {
 const MicroPostText = ({ setter, getter }) => {
     return (
         <div>
-            <input type="text" value={getter?.title} onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} />
+            <TextField
+                size="small"
+                placeholder="What's on your mind?"
+                value={getter?.title}
+                onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))}
+                sx={{ '& .MuiInputBase-root': { '& .MuiInputBase-input': { padding: '0px 10px !important' } } }}
+                fullWidth
+                variant="standard"
+                margin="dense"
+                counter={true}
+                multiline
+                InputProps={{
+                    disableUnderline: true,
+                    maxLength: 500
+                }}
+            />
         </div>
     )
 }

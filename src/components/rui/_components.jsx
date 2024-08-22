@@ -126,9 +126,9 @@ const UnstyledTextField = ({ counter, ...props }) => {
         <>
 
             <TextField
-                {...props}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                {...props}
                 InputProps={{
                     ...InputProps,
                     ...inputProps,
