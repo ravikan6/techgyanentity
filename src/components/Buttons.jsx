@@ -458,9 +458,17 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
 const CreateBtn = ({ classes, iconColor, sx }) => {
   const { data } = useContext(StudioContext);
   if (!data?.data) return null;
+  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const router = useRouter();
+
+  const handleOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleClick = async () => {
     try {
@@ -477,11 +485,29 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
   }
 
   return (
-    <div className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
-      <IconButton disabled={loading} onClick={handleClick} size='small' sx={{ ...sx }} >
-        <DrawOutlined htmlColor={iconColor} />
-      </IconButton>
-    </div>
+    <>
+      <div className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
+        <IconButton disabled={loading} onClick={handleOpen} size='small' sx={{ ...sx }} >
+          <DrawOutlined htmlColor={iconColor} />
+        </IconButton>
+      </div>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+        sx={{ '& .MuiPaper-root': { borderRadius: '12px', py: 0, minWidth: '128px' } }} >
+        <MenuItem onClick={() => { handleClick(), handleClose() }}>
+          <span className='text-base'>Article</span>
+        </MenuItem>
+        <MenuItem onClick={() => { router.push('/studio/create/post'), handleClose() }}>
+          <span className='text-base'>Post</span>
+        </MenuItem>
+      </Menu>
+    </>
   )
 }
 

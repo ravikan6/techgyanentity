@@ -51,7 +51,7 @@ const StudioCreateLayoutWrapper = ({ children }) => {
 
     useEffect(() => {
         context.setData({ ...context.data, page: 'create' })
-    }, [path]);
+    }, []);
 
     return (
         children
