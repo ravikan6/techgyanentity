@@ -37,6 +37,9 @@ export const DrawerBtn = (props) => {
 
   const handleDrawerOpen = () => {
     drawer.setOpen(!drawer.open);
+    try {
+      if (drawer?.variant === 'permanent') sessionStorage.setItem('drawer', `${!drawer.open}`);
+    } catch { }
   }
 
   return (

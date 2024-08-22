@@ -66,7 +66,7 @@ export default async function Home() {
 const CommunityPosts = ({ posts }) => {
   return (
     <div className="mt-3">
-      <div className="grid w-full 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1">
+      <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
         {
           posts.map((post, index) => (
             <div key={index} className="bg-light dark:bg-dark p-4 rounded-lg shadow-md">

@@ -22,14 +22,15 @@ const MicroPostCreate = () => {
     const structSetter = (type) => {
         switch (type) {
             case "IMAGE": {
-
+                break;
             } case "POLL": {
                 setContent((c) => ({ title: c.title, options: ['', ''] }))
+                break;
             } default: {
                 setContent((c) => ({ title: c.title }))
             }
         }
-        setType(t)
+        setType(type)
     }
 
     const onSubmit = async () => {
