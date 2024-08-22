@@ -61,6 +61,9 @@ const MainLayout = ({ children, session }) => {
 
     const handleDrawerOpen = () => {
         setOpen((open) => !open);
+        try {
+            if (variant === 'permanent') sessionStorage.setItem('drawer', !open);
+        } catch { }
     };
 
     const handleTempDrawer = () => {
@@ -80,7 +83,14 @@ const MainLayout = ({ children, session }) => {
                 styleTag.remove();
             }
         } else {
-            setOpen(o)
+            if (variant === 'permanent') {
+                let value = sessionStorage.getItem('drawer');
+                if (value === 'false') {
+                    setOpen(false);
+                } else {
+                    setOpen(true);
+                }
+            } else setOpen(o)
             setVariant(v)
         }
     }, [q, path, variant]);

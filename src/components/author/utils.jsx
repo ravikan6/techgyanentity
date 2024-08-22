@@ -100,7 +100,8 @@ const FollowButton = ({ authorId, buttonProps }) => {
 
 const AuthorTipWrapper = ({ children, shortId }) => {
     return (
-        <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={1500} leaveDelay={300}
+        <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={1300} leaveDelay={300}
+            enterNextDelay={800}
             PopperProps={{
                 onClick(e) {
                     e.stopPropagation();
@@ -134,7 +135,7 @@ const AuthorTipView = ({ shortId }) => {
 
     return (
         data ? <>
-            <section className="px-4 py-2 max-w-72 relative">
+            <section className="px-4 py-2 w-72 max-w-72 relative">
                 <div className="flex items-center justify-between">
                     <AuthorAvatar data={data?.image} sx={{ width: '40px', height: '40px' }} />
                     <div className="ml-3 mr-1">
@@ -143,11 +144,11 @@ const AuthorTipView = ({ shortId }) => {
                 </div>
                 <div className="mt-1">
                     <h3 className="text-lg karnak font-bold text-white dark:text-black">{data?.name}</h3>
-                    <p className="text-sm mt-0.5 text-zinc-200 dark:text-zinc-800">{data?._count?.followers} Followers</p>
+                    <p className="text-sm mt-0.5 franklin font-medium text-zinc-200 dark:text-zinc-800">{data?._count?.followers} Followers</p>
                 </div>
-                <div className="mt-4">
-                    <p className="text-xs font-normal text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{data?.bio}</p>
-                </div>
+                {data?.bio ? <div className="mt-4">
+                    <p className="text-xs font-normal franklin text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{data?.bio}</p>
+                </div> : null}
             </section>
         </> :
             <section className="px-4 py-2 w-72 max-w-72">

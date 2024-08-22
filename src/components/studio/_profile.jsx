@@ -173,7 +173,7 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} modern={false} />
+                <SecondaryMenu insiderData={insiderData} insiderRun={insiderRun} handleBack={handleBack} modern={false} state={state} />
             </Menu>
 
         </Fragment>
