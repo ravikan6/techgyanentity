@@ -62,7 +62,7 @@ const MainLayout = ({ children, session }) => {
     const handleDrawerOpen = () => {
         setOpen((open) => !open);
         try {
-            if (variant === 'permanent') sessionStorage.setItem('drawer', !open);
+            if (variant === 'permanent') sessionStorage.setItem('drawer', `${!open}`);
         } catch { }
     };
 

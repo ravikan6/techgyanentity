@@ -4,8 +4,7 @@ const CreatePage = ({ params }) => {
     const type = params?.type;
     if (type === 'post') {
         return (
-            <div className="mx-auto max-w-3xl py-2">
-                <br className="my-2"></br>
+            <div className="mx-auto max-w-3xl my-5-2">
                 <MicroPostCreate />
             </div>
         );

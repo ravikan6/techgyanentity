@@ -8,11 +8,58 @@ const createMicroPost = async (data) => {
         res.errors.push({ message: 'No data provided' })
         return res
     }
-    let shortId = nanoid(25)
+    let objectId, shortId = nanoid(25)
+
+    try {
+        switch (data.type) {
+            case "IMAGE": {
+                if (!data.content?.image) {
+                    res.errors.push({ message: 'No image provided' })
+                    return res
+                }
+                break;
+            } case "POLL": {
+                if (!data.content?.options) {
+                    res.errors.push({ message: 'No options provided' })
+                    return res
+                }
+                const poll = await prisma.poll.create({
+                    data: {
+                        question: data.content.title,
+                        options: data.content.options,
+                    }
+                })
+                objectId = poll.id
+                break;
+            } case "LINK": {
+                if (!data.content?.link) {
+                    res.errors.push({ message: 'No link provided' })
+                    return res
+                }
+                break;
+            } case "ARTICLE": {
+                if (!data.content?.article) {
+                    res.errors.push({ message: 'No article provided' })
+                    return res
+                }
+                break;
+            } default: {
+                if (!data.content?.title) {
+                    res.errors.push({ message: 'No title provided' })
+                    return res
+                }
+            }
+        }
+    } catch (e) {
+        console.log(e)
+        res.errors.push({ message: JSON.stringify(e) })
+        return res
+    }
+
     try {
         const post = await prisma.microPost.create({
             data: {
-                content: data?.title,
+                ...(data.type == 'TEXT') && { content: data?.title },
                 type: data.type,
                 author: {
                     connect: {
@@ -20,10 +67,10 @@ const createMicroPost = async (data) => {
                     }
                 },
                 published: true,
-                shortId: shortId
+                shortId: shortId,
+                ...(objectId) && { typeContent: objectId }
             }
         })
-        console.log(post)
         res.data = post
         res.status = 200
     } catch (e) {

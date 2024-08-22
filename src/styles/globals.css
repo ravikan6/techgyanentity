@@ -184,15 +184,15 @@ svg {
 }
 
 .franklin {
-  font-family: 'rb-franklin', Helvetica, sans-serif;
+  font-family: rb-franklin, system-ui, -apple-system, Helvetica, sans-serif;
 }
 
 .karnak {
-  font-family: 'rb-karnak', Helvetica, sans-serif;
+  font-family: rb-karnak, Helvetica, sans-serif;
 }
 
 .stymie {
-  font-family: 'rb-stymie', Helvetica, sans-serif !important;
+  font-family: rb-stymie, Helvetica, sans-serif !important;
 }
 
 .imperial {
