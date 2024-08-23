@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArticleImage } from "./_client";
 import { formatDate, formatDateToString } from "@/lib/utils";
 import { useState } from "react";
-import { IconButton, Menu, Tooltip } from "../rui";
+import { Button, IconButton, Menu, Tooltip } from "../rui";
 import { Box, Skeleton } from "@mui/material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { HeartBrokenOutlined, ShareOutlined } from "@mui/icons-material";
@@ -232,15 +232,15 @@ const PostAuthorView = ({ author }) => {
 
 const PollView = ({ post }) => {
     return (
-        <div className="mt-4">
+        <div className="mb-1">
             <h3 className="text-base text-gray-900 dark:text-gray-100">{post?.typeContent?.question}</h3>
-            <div className="mt-3 flex flex-col gap-2">
+            <div className="mt-3 flex flex-col gap-2.5">
                 {
                     post?.typeContent?.options?.map((option, index) => (
-                        <div key={index} className="flex items-center">
-                            <Box component={'div'} sx={{ width: '100%', height: '1.5rem', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'normal', fontSize: '0.75rem', fontWeight: '500', cursor: 'pointer', border: '1px solid' }}>
-                                {option?.text}
-                            </Box>
+                        <div key={index} className="">
+                            <Button variant="outlined" size="small" fullWidth startIcon={<span>{option?.text}</span>} >
+
+                            </Button>
                         </div>
                     ))
                 }

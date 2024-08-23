@@ -69,17 +69,17 @@ const CommunityPosts = ({ posts }) => {
       <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
         {
           posts.map((post, index) => (
-            <div key={index} className="bg-light dark:bg-dark p-4 rounded-lg shadow-md">
+            <div key={index} className="p-2.5 rounded-lg border border-solid border-gray-700 dark:border-gray-300">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <AuthorAvatar data={{ url: post.author?.image?.url }} />
+                  <AuthorAvatar data={{ url: post.author?.image?.url, width: '32px', height: '32px' }} />
                 </div>
                 <div className="ml-4">
                   <div className="text-sm karnak font-bold text-zinc-900 dark:text-slate-100">{post.author.name}</div>
-                  <div className="text-xs text-zinc-600 dark:text-slate-400">{post.author.handle}</div>
+                  <div className="text-xs text-zinc-600 -mt-px dark:text-slate-400">{post.author.handle}</div>
                 </div>
               </div>
-              <div className="mt-4 px-3">
+              <div className="mt-2.5">
                 <CommunityPostContent post={post} />
               </div>
             </div>

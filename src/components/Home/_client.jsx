@@ -286,7 +286,7 @@ const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
             swipeAreaWidth={40}
             container={document?.body}
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
-            sx={{ zIndex: 1500 }}
+            sx={{ zIndex: 1500, '& .MuiDrawer-paper': { borderRadius: '20px', marginRight: '8px', marginLeft: '8px', marginBottom: '3px' } }}
             keepMounted={false}
         >
             <h2 className="text-lg karnak mb-3">
