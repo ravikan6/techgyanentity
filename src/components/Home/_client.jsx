@@ -232,7 +232,7 @@ const ShareViewContent = ({ meta }) => {
     return (
         <>
             <div className='relative mx-2'>
-                <div id="#_share_options" className='block scroll-smooth overflow-hidden whitespace-nowrap'>
+                <div id="#_share_options" className='block scroll-smooth overflow-auto min-[425px]:overflow-hidden whitespace-nowrap'>
                     {shareOptions.map((item, index) => (
                         <span key={index} className={`inline-block ${shareOptions.length === (index + 1) ? '' : 'mr-5'}`}>
                             <Tooltip title={item.name}>
@@ -244,14 +244,14 @@ const ShareViewContent = ({ meta }) => {
                     ))}
                 </div>
                 {scroll > 0 &&
-                    <div className='w-8 h-8 rounded-full shadow-md absolute -left-4 top-3'>
+                    <div className='w-8 h-8 invisible min-[425px]:visible rounded-full shadow-md absolute -left-4 top-3'>
                         <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead  transition-colors rounded-full h-8 w-8`} onClick={handlePrevClick}>
                             <ChevronLeft />
                         </IconButton>
                     </div>
                 }
                 {scroll < container?.scrollWidth - container?.offsetWidth &&
-                    <div className='w-8 h-8 rounded-full shadow-md absolute -right-4 top-3'>
+                    <div className='w-8 h-8 invisible min-[425px]:visible rounded-full shadow-md absolute -right-4 top-3'>
                         <IconButton className={`text-black dark:text-white cursor-pointer hover:bg-accentLight dark:hover:bg-accentDark bg-lightHead dark:bg-darkHead transition-colors rounded-full h-8 w-8`} onClick={handleNextClick}>
                             <ChevronRight />
                         </IconButton>
@@ -281,12 +281,12 @@ const ShareContentPreview = ({ data }) => {
 const ShareSwiper = ({ isOpen, setIsOpen, data, meta }) => {
     return (
         <SwipeableDrawer
-            minFlingVelocity={500}
+            minFlingVelocity={300}
             disableSwipeToOpen={false}
-            swipeAreaWidth={40}
+            swipeAreaWidth={20}
             container={document?.body}
             anchor="bottom" open={isOpen} onClose={() => setIsOpen(false)} onOpen={() => setIsOpen(true)}
-            sx={{ zIndex: 1500, '& .MuiDrawer-paper': { borderRadius: '20px', marginRight: '8px', marginLeft: '8px', marginBottom: '3px' } }}
+            sx={{ zIndex: 1500, '& .MuiDrawer-paper': { borderRadius: '20px', marginRight: '8px', marginLeft: '8px', marginBottom: '8px' } }}
             keepMounted={false}
         >
             <h2 className="text-lg karnak mb-3">

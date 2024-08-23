@@ -238,7 +238,7 @@ const PollView = ({ post }) => {
                 {
                     post?.typeContent?.options?.map((option, index) => (
                         <div key={index} className="">
-                            <Button variant="outlined" size="small" fullWidth startIcon={<span>{option?.text}</span>} >
+                            <Button variant="outlined" size="small" fullWidth sx={{ justifyContent: 'space-between', px: 2.5 }} startIcon={<span>{option?.text}</span>} >
 
                             </Button>
                         </div>

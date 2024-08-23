@@ -24,7 +24,7 @@ const MicroPostCreate = () => {
         if (content?.title) {
             switch (type) {
                 case "TEXT": {
-                    if (content?.title.length > 0) {
+                    if (content?.title.trim().length > 0) {
                         setDisabled(false)
                     } else {
                         setDisabled(true)
@@ -33,8 +33,8 @@ const MicroPostCreate = () => {
                 } case "IMAGE": {
                     break;
                 } case "POLL": {
-                    if (content?.title.length > 0 && content?.options.length > 1) {
-                        let a = content?.options.filter((v) => v.length > 0)
+                    if (content?.title.trim().length > 0 && content?.options.length > 1) {
+                        let a = content?.options.filter((v) => v.trim().length > 0)
                         if (a.length > 1) {
                             setDisabled(false)
                         } else {
@@ -114,7 +114,7 @@ const MicroPostCreate = () => {
                     <Button size="small" disabled={loading || disabled} variant="contained" color="button" className={`${(loading || disabled) ? null : 'dark:!text-black'}`} onClick={() => onSubmit()}>Post</Button>
                 </div>
             </Box>
-            {(type.toLowerCase() === 'text') ? <div className="flex gap-2 mt-4">
+            {(type.toLowerCase() === 'text') ? <div className="flex gap-2 mt-4 flex-wrap">
                 {types.map(({ t, i: iconComp }, l) => (
                     <Chip key={l} variant={type === t ? "filled" : "outlined"} color={type === t ? "accent" : "primary"} icon={<span className="mr-3">{iconComp}</span>} label={t.slice(0, 1).concat(t.slice(1).toLowerCase())} onClick={() => { structSetter(t) }} sx={{ px: 1.2 }} />
                 ))}
