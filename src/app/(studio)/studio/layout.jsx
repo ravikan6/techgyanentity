@@ -23,9 +23,9 @@ const StudioExpendedLayout = async ({ children }) => {
         <StudioMainLayoutWrapper authorData={authorData} session={session} >
             <StudioMainLayout.default session={session} >
                 <StudioHeader lang='en' />
-                <main className='mt-[54px]'>
+                <section aria-labelledby='page-content'>
                     {children}
-                </main>
+                </section>
             </StudioMainLayout.default>
         </StudioMainLayoutWrapper>
     );

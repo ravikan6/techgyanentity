@@ -30,11 +30,9 @@ export default function StudioLayout({ children, studio_models, models }) {
         <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
           <Providers>
             <CssBaseline />
-            <div className="">
-              {children}
-              {studio_models}
-              {models}
-            </div>
+            {children}
+            {studio_models}
+            {models}
           </Providers>
         </body>
       </html>

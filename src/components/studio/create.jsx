@@ -11,6 +11,7 @@ const MicroPostCreate = () => {
     const [type, setType] = useState('TEXT')
     const [content, setContent] = useState({ title: '' })
     const [loading, setLoading] = useState(false)
+    const [disabled, setDisabled] = useState(false)
     const { data, setLoading: contextLoading } = useContext(StudioContext);
 
     const types = [{ t: 'TEXT', i: <TextFields fontSize="small" /> }, { t: 'IMAGE', i: <ImageRounded fontSize="small" /> }, { t: 'POLL', i: <Poll fontSize="small" /> }, { t: 'LINK', i: <LinkRounded fontSize="small" /> }, { t: 'ARTICLE', i: <Paragliding fontSize="small" /> }]
@@ -19,12 +20,59 @@ const MicroPostCreate = () => {
         contextLoading(false)
     }, [])
 
+    useEffect(() => {
+        if (content?.title) {
+            switch (type) {
+                case "TEXT": {
+                    if (content?.title.length > 0) {
+                        setDisabled(false)
+                    } else {
+                        setDisabled(true)
+                    }
+                    break;
+                } case "IMAGE": {
+                    break;
+                } case "POLL": {
+                    if (content?.title.length > 0 && content?.options.length > 1) {
+                        let a = content?.options.filter((v) => v.length > 0)
+                        if (a.length > 1) {
+                            setDisabled(false)
+                        } else {
+                            setDisabled(true)
+                        }
+                    } else {
+                        setDisabled(true)
+                    }
+                    break;
+                } case "LINK": {
+                    if (content?.title.length > 0) {
+                        setDisabled(false)
+                    } else {
+                        setDisabled(true)
+                    }
+                    break;
+                } case "ARTICLE": {
+                    if (content?.title.length > 0) {
+                        setDisabled(false)
+                    } else {
+                        setDisabled(true)
+                    }
+                    break;
+                } default: {
+                    setDisabled(true)
+                }
+            }
+        } else {
+            setDisabled(true)
+        }
+    }, [content, type])
+
     const structSetter = (type) => {
         switch (type) {
             case "IMAGE": {
                 break;
             } case "POLL": {
-                setContent((c) => ({ title: c.title, options: ['', ''] }))
+                setContent((c) => ({ title: content.title, options: ['', ''] }))
                 break;
             } default: {
                 setContent((c) => ({ title: c.title }))
@@ -59,11 +107,11 @@ const MicroPostCreate = () => {
                     <h3 className={`text-lg karnak font-semibold`}>{data?.data?.name}</h3>
                 </div>
                 <div className="my-2">
-                    <MicroPostEditor type={type} setter={setContent} getter={content} onCancle={() => structSetter("TEXT")} />
+                    <MicroPostEditor type={type} setter={setContent} getter={content} onCancle={() => structSetter("TEXT")} disabled={loading} />
                 </div>
                 <div className="flex justify-end items-center gap-4">
                     <Button size="small" disabled={loading} variant="text" color="primary" onClick={() => { structSetter("TEXT") }}>Cancle</Button>
-                    <Button size="small" disabled={loading} variant="contained" color="button" className={`${loading ? null : 'dark:!text-black'}`} onClick={() => onSubmit()}>Post</Button>
+                    <Button size="small" disabled={loading || disabled} variant="contained" color="button" className={`${(loading || disabled) ? null : 'dark:!text-black'}`} onClick={() => onSubmit()}>Post</Button>
                 </div>
             </Box>
             {(type.toLowerCase() === 'text') ? <div className="flex gap-2 mt-4">
@@ -75,14 +123,14 @@ const MicroPostCreate = () => {
     )
 }
 
-const MicroPostEditor = ({ type, setter, getter, onCancle }) => {
+const MicroPostEditor = ({ type, setter, getter, onCancle, disabled }) => {
     switch (type) {
         case 'TEXT':
             return <MicroPostText setter={setter} getter={getter} />
         case 'IMAGE':
             return <MicroPostImage setter={setter} getter={getter} />
         case 'POLL':
-            return <MicroPostPoll setter={setter} getter={getter} onCancle={onCancle} />
+            return <MicroPostPoll setter={setter} getter={getter} onCancle={onCancle} disabled={disabled} />
         case 'LINK':
             return <MicroPostLink setter={setter} getter={getter} />
         case 'ARTICLE':
@@ -108,13 +156,13 @@ const MicroPostImage = ({ setter, getter }) => {
     )
 }
 
-const MicroPostPoll = ({ setter, getter, onCancle }) => {
+const MicroPostPoll = ({ setter, getter, onCancle, disabled }) => {
     const a = getter?.options;
 
     return (
         <div>
             <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} getter={getter?.title} placeholder="Poll Question" />
-            <div className="flex flex-col gap-3 mt-4">
+            <div className="flex flex-col gap-3 mt-2.5">
                 {getter.options?.map((v, i) => {
                     const onChange = (e) => {
                         a[i] = e.target.value;
@@ -129,12 +177,13 @@ const MicroPostPoll = ({ setter, getter, onCancle }) => {
                     }
                     return (
                         <div className="flex items-center gap-3 w-full">
-                            <IconButton size="small" onClick={() => { onRemove() }}>
+                            <IconButton disabled={disabled} size="small" onClick={() => { onRemove() }}>
                                 <CloseRounded fontSize="small" />
                             </IconButton>
-                            <div className="rounded-full overflow-hidden bg-lightHead/70 dark:bg-darkHead/70 px-2 w-3/4 max-w-max flex items-center h-10" key={i}>
+                            <div className="rounded-full overflow-hidden bg-lightHead/70 dark:bg-darkHead/70 px-2 w-3/4 flex items-center h-10" key={i}>
                                 <TextField
                                     size="small"
+                                    disabled={disabled}
                                     placeholder="Add Option..."
                                     value={v}
                                     onChange={(e) => onChange(e)}
@@ -142,19 +191,18 @@ const MicroPostPoll = ({ setter, getter, onCancle }) => {
                                     fullWidth
                                     variant="standard"
                                     counter={true}
-                                    multiline
                                     InputProps={{
                                         disableUnderline: true,
-                                        maxLength: 65
                                     }}
+                                    inputProps={{ maxLength: 65, disableUnderline: true }}
                                 />
                             </div>
                         </div>
                     )
                 })}
             </div>
-            {(a?.length <= 4) ? <div className="flex mt-2">
-                <Button size="small" variant="outlined" color="button" onClick={() => { setter((dt) => ({ ...dt, options: [...dt.options, ''] })) }}>Add Option</Button>
+            {(a?.length <= 4) ? <div className="flex mt-4">
+                <Button size="small" variant="outlined" sx={{ px: 2 }} color="button" onClick={() => { setter((dt) => ({ ...dt, options: [...dt.options, ''] })) }}>Add Option</Button>
             </div> : null}
         </div>
     )
@@ -191,8 +239,8 @@ const MicroPostTextField = ({ value, onChange, length, counter, placeholder, fie
             multiline
             InputProps={{
                 disableUnderline: true,
-                maxLength: length || 500
             }}
+            inputProps={{ maxLength: length || 500, disableUnderline: true }}
             {...fieldProps}
         />)
 }

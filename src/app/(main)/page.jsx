@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { TestToastify } from "@/components/Home/_client";
-import { PostView_TIA } from "@/components/post/_struct";
+import { PollView, PostView_TIA } from "@/components/post/_struct";
 import { AuthorAvatar } from "@/components/author/_client";
 
 export default async function Home() {
@@ -138,13 +138,13 @@ const getCommunityPosts = async () => {
 const CommunityPostContent = ({ post }) => {
   switch (post.type) {
     case 'TEXT':
-      return <p className="text-sm text-gray-900 dark:text-gray-100">{post.content}</p>;
+      return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
     case 'IMAGE':
       return <img src={post.content} alt="Image" />;
     case 'LINK':
       return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
     case 'POLL':
-      return <Poll post={post} />;
+      return <PollView post={post} />;
     case 'ARTICLE':
       return <div>Article</div>;
     default:
@@ -152,20 +152,3 @@ const CommunityPostContent = ({ post }) => {
   }
 }
 
-const Poll = ({ post }) => {
-  return (
-    <div className="mt-4">
-      <h3 className="text-sm text-gray-900 dark:text-gray-100">{post?.typeContent?.question}</h3>
-      <div className="mt-2">
-        {
-          post?.typeContent?.options?.map((option, index) => (
-            <div key={index} className="flex items-center">
-              <input type="radio" name={`poll-${post.id}`} id={`poll-${post.id}-${index}`} />
-              <label htmlFor={`poll-${post.id}-${index}`} className="ml-2">{option?.text}</label>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  )
-}

@@ -19,6 +19,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
         paddingLeft: theme.spacing(3),
         paddingRight: theme.spacing(3),
         marginLeft: 0,
+        marginTop: '54px',
         width: `calc(100% - ${drawerWidth_get(open, variant)}px)`,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
