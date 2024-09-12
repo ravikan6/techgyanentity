@@ -214,6 +214,7 @@ model Vote {
   userId String @db.ObjectId
   poll   Poll   @relation(fields: [pollId], references: [id])
 
+  @@unique([pollId, userId], name: "vote_by_user")
   @@index([pollId])
   @@index([userId])
 }

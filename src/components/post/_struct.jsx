@@ -234,20 +234,22 @@ const PostAuthorView = ({ author }) => {
 
 
 const PollView = ({ post }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
     const [pollData, setPollData] = useState(post?.typeContent);
+    const [disabled, setDisabled] = useState(false);
 
     const onSubmit = async (option) => {
-        setSelectedOption(option);
+        setDisabled(true);
         try {
             const response = await pollAnsSubmit(
                 post.typeContent.poll.id,
                 option);
             if (response.status == 200)
                 setPollData(response.data);
-            else toast('Something Went Wrong While Submiting poll answer.')
+            else toast.error('Something Went Wrong While Submiting poll answer.')
         } catch (error) {
-            console.error('Error submitting vote:', error);
+            toast.error('Something went wrong.')
+        } finally {
+            setDisabled(false)
         }
     }
 
@@ -257,28 +259,33 @@ const PollView = ({ post }) => {
             <div className="mt-3 flex flex-col gap-2.5">
                 {
                     pollData?.poll?.options?.map((option, index) => (
-                        <div key={index} className="">
+                        <div key={index} className="relative h-auto rounded-[24px]">
                             <Button
                                 onClick={() => onSubmit(index)}
                                 variant="outlined"
                                 size="small"
                                 fullWidth
+                                disabled={disabled}
                                 sx={{
                                     justifyContent: 'space-between',
                                     px: 2.5,
-                                    backgroundColor: `rgba(0, 123, 255, ${pollData.percentages[index] / 100})`
+                                    borderRadius: '24px'
                                 }}
-                                startIcon={<span>{option?.text}</span>}
+                                endIcon={<span>{pollData.percentages[index]?.toFixed(2) || 0}%</span>}
                             >
                                 {option?.text}
                             </Button>
-                            <div>
-                                Votes: {pollData.votes[index] || 0} ({pollData.percentages[index]?.toFixed(2) || 0}%)
-                            </div>
+                            <div className={`absolute h-full top-0 ${disabled ? 'bg-gray-200/30 dark:bg-gray-600/30' : 'bg-secondary/50 dark:bg-secondaryDark/50'}`} style={{
+                                zIndex: '-1',
+                                width: `${pollData.percentages[index]?.toFixed(2) || 0}%`
+                            }} />
                         </div>
                     ))
                 }
             </div>
+            <span className="mt-2 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
+                formatNumber(pollData?.poll?._count.votes)
+            </span>
         </div>
     )
 }

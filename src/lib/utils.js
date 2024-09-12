@@ -85,12 +85,32 @@ function formatDateToString(dateString) {
     };
 }
 
+function formatNumber(num) {
+    if (num < 1000) return num.toString();
+
+    const suffixes = [
+        { value: 1E12, symbol: "T" },
+        { value: 1E9, symbol: "B" },
+        { value: 1E6, symbol: "M" },
+        { value: 1E3, symbol: "K" }
+    ];
+
+    for (let i = 0; i < suffixes.length; i++) {
+        if (num >= suffixes[i].value) {
+            return (num / suffixes[i].value).toFixed(1).replace(/\.0$/, '') + suffixes[i].symbol;
+        }
+    }
+
+    return num.toString();
+}
+
 export {
     encrypt,
     decrypt,
     generateDisplayNameOptions,
     getAuthorFirst,
-    formatDateToString
+    formatDateToString,
+    formatNumber
 }
 
 /**

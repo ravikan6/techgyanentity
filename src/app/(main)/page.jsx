@@ -70,7 +70,7 @@ const CommunityPosts = ({ posts }) => {
       <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
         {
           posts.map((post, index) => (
-            <div key={index} className="p-2.5 rounded-lg border border-solid dark:border-white/30 border-black/30">
+            <div key={index} className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <AuthorAvatar data={{ url: post.author?.image?.url }} sx={{ width: '32px', height: '32px' }} />
