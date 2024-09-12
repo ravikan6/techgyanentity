@@ -259,7 +259,7 @@ const PollView = ({ post }) => {
             <div className="mt-3 flex flex-col gap-2.5">
                 {
                     pollData?.poll?.options?.map((option, index) => (
-                        <div key={index} className="relative h-auto rounded-[24px]">
+                        <div key={index} className="relative h-auto rounded-[24px] overflow-hidden">
                             <Button
                                 onClick={() => onSubmit(index)}
                                 variant="outlined"
@@ -271,20 +271,21 @@ const PollView = ({ post }) => {
                                     px: 2.5,
                                     borderRadius: '24px'
                                 }}
-                                endIcon={<span>{pollData.percentages[index]?.toFixed(2) || 0}%</span>}
+                                endIcon={<span className="text-sm cheltenham">{pollData.percentages[index]?.toFixed(2) || 0}%</span>}
                             >
                                 {option?.text}
                             </Button>
-                            <div className={`absolute h-full top-0 ${disabled ? 'bg-gray-200/30 dark:bg-gray-600/30' : 'bg-secondary/50 dark:bg-secondaryDark/50'}`} style={{
+                            <div className={`absolute h-full top-0 ${disabled ? 'bg-gray-200 dark:bg-gray-600' : 'bg-secondary dark:bg-secondaryDark'}`} style={{
                                 zIndex: '-1',
-                                width: `${pollData.percentages[index]?.toFixed(2) || 0}%`
+                                width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
+                                opacity: (pollData?.poll?.votes?.map((v) => v?.option == option) || []).length ? '1' : '0.4',
                             }} />
                         </div>
                     ))
                 }
             </div>
-            <span className="mt-2 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
-                formatNumber(pollData?.poll?._count.votes)
+            <span className="mt-2.5 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
+                {formatNumber(pollData?.poll?._count.votes)} Votes
             </span>
         </div>
     )
