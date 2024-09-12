@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ArticleImage } from "./_client";
-import { formatDate, formatDateToString } from "@/lib/utils";
+import { formatDate, formatDateToString, formatNumber } from "@/lib/utils";
 import { useState } from "react";
 import { Button, IconButton, Menu, Tooltip } from "../rui";
 import { Box, Skeleton } from "@mui/material";
