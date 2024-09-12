@@ -14,6 +14,8 @@ import { PiHandsClappingLight } from "react-icons/pi";
 import { AiOutlineComment } from "react-icons/ai";
 import { ShareView } from "../Home/_client";
 import { AuthorTipWrapper } from "../author/utils";
+import { pollAnsSubmit } from "@/lib/actions/create";
+import { toast } from "react-toastify";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -230,17 +232,49 @@ const PostAuthorView = ({ author }) => {
     )
 }
 
+
 const PollView = ({ post }) => {
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [pollData, setPollData] = useState(post?.typeContent);
+
+    const onSubmit = async (option) => {
+        setSelectedOption(option);
+        try {
+            const response = await pollAnsSubmit(
+                post.typeContent.poll.id,
+                option);
+            if (response.status == 200)
+                setPollData(response.data);
+            else toast('Something Went Wrong While Submiting poll answer.')
+        } catch (error) {
+            console.error('Error submitting vote:', error);
+        }
+    }
+
     return (
         <div className="mb-1">
-            <h3 className="text-base text-gray-900 dark:text-gray-100">{post?.typeContent?.question}</h3>
+            <h3 className="text-base text-gray-900 dark:text-gray-100">{pollData?.poll?.question}</h3>
             <div className="mt-3 flex flex-col gap-2.5">
                 {
-                    post?.typeContent?.options?.map((option, index) => (
+                    pollData?.poll?.options?.map((option, index) => (
                         <div key={index} className="">
-                            <Button variant="outlined" size="small" fullWidth sx={{ justifyContent: 'space-between', px: 2.5 }} startIcon={<span>{option?.text}</span>} >
-
+                            <Button
+                                onClick={() => onSubmit(index)}
+                                variant="outlined"
+                                size="small"
+                                fullWidth
+                                sx={{
+                                    justifyContent: 'space-between',
+                                    px: 2.5,
+                                    backgroundColor: `rgba(0, 123, 255, ${pollData.percentages[index] / 100})`
+                                }}
+                                startIcon={<span>{option?.text}</span>}
+                            >
+                                {option?.text}
                             </Button>
+                            <div>
+                                Votes: {pollData.votes[index] || 0} ({pollData.percentages[index]?.toFixed(2) || 0}%)
+                            </div>
                         </div>
                     ))
                 }
@@ -248,6 +282,8 @@ const PollView = ({ post }) => {
         </div>
     )
 }
+
+export default PollView;
 
 
 const PostViewActions = ({ id, post }) => {

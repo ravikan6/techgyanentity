@@ -1,6 +1,7 @@
 "use server";
 import { nanoid } from "nanoid";
 import { prisma } from "../db";
+import { auth } from "../auth";
 
 const createMicroPost = async (data) => {
     let res = { data: null, status: 500, errors: [] };
@@ -86,4 +87,59 @@ const createMicroPost = async (data) => {
     return res;
 }
 
-export { createMicroPost }
+
+const pollAnsSubmit = async (pollId, option) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+
+    if (!session) return res;
+
+    await prisma.vote.create({
+        data: {
+            poll: {
+                connect: {
+                    id: pollId,
+                }
+            },
+            option: option,
+            userId: session.user.id,
+        }
+    });
+
+    let p = await prisma.poll.findUnique({
+        where: {
+            id: pollId
+        },
+        include: {
+            votes: true,
+            _count: {
+                select: {
+                    votes: true
+                }
+            },
+        },
+    });
+
+    let votes = p.votes;
+
+    const voteCounts = votes.reduce((acc, vote) => {
+        acc[vote.option] = (acc[vote.option] || 0) + 1;
+        return acc;
+    }, {});
+
+    const votePercentages = Object.keys(voteCounts).reduce((acc, option) => {
+        acc[option] = (voteCounts[option] / p._count.votes) * 100;
+        return acc;
+    }, {});
+
+    res.status = 200
+    res.data = {
+        poll: p,
+        votes: voteCounts,
+        percentages: votePercentages
+    };
+
+    return res;
+}
+
+export { createMicroPost, pollAnsSubmit }

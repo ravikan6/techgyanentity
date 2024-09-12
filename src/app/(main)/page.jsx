@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { TestToastify } from "@/components/Home/_client";
 import { PollView, PostView_TIA } from "@/components/post/_struct";
 import { AuthorAvatar } from "@/components/author/_client";
+import { getMicoPosts } from "@/lib/actions/getContent";
 
 export default async function Home() {
   const session = await auth();
@@ -45,7 +46,7 @@ export default async function Home() {
     },
   });
 
-  const communityPosts = await getCommunityPosts();
+  const communityPosts = await getMicoPosts();
 
   return (
     <>
@@ -88,51 +89,6 @@ const CommunityPosts = ({ posts }) => {
       </div>
     </div>
   )
-}
-
-const getCommunityPosts = async () => {
-  const posts = await prisma.microPost.findMany({
-    include: {
-      author: {
-        select: {
-          name: true,
-          handle: true,
-          image: true,
-        }
-      }
-    }
-  });
-  for (let post of posts) {
-    switch (post.type) {
-      case 'TEXT':
-        break;
-      case 'IMAGE':
-        break;
-      case 'LINK':
-        break;
-      case 'POLL':
-        let p = await prisma.poll.findUnique({
-          where: {
-            id: post.typeContent
-          },
-          include: {
-            _count: {
-              select: {
-                votes: true
-              }
-            },
-          },
-        });
-        post.content = p.question;
-        post.typeContent = p;
-        break;
-      case 'ARTICLE':
-        break;
-      default:
-        break;
-    }
-  }
-  return posts;
 }
 
 const CommunityPostContent = ({ post }) => {
