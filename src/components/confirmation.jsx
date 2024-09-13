@@ -20,7 +20,7 @@ const Confirmation = ({
 }) => {
     const isMinWidth = useMediaQuery('(max-width:600px)');
     return (
-        <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
+        (<CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
             {isMinWidth ? <>
                 <SwipeableDrawer
                     anchor="bottom"
@@ -62,14 +62,17 @@ const Confirmation = ({
                     modal={modal}
                     open={show}
                     onClose={dismiss}
-                    sx={{
+                    sx={theme => ({
                         '& .MuiPaper-root': {
-                            boxShadow: (theme) => theme.shadows[4],
-                            backgroundColor: (theme) => theme.palette.mode === 'dark' ? theme.palette?.button.main : theme.palette?.head.main,
+                            boxShadow: theme.shadows[4],
+                            backgroundColor: theme.palette?.head.main,
+                            ...theme.applyStyles("dark", {
+                                backgroundColor: theme.palette?.button.main
+                            })
                         },
                         maxWidth: 'sm',
-                        mx: 'auto',
-                    }}
+                        mx: 'auto'
+                    })}
                 >
                     {title && <DialogTitle className='!font-bold !text-black'>
                         {title}
@@ -96,8 +99,7 @@ const Confirmation = ({
                         </Button>
                     </DialogActions>
                 </Dialog>}
-        </CssVarsProvider>
-
+        </CssVarsProvider>)
     );
 }
 

@@ -97,7 +97,6 @@ const FollowButton = ({ authorId, buttonProps }) => {
             </UnAuthorizedActionWrapper>
     )
 }
-
 const AuthorTipWrapper = ({ children, shortId }) => {
     return (
         <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={1300} leaveDelay={300}

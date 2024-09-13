@@ -128,8 +128,8 @@ const updateAuthorImagesAction = async (data, files) => {
             let author = await prisma.author.update({
                 where: { id: data?.id },
                 data: {
-                    ...lgData ? (lgData == 'rm' ? { image: null } : { image: { set: lgData } }) : null,
-                    ...bnData ? (bnData == 'rm' ? { banner: null } : { banner: { set: bnData } }) : null,
+                    ...(lgData ? (lgData == 'rm' ? { image: null } : { image: { set: lgData } }) : null),
+                    ...(bnData ? (bnData == 'rm' ? { banner: null } : { banner: { set: bnData } }) : null),
                 }
             });
 
@@ -297,8 +297,8 @@ const articleCommentAction = async (data) => {
                     content: data.body,
                     user: { connect: { id: session.user.id } },
                     post: { connect: { id: data.postId } },
-                    ...data.parentId && { parent: { connect: { id: data.parentId } } },
-                    ...data.authorId && { author: { connect: { id: data.authorId } } }
+                    ...(data.parentId && { parent: { connect: { id: data.parentId } } }),
+                    ...(data.authorId && { author: { connect: { id: data.authorId } } })
                 },
                 include: {
                     user: true,
@@ -616,11 +616,11 @@ const getAuthorPosts = async (params) => {
             },
             take: params?.take || 12,
             skip: params?.skip || 0,
-            ...params?.cursor && {
+            ...(params?.cursor && {
                 cursor: {
                     shortId: params.cursor,
                 }
-            },
+            }),
         });
         res.data = posts;
         res.status = 200;

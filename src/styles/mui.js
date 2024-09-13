@@ -1,8 +1,9 @@
 import { blue, purple, blueGrey } from '@mui/material/colors';
-import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
+import { createTheme, extendTheme } from '@mui/material/styles';
 
-const mui = extendTheme({
+const mui = createTheme({
   cssVarPrefix: 'rb',
+  cssVariables: true,
   colorSchemes: {
     light: {
       palette: {
@@ -33,10 +34,10 @@ const mui = extendTheme({
         button: {
           main: 'rgb(213, 118, 108)', // Japonica
         },
-        modelBg: {
-          main: 'rgb(253, 236, 236)', // Wisp Pink
-        },
-        switch: { main: '#000', contrastText: '#fff', accent: '#176766' },
+        // modelBg: {
+        //   main: 'rgb(253, 236, 236)', // Wisp Pink
+        // },
+        // switch: { main: '#000', contrastText: '#fff', accent: '#176766' },
         background: {
           main: '#1e1a28',
           paper: 'rgb(253, 236, 236)', // Wisp Pink
@@ -90,14 +91,14 @@ const mui = extendTheme({
         button: {
           main: 'rgb(198, 215, 240)', // Spindle
         },
-        modelBg: {
-          main: 'rgb(26, 45, 76)', // Big Stone
-        },
+        // modelBg: {
+        //   main: 'rgb(26, 45, 76)', // Big Stone
+        // },
         bgSP: {
           main: 'rgb(198, 215, 240)', // Spindle
           // main: 'rgb(141, 155, 180)', // Bali Hai
         },
-        switch: { main: '#fff', contrastText: '#000', accent: '#bb6eff' },
+        // switch: { main: '#fff', contrastText: '#000', accent: '#bb6eff' },
         Avatar: {
           defaultBg: 'rgb(182, 184, 190)', // Bombay
         },

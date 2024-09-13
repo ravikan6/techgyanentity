@@ -130,7 +130,7 @@ const updateCoverAppereanceAction = async (data, files) => {
         `;
 
         res = await ApiGql_V2(query, { 'Authorization': `${process.env.API_TOKEN_V2}` });
-        let newRes = await res?.data?.updateCommunityBrand?.community || null;
+        let newRes = (await res?.data?.updateCommunityBrand?.community) || null;
         res = { ...res, data: newRes };
         return res;
     } catch (error) {
@@ -161,7 +161,7 @@ const updateCommunityInfoAction = async (data = {}) => {
     }`;
     console.log(query);
     res = await ApiGql_V2(query, { 'Authorization': `${process.env.API_TOKEN_V2}` });
-    let newRes = await res?.data?.updateCommunity?.community || null;
+    let newRes = (await res?.data?.updateCommunity?.community) || null;
     console.log(newRes);
     res = { ...res, data: newRes }
     return res;

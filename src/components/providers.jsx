@@ -1,6 +1,5 @@
 'use client'
-import { Experimental_CssVarsProvider as CssVarsProvider, getInitColorSchemeScript } from '@mui/material/styles';
-// import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { ThemeProvider as NextTheme } from 'next-themes'
 import { SessionProvider } from "next-auth/react"
 import { ToastContainer, Zoom } from 'react-toastify';
@@ -8,6 +7,7 @@ import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import CssBaseline from '@mui/material/CssBaseline';
 import mui from '@/styles/mui';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
+import { ThemeProvider } from '@mui/material';
 
 export function Providers({ session, children }) {
 
@@ -85,11 +85,8 @@ export function Providers({ session, children }) {
   `;
 
   return (
-    <CssVarsProvider disableTransitionOnChange theme={mui} defaultMode='system'>
-      {getInitColorSchemeScript({
-        defaultMode: 'system'
-      })}
-      {/* <InitColorSchemeScript defaultMode='system' /> */}
+    <ThemeProvider disableTransitionOnChange theme={mui} defaultMode='dark'>
+      <InitColorSchemeScript defaultMode='dark' />
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">
@@ -100,6 +97,6 @@ export function Providers({ session, children }) {
         </SessionProvider>
       </NextTheme>
       {/* </AppRouterCacheProvider> */}
-    </CssVarsProvider>
+    </ThemeProvider>
   );
 }

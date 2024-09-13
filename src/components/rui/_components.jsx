@@ -22,8 +22,11 @@ const RuiMenu = styled(React.forwardRef((props, ref) => (
 )))(({ theme }) => ({
     '& .MuiPaper-root': {
         borderRadius: '24px',
-        color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[200],
-        backgroundColor: theme.palette.modelBg.main,
+        color: theme.palette.grey[200],
+        backgroundColor: theme.palette?.modelBg?.main,
+        ...theme.applyStyles("light", {
+            color: theme.palette.grey[800]
+        })
     },
 }));
 
@@ -52,7 +55,10 @@ const RuiMenuItem = styled((props) => (
     />
 ))(({ theme }) => ({
     typography: 'body1',
-    color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[200],
+    color: theme.palette.grey[200],
+    ...theme.applyStyles("light", {
+        color: theme.palette.grey[800]
+    })
 }));
 
 const RuiButton = styled(Button)(({ theme }) => ({
@@ -60,7 +66,7 @@ const RuiButton = styled(Button)(({ theme }) => ({
     borderRadius: 999,
     '& .MuiButton-contained': {
         boxShadow: theme.shadows[2],
-        backgroundColor: `${theme.palette.accent.main} !important`,
+        backgroundColor: `${theme.palette?.accent?.main} !important`,
     }
 }));
 
@@ -75,7 +81,7 @@ const RuiToolTip = styled(({ className, ...props }) =>
     '& .MuiTooltip-tooltip': {
         borderRadius: 12,
         backgroundColor: theme.palette?.bgSP?.main,
-        color: theme.palette?.ld.main,
+        color: theme.palette?.ld?.main,
         fontFamily: 'rb-cheltenham',
         fontWeight: 'bold',
         fontSize: '0.6rem',
@@ -102,8 +108,11 @@ const RuiDialog = styled(Dialog)(({ theme }) => ({
         borderRadius: '24px',
     },
     '& .MuiBackdrop-root': {
-        backgroundColor: theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
         backdropFilter: process.env.MODAL_BLUR === 'true' ? 'blur(4px)' : 'none',
+        ...theme.applyStyles("light", {
+            backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        })
     },
 }));
 
@@ -122,23 +131,22 @@ const UnstyledTextField = ({ counter, ...props }) => {
     };
 
     let condition = counter && (isFocused && value?.length > 0);
-    return (
-        <>
-
-            <TextField
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                {...props}
-                InputProps={{
+    return (<>
+        <TextField
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            {...props}
+            slotProps={{
+                input: {
                     ...InputProps,
                     ...inputProps,
                     endAdornment: inputProps?.endAdornment ? inputProps?.endAdornment : (
                         condition && <p className={`absolute right-1 mr-2.5 backdrop-blur-sm px-1 rounded overflow-hidden font-semibold ${size == 'small' ? `text-[8px] -bottom-0.5` : `text-[10px] bottom-1`} ${value?.length >= inputProps?.maxLength ? 'text-red-800 dark:text-red-600' : 'text-slate-700 dark:text-slate-300'} cheltenham text-right`}>{value?.length}{inputProps?.maxLength && `/${inputProps?.maxLength}`}</p>
                     ),
-                }}
-            />
-        </>
-    );
+                }
+            }}
+        />
+    </>);
 };
 
 
@@ -180,10 +188,13 @@ const RuiSnakBar = styled(Snackbar)(({ theme }) => ({
     '& .MuiSnackbarContent-root': {
         borderRadius: '999px',
         backgroundColor: theme.palette.bgSP.main,
-        color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[200],
+        color: theme.palette.grey[200],
         fontFamily: 'rb-cheltenham, sans-serif',
         fontSize: '0.8rem',
         fontWeight: 'bold',
+        ...theme.applyStyles("light", {
+            color: theme.palette.grey[800]
+        })
     },
 }));
 
@@ -203,7 +214,6 @@ const RuiToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 const RuiToggleButton = styled(ToggleButton)(({ theme }) => ({
-
 }));
 
 const RuiSwitch = styled(Switch)(({ theme }) => ({
@@ -237,8 +247,11 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
         backgroundColor: theme.palette?.switch?.main,
     },
     '&.Mui-disabled + .MuiSwitch-track': {
-        opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+        opacity: 0.3,
         backgroundColor: 'transparent',
+        ...theme.applyStyles("light", {
+            opacity: 0.7
+        })
     },
 }));
 
@@ -273,7 +286,6 @@ const RuiSwipeableDrawerStyled = styled(SwipeableDrawer)(({ theme }) => ({
         // // maxWidth: '400px',
         // right: '20px',
         // left: '20px',
-
     },
     '& .MuiBackdrop-root': {
         position: 'absolute',

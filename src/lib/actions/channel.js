@@ -81,7 +81,7 @@ const updateChannelInfoAction = async (data = {}) => {
     }`;
 
     res = await ApiGql_V2(query, { 'Authorization': `${process.env.API_TOKEN_V2}` });
-    let newRes = await res?.data?.updateChannel?.channel || null;
+    let newRes = (await res?.data?.updateChannel?.channel) || null;
     res = { ...res, data: newRes }
     return res;
 }
@@ -178,7 +178,7 @@ const updateChannelBrandAction = async (data, files) => {
         `;
     
         res = await ApiGql_V2(query, { 'Authorization': `${process.env.API_TOKEN_V2}` });
-        let newRes = await res?.data?.updateChannelBrand?.channel || null;
+        let newRes = (await res?.data?.updateChannelBrand?.channel) || null;
         res = { ...res, data: newRes };
         return res;
     } catch (error) {

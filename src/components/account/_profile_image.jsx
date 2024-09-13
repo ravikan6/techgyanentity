@@ -138,7 +138,6 @@ const UserProfileImageHandler = ({ open, setOpen }) => {
                 </div> */}
                 {
                     tab === 'upload' && (<>
-
                         <div className="w-full h-full flex-col flex items-center justify-center">
                             <Avatar sx={{ boxShadow: 3 }} width={128} height={128} className='w-32 h-32 rounded-full overflow-hidden' src={session?.user?.image} alt={session?.user?.name} />
                             <div className="mt-5 flex space-x-10">
@@ -154,5 +153,4 @@ const UserProfileImageHandler = ({ open, setOpen }) => {
         </Dialog>
     );
 }
-
 export { UserProfileImageHandler }

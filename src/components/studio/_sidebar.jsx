@@ -131,65 +131,60 @@ const StudioSidebar = (props) => {
         },
     ];
 
-    return (
-        <>
-            <div className='w-full transition-all duration-500 dark:bg-darkHead bg-lightHead'>
-                <div className="flex w-full transition-all duration-500 flex-col h-[calc(100vh-54px)] items-start">
-                    {(context?.data?.page === 'p') ? <PostBox url={currentData?.url} title={currentData?.title} image={currentData?.image} open={open} /> : <div className={`flex w-full px-3 items-center ${open ? 'h-40' : 'h-14'}`}>
-                        <UserBox currentData={currentData} open={open} />
-                    </div>}
+    return (<>
+        <div className='w-full transition-all duration-500 dark:bg-darkHead bg-lightHead'>
+            <div className="flex w-full transition-all duration-500 flex-col h-[calc(100vh-54px)] items-start">
+                {(context?.data?.page === 'p') ? <PostBox url={currentData?.url} title={currentData?.title} image={currentData?.image} open={open} /> : <div className={`flex w-full px-3 items-center ${open ? 'h-40' : 'h-14'}`}>
+                    <UserBox currentData={currentData} open={open} />
+                </div>}
 
-                    <div className={`${open ? 'h-[calc(100vh-256px)]' : 'h-[calc(100vh-200px)]'} w-full transition-all duration-500 px-1.5 rb__studio__menu min-h-10 overflow-hidden hover:overflow-y-auto`}>
-                        <div className={`dark:bg-dark bg-light py-1.5 rounded-xl ${open ? 'w-full px-1.5' : 'flex flex-col items-center'} h-full overflow-hidden hover:overflow-y-auto`}>
-                            {staticMenu.map((menu, index) => (
-                                <div key={index} className={MenuBtnStyle(menu.link)} >
-                                    <Tooltip title={menu.tip} placement="right">
-                                        <Link href={menu.link} >
-                                            <Button fullWidth={open} sx={{ ...!open && { height: '40px', minWidth: '40px !important' } }}  >
-                                                <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : ''} items-center`}>
-                                                    {(path === menu.link) ? <menu.icon2 className={`w-5 h-5 dark:text-black text-black`} /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                                    <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} ${!open && 'w-0'} text-base font-semibold truncate`}>{menu.name}</span>
-                                                </div>
-                                            </Button>
-                                        </Link>
-                                    </Tooltip>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className={`h-20 w-full transition-all duration-500 mt-3 mb-1 ${open && 'px-3'}`}>
-                        <div className={`flex flex-col h-full w-full ${!open && 'items-center mx-auto'}`}>
-                            {bottomMenu.map((menu, index) => (
-                                <div key={index} className={MenuBtnStyle(menu.link)} >
+                <div className={`${open ? 'h-[calc(100vh-256px)]' : 'h-[calc(100vh-200px)]'} w-full transition-all duration-500 px-1.5 rb__studio__menu min-h-10 overflow-hidden hover:overflow-y-auto`}>
+                    <div className={`dark:bg-dark bg-light py-1.5 rounded-xl ${open ? 'w-full px-1.5' : 'flex flex-col items-center'} h-full overflow-hidden hover:overflow-y-auto`}>
+                        {staticMenu.map((menu, index) => (
+                            <div key={index} className={MenuBtnStyle(menu.link)} >
+                                <Tooltip title={menu.tip} placement="right">
                                     <Link href={menu.link} >
-                                        <Button fullWidth={open} sx={{ ...!open && { height: '40px', minWidth: '40px !important' } }} >
+                                        <Button fullWidth={open} sx={[!open && { height: '40px', minWidth: '40px !important' }]}  >
                                             <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : ''} items-center`}>
-                                                {(path === menu.link) ? <menu.icon className="w-5 dark:text-white text-black h-5" /> : <menu.icon2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                                {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">{menu.name}</span>}
+                                                {(path === menu.link) ? <menu.icon2 className={`w-5 h-5 dark:text-black text-black`} /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                                                <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} ${!open && 'w-0'} text-base font-semibold truncate`}>{menu.name}</span>
                                             </div>
                                         </Button>
                                     </Link>
-                                </div>
-                            ))}
-                        </div>
+                                </Tooltip>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className={`h-20 w-full transition-all duration-500 mt-3 mb-1 ${open && 'px-3'}`}>
+                    <div className={`flex flex-col h-full w-full ${!open && 'items-center mx-auto'}`}>
+                        {bottomMenu.map((menu, index) => (
+                            <div key={index} className={MenuBtnStyle(menu.link)} >
+                                <Link href={menu.link} >
+                                    <Button fullWidth={open} sx={[!open && { height: '40px', minWidth: '40px !important' }]} >
+                                        <div className={`flex ${open ? 'space-x-7 w-full py-0.5 px-2' : ''} items-center`}>
+                                            {(path === menu.link) ? <menu.icon className="w-5 dark:text-white text-black h-5" /> : <menu.icon2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                                            {open && <span className="text-base dark:text-gray-100 text-gray-800 font-semibold truncate ">{menu.name}</span>}
+                                        </div>
+                                    </Button>
+                                </Link>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
-        </>
-    );
+        </div>
+    </>);
 };
-
 const PostBox = ({ url, title, image, open }) => {
     return (
         <>
             <div className="flex flex-col pb-2 space-y-2 justify-center w-full items-center">
-
                 <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open ? 'hidden' : 'inline'}`} >
                     <Button className="!bg-light dark:!bg-dark" sx={{ height: '40px', minWidth: '40px !important', borderRadius: 999 }}  >
                         <ArrowBack className="w-5 dark:text-white text-black h-5" />
                     </Button>
                 </Link>
-
                 <a href={url} target="_blank" className={`${open ? '!w-[224px] !h-[127px]' : '!w-14 !h-8'} mx-auto rounded-full`}>
                     <Tooltip title={`Post Details: ${title}`} placement='right'>
                         <div className='flex flex-col group justify-center items-center'>
@@ -200,14 +195,12 @@ const PostBox = ({ url, title, image, open }) => {
                         </div>
                     </Tooltip>
                 </a>
-
                 <div className={`${open ? 'flex' : 'hidden'} mt-2 w-full flex-col px-3 justify-start items-start`}>
                     <span className='text-base font-semibold mb-0.5'>Your Post</span>
                     <Tooltip title={title} placement='right'>
                         <h3 className='text-sm text-start line-clamp-1 w-[99%] dark:text-gray-300 text-gray-600 cheltenham'>{title}</h3>
                     </Tooltip>
                 </div>
-
                 <Link href={`/${process.env.STUDIO_URL_PREFIX}/content`} className={`${open ? 'px-0.5 w-full block' : 'hidden'}`} >
                     <Button size="small" fullWidth={open} >
                         <div className={`flex ${open ? 'space-x-5 w-full' : ''} items-center`}>
@@ -220,7 +213,6 @@ const PostBox = ({ url, title, image, open }) => {
         </>
     )
 }
-
 const UserBox = ({ currentData, open }) => {
     return (
         <>
@@ -235,7 +227,6 @@ const UserBox = ({ currentData, open }) => {
                         </div>
                     </Tooltip>
                 </a>
-
                 {open && <div className='flex mt-2 flex-col w-9/12 mx-auto items-center'>
                     <Tooltip title={currentData?.name} placement='right'>
                         <h3 className='text-lg text-center truncate w-full dark:text-gray-100 text-gray-800 font-semibold'>{currentData?.name}</h3>
@@ -245,8 +236,6 @@ const UserBox = ({ currentData, open }) => {
         </>
     )
 }
-
-
 const MenuSkeleton = (count) => {
     return Array.from({ length: count }, (_, index) => (
         <div key={index} className={`!py-2 !pl-4 !pr-2 !flex !space-x-7 items-center !max-w-[204px] w-full`}>
@@ -255,5 +244,4 @@ const MenuSkeleton = (count) => {
         </div>
     ));
 }
-
 export { StudioSidebar };

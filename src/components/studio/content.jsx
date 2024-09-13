@@ -137,11 +137,11 @@ const StudioContent = () => {
         initialState: {
             showColumnFilters: false,
             showGlobalFilter: true,
-            ...(variant === 'permanent') && {
+            ...((variant === 'permanent') && {
                 columnPinning: {
                     left: ['mrt-row-select', 'post'],
                 }
-            }
+            })
         },
         enableGlobalFilterModes: true,
         globalFilterModeOptions: ['fuzzy', 'startsWith', 'date', 'contains', 'equals'],

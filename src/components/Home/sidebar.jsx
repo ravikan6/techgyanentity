@@ -263,45 +263,40 @@ const MainSidebar = (props) => {
     // }
 
     const UserMenu = () => {
-        return (
-            <>
-                <div className="flex w-full items-center">
-                    {session?.user ? <Link href={userData ? `/@${session?.user?.username}` : '#'} className={MenuBtnStyle(`/@${session?.user?.username}`)}>
-                        <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }}>
-                            <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
-                                <>{session?.user?.image ? <Image className='rounded' src={`${session?.user?.image}`} alt={session?.user?.username} width={20} height={20} /> : false ? <BiSolidUserRectangle className="w-5 text-black dark:text-white h-5" /> : <LuUserSquare2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
-                                    <span className={`text-base line-clamp-1 truncate dark:text-gray-100 text-gray-800 font-semibold ${isSmall && 'w-0'}`}>@{session?.user?.username}</span></>
-                            </div>
-                        </Button>
-                    </Link> : <>{MenuSkeleton(1)}</>}
-                </div>
-                <div className="w-full transition-all h-auto duration-500">
-                    {userMenu.slice(0, showMore ? userMenu.length : 3).map((menu, index) => (
-                        <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} onClick={onMenuClick} />
-                    ))}
-                </div>
-                <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all duration-500 bg-transparent`}>
-                    <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
-                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-500`}>
-                            {showMore ? <BiChevronUp className="w-5 dark:text-gray-100 text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
-                            <span className={`${showMore ? '' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-500`}>{showMore ? 'Show less' : 'Show more'}</span>
+        return (<>
+            <div className="flex w-full items-center">
+                {session?.user ? <Link href={userData ? `/@${session?.user?.username}` : '#'} className={MenuBtnStyle(`/@${session?.user?.username}`)}>
+                    <Button fullWidth={!isSmall} sx={[isSmall && { height: '40px', minWidth: '40px !important' }]}>
+                        <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center`}>
+                            <>{session?.user?.image ? <Image className='rounded' src={`${session?.user?.image}`} alt={session?.user?.username} width={20} height={20} /> : false ? <BiSolidUserRectangle className="w-5 text-black dark:text-white h-5" /> : <LuUserSquare2 className="w-5 dark:text-gray-200 text-gray-700 h-5" />}
+                                <span className={`text-base line-clamp-1 truncate dark:text-gray-100 text-gray-800 font-semibold ${isSmall && 'w-0'}`}>@{session?.user?.username}</span></>
                         </div>
                     </Button>
-                </div>
-            </>
-        );
+                </Link> : <>{MenuSkeleton(1)}</>}
+            </div>
+            <div className="w-full transition-all h-auto duration-500">
+                {userMenu.slice(0, showMore ? userMenu.length : 3).map((menu, index) => (
+                    <MenuItem key={index} menu={menu} path={path} isSmall={isSmall} onClick={onMenuClick} />
+                ))}
+            </div>
+            <div onClick={() => setTimeout(() => setShowMore(!showMore), 200)} className={`h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all duration-500 bg-transparent`}>
+                <Button fullWidth={!isSmall} sx={[isSmall && { height: '40px', minWidth: '40px !important' }]} >
+                    <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-500`}>
+                        {showMore ? <BiChevronUp className="w-5 dark:text-gray-100 text-black h-5 min-w-5 min-h-5" /> : <BiChevronDown className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
+                        <span className={`${showMore ? '' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-500`}>{showMore ? 'Show less' : 'Show more'}</span>
+                    </div>
+                </Button>
+            </div>
+        </>);
     }
-
     const NavBorder = () => {
         return (
             <span className='w-full border-accentLight/60 dark:border-accentDark/60 border-b my-2 h-0.5' ></span>
         )
     }
-
     const MenuBtnStyle = (link) => {
         return `h-10 ${isSmall ? 'w-10 mb-1 rounded-full self-center mx-auto' : 'w-full mb-0.5 rounded-xl'} max-w-[204px] transition-all duration-500 ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
-
     return (
         <>
             <div className='w-full'>
@@ -328,7 +323,6 @@ const MainSidebar = (props) => {
                             </>} */}
                         </>
                     }
-
                     <div className='w-full mb-10'>
                         <div className={`${isSmall ? '!text-[0]' : 'mb-2 karnak font-semibold tracking-[1px]'}`}>
                             <span className='truncate'>Explore</span>
@@ -344,14 +338,12 @@ const MainSidebar = (props) => {
         </>
     );
 };
-
 const MenuItem = ({ menu, path, isSmall, onClick = () => { } }) => {
     const MenuBtnStyle = (link) => {
         return `h-10 ${isSmall ? 'w-10 mb-1 self-center mx-auto' : 'w-full mb-0.5'} rounded-full max-w-[204px] transition-all duration-500 ${(path === link) ? 'bg-lightButton dark:bg-darkButton' : ''}`
     }
-
     return (
-        <div className={MenuBtnStyle(menu.link)} >
+        (<div className={MenuBtnStyle(menu.link)} >
             <Tooltip title={menu.name} placement="right" slotProps={{
                 popper: {
                     modifiers: [
@@ -365,7 +357,7 @@ const MenuItem = ({ menu, path, isSmall, onClick = () => { } }) => {
                 },
             }}>
                 <Link onClick={onClick} href={menu.link} >
-                    <Button fullWidth={!isSmall} sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }} >
+                    <Button fullWidth={!isSmall} sx={[isSmall && { height: '40px', minWidth: '40px !important' }]} >
                         <div className={`flex ${isSmall ? '' : 'space-x-7 w-full py-0.5 px-2'} items-center transition-all duration-500`}>
                             {(path === menu.link) ? <menu.icon2 className="w-5 dark:text-black text-black h-5 min-w-5 min-h-5" /> : <menu.icon className="w-5 dark:text-gray-200 text-gray-700 h-5 min-w-5 min-h-5" />}
                             <span className={`${(path === menu.link) ? 'dark:text-black text-black' : 'dark:text-gray-100 text-gray-800'} text-base ${isSmall && 'w-0'} font-semibold truncate transition-all duration-500`}>{menu.name}</span>
@@ -373,14 +365,12 @@ const MenuItem = ({ menu, path, isSmall, onClick = () => { } }) => {
                     </Button>
                 </Link>
             </Tooltip>
-        </div>
-    )
+        </div>)
+    );
 };
-
 const SmallSidebar = (props) => {
     const path = usePathname();
     const session = props.session;
-
     return (
         <div className="flex flex-col justify-center items-center">
             {staticMenu.map((menu, index) => (
@@ -396,7 +386,6 @@ const SmallSidebar = (props) => {
         </div>
     );
 }
-
 const NonLoggedBox = ({ path, isSmall, onMenuClick }) => {
     const [showTip, setShowTip] = useState(false);
     const staticMenu = [
@@ -413,7 +402,6 @@ const NonLoggedBox = ({ path, isSmall, onMenuClick }) => {
             link: '/history'
         },
     ];
-
     useEffect(() => {
         let dt = localStorage.getItem('_non_logged_in_tip');
         if (dt === null) {
@@ -424,12 +412,10 @@ const NonLoggedBox = ({ path, isSmall, onMenuClick }) => {
             setShowTip(false)
         }
     }, [])
-
     function boxCloser() {
         setShowTip(false)
         localStorage.setItem('_non_logged_in_tip', 'true')
     }
-
     const TheBox = () => {
         return (
             <div className="flex flex-col backdrop-blur-md p-2 items-center justify-center space-y-4">
@@ -445,7 +431,6 @@ const NonLoggedBox = ({ path, isSmall, onMenuClick }) => {
                     >
                         Close
                     </Button>
-
                     <Button
                         variant='outlined'
                         color="head"
@@ -457,32 +442,27 @@ const NonLoggedBox = ({ path, isSmall, onMenuClick }) => {
                     </Button>
                 </div>
             </div>
-
         )
     }
-
-    return (
-        <>
-            {staticMenu.map((menu, index) => (
-                <MenuItem key={index} menu={menu} path={path} onClick={onMenuClick} />
-            ))}
-            <div className='my-2 flex w-full justify-center items-center'>
-                <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: false }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
-                    <Button
-                        variant='outlined'
-                        color="button"
-                        sx={{ ...isSmall && { height: '40px', minWidth: '40px !important' } }}
-                    >
-                        <BiSolidUserCircle className='w-5 h-5' />
-                        <span className={`mt-0.5 ml-2 ${isSmall && 'hidden'}`}>Sign In</span>
-                    </Button>
-                </Tooltip>
-            </div>
-            <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
-        </>
-    );
+    return (<>
+        {staticMenu.map((menu, index) => (
+            <MenuItem key={index} menu={menu} path={path} onClick={onMenuClick} />
+        ))}
+        <div className='my-2 flex w-full justify-center items-center'>
+            <Tooltip className="!z-[9999]" title={<TheBox />} open={showTip} placement="right" arrow PopperProps={{ disablePortal: false }} onClose={boxCloser} disableFocusListener disableHoverListener disableTouchListener>
+                <Button
+                    variant='outlined'
+                    color="button"
+                    sx={[isSmall && { height: '40px', minWidth: '40px !important' }]}
+                >
+                    <BiSolidUserCircle className='w-5 h-5' />
+                    <span className={`mt-0.5 ml-2 ${isSmall && 'hidden'}`}>Sign In</span>
+                </Button>
+            </Tooltip>
+        </div>
+        <span className='w-full border-slate-300 dark:border-zinc-700 border-b my-2 h-0.5' ></span>
+    </>);
 }
-
 const MenuSkeleton = (count) => {
     return Array.from({ length: count }, (_, index) => (
         <div key={index} className={`!py-2 !pl-4 !pr-2 !flex !space-x-7 items-center !max-w-[204px] w-full`}>
@@ -491,7 +471,5 @@ const MenuSkeleton = (count) => {
         </div>
     ));
 }
-
 export { MainSidebar, SmallSidebar };
-
 export const dynamic = 'force-static';

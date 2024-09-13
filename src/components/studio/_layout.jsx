@@ -14,7 +14,9 @@ const drawerWidth = 240;
 const drawerWidthClose = 80;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shouldForwardProp: (prop) => prop !== 'variant' })(
-    ({ theme, open, variant }) => ({
+    ({
+        theme, open, variant
+    }) => ({
         flexGrow: 1,
         paddingLeft: theme.spacing(3),
         paddingRight: theme.spacing(3),
@@ -25,16 +27,31 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
         }),
-        ...((open && variant == 'permanent') && {
-            transition: theme.transitions.create('margin', {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
-            }),
-        }),
-        ...((open && variant == 'persistent') && {
-            transition: null,
-            marginLeft: `-${drawerWidth}px`,
-        }),
+        variants: [{
+            props: (
+                {
+                    variant,
+                    open
+                }
+            ) => (open && variant == 'permanent'),
+            style: {
+                transition: theme.transitions.create('margin', {
+                    easing: theme.transitions.easing.easeOut,
+                    duration: theme.transitions.duration.enteringScreen,
+                }),
+            }
+        }, {
+            props: (
+                {
+                    variant,
+                    open
+                }
+            ) => (open && variant == 'persistent'),
+            style: {
+                transition: null,
+                marginLeft: `-${drawerWidth}px`,
+            }
+        }]
     }),
 );
 
@@ -76,31 +93,53 @@ const StudioLayout = ({ children, session }) => {
     }, [q2]);
 
     return (
-        <DrawerContext.Provider value={{ open, setOpen, variant }}>
+        (<DrawerContext.Provider value={{ open, setOpen, variant }}>
             <Box sx={{ display: 'flex' }}>
                 <Drawer
-                    sx={{
+                    sx={[theme => ({
                         width: drawerWidth_get(open, variant),
                         flexShrink: 0,
-
                         transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
                             easing: theme.transitions.easing.sharp,
                             duration: theme.transitions.duration.enteringScreen,
                         }),
-
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(open, variant),
-                            backgroundColor: (theme) => variant === 'persistent' ? theme.palette?.modelBG?.main : 'transparent',
-                            mt: variant === 'persistent' ? 0 : 0,
-                            pt: variant === 'persistent' ? 0 : '54px',
                             border: 'none',
-                            transition: (theme) => theme.transitions.create('width', {
+                            transition: theme.transitions.create('width', {
                                 easing: theme.transitions.easing.sharp,
                                 duration: theme.transitions.duration.enteringScreen,
-                            }),
-                        },
-                        zIndex: variant === 'persistent' ? (theme) => theme.zIndex.drawer + 1 : 1,
-                    }}
+                            })
+                        }
+                    }), variant === 'persistent' ? {
+                        '& .MuiDrawer-paper': {
+                            backgroundColor: (theme) => theme.palette?.background?.default,
+                        }
+                    } : {
+                        '& .MuiDrawer-paper': {
+                            backgroundColor: 'transparent'
+                        }
+                    }, variant === 'persistent' ? {
+                        '& .MuiDrawer-paper': {
+                            mt: 0
+                        }
+                    } : {
+                        '& .MuiDrawer-paper': {
+                            mt: 0
+                        }
+                    }, variant === 'persistent' ? {
+                        '& .MuiDrawer-paper': {
+                            pt: 0
+                        }
+                    } : {
+                        '& .MuiDrawer-paper': {
+                            pt: '54px'
+                        }
+                    }, variant === 'persistent' ? {
+                        zIndex: (theme) => theme.zIndex.drawer + 1
+                    } : {
+                        zIndex: 1
+                    }]}
                     variant={variant}
                     anchor="left"
                     open={open}
@@ -118,7 +157,10 @@ const StudioLayout = ({ children, session }) => {
                     <StudioSidebar session={session} variant={variant} open={open} />
                 </Drawer>
                 <Main aria-busy={loading} open={open} variant={variant}>
-                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer }}
+                    <Backdrop sx={theme => ({
+                        color: '#fff',
+                        zIndex: theme.zIndex.drawer
+                    })}
                         open={open && variant === 'persistent'}
                         onClick={handleDrawerOpen}
                     > </Backdrop>
@@ -127,7 +169,7 @@ const StudioLayout = ({ children, session }) => {
                     {children}
                 </Main>
             </Box>
-        </DrawerContext.Provider>
+        </DrawerContext.Provider>)
     );
 }
 

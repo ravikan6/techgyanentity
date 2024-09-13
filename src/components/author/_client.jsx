@@ -64,12 +64,12 @@ const AuthorBottomButtons = ({ url, title, isExt, icon, tip, className, isNoWrap
     }
 
     return (
-        <Tooltip title={tip || `${title} (${url?.replace(/^(https?:\/\/)?(www\.)?/i, '').replace(/\/$/, '')})`}>
+        (<Tooltip title={tip || `${title} (${url?.replace(/^(https?:\/\/)?(www\.)?/i, '').replace(/\/$/, '')})`}>
             <Button onClick={handleClick} variant="outlined" size="small" className={`${isNoWrap && 'max-[768px]:!min-w-8 max-[768px]:!min-h-8 max-[768px]:!max-h-8 max-[768px]:!max-w-8 max-[768px]:!text-[0px]'} ${className}`} startIcon={icon ? icon : <Image src={getFevicon(url)} className={`rounded w-4 h-4 max-w-4 ${isNoWrap && 'max-[768px]:-mr-[0.6rem]'}`} alt={title} width={16} height={16} />}>
                 {title}
             </Button>
-        </Tooltip>
-    )
+        </Tooltip>)
+    );
 }
 
 const AuthorLayoutNav = ({ data }) => {

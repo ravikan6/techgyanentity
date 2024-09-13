@@ -17,7 +17,7 @@ const createUser = async (data) => {
     let alUser = await prisma.user.findUnique({
       where: {
         email: data.email,
-        ...data.username && { username: data.username }
+        ...(data.username && { username: data.username })
       }
     });
 
@@ -210,7 +210,7 @@ const userImage = async (files) => {
           id: session.user.id
         },
         data: {
-          ...imageData ? (imageData == 'rm' ? { image: null } : { image: { set: imageData } }) : null,
+          ...(imageData ? (imageData == 'rm' ? { image: null } : { image: { set: imageData } }) : null),
         }
       });
 
@@ -281,11 +281,11 @@ const getUserBookmarks = async (params) => {
           },
           take: params?.take || 5,
           skip: params?.skip || 0,
-          ...params?.cursor && {
+          ...(params?.cursor && {
             cursor: {
               shortId: params.cursor,
             }
-          },
+          }),
           select: {
             title: true,
             slug: true,
@@ -342,11 +342,11 @@ const getUserClappedPost = async (params) => {
       },
       take: params?.take || 5,
       skip: params?.skip || 0,
-      ...params?.cursor && {
+      ...(params?.cursor && {
         cursor: {
           postId: params.cursor,
         }
-      },
+      }),
       select: {
         post: {
           select: {

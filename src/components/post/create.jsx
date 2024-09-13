@@ -68,20 +68,21 @@ const CreatePost = (props) => {
         }
     }
 
-    return (
-        <>
-            <div>
-                <div className="mx-5">
-                    <TextField
-                        name="title"
-                        value={post.title}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyPress}
-                        autoFocus
-                        placeholder="Title"
-                        multiline
-                        variant="standard"
-                        InputProps={{
+    return (<>
+        <div>
+            <div className="mx-5">
+                <TextField
+                    name="title"
+                    value={post.title}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyPress}
+                    autoFocus
+                    placeholder="Title"
+                    multiline
+                    variant="standard"
+                    fullWidth
+                    slotProps={{
+                        input: {
                             disableUnderline: true,
                             sx: {
                                 fontSize: '2.6rem',
@@ -90,16 +91,15 @@ const CreatePost = (props) => {
                                 fontFamily: 'rb-karnak',
                                 color: (theme) => theme.palette.text.primary,
                             },
-                        }}
-                        fullWidth
-                    />
-                </div>
-                <div className="my-2 lg:-mx-8">
-                    <Editor content={post.content} setBlocks={setBlocks} focus={keyPress} />
-                </div>
+                        }
+                    }}
+                />
             </div>
-        </>
-    );
+            <div className="my-2 lg:-mx-8">
+                <Editor content={post.content} setBlocks={setBlocks} focus={keyPress} />
+            </div>
+        </div>
+    </>);
 };
 
 export { CreatePost }

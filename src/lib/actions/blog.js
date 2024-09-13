@@ -170,13 +170,13 @@ export const updatePostDetailsAction = async (data) => {
             },
             data: {
                 ...setter,
-                ...cat?.slug && {
+                ...(cat?.slug && {
                     category: {
                         connect: {
                             slug: cat?.slug,
                         }
                     }
-                }
+                })
             },
             select: {
                 id: false,

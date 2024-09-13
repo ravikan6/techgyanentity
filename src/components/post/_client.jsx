@@ -51,7 +51,6 @@ export const Puller = styled('div')(({ theme }) => ({
     position: 'absolute',
     top: 4,
     left: 'calc(50% - 20px)',
-
 }));
 
 const SidebarContext = createContext();
@@ -327,7 +326,7 @@ export const ArticleComments = ({ articleId, article }) => {
     const handleAddReply = async (commentId, reply) => {
         if (!session?.user || !reply || (reply === '')) return;
         let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
-        const res = await articleCommentAction({ postId: articleId, body: reply, parentId: commentId, ...aId && { authorId: aId } })
+        const res = await articleCommentAction({ postId: articleId, body: reply, parentId: commentId, ...(aId && { authorId: aId }) })
         if (res?.status === 200) {
             let newComments = comments.map(comment => {
                 if (comment.id === commentId) {
@@ -343,7 +342,7 @@ export const ArticleComments = ({ articleId, article }) => {
     const handleAddComment = async (comment) => {
         if (!session?.user || !comment || (comment === '')) return;
         let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
-        const res = await articleCommentAction({ postId: articleId, body: comment, ...aId && { authorId: aId } })
+        const res = await articleCommentAction({ postId: articleId, body: comment, ...(aId && { authorId: aId }) })
         if (res?.status === 200) {
             if (res.status === 200) {
                 let newRes = await articleCommentsListAction(articleId)
@@ -604,59 +603,56 @@ const CommentFormField = ({ article, showButtons, setShowButtons, isMc, onSubmit
         image: session?.user?.image
     }
 
-    return (
-        session?.user ? <div className="">
-            <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
-                <Avatar src={currentUser?.image} sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={currentUser?.username} >{currentUser?.username?.slice(0, 1)}</Avatar>
-                <TextField
-                    required
-                    onClick={() => { setShowButtons(true) }}
-                    multiline
-                    variant="standard"
-                    size="small"
-                    fullWidth
-                    autoFocus={showButtons}
-                    placeholder="Add a comment"
-                    sx={{
-                        ...!showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
-                        ...!isMc && { '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '1', height: '30px', padding: '0px' } }
-                    }}
-                    value={comment}
-                    onChange={handleCommentChange}
-                    className="text-sm"
-                ></TextField>
-            </div>
-            {showButtons && <div className="flex items-center justify-end space-x-4">
-                {isPosting && <BetaLoader />}
-                <Button disabled={isPosting} size="small" onClick={handleCancle} variant="outlined" color="primary">
-                    Cancle
-                </Button>
-                <Button size="small" className={!(comment?.length === 0 || isPosting) ? "text-white dark:text-black" : ''} disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
-                    {toReply ? 'Reply' : commentText ? 'Update' : 'Comment'}
-                </Button>
-            </div>}
-        </div> :
-            <UnAuthorizedActionWrapper description={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} link={'#'} >
-                <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
-                    <Avatar sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={'User Image'} />
-                    <TextField
-                        required
-                        multiline
-                        variant="standard"
-                        size="small"
-                        fullWidth
-                        readOnly
-                        placeholder="Add a comment"
-                        sx={{
-                            ...!showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
-                            ...!isMc && { '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '1', height: '30px', padding: '0px' } }
-                        }}
-                        value={''}
-                        className="text-sm"
-                    ></TextField>
-                </div>
-            </UnAuthorizedActionWrapper>
-    )
+    return (session?.user ? <div className="">
+        <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
+            <Avatar src={currentUser?.image} sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={currentUser?.username} >{currentUser?.username?.slice(0, 1)}</Avatar>
+            <TextField
+                required
+                onClick={() => { setShowButtons(true) }}
+                multiline
+                variant="standard"
+                size="small"
+                fullWidth
+                autoFocus={showButtons}
+                placeholder="Add a comment"
+                sx={[
+                    !showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
+                    !isMc && { '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '1', height: '30px', padding: '0px' } }
+                ]}
+                value={comment}
+                onChange={handleCommentChange}
+                className="text-sm"
+            ></TextField>
+        </div>
+        {showButtons && <div className="flex items-center justify-end space-x-4">
+            {isPosting && <BetaLoader />}
+            <Button disabled={isPosting} size="small" onClick={handleCancle} variant="outlined" color="primary">
+                Cancle
+            </Button>
+            <Button size="small" className={!(comment?.length === 0 || isPosting) ? "text-white dark:text-black" : ''} disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
+                {toReply ? 'Reply' : commentText ? 'Update' : 'Comment'}
+            </Button>
+        </div>}
+    </div> : <UnAuthorizedActionWrapper description={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} link={'#'} >
+        <div className={`flex justify-between space-x-4 mb-3 ${!showButtons && 'items-center'}`}>
+            <Avatar sx={{ width: (showButtons && isMc) ? 30 : 24, height: (showButtons && isMc) ? 30 : 24, borderRadius: 1000 }} alt={'User Image'} />
+            <TextField
+                required
+                multiline
+                variant="standard"
+                size="small"
+                fullWidth
+                readOnly
+                placeholder="Add a comment"
+                sx={[
+                    !showButtons && { height: '30px', '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '0.8', height: '30px', padding: '0px' } },
+                    !isMc && { '& .MuiInputBase-input': { fontSize: '0.8rem', lineHeight: '1', height: '30px', padding: '0px' } }
+                ]}
+                value={''}
+                className="text-sm"
+            ></TextField>
+        </div>
+    </UnAuthorizedActionWrapper>);
 }
 
 const CommentBottomControl = ({ commentId, onAddReply, toReplay, claps, clapsCount, article }) => {

@@ -171,7 +171,6 @@ const PostDetailsEditor = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="flex items-start my-5 justify-between flex-wrap">
                     <div className="w-full lg:max-w-[calc(100%-320px)] md:max-w-[calc(100%-280px)] lg:min-w-[400px]">
                         <div className="flex flex-col space-y-8 mb-5">
@@ -198,9 +197,7 @@ const PostDetailsEditor = () => {
                     </div>
                     <div className="w-full lg:max-w-[300px] md:min-w-[250px] md:max-w-[250px] lg:min-w-[300px]">
                         <div className="flex flex-col gap-7">
-
                             <FtImage img={npst?.image} handleImageData={handleImageData} handleUpdateNewPost={handleUpdateNewPost} />
-
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Privacy'} desc={'Choose the privacy settings for your post. You can make your post public, private, or unlisted.'} tip={'Choose the privacy settings for your post.'} />
                                 <Select size="small" className="!rounded-full" value={npst?.privacy || 'PUBLIC'} label="" onChange={(e) => handleUpdateNewPost(e, 'privacy')} disabled={loading}>
@@ -209,7 +206,6 @@ const PostDetailsEditor = () => {
                                     <MenuItem value="UNLISTED">Unlisted</MenuItem>
                                 </Select>
                             </div>
-
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Category'} desc={'Choose the category for your post. You can select a category from the list of available categories.'} tip={'Choose the category for your post.'} />
                                 <Select size="small" className="!rounded-full" value={npst?.category?.slug || ''} label="" onChange={handleSetCategory} disabled={loading}>
@@ -218,7 +214,6 @@ const PostDetailsEditor = () => {
                                     ))}
                                 </Select>
                             </div>
-
                             {((post?.published === false) && !post?.publishedAt) ? <>
                                 <Button fullWidth disabled={loading} variant="contained" color="button" className="dark:text-black" onClick={() => handlePublishButton()}>
                                     Publish
@@ -296,8 +291,12 @@ const TagInput = ({ tags, setTags }) => {
     }
 
     return (
-        <Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/30 border-black/30 focus-within:dark:border-white focus-within:border-black`}>
-            <Box display="flex" flexWrap="wrap">
+        (<Box onClick={handleFocus} className={`${(tags && tags?.length > 0) ? 'p-2 rounded-2xl' : 'p-0 rounded-full'} border dark:border-white/30 border-black/30 focus-within:dark:border-white focus-within:border-black`}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap"
+                }}>
                 {tags.map((tag, index) => (
                     <Chip
                         key={index}
@@ -322,7 +321,7 @@ const TagInput = ({ tags, setTags }) => {
                     focus={`${focus}`}
                 />
             </Box>
-        </Box>
+        </Box>)
     );
 };
 

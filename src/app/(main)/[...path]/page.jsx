@@ -120,9 +120,9 @@ const getArticle = async (slug, id) => {
         const post = await prisma.post.findFirst({
             where: {
                 slug: slug,
-                ...id && {
+                ...(id && {
                     authorId: id,
-                },
+                }),
             },
             include: {
                 author: {
@@ -164,7 +164,7 @@ const getArticle = async (slug, id) => {
 }
 
 const getAuthor = async (handle) => {
-    handle = await handle?.startsWith('@') ? handle.slice(1) : handle;
+    handle = (await handle?.startsWith('@')) ? handle.slice(1) : handle;
 
     try {
         let author = await prisma.author.findFirst({
@@ -217,7 +217,7 @@ const articleMeta = async (slug) => {
             title: article?.title,
             description: article?.description,
             siteName: process.env.APP_NAME,
-            ...url && {
+            ...(url && {
                 images: [
                     {
                         url,
@@ -225,13 +225,13 @@ const articleMeta = async (slug) => {
                         height: 600,
                     },
                 ]
-            },
+            }),
             locale: 'en_US',
             type: 'article',
             publishedTime: article?.publishedAt,
             authors: [article?.author?.name]
         }
-    }
+    };
 }
 
 export default DynamicPages;

@@ -29,7 +29,7 @@ const DynamicMainLayout = async ({ params, searchParams, children }) => {
 
 
 const getAuthor = async (handle) => {
-    handle = await handle?.startsWith('@') ? handle.slice(1) : handle;
+    handle = (await handle?.startsWith('@')) ? handle.slice(1) : handle;
 
     try {
         let author = await prisma.author.findFirst({

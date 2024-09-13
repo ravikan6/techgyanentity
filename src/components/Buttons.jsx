@@ -313,20 +313,15 @@ const PostDetailsImageMenu = ({ onFistClick, disabled }) => {
     </>
   );
 };
-
-
 const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const context = useContext(StudioContext);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const View = () => (
     <>
       <div className='bg-light dark:bg-dark truncate rounded-xl p-2 flex space-x-4'>
@@ -339,7 +334,6 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
       <p className='mt-2 opacity-70 cheltenham-small'> Please note that this action is irreversible. </p>
     </>
   )
-
   const onDelete = async () => {
     try {
       if (await confirm(<View />, { title: 'Are you sure you want to delete this post?', okLabel: 'Delete', cancelLabel: 'Cancel' })) {
@@ -414,18 +408,14 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
     </>
   );
 };
-
 const PostDetailsActionMenu = ({ list = [], disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   return (
     <>
       <IconButton color="primary" size='small' disabled={disabled} onClick={handleClick}>
@@ -457,22 +447,18 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
     </>
   );
 };
-
 const CreateBtn = ({ classes, iconColor, sx }) => {
   const { data } = useContext(StudioContext);
   if (!data?.data) return null;
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const handleClick = async () => {
     try {
       if (loading) return;
@@ -486,7 +472,6 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
       toast.error('Something went wrong while creating post, Please try again.')
     } finally { setLoading(false) }
   }
-
   return (
     <>
       <div className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
@@ -513,7 +498,6 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
     </>
   )
 }
-
 const NotificationBtn = ({ classes, iconColor, sx }) => {
   return (
     <IconButton size='small' sx={{ ...sx }} onClick={() => { }} className={`${classes}`} >
@@ -521,7 +505,6 @@ const NotificationBtn = ({ classes, iconColor, sx }) => {
     </IconButton>
   )
 }
-
 const RouterBackBtn = (props) => {
   const router = useRouter();
   return (
@@ -534,9 +517,7 @@ const RouterBackBtn = (props) => {
     </IconButton>
   )
 }
-
 const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', accent = false }) => {
-
   const IconContent = () => {
     return (
       <Tooltip hidden={!tooltip} title={<p className='p-1 text-[12px] max-w-[200px]'>{tooltip}</p>} placement="bottom">
@@ -544,7 +525,6 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
       </Tooltip>
     )
   }
-
   const Content = () => {
     switch (show) {
       case 'full':
@@ -557,13 +537,10 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
         return 'Learn More'
     }
   }
-
   return (
     <span onClick={onClick ? onClick : () => { }} className={accent ? 'text-accent dark:text-accentDarker' : ''} >
       {url ? <Link target={target} href={url}> {Content()} </Link> : Content()}
     </span>
   )
 }
-
 export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu, PostDetailsTableViewMenu, ShareButton };
-

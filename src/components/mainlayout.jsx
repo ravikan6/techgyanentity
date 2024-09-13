@@ -15,7 +15,9 @@ const drawerWidth = 240;
 const drawerWidthClose = 80;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shouldForwardProp: (prop) => prop !== 'variant' })(
-    ({ theme, open, variant }) => ({
+    ({
+        theme, open, variant
+    }) => ({
         flexGrow: 1,
         [theme.breakpoints.down('sm')]: {
             paddingLeft: '12px',
@@ -27,17 +29,34 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open', shou
         },
         marginLeft: 0,
         paddingTop: '54px',
-        width: `calc(100% - ${(variant === 'permanent') ? drawerWidth_get(open, variant) : 0}px)`,
+        width: `calc(100% - ${0}px)`,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
         }),
-        ...((open && variant == 'permanent') && {
-            transition: theme.transitions.create('margin', {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.leavingScreen,
-            }),
-        }),
+        variants: [{
+            props: {
+                variant: 'permanent'
+            },
+            style: {
+                width: {
+                    width: drawerWidth_get(open, variant)
+                }
+            }
+        }, {
+            props: (
+                {
+                    variant,
+                    open
+                }
+            ) => (open && variant == 'permanent'),
+            style: {
+                transition: theme.transitions.create('margin', {
+                    easing: theme.transitions.easing.sharp,
+                    duration: theme.transitions.duration.leavingScreen,
+                }),
+            }
+        }]
     }),
 );
 
@@ -96,31 +115,53 @@ const MainLayout = ({ children, session }) => {
     }, [q, path, variant]);
 
     return (
-        <DrawerContext.Provider value={{ open, setOpen, setVariant, variant }}>
+        (<DrawerContext.Provider value={{ open, setOpen, setVariant, variant }}>
             <Box sx={{ display: 'flex' }}>
                 <Drawer
-                    sx={{
+                    sx={[theme => ({
                         width: drawerWidth_get(open, variant),
                         flexShrink: 0,
-
                         transition: (theme) => (variant === 'permanent') && theme.transitions.create('width', {
                             easing: theme.transitions.easing.sharp,
                             duration: theme.transitions.duration.short,
                         }),
-
                         '& .MuiDrawer-paper': {
                             width: drawerWidth_get(open, variant),
-                            backgroundColor: (theme) => variant !== 'permanent' ? theme.palette?.modelBG?.main : 'transparent',
-                            mt: variant === 'persistent' ? 0 : 0, // '54px'
-                            pt: variant !== 'permanent' ? 0 : '54px',
                             border: 'none',
-                            transition: (theme) => theme.transitions.create('width', {
+                            transition: theme.transitions.create('width', {
                                 easing: theme.transitions.easing.sharp,
                                 duration: theme.transitions.duration.short,
-                            }),
-                        },
-                        zIndex: variant !== 'permanent' ? (theme) => theme.zIndex.drawer + 1 : 1,
-                    }}
+                            })
+                        }
+                    }), variant !== 'permanent' ? {
+                        '& .MuiDrawer-paper': {
+                            backgroundColor: (theme)=> theme.palette?.background?.default,
+                        }
+                    } : {
+                        '& .MuiDrawer-paper': {
+                            backgroundColor: 'transparent'
+                        }
+                    }, variant === 'persistent' ? {
+                        '& .MuiDrawer-paper': {
+                            mt: 0
+                        }
+                    } : {
+                        '& .MuiDrawer-paper': {
+                            mt: 0
+                        }
+                    }, variant !== 'permanent' ? {
+                        '& .MuiDrawer-paper': {
+                            pt: 0
+                        }
+                    } : {
+                        '& .MuiDrawer-paper': {
+                            pt: '54px'
+                        }
+                    }, variant !== 'permanent' ? {
+                        zIndex: (theme) => theme.zIndex.drawer + 1
+                    } : {
+                        zIndex: 1
+                    }]}
                     variant={variant}
                     anchor="left"
                     open={open}
@@ -141,7 +182,7 @@ const MainLayout = ({ children, session }) => {
                     {children}
                 </Main>
             </Box>
-        </DrawerContext.Provider>
+        </DrawerContext.Provider>)
     );
 }
 

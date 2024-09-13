@@ -66,7 +66,7 @@ const createMicroPost = async (data) => {
     try {
         const post = await prisma.microPost.create({
             data: {
-                ...(data.type == 'TEXT') && { content: data?.title },
+                ...((data.type == 'TEXT') && { content: data?.title }),
                 type: data.type,
                 author: {
                     connect: {
@@ -75,7 +75,7 @@ const createMicroPost = async (data) => {
                 },
                 published: true,
                 shortId: shortId,
-                ...(objectId) && { typeContent: objectId }
+                ...(objectId && { typeContent: objectId })
             }
         })
         res.data = post
@@ -104,17 +104,26 @@ const pollAnsSubmit = async (pollId, option) => {
             option: true,
         }
     })
+    console.log(pollId, option, userVotes)
+    console.log(userVotes.map(v => v.option))
 
     if (userVotes.length > 0) {
-        if (option in userVotes.map(v => v.option.id)) {
-            for (let i = 0; i < userVotes.length; i++) {
-                if (userVotes[i].option.id == option) {
-                    await prisma.vote.delete({
-                        where: {
-                            id: userVotes[i].id
-                        }
-                    });
-                }
+        for (let i = 0; i < userVotes.length; i++) {
+            if (userVotes[i].option == option) {
+                await prisma.vote.delete({
+                    where: {
+                        id: userVotes[i].id
+                    }
+                });
+            } else {
+                await prisma.vote.update({
+                    where: {
+                        id: userVotes[i].id
+                    },
+                    data: {
+                        option: option
+                    }
+                });
             }
         }
     } else {

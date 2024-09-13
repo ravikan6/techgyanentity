@@ -168,40 +168,34 @@ const ClapPost = ({ id, session }) => {
         }
     }
 
-    return (
-        session?.user ?
-            <Tooltip title={isClapped?.is ? 'Unclap' : 'Clap'} placement='top'>
-                <Button disabled={isLoading} sx={{ px: 2, height: '32px', ...clapsCount == 0 && { width: '32px', minWidth: '32px' } }} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className={`w-4 h-4 ${clapsCount == 0 ? 'ml-2.5' : null} `} />} endIcon={clapsCount == 0 ? null : <span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span>} />
-            </Tooltip>
-            :
-            <UnAuthorizedActionWrapper description={'Sign in to clap'}>
-                <Button sx={{ px: 2, height: '32px', ...clapsCount == 0 && { width: '32px', minWidth: '32px' } }} size='small' variant='outlined' color='primary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${clapsCount == 0 ? 'ml-2.5' : null} `} />} endIcon={clapsCount == 0 ? null : <span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span>} />
-            </UnAuthorizedActionWrapper>
-    );
+    return (session?.user ? <Tooltip title={isClapped?.is ? 'Unclap' : 'Clap'} placement='top'>
+        <Button disabled={isLoading} sx={[{
+            px: 2,
+            height: '32px'
+        }, clapsCount == 0 && { width: '32px', minWidth: '32px' }]} onClick={handleClap} size='small' variant='outlined' color='primary' startIcon={isClapped?.is ? <FaHandsClapping className="w-4 h-4" /> : <PiHandsClappingLight className={`w-4 h-4 ${clapsCount == 0 ? 'ml-2.5' : null} `} />} endIcon={clapsCount == 0 ? null : <span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span>} />
+    </Tooltip> : <UnAuthorizedActionWrapper description={'Sign in to clap'}>
+        <Button sx={[{
+            px: 2,
+            height: '32px'
+        }, clapsCount == 0 && { width: '32px', minWidth: '32px' }]} size='small' variant='outlined' color='primary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${clapsCount == 0 ? 'ml-2.5' : null} `} />} endIcon={clapsCount == 0 ? null : <span className='!text-xs'>{(clapsCount === null || clapsCount === undefined) ? '--' : clapsCount}</span>} />
+    </UnAuthorizedActionWrapper>);
 }
-
-
 const AuthorActions = ({ id, authorId }) => {
     const { data } = useContext(StudioContext);
-
     if (data?.data?.id === authorId) {
         return (
             <PostEditButton href={`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${id}/edit`} />
         );
     }
 }
-
 export const UnAuthorizedActionWrapper = ({ children, description, link }) => {
     const [open, setOpen] = useState(false);
-
     const handleClose = () => {
         setOpen(false);
     };
-
     const handleOpen = () => {
         setOpen(true);
     };
-
     const TheComp = () => {
         return (
             <>
@@ -240,7 +234,6 @@ export const UnAuthorizedActionWrapper = ({ children, description, link }) => {
             </>
         )
     }
-
     return (
         <Tooltip
             disableHoverListener

@@ -259,28 +259,30 @@ const PollView = ({ post }) => {
             <div className="mt-3 flex flex-col gap-2.5">
                 {
                     pollData?.poll?.options?.map((option, index) => (
-                        <div key={index} className="relative h-auto rounded-[24px] overflow-hidden">
-                            <Button
-                                onClick={() => onSubmit(index)}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                disabled={disabled}
-                                sx={{
-                                    justifyContent: 'space-between',
-                                    px: 2.5,
-                                    borderRadius: '24px'
-                                }}
-                                endIcon={<span className="!text-sm cheltenham">{pollData.percentages[index]?.toFixed(2) || 0}%</span>}
-                            >
-                                {option?.text}
-                            </Button>
-                            <div className={`absolute h-full top-0 ${disabled ? 'bg-gray-200 dark:bg-gray-600' : 'bg-secondary dark:bg-secondaryDark'}`} style={{
-                                zIndex: '-1',
-                                width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
-                                opacity: (pollData?.poll?.votes?.map((v) => v?.option == option) || []).length ? '1' : '0.4',
-                            }} />
-                        </div>
+                        <Tooltip key={index} title={option?.text}>
+                            <div key={index} className="relative h-auto rounded-[24px] overflow-hidden">
+                                <Button
+                                    onClick={() => onSubmit(index)}
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    disabled={disabled}
+                                    sx={{
+                                        justifyContent: 'space-between',
+                                        px: 2.5,
+                                        borderRadius: '24px'
+                                    }}
+                                    endIcon={(pollData.percentages[index]?.toFixed(2) || 0) > 0 ? <span className="!text-sm cheltenham">{pollData.percentages[index]?.toFixed(2) || 0}%</span> : null}
+                                >
+                                    {option?.text}
+                                </Button>
+                                <div className={`absolute h-full top-0 ${disabled ? 'bg-gray-200 dark:bg-gray-600' : 'bg-secondary dark:bg-secondaryDark'}`} style={{
+                                    zIndex: '-1',
+                                    width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
+                                    opacity: (pollData?.poll?.votes?.map((v) => v?.option == option) || []).length ? '1' : '0.4',
+                                }} />
+                            </div>
+                        </Tooltip>
                     ))
                 }
             </div>

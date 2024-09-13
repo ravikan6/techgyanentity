@@ -464,7 +464,6 @@ const ChannelEditLayout = ({ children }) => {
                                 })
                             }
                         </div>
-
                         <div ref={ref} className="flex justify-between mb-1 mt-1 sm:justify-end w-full sm:w-auto transition-all duration-500 items-center space-x-2 md:space-x-3">
                             <Button disabled={state?.data?.isRunnable ? context?.loading : (state?.data?.aCancle ? context?.loading : true)} onClick={handleCancle} variant="text" sx={{ px: { xs: 3, sm: 1.3, lg: 3 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="primary" size="small" > Cancel </Button>
                             <Button disabled={state?.data?.isRunnable ? context?.loading : true} onClick={() => handlePublish()} variant="outlined" sx={{ px: { xs: 4, sm: 2, lg: 4 } }} className="font-bold -tracking-tighter cheltenham !bg-light dark:!bg-dark" color="button" size="small" > Publish </Button>
@@ -478,11 +477,9 @@ const ChannelEditLayout = ({ children }) => {
         </>
     )
 }
-
 const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     const [items, setItems] = useState(set.links);
     const titleRef = useRef(null);
-
     useEffect(() => {
         let s = items?.map((item, index) => {
             let { error, T, U, ...rest } = item;
@@ -492,21 +489,16 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
             setItems(set.links);
         }
     }, [set.links]);
-
     const handleDragEnd = (result) => {
         if (!result.destination) return;
-
         const updatedItems = [...items];
         const [reorderedItem] = updatedItems.splice(result.source.index, 1);
         updatedItems.splice(result.destination.index, 0, reorderedItem);
-
         setItems(updatedItems);
     };
-
     const handleChange = (index, field, value) => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
-
         if (field === 'title') {
             if (value.trim() === '') {
                 updatedItems[index].error = 'T';
@@ -525,10 +517,8 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                 updatedItems[index].U = '';
             }
         }
-
         setItems(updatedItems);
     };
-
     useEffect(() => {
         setTimeout(() => {
             if (JSON.stringify(set.links) === JSON.stringify(items)) {
@@ -549,13 +539,11 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
             }
         }, 200);
     }, [items]);
-
     const handleDelete = (index) => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
         setItems(updatedItems);
     };
-
     const handleAddLink = () => {
         setItems([...items, { id: String(items.length + 1), title: '', url: '', error: 'T', T: 'Title is required', U: '' }]);
         setTimeout(() => {
@@ -564,7 +552,6 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
             }
         }, 100);
     };
-
     return (
         <div className="py-2">
             <DragDropContext onDragEnd={handleDragEnd}>
