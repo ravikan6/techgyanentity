@@ -85,8 +85,8 @@ export function Providers({ session, children }) {
   `;
 
   return (
-    <ThemeProvider disableTransitionOnChange theme={mui} defaultMode='dark'>
-      <InitColorSchemeScript defaultMode='dark' />
+    <ThemeProvider disableTransitionOnChange theme={mui} defaultMode='system'>
+      <InitColorSchemeScript defaultMode='system' attribute="class" />
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">

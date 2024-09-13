@@ -23,7 +23,7 @@ const RuiMenu = styled(React.forwardRef((props, ref) => (
     '& .MuiPaper-root': {
         borderRadius: '24px',
         color: theme.palette.grey[200],
-        backgroundColor: theme.palette?.modelBg?.main,
+        backgroundColor: theme.palette?.background?.default,
         ...theme.applyStyles("light", {
             color: theme.palette.grey[800]
         })
@@ -39,10 +39,6 @@ const RuiIcoBtn = styled(IconButton)(({ theme }) => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: '2px',
-    // minWidth: '30px',
-    // minHeight: '30px',
-    // maxWidth: '30px',
-    // maxHeight: '30px',
     cursor: 'pointer',
 }));
 

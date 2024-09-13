@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes'
 import { ListItemIcon, MenuItem, useColorScheme } from '@mui/material';
 import { Check } from '@mui/icons-material'
 
-const ThemeSwitch = ({setThemeName}) => {
+const ThemeSwitch = ({ setThemeName }) => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
   const { mode, setMode } = useColorScheme();

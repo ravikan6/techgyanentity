@@ -16,6 +16,7 @@ import { ShareView } from "../Home/_client";
 import { AuthorTipWrapper } from "../author/utils";
 import { pollAnsSubmit } from "@/lib/actions/create";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -234,6 +235,7 @@ const PostAuthorView = ({ author }) => {
 
 
 const PollView = ({ post }) => {
+    const { data: session } = useSession();
     const [pollData, setPollData] = useState(post?.typeContent);
     const [disabled, setDisabled] = useState(false);
 
@@ -260,7 +262,7 @@ const PollView = ({ post }) => {
                 {
                     pollData?.poll?.options?.map((option, index) => (
                         <Tooltip key={index} title={option?.text}>
-                            <div key={index} className="relative h-auto rounded-[24px] overflow-hidden">
+                            <div className="relative h-auto rounded-[24px] overflow-hidden">
                                 <Button
                                     onClick={() => onSubmit(index)}
                                     variant="outlined"
@@ -272,15 +274,24 @@ const PollView = ({ post }) => {
                                         px: 2.5,
                                         borderRadius: '24px'
                                     }}
-                                    endIcon={(pollData.percentages[index]?.toFixed(2) || 0) > 0 ? <span className="!text-sm cheltenham">{pollData.percentages[index]?.toFixed(2) || 0}%</span> : null}
+                                    endIcon={
+                                        session.user && pollData.percentages[index] > 0 ? (
+                                            <span className="!text-sm cheltenham">
+                                                {pollData.percentages[index].toFixed(2)}%
+                                            </span>
+                                        ) : null
+                                    }
                                 >
                                     {option?.text}
                                 </Button>
-                                <div className={`absolute h-full top-0 ${disabled ? 'bg-gray-200 dark:bg-gray-600' : 'bg-secondary dark:bg-secondaryDark'}`} style={{
-                                    zIndex: '-1',
-                                    width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
-                                    opacity: (pollData?.poll?.votes?.map((v) => v?.option == option) || []).length ? '1' : '0.4',
-                                }} />
+                                <div
+                                    className={`absolute h-full top-0 ${disabled ? 'bg-gray-200 dark:bg-gray-600' : 'bg-secondary dark:bg-secondaryDark'}`}
+                                    style={{
+                                        zIndex: '-1',
+                                        width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
+                                        opacity: session.user ? pollData.poll.votes.some(v => v.option === option && v.userId === session.user.id) ? 1 : 0.4 : 0,
+                                    }}
+                                />
                             </div>
                         </Tooltip>
                     ))

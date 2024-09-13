@@ -3,7 +3,9 @@ import { createTheme, extendTheme } from '@mui/material/styles';
 
 const mui = createTheme({
   cssVarPrefix: 'rb',
-  cssVariables: true,
+  cssVariables: {
+    colorSchemeSelector: 'class',
+  },
   colorSchemes: {
     light: {
       palette: {

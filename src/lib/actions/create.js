@@ -104,27 +104,31 @@ const pollAnsSubmit = async (pollId, option) => {
             option: true,
         }
     })
-    console.log(pollId, option, userVotes)
-    console.log(userVotes.map(v => v.option))
 
-    if (userVotes.length > 0) {
+    if (userVotes.length > 1) {
         for (let i = 0; i < userVotes.length; i++) {
-            if (userVotes[i].option == option) {
-                await prisma.vote.delete({
-                    where: {
-                        id: userVotes[i].id
-                    }
-                });
-            } else {
-                await prisma.vote.update({
-                    where: {
-                        id: userVotes[i].id
-                    },
-                    data: {
-                        option: option
-                    }
-                });
-            }
+            await prisma.vote.delete({
+                where: {
+                    id: userVotes[i].id
+                }
+            });
+        }
+    } else if (userVotes.length == 1) {
+        if (userVotes[0].option == option) {
+            await prisma.vote.delete({
+                where: {
+                    id: userVotes[i].id
+                }
+            });
+        } else {
+            await prisma.vote.update({
+                where: {
+                    id: userVotes[0].id
+                },
+                data: {
+                    option: option
+                }
+            });
         }
     } else {
         await prisma.vote.create({
