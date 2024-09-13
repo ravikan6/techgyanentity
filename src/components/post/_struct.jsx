@@ -271,7 +271,7 @@ const PollView = ({ post }) => {
                                     px: 2.5,
                                     borderRadius: '24px'
                                 }}
-                                endIcon={<span className="text-sm cheltenham">{pollData.percentages[index]?.toFixed(2) || 0}%</span>}
+                                endIcon={<span className="!text-sm cheltenham">{pollData.percentages[index]?.toFixed(2) || 0}%</span>}
                             >
                                 {option?.text}
                             </Button>
@@ -284,9 +284,9 @@ const PollView = ({ post }) => {
                     ))
                 }
             </div>
-            <span className="mt-2.5 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
+            <div className="mt-3 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
                 {formatNumber(pollData?.poll?._count.votes)} Votes
-            </span>
+            </div>
         </div>
     )
 }
