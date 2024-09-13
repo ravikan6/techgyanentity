@@ -96,7 +96,7 @@ const pollAnsSubmit = async (pollId, option) => {
 
     const userVotes = await prisma.vote.findMany({
         where: {
-            poll: { id: pollId },
+            pollId: pollId,
             userId: session.user.id,
         },
         select: {
@@ -106,18 +106,17 @@ const pollAnsSubmit = async (pollId, option) => {
     })
 
     if (userVotes.length > 1) {
-        for (let i = 0; i < userVotes.length; i++) {
-            await prisma.vote.delete({
-                where: {
-                    id: userVotes[i].id
-                }
-            });
-        }
+        await prisma.vote.deleteMany({
+            where: {
+                poll: { id: pollId },
+                userId: session.user.id,
+            }
+        });
     } else if (userVotes.length == 1) {
         if (userVotes[0].option == option) {
             await prisma.vote.delete({
                 where: {
-                    id: userVotes[i].id
+                    id: userVotes[0].id
                 }
             });
         } else {

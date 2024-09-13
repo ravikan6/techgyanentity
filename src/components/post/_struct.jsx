@@ -261,22 +261,22 @@ const PollView = ({ post, session }) => {
                 {
                     pollData?.poll?.options?.map((option, index) => (
                         <Tooltip key={index} title={option?.text}>
-                            <div className="relative h-auto rounded-[24px] overflow-hidden">
+                            <div className="relative h-auto rounded-[12px] overflow-hidden">
                                 <Button
-                                    onClick={() => onSubmit(index)}
+                                    onClick={() => onSubmit(option?.id)}
                                     variant="outlined"
                                     size="small"
                                     fullWidth
                                     disabled={disabled}
                                     sx={{
-                                        justifyContent: 'space-between',
-                                        px: 2.5,
-                                        borderRadius: '24px'
+                                        justifyContent: 'flex-start',
+                                        px: 1.5,
+                                        borderRadius: '12px'
                                     }}
                                     endIcon={
-                                        session?.user && pollData.percentages[index] > 0 ? (
-                                            <span className="!text-sm cheltenham">
-                                                {pollData.percentages[index].toFixed(2)}%
+                                        session?.user && pollData.percentages[option?.id] > 0 ? (
+                                            <span className="!text-xs cheltenham">
+                                                {pollData.percentages[option?.id].toFixed(2)}%
                                             </span>
                                         ) : null
                                     }
@@ -288,7 +288,7 @@ const PollView = ({ post, session }) => {
                                     style={{
                                         zIndex: '-1',
                                         width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
-                                        opacity: session?.user ? pollData.poll.votes.some(v => v.option === option && v.userId === session.user.id) ? 1 : 0.4 : 0,
+                                        opacity: session?.user ? pollData.poll.votes.some(v => v.option === option?.id && v.userId === session.user.id) ? 1 : 0.4 : 0,
                                     }}
                                 />
                             </div>
