@@ -54,7 +54,7 @@ export default async function Home() {
         <PostView_TIA data={{ list: blogPosts, loading: false, ref: null, hasMore: false, }}
           className={'2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1'}
         />
-        <CommunityPosts posts={communityPosts} />
+        <CommunityPosts posts={communityPosts} session={session} />
         <div className="mt-5">
           <TestToastify />
         </div>
@@ -64,7 +64,7 @@ export default async function Home() {
 }
 
 
-const CommunityPosts = ({ posts }) => {
+const CommunityPosts = ({ posts, session }) => {
   return (
     <div className="mt-3">
       <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
@@ -81,7 +81,7 @@ const CommunityPosts = ({ posts }) => {
                 </div>
               </div>
               <div className="mt-2.5">
-                <CommunityPostContent post={post} />
+                <CommunityPostContent post={post} session={session} />
               </div>
             </div>
           ))
@@ -91,7 +91,7 @@ const CommunityPosts = ({ posts }) => {
   )
 }
 
-const CommunityPostContent = ({ post }) => {
+const CommunityPostContent = ({ post, session }) => {
   switch (post.type) {
     case 'TEXT':
       return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
@@ -100,7 +100,7 @@ const CommunityPostContent = ({ post }) => {
     case 'LINK':
       return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
     case 'POLL':
-      return <PollView post={post} />;
+      return <PollView post={post} session={session} />;
     case 'ARTICLE':
       return <div>Article</div>;
     default:

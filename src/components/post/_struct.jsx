@@ -234,8 +234,7 @@ const PostAuthorView = ({ author }) => {
 }
 
 
-const PollView = ({ post }) => {
-    const { data: session } = useSession();
+const PollView = ({ post, session }) => {
     const [pollData, setPollData] = useState(post?.typeContent);
     const [disabled, setDisabled] = useState(false);
 
@@ -275,7 +274,7 @@ const PollView = ({ post }) => {
                                         borderRadius: '24px'
                                     }}
                                     endIcon={
-                                        session.user && pollData.percentages[index] > 0 ? (
+                                        session?.user && pollData.percentages[index] > 0 ? (
                                             <span className="!text-sm cheltenham">
                                                 {pollData.percentages[index].toFixed(2)}%
                                             </span>
@@ -289,7 +288,7 @@ const PollView = ({ post }) => {
                                     style={{
                                         zIndex: '-1',
                                         width: `${pollData.percentages[index]?.toFixed(2) || 0}%`,
-                                        opacity: session.user ? pollData.poll.votes.some(v => v.option === option && v.userId === session.user.id) ? 1 : 0.4 : 0,
+                                        opacity: session?.user ? pollData.poll.votes.some(v => v.option === option && v.userId === session.user.id) ? 1 : 0.4 : 0,
                                     }}
                                 />
                             </div>
