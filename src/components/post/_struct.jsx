@@ -269,9 +269,10 @@ const PollView = ({ post, session }) => {
                                     fullWidth
                                     disabled={disabled}
                                     sx={{
-                                        justifyContent: 'flex-start',
+                                        justifyContent: 'space-between',
                                         px: 1.5,
-                                        borderRadius: '12px'
+                                        borderRadius: '12px',
+                                        textAlign: 'start'
                                     }}
                                     endIcon={
                                         session?.user && pollData.percentages[option?.id] > 0 ? (
@@ -281,7 +282,7 @@ const PollView = ({ post, session }) => {
                                         ) : null
                                     }
                                 >
-                                    {option?.text}
+                                    <span className="mr-0.5">{option?.text}</span>
                                 </Button>
                                 <div
                                     className={`absolute h-full top-0 ${disabled ? 'bg-gray-200 dark:bg-gray-600' : 'bg-secondary dark:bg-secondaryDark'}`}
