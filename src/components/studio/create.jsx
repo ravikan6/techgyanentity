@@ -6,6 +6,7 @@ import { Button, IconButton, TextField } from "../rui";
 import { createMicroPost } from "@/lib/actions/create";
 import { toast } from "react-toastify";
 import { CloseRounded, ImageRounded, LinkRounded, Paragliding, Poll, TextFields } from "@mui/icons-material";
+import { MicroPostImageUploader } from "../uploader";
 
 const MicroPostCreate = () => {
     const [type, setType] = useState('TEXT')
@@ -70,6 +71,7 @@ const MicroPostCreate = () => {
     const structSetter = (type) => {
         switch (type) {
             case "IMAGE": {
+                setContent((c) => ({ title: content.title, images: [] }))
                 break;
             } case "POLL": {
                 setContent((c) => ({ title: content.title, options: ['', ''] }))
@@ -151,7 +153,8 @@ const MicroPostText = ({ setter, getter }) => {
 const MicroPostImage = ({ setter, getter }) => {
     return (
         <div>
-            <input type="file" onChange={(e) => setter({ title: e.target.value })} />
+            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} getter={getter?.title} placeholder="Image Title" />
+            <MicroPostImageUploader setter={setter} getter={getter} />
         </div>
     )
 }
