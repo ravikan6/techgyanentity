@@ -2,6 +2,7 @@
 import { nanoid } from "nanoid";
 import { prisma } from "../db";
 import { auth } from "../auth";
+import { uploadImage } from "./upload";
 
 const createMicroPost = async (data) => {
     let res = { data: null, status: 500, errors: [] };
@@ -14,10 +15,41 @@ const createMicroPost = async (data) => {
     try {
         switch (data.type) {
             case "IMAGE": {
-                if (!data.content?.image) {
+                if (!data.content?.images) {
                     res.errors.push({ message: 'No image provided' })
                     return res
                 }
+                let images = data.content.images.map((i, index) => {
+                    let file = i.file?.has("data") ? i.file.get("data") : i.file;
+                    console.log(file)
+                    console.log(i, typeof i.file)
+                    if (!file) {
+                        res.errors.push({ message: `No file provided for image ${index + 1}` })
+                        return res
+                    }
+                    return {
+                        file: file,
+                        caption: i.caption,
+                        location: i.location,
+                    }
+                });
+
+                let newImages = await Promise.all(images.map(async (i) => {
+                    let url = await uploadImage(i.file, 'TechGyan');
+                    console.log(url)
+                    return {
+                        url: url.data.public_id,
+                        caption: i.caption,
+                        location: i.location,
+                    }
+                }));
+
+                let postImage = await prisma.imagePost.create({
+                    data: {
+                        list: newImages,
+                    }
+                })
+                objectId = postImage.id
                 break;
             } case "POLL": {
                 if (!data.content?.options) {

@@ -304,7 +304,29 @@ const PollView = ({ post, session }) => {
     )
 }
 
+const ImagePostView = ({ post }) => {
+    return (
+        <div>
+            <h1>Image Post</h1>
+            <p><strong>ID:</strong> {post.id}</p>
+            <p><strong>Created At:</strong> {post.createdAt.toLocaleString()}</p>
+            <p><strong>Updated At:</strong> {post.updatedAt.toLocaleString()}</p>
+            <div>
+                {post.list.map((image, index) => (
+                    <div key={index} style={{ marginBottom: '20px' }}>
+                        <img src={image.url} alt={image.alt || 'Image'} style={{ maxWidth: '100%' }} />
+                        <p><strong>Provider:</strong> {image.provider}</p>
+                        <p><strong>Caption:</strong> {image.caption}</p>
+                        <p><strong>Location:</strong> {image.location}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export default PollView;
+export { ImagePostView };
 
 
 const PostViewActions = ({ id, post }) => {

@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { TestToastify } from "@/components/Home/_client";
-import { PollView, PostView_TIA } from "@/components/post/_struct";
+import { ImagePostView, PollView, PostView_TIA } from "@/components/post/_struct";
 import { AuthorAvatar } from "@/components/author/_client";
 import { getMicoPosts } from "@/lib/actions/getContent";
 
@@ -96,7 +96,7 @@ const CommunityPostContent = ({ post, session }) => {
     case 'TEXT':
       return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
     case 'IMAGE':
-      return <img src={post.content} alt="Image" />;
+      return <ImagePostView post={post.typeContent} />;
     case 'LINK':
       return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
     case 'POLL':

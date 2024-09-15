@@ -250,7 +250,7 @@ enum MicroPostType {
   TEXT
   LINK
   POLL
-  ARTICLE
+  ARTICLEimages
   IMAGE
 }
 

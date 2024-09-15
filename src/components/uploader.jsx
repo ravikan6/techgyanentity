@@ -1,18 +1,66 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, IconButton, TextField } from "./rui";
-import { CgFileAdd } from "react-icons/cg";
 import { Fullscreen, FullscreenExit } from "@mui/icons-material";
 import { InputHeader } from "./studio/author/_edit-funcs";
+import { LuImagePlus } from "react-icons/lu";
+import { useDropzone } from 'react-dropzone'
 
 const MicroPostImageUploader = ({ setter, getter }) => {
     const [files, setFiles] = useState([]);
-    const [fileEnter, setFileEnter] = useState(false);
     const [selectedFile, setSelectedFile] = useState(0);
-    const [caption, setCaption] = useState("");
+    const [meta, setMeta] = useState([]);
     const [isCover, setIsCover] = useState(true);
+    const [error, setError] = useState("");
 
-    console.log(files);
+    const onDrop = (acceptedFiles) => {
+        if (acceptedFiles.length > 5) {
+            return;
+        }
+        setFiles([...acceptedFiles]);
+        setMeta([...meta, ...Array(acceptedFiles.length).fill({ caption: "", location: "" })]);
+    }
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: 'image/*', multiple: true, maxFiles: 5 });
+
+    const handleCaption = (value) => {
+        const newMeta = [...meta];
+        newMeta[selectedFile] = { ...newMeta[selectedFile], caption: value };
+        setMeta(newMeta);
+    }
+
+    const handleLocation = (value) => {
+        const newMeta = [...meta];
+        newMeta[selectedFile] = { ...newMeta[selectedFile], location: value };
+        setMeta(newMeta);
+    }
+
+    const onRemove = (index) => {
+        setFiles(files.filter((_, i) => i !== index));
+        setMeta(meta.filter((_, i) => i !== index));
+        setSelectedFile(0);
+    }
+
+    useEffect(() => {
+        if (files.length > 0 && files.length <= 5 && !error) {
+            let data = [];
+            files.forEach((file, index) => {
+                let f = new FormData();
+                f.append("data", file);
+                data.push({
+                    file: f,
+                    caption: meta[index]?.caption,
+                    location: meta[index]?.location,
+                });
+            });
+            setter((prev) => {
+                return {
+                    ...prev,
+                    images: data,
+                }
+            });
+        }
+    }, [files, meta, error]);
 
     return (
         <div className="bg-lightHead dark:bg-darkHead p-2 rounded-md">
@@ -20,23 +68,8 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                 files.length === 0 ? (
                     <div className="">
                         <div
-                            onDragOver={(e) => {
-                                e.preventDefault();
-                                setFileEnter(true);
-                            }}
-                            onDragLeave={(e) => {
-                                setFileEnter(false);
-                            }}
-                            onDragEnd={(e) => {
-                                e.preventDefault();
-                                setFileEnter(false);
-                            }}
-                            onDrop={(e) => {
-                                e.preventDefault();
-                                setFileEnter(false);
-                                setFiles([...e.dataTransfer.files]);
-                            }}
-                            className={`${fileEnter ? "border-4" : "border-2"
+                            {...getRootProps()}
+                            className={`${isDragActive ? "border-4" : "border-2"
                                 } mx-auto flex flex-col w-full max-w-xs h-72 items-center justify-center`}
                         >
                             <label
@@ -47,12 +80,10 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                             </label>
                             <input
                                 id="file"
-                                type="file"
+                                {...getInputProps()}
                                 className="hidden"
+                                accept="image/*"
                                 multiple
-                                onChange={(e) => {
-                                    setFiles([...e.target.files]);
-                                }}
                             />
                         </div>
                     </div>
@@ -85,9 +116,10 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                                             id="file"
                                             type="file"
                                             className="hidden"
+                                            accept="image/*"
                                             multiple
                                             onChange={(e) => {
-                                                setFiles([...files, ...e.target.files]);
+                                                onDrop([...files, ...e.target.files]);
                                             }}
                                         />
                                         <IconButton onClick={() => {
@@ -96,7 +128,7 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                                             width: "2.5rem",
                                             height: "2.5rem"
                                         }}>
-                                            <CgFileAdd />
+                                            <LuImagePlus />
                                         </IconButton>
                                     </div>
                                 )
@@ -106,11 +138,11 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                             <div className="flex flex-col space-y-2">
                                 <div>
                                     <InputHeader label={"Caption"} desc={"Write a caption"} tip={"Add a caption"} />
-                                    <TextField value={caption} required={false} onChange={(e) => setCaption(e.target.value)} size='small' />
+                                    <TextField value={meta[selectedFile]?.caption} required={false} onChange={(e) => handleCaption(e.target.value)} size='small' />
                                 </div>
                                 <div>
                                     <InputHeader label={"Location"} required={false} desc={"Tell your followers where you are or where you took the photo"} tip={"Add a location"} />
-                                    <TextField size='small' />
+                                    <TextField size='small' value={meta[selectedFile]?.location} onChange={(e) => handleLocation(e.target.value)} />
                                 </div>
                             </div>
 
@@ -133,8 +165,7 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                                 <div className="flex justify-around">
                                     <Button
                                         onClick={() => {
-                                            setFiles(files.filter((_, index) => index !== selectedFile));
-                                            setSelectedFile(0);
+                                            onRemove(selectedFile);
                                         }}
                                         variant="text"
                                         size="small"

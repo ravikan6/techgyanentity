@@ -21,6 +21,8 @@ const MicroPostCreate = () => {
         contextLoading(false)
     }, [])
 
+    console.log(content, 'content____\n')
+
     useEffect(() => {
         if (content?.title) {
             switch (type) {
@@ -32,6 +34,11 @@ const MicroPostCreate = () => {
                     }
                     break;
                 } case "IMAGE": {
+                    if (content?.title.trim().length > 0 && content?.images.length > 0) {
+                        setDisabled(false)
+                    } else {
+                        setDisabled(true)
+                    }
                     break;
                 } case "POLL": {
                     if (content?.title.trim().length > 0 && content?.options.length > 1) {
@@ -71,10 +78,10 @@ const MicroPostCreate = () => {
     const structSetter = (type) => {
         switch (type) {
             case "IMAGE": {
-                setContent((c) => ({ title: content.title, images: [] }))
+                setContent((c) => ({ title: c.title, images: [] }))
                 break;
             } case "POLL": {
-                setContent((c) => ({ title: content.title, options: ['', ''] }))
+                setContent((c) => ({ title: c.title, options: ['', ''] }))
                 break;
             } default: {
                 setContent((c) => ({ title: c.title }))
@@ -87,6 +94,7 @@ const MicroPostCreate = () => {
         if (content?.title && type) {
             try {
                 setLoading(true)
+
                 let dt = { content: content, type, authorId: data?.data?.id }
                 let res = await createMicroPost(dt);
 
@@ -95,7 +103,10 @@ const MicroPostCreate = () => {
                 } else {
                     res.errors.map((e) => toast.error(e?.message))
                 }
-            } catch { } finally {
+            } catch (e) {
+                console.log(e)
+                toast.error('An error occured') 
+            } finally {
                 setLoading(false)
             }
         }
