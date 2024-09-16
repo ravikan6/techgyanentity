@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { ArticleImage } from "./_client";
 import { formatDate, formatDateToString, formatNumber } from "@/lib/utils";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button, IconButton, Menu, Tooltip } from "../rui";
-import { Box, Skeleton } from "@mui/material";
+import { Box, Radio, RadioGroup, Skeleton } from "@mui/material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { HeartBrokenOutlined, ShareOutlined } from "@mui/icons-material";
 import { AuthorAvatar } from "../author/_client";
@@ -17,6 +17,8 @@ import { AuthorTipWrapper } from "../author/utils";
 import { pollAnsSubmit } from "@/lib/actions/create";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
+import { imageUrl } from "@/lib/helpers";
+import { BackBtn, NextBtn } from "../Buttons";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -307,26 +309,97 @@ const PollView = ({ post, session }) => {
 const ImagePostView = ({ post }) => {
     return (
         <div>
-            <h1>Image Post</h1>
-            <p><strong>ID:</strong> {post.id}</p>
-            <p><strong>Created At:</strong> {post.createdAt.toLocaleString()}</p>
-            <p><strong>Updated At:</strong> {post.updatedAt.toLocaleString()}</p>
-            <div>
-                {post.list.map((image, index) => (
-                    <div key={index} style={{ marginBottom: '20px' }}>
-                        <img src={image.url} alt={image.alt || 'Image'} style={{ maxWidth: '100%' }} />
-                        <p><strong>Provider:</strong> {image.provider}</p>
-                        <p><strong>Caption:</strong> {image.caption}</p>
-                        <p><strong>Location:</strong> {image.location}</p>
-                    </div>
-                ))}
-            </div>
+            <ImageSlider slides={post.list || []} />
         </div>
     );
 };
 
-export default PollView;
-export { ImagePostView };
+const ImageSlider = ({ slides = [] }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [hasNext, setHasNext] = useState(slides.length > 1);
+    const [hasPrev, setHasPrev] = useState(false);
+
+    const goToNextSlide = useCallback(() => {
+        const nextIndex = (currentIndex + 1) % slides.length;
+        if (nextIndex) {
+            setCurrentIndex((currentIndex + 1));
+            setHasPrev(true);
+            if ((currentIndex + 1) === slides.length - 1) {
+                setHasNext(false);
+            } else {
+                setHasNext(true);
+            }
+        } else {
+            setCurrentIndex(0);
+            setHasPrev(false);
+        }
+    }, [currentIndex, slides.length]);
+
+    const radioBtnClick = useCallback((index) => {
+        setCurrentIndex(index);
+        if (index === 0) {
+            setHasPrev(false);
+        } else {
+            setHasPrev(true);
+        }
+        if (index === slides.length - 1) {
+            setHasNext(false);
+        } else {
+            setHasNext(true);
+        }
+    }, [currentIndex, slides.length]);
+
+    const goToPrevSlide = useCallback(() => {
+        const preIndex = (currentIndex - 1) === 0 || (currentIndex - 1) % slides.length;
+        if (preIndex) {
+            setCurrentIndex((currentIndex - 1));
+            setHasNext(true);
+            if ((currentIndex - 1) === 0) {
+                setHasPrev(false);
+            } else {
+                setHasPrev(true);
+            }
+        };
+    }, [currentIndex, slides.length]);
+
+    return (
+        <div className="relative group">
+            <div className="flex items-center justify-center">
+                <div className={`bg-cover overflow-hidden rounded-lg w-96 min-h-[500px] max-h-[500px]`} style={{ backgroundImage: `url(${slides[currentIndex].url})` }}>
+                    <div className="overflow-hidden min-h-[500px] max-h-[500px] backdrop-blur-3xl items-center justify-center flex-nowrap flex">
+                        {slides.map((slide, index) => (
+                            <div key={index} className={`transition-[width,opacity] duration-500 ${index === currentIndex ? 'w-96 opacity-100' : 'w-0 opacity-25'}`}>
+                                <img
+                                    className="w-full h-full"
+                                    src={imageUrl(slide.url, slide?.provider)}
+                                    alt={slide.alt || 'Slide image'}
+                                    width={slide?.width}
+                                    height={slide?.height}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <span className='hidden'></span>
+            <div className="absolute top-1/2 transition-opacity opacity-25 group-hover:opacity-100 -translate-y-1/2 left-0 right-0 flex justify-between">
+                <div> <BackBtn onClick={goToPrevSlide} color="accent" class={`${!hasPrev && 'hidden'}`} /> </div>
+                <div> <NextBtn onClick={goToNextSlide} color="accent" class={`${!hasNext && 'hidden'}`} /> </div>
+            </div>
+
+            <div className="absolute bottom-2 w-96 left-1/2 transition-opacity opacity-25 group-hover:opacity-100 transform -translate-x-1/2 justify-center flex">
+                <RadioGroup aria-labelledby="rb-images-select-post" name="imges select data" row >
+                    {slides.map((_, index) => (
+                        <div key={index} >
+                            <Radio size='small' color='accent' checked={index === currentIndex} onClick={() => radioBtnClick(index)} />
+                        </div>
+                    ))}
+                </RadioGroup>
+            </div>
+        </div>
+    );
+};
 
 
 const PostViewActions = ({ id, post }) => {
@@ -400,4 +473,4 @@ const PostListLoadingSkelton = ({ count }) => {
     )
 }
 
-export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView };
+export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView };
