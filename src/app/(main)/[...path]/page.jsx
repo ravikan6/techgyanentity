@@ -1,8 +1,10 @@
 import AuthorPosts from '@/components/author/_posts';
 import { AuthorAbout, AuthorSingleViewPage } from '@/components/author/view';
 import { UserBookmarks, UserClappedPost } from '@/components/Home/_client';
+import { MicroPostView } from '@/components/post/_micropost';
 import { PostView } from '@/components/post/view';
 import { getAuthorPosts } from '@/lib/actions/author';
+import { getMicroPost } from '@/lib/actions/getContent';
 import { getUserBookmarks, getUserClappedPost } from '@/lib/actions/user';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
@@ -95,6 +97,11 @@ const DynamicPages = async ({ params, searchParams }) => {
             if (route?.length === 1) {
                 return (
                     <span>This is Author Home Page</span>
+                )
+            } else if (route?.length === 3 && route[1] === 'post') {
+                const post = await getMicroPost(route[2]);
+                return (
+                    <MicroPostView post={post} session={session} />
                 )
             } else if (route?.length === 2 && route[1] === 'about') {
                 return <AuthorAbout author={author} />

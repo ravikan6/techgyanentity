@@ -96,7 +96,7 @@ const CommunityPostContent = ({ post, session }) => {
     case 'TEXT':
       return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
     case 'IMAGE':
-      return <ImagePostView post={post.typeContent} />;
+      return <ImagePostView post={post.typeContent} url={`@${post?.author?.handle}/post/${post.shortId}`} />;
     case 'LINK':
       return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
     case 'POLL':
@@ -107,4 +107,3 @@ const CommunityPostContent = ({ post, session }) => {
       return <div>Unknown</div>;
   }
 }
-

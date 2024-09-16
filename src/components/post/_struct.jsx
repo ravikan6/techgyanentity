@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { imageUrl } from "@/lib/helpers";
 import { BackBtn, NextBtn } from "../Buttons";
+import { useRouter } from "next/navigation";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -306,18 +307,20 @@ const PollView = ({ post, session }) => {
     )
 }
 
-const ImagePostView = ({ post }) => {
+const ImagePostView = ({ post, url }) => {
     return (
         <div>
-            <ImageSlider slides={post.list || []} />
+            <ImageSlider slides={post.list || []} url={url} />
         </div>
     );
 };
 
-const ImageSlider = ({ slides = [] }) => {
+const ImageSlider = ({ slides = [], url }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
+
+    const router = useRouter();
 
     const goToNextSlide = useCallback(() => {
         const nextIndex = (currentIndex + 1) % slides.length;
@@ -365,8 +368,10 @@ const ImageSlider = ({ slides = [] }) => {
     return (
         <div className="relative group">
             <div className="flex items-center justify-center">
-                <div className={`bg-cover overflow-hidden rounded-lg w-96 min-h-[500px] max-h-[500px]`} style={{ backgroundImage: `url(${slides[currentIndex].url})` }}>
-                    <div className="overflow-hidden min-h-[500px] max-h-[500px] backdrop-blur-3xl items-center justify-center flex-nowrap flex">
+                <div className={`bg-cover overflow-hidden rounded-lg aspect-square`} style={{ backgroundImage: `url(${imageUrl(slides[currentIndex].url, slides[currentIndex].provider)})` }}
+                    onClick={() => router.push(url)}
+                >
+                    <div className="overflow-hidden aspect-square backdrop-blur-3xl items-center justify-center flex-nowrap flex">
                         {slides.map((slide, index) => (
                             <div key={index} className={`transition-[width,opacity] duration-500 ${index === currentIndex ? 'w-96 opacity-100' : 'w-0 opacity-25'}`}>
                                 <img
@@ -380,6 +385,9 @@ const ImageSlider = ({ slides = [] }) => {
                         ))}
                     </div>
                 </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    {slides[currentIndex].caption}
+                </p>
             </div>
 
             <span className='hidden'></span>
@@ -388,11 +396,11 @@ const ImageSlider = ({ slides = [] }) => {
                 <div> <NextBtn onClick={goToNextSlide} color="accent" class={`${!hasNext && 'hidden'}`} /> </div>
             </div>
 
-            <div className="absolute bottom-2 w-96 left-1/2 transition-opacity opacity-25 group-hover:opacity-100 transform -translate-x-1/2 justify-center flex">
+            <div className="absolute bottom-2 w-full left-1/2 transition-opacity opacity-25 group-hover:opacity-100 transform -translate-x-1/2 justify-center flex">
                 <RadioGroup aria-labelledby="rb-images-select-post" name="imges select data" row >
                     {slides.map((_, index) => (
                         <div key={index} >
-                            <Radio size='small' color='accent' checked={index === currentIndex} onClick={() => radioBtnClick(index)} />
+                            <Radio sx={{ width: '16px', height: '16px' }} size='small' color='accent' checked={index === currentIndex} onClick={() => radioBtnClick(index)} />
                         </div>
                     ))}
                 </RadioGroup>
