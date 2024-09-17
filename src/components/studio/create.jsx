@@ -21,8 +21,6 @@ const MicroPostCreate = () => {
         contextLoading(false)
     }, [])
 
-    console.log(content, 'content____\n')
-
     useEffect(() => {
         if (content?.title) {
             switch (type) {
@@ -105,7 +103,7 @@ const MicroPostCreate = () => {
                 }
             } catch (e) {
                 console.log(e)
-                toast.error('An error occured') 
+                toast.error('An error occured')
             } finally {
                 setLoading(false)
             }

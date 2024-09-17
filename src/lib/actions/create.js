@@ -95,10 +95,14 @@ const createMicroPost = async (data) => {
         return res
     }
 
+    if (data.type !== 'TEXT' && !objectId) {
+        return res
+    }
+
     try {
         const post = await prisma.microPost.create({
             data: {
-                ...((data.type == 'TEXT') && { content: data?.title }),
+                content: data?.content?.title,
                 type: data.type,
                 author: {
                     connect: {

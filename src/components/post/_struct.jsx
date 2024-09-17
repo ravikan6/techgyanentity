@@ -543,6 +543,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
                             className={`w-full h-full ${original ? 'object-contain' : 'object-cover'}`}
                             src={imageUrl(slide.url, slide?.provider)}
                             alt={slide.alt || 'Slide image'}
+                            draggable={false}
                         />
                     </div>
                 ))}
@@ -578,7 +579,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
                     <button
                         key={index}
                         onClick={() => radioBtnClick(index)}
-                        className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-3 h-3' : 'bg-lightHead dark:bg-darkHead w-2 h-2'}`}
+                        className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-2.5 h-2.5' : 'bg-lightHead dark:bg-darkHead w-2 h-2'}`}
                     />
                 ))}
             </div>
@@ -586,14 +587,17 @@ const ImageSliderView = ({ slides = [], url, }) => {
             {/* Caption */}
             {slides[currentIndex]?.caption && (
                 <div className="absolute bottom-0 left-0 w-full">
-                    <div className="bg-lightHead dark:bg-darkHead w-5 h-5 flex justify-center items-center absolute left-4 -top-5 rounded-t-md">
+                    <div className="bg-lightHead dark:bg-darkHead w-5 h-5 flex justify-center items-center absolute left-4 -top-5 rounded-t-md cursor-pointer" onClick={() => setShowMeta(!showMeta)}>
                         {
                             showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />
                         }
                     </div>
-                    {showMeta && <div className="w-full text-sm bg-light/65 dark:bg-dark/65 backdrop-blur-lg px-2 py-1 pb-3 rounded-t-md ">
+                    <div className="w-full text-sm bg-light/65 dark:bg-dark/65 backdrop-blur-lg px-2 py-1 pb-3 rounded-t-md "
+                        style={{
+                            display: showMeta ? 'block' : 'none',
+                        }}>
                         {slides[currentIndex].caption}
-                    </div>}
+                    </div>
                 </div>
             )}
         </div>

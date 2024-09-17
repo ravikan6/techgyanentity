@@ -10,7 +10,7 @@ const MicroPostView = ({ post, session }) => {
         <div className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40">
             <div className="flex items-center">
                 <div className="flex-shrink-0">
-                    <Autho url={`@${post?.author?.handle}/post/${post.shortId}`} rAvatar data={{ url: post.author?.image?.url }} sx={{ width: '32px', height: '32px' }} />
+                    <AuthorAvatar data={{ url: post.author?.image?.url }} sx={{ width: '32px', height: '32px' }} />
                 </div>
                 <div className="ml-4">
                     <div className="text-sm karnak font-bold text-zinc-900 dark:text-slate-100">{post.author.name}</div>
@@ -30,11 +30,11 @@ const CommunityPostContent = ({ post, session }) => {
         case 'TEXT':
             return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
         case 'IMAGE':
-            return <ImagePostView post={post.typeContent} url={`@${post?.author?.handle}/post/${post.shortId}`} />;
+            return <ImagePostView post={post.typeContent} url={`view?type=post&id=${post.shortId}`} />;
         case 'LINK':
             return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
         case 'POLL':
-            return <PollView post={post} session={session} />;
+            return <PollView post={post} session={session} url={`view?type=post&id=${post.shortId}`} />;
         case 'ARTICLE':
             return <div>Article</div>;
         default:
@@ -47,11 +47,11 @@ const MicroPostViewPage = ({ post, session }) => {
     const router = useRouter();
 
     return (
-        <div className="flex flex-col md:flex-row gap-3 md:gap-0 items-start">
-            <div className="w-full md:w-1/2">
+        <div className="flex flex-col sm:flex-row gap-3 mdsm:gap-0 items-start">
+            <div className="w-full sm:w-1/2">
                 <MicroPostPageContent post={post} session={session} />
             </div>
-            <div className="w-full md:w-1/2 md:flex-1">
+            <div className="w-full sm:w-1/2 sm:flex-1">
                 <div className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -71,7 +71,7 @@ const MicroPostViewPage = ({ post, session }) => {
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 px-2">
                     <Button variant="outlined" onClick={() => {
                         router.back();
                         router.push('/@techgyanentity/what-are-signals-in-tailwind-how-do-they-work-and-use')

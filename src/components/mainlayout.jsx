@@ -66,7 +66,7 @@ export const DrawerContext = React.createContext();
 const drawerWidth_get = (open, variant) => {
     if (variant === 'permanent') {
         return open ? drawerWidth : drawerWidthClose;
-    } else return drawerWidth;
+    } else return open ? drawerWidth : 0;
 }
 
 const MainLayout = ({ children, session }) => {
@@ -96,7 +96,6 @@ const MainLayout = ({ children, session }) => {
         if (drawerElement) {
             setOpen(false);
             setVariant('temporary');
-            // const statusValue = drawerElement.getAttribute('data-status');
             const styleTag = document.getElementById('r_tt');
             if (styleTag && variant !== 'permanent') {
                 styleTag.remove();
@@ -112,7 +111,7 @@ const MainLayout = ({ children, session }) => {
             } else setOpen(o)
             setVariant(v)
         }
-    }, [q, path, variant]);
+    }, [o, v, path, variant]);
 
     return (
         (<DrawerContext.Provider value={{ open, setOpen, setVariant, variant }}>
@@ -135,7 +134,7 @@ const MainLayout = ({ children, session }) => {
                         }
                     }), variant !== 'permanent' ? {
                         '& .MuiDrawer-paper': {
-                            backgroundColor: (theme)=> theme.palette?.background?.default,
+                            backgroundColor: (theme) => theme.palette?.background?.default,
                         }
                     } : {
                         '& .MuiDrawer-paper': {
