@@ -93,25 +93,24 @@ const CloseBtn = (props) => {
 
 const NextBtn = (props) => {
   return (
-    <div className={`${props.class}`}>
-      <Button
+    <div className={`${props.className}`}>
+      <IconButton
         onClick={props.onClick}
-        sx={{ minWidth: '2rem', minHeight: '2rem', borderRadius: '100rem', p: 0 }}
         color={props.color ? props.color : 'icon'}
         disabled={props.disabled ? props.disabled : false}
       >
-        <MdNavigateNext className='w-6 h-6' />
-      </Button>
+        <MdNavigateNext className='w-5 h-5' />
+      </IconButton>
     </div>
   )
 }
 
 const BackBtn = (props) => {
   return (
-    <div className={`${props.class}`}>
+    <div className={`${props.className}`}>
       <IconButton
         onClick={props.onClick}
-        // color={props.color ? props.color : 'icon'}
+        color={props.color ? props.color : 'icon'}
         disabled={props.disabled ? props.disabled : false}
       >
         <MdOutlineKeyboardArrowLeft className='w-5 h-5' />
@@ -508,10 +507,10 @@ const NotificationBtn = ({ classes, iconColor, sx }) => {
 const RouterBackBtn = (props) => {
   const router = useRouter();
   return (
-    <IconButton size='small' className="bg-white dark:bg-dark" sx={{ ...btnSx }} onClick={() => {
+    <IconButton size='small' className="bg-white dark:bg-dark" sx={{ width: 32, height: 32, ...btnSx }} onClick={() => {
       setTimeout(() => {
         router.back()
-      }, 300);
+      }, 100);
     }}>
       <AiOutlineClose />
     </IconButton>

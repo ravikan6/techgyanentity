@@ -90,6 +90,12 @@ const getMicroPost = async (shortId) => {
         case 'TEXT':
             break;
         case 'IMAGE':
+            let i = await prisma.imagePost.findUnique({
+                where: {
+                    id: post.typeContent
+                }
+            });
+            post.typeContent = i;
             break;
         case 'LINK':
             break;

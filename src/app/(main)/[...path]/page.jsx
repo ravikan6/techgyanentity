@@ -100,6 +100,7 @@ const DynamicPages = async ({ params, searchParams }) => {
                 )
             } else if (route?.length === 3 && route[1] === 'post') {
                 const post = await getMicroPost(route[2]);
+                if (!post) return notFound();
                 return (
                     <MicroPostView post={post} session={session} />
                 )

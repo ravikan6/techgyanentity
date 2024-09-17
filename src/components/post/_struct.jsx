@@ -19,7 +19,9 @@ import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { imageUrl } from "@/lib/helpers";
 import { BackBtn, NextBtn } from "../Buttons";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
+import Image from "next/image";
+import { IoResize } from "react-icons/io5";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -310,7 +312,13 @@ const PollView = ({ post, session }) => {
 const ImagePostView = ({ post, url }) => {
     return (
         <div>
-            <ImageSlider slides={post.list || []} url={url} />
+            <Link href={url}>
+                <img
+                    className="w-full h-full aspect-square rounded-md"
+                    src={imageUrl(post.list?.at(0)?.url, post.list?.at(0)?.provider)}
+                    alt={post.list?.at(0)?.alt || 'Slide image'}
+                />
+            </Link>
         </div>
     );
 };
@@ -366,45 +374,48 @@ const ImageSlider = ({ slides = [], url }) => {
     }, [currentIndex, slides.length]);
 
     return (
-        <div className="relative group">
-            <div className="flex items-center justify-center">
-                <div className={`bg-cover overflow-hidden rounded-lg aspect-square`} style={{ backgroundImage: `url(${imageUrl(slides[currentIndex].url, slides[currentIndex].provider)})` }}
-                    onClick={() => router.push(url)}
-                >
-                    <div className="overflow-hidden aspect-square backdrop-blur-3xl items-center justify-center flex-nowrap flex">
-                        {slides.map((slide, index) => (
-                            <div key={index} className={`transition-[width,opacity] duration-500 ${index === currentIndex ? 'w-96 opacity-100' : 'w-0 opacity-25'}`}>
-                                <img
-                                    className="w-full h-full"
-                                    src={imageUrl(slide.url, slide?.provider)}
-                                    alt={slide.alt || 'Slide image'}
-                                    width={slide?.width}
-                                    height={slide?.height}
-                                />
-                            </div>
-                        ))}
+        <div className="group">
+            <div className="relative">
+                <div className="flex items-center justify-center">
+                    <div className={`bg-cover overflow-hidden rounded-lg aspect-square`} style={{ backgroundImage: `url(${imageUrl(slides[currentIndex].url, slides[currentIndex].provider)})` }}
+                    >
+                        <div className="overflow-hidden aspect-square backdrop-blur-3xl items-center justify-center flex-nowrap flex">
+                            {slides.map((slide, index) => (
+                                <div key={index} className={`transition-[width,opacity] duration-500 ${index === currentIndex ? 'w-96 opacity-100' : 'w-0 opacity-25'}`}>
+                                    <Link href={url}>
+                                        <img
+                                            className="w-full h-full"
+                                            src={imageUrl(slide.url, slide?.provider)}
+                                            alt={slide.alt || 'Slide image'}
+                                            width={slide?.width}
+                                            height={slide?.height}
+                                        />
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    {slides[currentIndex].caption}
-                </p>
-            </div>
 
+                <div className="absolute top-1/2 transition-opacity opacity-25 group-hover:opacity-100 -translate-y-1/2 left-0 right-0 flex justify-between">
+                    <div> <BackBtn onClick={goToPrevSlide} color="accent" class={`${!hasPrev && 'hidden'}`} /> </div>
+                    <div> <NextBtn onClick={goToNextSlide} color="accent" class={`${!hasNext && 'hidden'}`} /> </div>
+                </div>
+
+                <div className="absolute bottom-2 w-full left-1/2 transition-opacity opacity-25 group-hover:opacity-100 transform -translate-x-1/2 justify-center flex">
+                    <RadioGroup aria-labelledby="rb-images-select-post" name="imges select data" row >
+                        {slides.map((_, index) => (
+                            <div key={index} >
+                                <Radio sx={{ width: '16px', height: '16px' }} size='small' color='accent' checked={index === currentIndex} onClick={() => radioBtnClick(index)} />
+                            </div>
+                        ))}
+                    </RadioGroup>
+                </div>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                {slides[currentIndex].caption}
+            </p>
             <span className='hidden'></span>
-            <div className="absolute top-1/2 transition-opacity opacity-25 group-hover:opacity-100 -translate-y-1/2 left-0 right-0 flex justify-between">
-                <div> <BackBtn onClick={goToPrevSlide} color="accent" class={`${!hasPrev && 'hidden'}`} /> </div>
-                <div> <NextBtn onClick={goToNextSlide} color="accent" class={`${!hasNext && 'hidden'}`} /> </div>
-            </div>
-
-            <div className="absolute bottom-2 w-full left-1/2 transition-opacity opacity-25 group-hover:opacity-100 transform -translate-x-1/2 justify-center flex">
-                <RadioGroup aria-labelledby="rb-images-select-post" name="imges select data" row >
-                    {slides.map((_, index) => (
-                        <div key={index} >
-                            <Radio sx={{ width: '16px', height: '16px' }} size='small' color='accent' checked={index === currentIndex} onClick={() => radioBtnClick(index)} />
-                        </div>
-                    ))}
-                </RadioGroup>
-            </div>
         </div>
     );
 };
@@ -481,4 +492,99 @@ const PostListLoadingSkelton = ({ count }) => {
     )
 }
 
-export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView };
+const ImageSliderView = ({ slides = [], url, }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [hasNext, setHasNext] = useState(slides.length > 1);
+    const [hasPrev, setHasPrev] = useState(false);
+    const [original, setOriginal] = useState(false);
+
+    const goToNextSlide = useCallback(() => {
+        const nextIndex = (currentIndex + 1) % slides.length;
+        setCurrentIndex(nextIndex);
+        setHasPrev(true);
+        if (nextIndex === slides.length - 1) {
+            setHasNext(false);
+        } else {
+            setHasNext(true);
+        }
+    }, [currentIndex, slides.length]);
+
+    const goToPrevSlide = useCallback(() => {
+        const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+        setCurrentIndex(prevIndex);
+        setHasNext(true);
+        if (prevIndex === 0) {
+            setHasPrev(false);
+        }
+    }, [currentIndex, slides.length]);
+
+    const radioBtnClick = useCallback((index) => {
+        setCurrentIndex(index);
+        setHasPrev(index > 0);
+        setHasNext(index < slides.length - 1);
+    }, [slides.length]);
+
+    return (
+        <div className="relative group w-full h-[calc(100vh-100px)] max-w-4xl mx-auto bg-gray-300/30 dark:bg-zinc-700/30">
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                {/* Images Slider */}
+                {slides.map((slide, index) => (
+                    <div
+                        key={index}
+                        className={`absolute inset-0 transition-opacity duration-500 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                        <img
+                            className={`w-full h-full ${original ? 'object-contain' : 'object-cover'}`}
+                            src={imageUrl(slide.url, slide?.provider)}
+                            alt={slide.alt || 'Slide image'}
+                        />
+                    </div>
+                ))}
+            </div>
+
+            {/* Navigation buttons */}
+            <BackBtn
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2  rounded-full opacity-80 hover:opacity-100 ${hasPrev ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                onClick={goToPrevSlide}
+                disabled={!hasPrev}
+            >
+            </BackBtn>
+            <NextBtn
+                className={`absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full opacity-80 hover:opacity-100 ${hasNext ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                onClick={goToNextSlide}
+                disabled={!hasNext}
+            >
+            </NextBtn>
+
+            {/* Original Image Button */}
+
+            <div className="absolute right-4 bottom-4">
+                <IconButton
+                    onClick={() => setOriginal(!original)}
+                    className="rounded-full bg-lightHead dark:bg-darkHead"
+                >
+                    <IoResize className="w-5 h-5" />
+                </IconButton>
+            </div>
+
+            {/* Radio Controls */}
+            <div className="absolute bottom-4 w-full flex justify-center space-x-2 items-center">
+                {slides.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => radioBtnClick(index)}
+                        className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-3 h-3' : 'bg-light dark:bg-dark w-2 h-2'}`}
+                    />
+                ))}
+            </div>
+
+            {/* Caption */}
+            {slides[currentIndex]?.caption && (
+                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-gray-700 bg-light/30 dark:bg-dark/30 backdrop-blur-lg px-2 py-1 rounded-md shadow-md">
+                    {slides[currentIndex].caption}
+                </div>
+            )}
+        </div>
+    );
+};
+export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView, ImageSliderView };

@@ -1,9 +1,9 @@
 'use client';
 import React from 'react'
 import { useContext, memo } from 'react'
-import { progressContext } from '../../layout';
 import { notFound } from 'next/navigation';
 import CreateAuthor from '@/components/author/create';
+import { progressContext } from '../layout';
 
 const InterceptSetupPage = ({ params }) => {
   let progress = useContext(progressContext);
