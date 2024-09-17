@@ -41,13 +41,13 @@ const CommunityPostContent = ({ post, session }) => {
 
 
 const MicroPostViewPage = ({ post, session }) => {
-    
+
     return (
-        <div className="flex items-start">
-            <div className="w-1/2">
+        <div className="flex flex-col md:flex-row items-start">
+            <div className="w-full md:w-1/2">
                 <MicroPostPageContent post={post} session={session} />
             </div>
-            <div className="w-1/2 flex-1">
+            <div className="w-full md:w-1/2 md:flex-1">
 
                 <div className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40">
                     <div className="flex items-center">

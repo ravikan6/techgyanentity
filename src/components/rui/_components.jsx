@@ -274,6 +274,7 @@ const RuiSwipeableDrawerStyled = styled(SwipeableDrawer)(({ theme }) => ({
         borderRadius: '20px 20px 0 0',
         position: 'absolute',
         maxHeight: 'calc(100% - 40px)',
+        width: '100%',
         bottom: 0,
         top: 'auto',
         // marginRight: '8px',

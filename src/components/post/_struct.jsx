@@ -311,12 +311,13 @@ const PollView = ({ post, session }) => {
 
 const ImagePostView = ({ post, url }) => {
     return (
-        <div>
+        <div className="aspect-[4/5] relative">
             <Link href={url}>
-                <img
-                    className="w-full h-full aspect-square rounded-md"
+                <Image
+                    className="w-full h-full object-cover rounded-md"
                     src={imageUrl(post.list?.at(0)?.url, post.list?.at(0)?.provider)}
                     alt={post.list?.at(0)?.alt || 'Slide image'}
+                    fill
                 />
             </Link>
         </div>
@@ -525,7 +526,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
     }, [slides.length]);
 
     return (
-        <div className="relative group w-full h-[calc(100vh-100px)] max-w-4xl mx-auto bg-gray-300/30 dark:bg-zinc-700/30">
+        <div className="relative group aspect-[4/5] mx-auto bg-gray-300/30 dark:bg-zinc-700/30">
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                 {/* Images Slider */}
                 {slides.map((slide, index) => (
@@ -533,7 +534,8 @@ const ImageSliderView = ({ slides = [], url, }) => {
                         key={index}
                         className={`absolute inset-0 transition-opacity duration-500 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
                     >
-                        <img
+                        <Image
+                            fill
                             className={`w-full h-full ${original ? 'object-contain' : 'object-cover'}`}
                             src={imageUrl(slide.url, slide?.provider)}
                             alt={slide.alt || 'Slide image'}
