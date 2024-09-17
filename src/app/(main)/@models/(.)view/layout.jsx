@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { RouterBackBtn } from '@/components/Buttons'
 import { Dialog } from '@/components/rui/_components';
-import { DialogContent, LinearProgress, useMediaQuery, Zoom } from '@mui/material';
+import { DialogContent, LinearProgress, useMediaQuery, Slide } from '@mui/material';
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { SwipeableDrawer } from '@/components/rui';
@@ -12,23 +12,31 @@ export const progressContext = React.createContext();
 const SetupLayout = ({ children }) => {
     const [inProgress, setInProgress] = useState(false);
     const router = useRouter();
-    let q = useMediaQuery('(max-width:768px)');
+    let q = useMediaQuery('(max-width:528px)');
 
     return (
         q ? <SwipeableDrawer
             open={true}
+            showClose={false}
             onClose={
                 () => {
                     router.back();
                 }
             }
+            sx={{
+                '& .MuiDrawer-paper': {
+                    borderRadius: '8px 8px 0 0',
+                    maxHeight: 'calc(100% - 40px)',
+                    width: '100%',
+                }
+            }}
         >
             <progressContext.Provider value={{ inProgress, setInProgress }}>
                 <div className='absolute top-0 left-0 w-full' >{inProgress && <LinearProgress color="accent" />}</div>
-                <div className='absolute top-1 right-1'>
+                <div className='absolute top-1 right-1 z-20'>
                     <RouterBackBtn />
                 </div>
-                <div className='min-h-full w-full pt-10'>
+                <div className='min-h-full w-full'>
                     <Suspense fallback={() => setInProgress(true)}>
                         {children}
                     </Suspense>
@@ -45,7 +53,7 @@ const SetupLayout = ({ children }) => {
                         borderRadius: '8px',
                     }
                 }}
-                // TransitionComponent={Zoom}
+                TransitionComponent={Slide}
                 aria-describedby="setup-modal-description"
                 aria-labelledby="setup-modal-title"
                 maxWidth='lg'
@@ -60,7 +68,7 @@ const SetupLayout = ({ children }) => {
                     <div className='absolute top-1 right-1'>
                         <RouterBackBtn />
                     </div>
-                    <div className='min-w-[768px] max-h-[calc(100%-100px)]  min-h-[calc(100%-100px)] '>
+                    <div className='min-w-[calc(100vw-80px)] min-[850px]:min-w-[768px] min-h-[calc(100%-100px)] '>
                         <Suspense fallback={() => setInProgress(true)}>
                             {children}
                         </Suspense>

@@ -252,7 +252,7 @@ const RuiSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 
-const RuiSwipeableDrawer = ({ children, puller = true, showClose = true, ...props }) => {
+const RuiSwipeableDrawer = ({ children, puller = true, showClose = true, addPd = true, ...props }) => {
 
     return (
         <RuiSwipeableDrawerStyled {...props}>
@@ -260,7 +260,7 @@ const RuiSwipeableDrawer = ({ children, puller = true, showClose = true, ...prop
             {showClose && <div className='absolute right-1.5 top-1.5 sm:block hidden'>
                 <CloseBtn onClick={props?.onClose} />
             </div>}
-            <div className={`max-h-[calc(100%-14px)] overflow-y-auto mt-3 p-3`}>
+            <div className={`max-h-[calc(100%-14px)] overflow-y-auto ${puller && 'mt-3'} ${addPd && 'p-3'}`}>
                 {children}
             </div>
         </RuiSwipeableDrawerStyled>
@@ -274,7 +274,6 @@ const RuiSwipeableDrawerStyled = styled(SwipeableDrawer)(({ theme }) => ({
         borderRadius: '20px 20px 0 0',
         position: 'absolute',
         maxHeight: 'calc(100% - 40px)',
-        width: '100%',
         bottom: 0,
         top: 'auto',
         // marginRight: '8px',

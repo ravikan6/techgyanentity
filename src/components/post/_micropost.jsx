@@ -1,4 +1,7 @@
+"use client";
+import { useRouter } from "next-nprogress-bar";
 import { AuthorAvatar } from "../author/_client";
+import { Button } from "../rui";
 import { ImagePostView, ImageSliderView, PollView } from "./_struct";
 
 
@@ -7,7 +10,7 @@ const MicroPostView = ({ post, session }) => {
         <div className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40">
             <div className="flex items-center">
                 <div className="flex-shrink-0">
-                    <AuthorAvatar data={{ url: post.author?.image?.url }} sx={{ width: '32px', height: '32px' }} />
+                    <Autho url={`@${post?.author?.handle}/post/${post.shortId}`} rAvatar data={{ url: post.author?.image?.url }} sx={{ width: '32px', height: '32px' }} />
                 </div>
                 <div className="ml-4">
                     <div className="text-sm karnak font-bold text-zinc-900 dark:text-slate-100">{post.author.name}</div>
@@ -41,14 +44,14 @@ const CommunityPostContent = ({ post, session }) => {
 
 
 const MicroPostViewPage = ({ post, session }) => {
+    const router = useRouter();
 
     return (
-        <div className="flex flex-col md:flex-row items-start">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-0 items-start">
             <div className="w-full md:w-1/2">
                 <MicroPostPageContent post={post} session={session} />
             </div>
             <div className="w-full md:w-1/2 md:flex-1">
-
                 <div className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -62,6 +65,37 @@ const MicroPostViewPage = ({ post, session }) => {
                     <div className="mt-2.5">
                     </div>
                 </div>
+                <div className="mt-4 px-2">
+                    <p>
+                        {post?.content}
+                    </p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                    <Button variant="outlined" onClick={() => {
+                        router.back();
+                        router.push('/@techgyanentity/what-are-signals-in-tailwind-how-do-they-work-and-use')
+                    }}>
+                        Back and Go
+                    </Button>
+
+                    <Button variant="contained" onClick={() => {
+                        try {
+                            router.back();
+                        } finally {
+                            router.push('/@techgyanentity/what-are-signals-in-tailwind-how-do-they-work-and-use')
+                        }
+                    }}>
+                        Back and finaly Go
+                    </Button>
+
+                    <Button variant="text" onClick={() => {
+                        router.push('/@techgyanentity/what-are-signals-in-tailwind-how-do-they-work-and-use')
+                    }}>
+                        Go
+                    </Button>
+                </div>
+
             </div>
         </div>
     )

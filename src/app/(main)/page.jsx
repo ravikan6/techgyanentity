@@ -100,7 +100,7 @@ const CommunityPostContent = ({ post, session }) => {
     case 'LINK':
       return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
     case 'POLL':
-      return <PollView post={post} session={session} />;
+      return <PollView post={post} session={session} url={`view?type=post&id=${post.shortId}`} />;
     case 'ARTICLE':
       return <div>Article</div>;
     default:

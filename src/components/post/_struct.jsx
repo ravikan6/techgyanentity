@@ -22,6 +22,7 @@ import { BackBtn, NextBtn } from "../Buttons";
 import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
 import { IoResize } from "react-icons/io5";
+import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -239,7 +240,7 @@ const PostAuthorView = ({ author }) => {
 }
 
 
-const PollView = ({ post, session }) => {
+const PollView = ({ post, session, url }) => {
     const [pollData, setPollData] = useState(post?.typeContent);
     const [disabled, setDisabled] = useState(false);
 
@@ -303,7 +304,9 @@ const PollView = ({ post, session }) => {
                 }
             </div>
             <div className="mt-3 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
-                {formatNumber(pollData?.poll?._count.votes)} Votes
+                <Link href={url}>
+                    {formatNumber(pollData?.poll?._count.votes)} Votes
+                </Link>
             </div>
         </div>
     )
@@ -498,6 +501,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
     const [original, setOriginal] = useState(false);
+    const [showMeta, setShowMeta] = useState(false);
 
     const goToNextSlide = useCallback(() => {
         const nextIndex = (currentIndex + 1) % slides.length;
@@ -559,31 +563,37 @@ const ImageSliderView = ({ slides = [], url, }) => {
             </NextBtn>
 
             {/* Original Image Button */}
-
-            <div className="absolute right-4 bottom-4">
+            <div className="absolute right-4 bottom-4 bg-lightHead dark:bg-darkHead rounded-full">
                 <IconButton
                     onClick={() => setOriginal(!original)}
-                    className="rounded-full bg-lightHead dark:bg-darkHead"
+                    className="rounded-full"
                 >
-                    <IoResize className="w-5 h-5" />
+                    <IoResize className="w-4 h-4" />
                 </IconButton>
             </div>
 
             {/* Radio Controls */}
-            <div className="absolute bottom-4 w-full flex justify-center space-x-2 items-center">
+            <div className="absolute bottom-0.5 z-10 w-full flex justify-center space-x-2 items-center">
                 {slides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => radioBtnClick(index)}
-                        className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-3 h-3' : 'bg-light dark:bg-dark w-2 h-2'}`}
+                        className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-3 h-3' : 'bg-lightHead dark:bg-darkHead w-2 h-2'}`}
                     />
                 ))}
             </div>
 
             {/* Caption */}
             {slides[currentIndex]?.caption && (
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-gray-700 bg-light/30 dark:bg-dark/30 backdrop-blur-lg px-2 py-1 rounded-md shadow-md">
-                    {slides[currentIndex].caption}
+                <div className="absolute bottom-0 left-0 w-full">
+                    <div className="bg-lightHead dark:bg-darkHead w-5 h-5 flex justify-center items-center absolute left-4 -top-5 rounded-t-md">
+                        {
+                            showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />
+                        }
+                    </div>
+                    {showMeta && <div className="w-full text-sm bg-light/65 dark:bg-dark/65 backdrop-blur-lg px-2 py-1 pb-3 rounded-t-md ">
+                        {slides[currentIndex].caption}
+                    </div>}
                 </div>
             )}
         </div>
