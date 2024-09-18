@@ -267,7 +267,7 @@ const PollView = ({ post, session, url }) => {
                 {
                     pollData?.poll?.options?.map((option, index) => (
                         <Tooltip key={index} title={option?.text}>
-                            <div className="relative h-auto rounded-[12px] overflow-hidden">
+                            <div className="relative h-auto rounded-[12px] overflow-hidden z-[1]">
                                 <Button
                                     onClick={() => onSubmit(option?.id)}
                                     variant="outlined"
@@ -304,7 +304,7 @@ const PollView = ({ post, session, url }) => {
                 }
             </div>
             <div className="mt-3 text-sm cheltenham text-gray-600 dark:text-gray-400 font-bold">
-                <Link href={url}>
+                <Link href={url || '#'}>
                     {formatNumber(pollData?.poll?._count.votes)} Votes
                 </Link>
             </div>
@@ -500,7 +500,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
-    const [original, setOriginal] = useState(false);
+    const [original, setOriginal] = useState(true);
     const [showMeta, setShowMeta] = useState(false);
 
     const goToNextSlide = useCallback(() => {
@@ -564,7 +564,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
             </NextBtn>
 
             {/* Original Image Button */}
-            <div className="absolute right-4 bottom-4 bg-lightHead dark:bg-darkHead rounded-full">
+            <div className={`absolute right-4 ${showMeta ? 'top-4 bottom-auto' : 'bottom-4'} bg-lightHead dark:bg-darkHead ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
                 <IconButton
                     onClick={() => setOriginal(!original)}
                     className="rounded-full"
@@ -587,16 +587,16 @@ const ImageSliderView = ({ slides = [], url, }) => {
             {/* Caption */}
             {slides[currentIndex]?.caption && (
                 <div className="absolute bottom-0 left-0 w-full">
-                    <div className="bg-lightHead dark:bg-darkHead w-5 h-5 flex justify-center items-center absolute left-4 -top-5 rounded-t-md cursor-pointer" onClick={() => setShowMeta(!showMeta)}>
-                        {
+                    <div className="bg-lightHead dark:bg-darkHead transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
+                        <button className="w-full h-full flex justify-center items-center" onClick={() => setShowMeta(!showMeta)}>{
                             showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />
-                        }
+                        } </button>
                     </div>
-                    <div className="w-full text-sm bg-light/65 dark:bg-dark/65 backdrop-blur-lg px-2 py-1 pb-3 rounded-t-md "
+                    <div className="w-full transition-all duration-300 text-sm bg-light/65 dark:bg-dark/65 backdrop-blur-lg px-2 py-1 pb-3 rounded-t-md max-h-32 overflow-y-auto"
                         style={{
                             display: showMeta ? 'block' : 'none',
                         }}>
-                        {slides[currentIndex].caption}
+                        <p className="cheltenham-small text-xs">{slides[currentIndex].caption}</p>
                     </div>
                 </div>
             )}
