@@ -1,7 +1,6 @@
-import { MicorPostAuthor, MicroPostPageContent } from "@/components/post/_micropost";
+import { MicorPostAuthor, MicroPostActions, MicroPostPageContent } from "@/components/post/_micropost";
 import { getMicroPost } from "@/lib/actions/getContent";
 import { auth } from "@/lib/auth";
-import { MoreVert } from "@mui/icons-material";
 import { notFound } from "next/navigation";
 
 const ViewPage = async ({ searchParams }) => {
@@ -19,7 +18,7 @@ const ViewPage = async ({ searchParams }) => {
                     <div className="bg-lightHead/40 dark:bg-darkHead/40 rounded-xl w-full md:p-4 p-2">
                         <div className="flex justify-between items-center">
                             <MicorPostAuthor post={post} />
-                            <MoreVert />
+                            <MicroPostActions id={post?.shortId} />
                         </div>
                         <div className="mt-2 px-2">
                             <p>

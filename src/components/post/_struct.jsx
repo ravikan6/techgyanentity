@@ -588,7 +588,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
             {slides[currentIndex]?.caption && (
                 <div className="absolute bottom-0 left-0 w-full">
                     <div className="bg-lightHead dark:bg-darkHead transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
-                        <button className="w-full h-full flex justify-center items-center" onClick={() => setShowMeta(!showMeta)}>{
+                        <button className="w-full h-full flex justify-center items-center relative" onClick={() => setShowMeta(!showMeta)}>{
                             showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />
                         } </button>
                     </div>
@@ -596,11 +596,13 @@ const ImageSliderView = ({ slides = [], url, }) => {
                         style={{
                             display: showMeta ? 'block' : 'none',
                         }}>
-                        <p className="cheltenham-small text-xs">{slides[currentIndex].caption}</p>
+                        <p className="cheltenham-small text-xs">{slides[currentIndex]?.caption}</p>
                     </div>
                 </div>
             )}
         </div>
     );
 };
+
+
 export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView, ImageSliderView };

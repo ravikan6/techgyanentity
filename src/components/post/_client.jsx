@@ -24,6 +24,7 @@ import { imgUrl } from "@/lib/helpers";
 import { AuthorAvatar } from "../author/_client";
 import { useRouter } from "next/navigation";
 import { Router } from "next/router";
+import { CommentsView } from "./comment";
 
 export const ArticleImage = ({ image, classes, height, width, className, style }) => {
     return <CldImage
@@ -101,7 +102,7 @@ const SidebarContent = ({ article }) => {
                         <PostActions id={article.id} commentCount={article?._count?.comments} isExpanded article={article} />
                     </div>
                 </div>
-                <ArticleComments articleId={article.id} article={article} />
+                <CommentsView articleId={article.id} article={article} contentAuthor={article?.author} />
             </div>
             <Description article={article} publishedAt={publishedAt} updatedAt={updatedAt} open={open} setOpen={setOpen} />
         </>

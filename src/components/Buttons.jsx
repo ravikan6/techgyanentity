@@ -407,6 +407,7 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
     </>
   );
 };
+
 const PostDetailsActionMenu = ({ list = [], disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -446,6 +447,49 @@ const PostDetailsActionMenu = ({ list = [], disabled }) => {
     </>
   );
 };
+const ActionMenu = ({ list = [], disabled }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  return (
+    <>
+      <IconButton color="primary" size='small' disabled={disabled} onClick={handleClick}>
+        <MoreVert className="w-4 h-4" />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'post_details_action',
+        }}
+        sx={{ '& .MuiPaper-root': { borderRadius: '12px', py: 0, minWidth: '128px' } }} >
+        <MenuList>
+          {
+            list.map((item, index) => {
+              return (
+                <MenuItem key={index} onClick={() => {
+                  item?.onClick()
+                  handleClose()
+                }}>
+                  <ListItemIcon >
+                    <item.icon className='w-5 h-5' />
+                  </ListItemIcon>
+                  <span className='text-base font-semibold mr-1.5'>{item.label}</span>
+                </MenuItem>
+              )
+            })
+          }
+        </MenuList>
+      </Menu>
+    </>
+  );
+};
+
 const CreateBtn = ({ classes, iconColor, sx }) => {
   const { data } = useContext(StudioContext);
   if (!data?.data) return null;
@@ -542,4 +586,4 @@ const LearnMoreBtn = ({ url, show = 'full', onClick, tooltip, target = '_self', 
     </span>
   )
 }
-export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu, PostDetailsTableViewMenu, ShareButton };
+export { NotificationBtn, LgBtn, SgBtn, TransBtn, CloseBtn, ShareBtn, BookmarkBtn, PrivacyHandlerBtn, BtnWithMenu, CreateBtn, NextBtn, BackBtn, RouterBackBtn, LearnMoreBtn, PostEditButton, PostDetailsImageMenu, PostDetailsActionMenu, PostDetailsTableViewMenu, ShareButton, ActionMenu };
