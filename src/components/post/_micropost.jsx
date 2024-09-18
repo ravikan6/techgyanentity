@@ -152,7 +152,7 @@ const MicroPostActions = ({ id, list = [] }) => {
         }
     }
 
-    const list = [
+    const listMenu = [
         ...list,
         { label: 'Edit', icon: HeartBroken },
         { label: 'Delete', icon: Delete, onClick: () => onDelete() },
@@ -161,7 +161,7 @@ const MicroPostActions = ({ id, list = [] }) => {
 
     return (
         <>
-            <ActionMenu list={list} />
+            <ActionMenu list={listMenu} />
         </>
     );
 }
