@@ -1,12 +1,11 @@
 "use client";
 import { imageUrl } from "@/lib/helpers";
-import { useContext, useEffect, useState, createContext, useMemo } from "react";
+import { useContext, useEffect, useState, createContext, useRef } from "react";
 import { formatDate } from "@/lib/utils";
 import { UnAuthorizedActionWrapper } from "./postActions";
 import { Avatar, ListItemIcon, Skeleton } from "@mui/material";
 import { Button, IconButton, Menu, MenuItem, TextField, Tooltip } from "../rui";
 import { MoreVert } from "@mui/icons-material";
-import { articleCommentAction, articleCommentClapAction, articleCommentDeleteAction, articleCommentRepliesListAction, articleCommentsListAction } from "@/lib/actions/author";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { PiHandsClappingLight } from "react-icons/pi";
@@ -16,102 +15,143 @@ import { FaHandsClapping } from "react-icons/fa6";
 import confirm from "@/lib/confirm";
 import { StudioContext } from "@/lib/context";
 import { useRouter } from "next/navigation";
+import { ErrorBox } from "./_struct";
 
 
 const CommentContext = createContext();
 
 
-export const CommentsView = ({ articleId, article, contentAuthor }) => {
+export const CommentsView = ({ contentAuthor, count, getComments, commentAction, getCommentReplies, deleteComment, clapAction }) => {
     const [comments, setComments] = useState([]);
+    const [replies, setReplies] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [cursor, setCursor] = useState(null);
+    const [error, setError] = useState(null);
     const { data: session } = useSession();
     const { data } = useContext(StudioContext);
+    const observer = useRef();
 
-    useMemo(() => {
-        setLoading(true);
-        articleCommentsListAction(articleId).then(res => {
+    useEffect(() => {
+        if (!loading && comments.length < count) fetchComments(cursor);
+    }, [cursor]);
+
+    async function fetchComments(cursor) {
+        try {
+            setLoading(true);
+            let res = await getComments({ cursor: cursor, take: 10 });
             if (res?.status === 200) {
-                setComments(res?.data);
-                setLoading(false);
+                setComments((prev) => [...prev, ...res?.data]);
+                setError(null);
+            } else {
+                throw new Error('Failed to fetch comments');
+            }
+        } catch (error) {
+            setError(error?.message || 'Failed to fetch comments');
+        } finally {
+            setLoading(false);
+        };
+    }
+
+    const lastItemRef = useRef(null);
+    useEffect(() => {
+        if (loading || comments.length === count) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && comments.length < count) {
+                setCursor(comments[comments.length - 1]?.id);
             }
         });
-    }, [articleId]);
+
+        if (lastItemRef.current) observer.current.observe(lastItemRef.current);
+    }, [loading]);
 
     const handleAddReply = async (commentId, reply) => {
         if (!session?.user || !reply || (reply === '')) return;
-        let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
-        const res = await articleCommentAction({ postId: articleId, body: reply, parentId: commentId, ...(aId && { authorId: aId }) })
+        let aId = (data?.data?.id === contentAuthor?.id) ? data?.data?.id : null
+        const res = await commentAction({ body: reply, parentId: commentId, ...(aId && { authorId: aId }) })
         if (res?.status === 200) {
             let newComments = comments.map(comment => {
                 if (comment.id === commentId) {
-                    comment = res?.data?.parent;
+                    comment._count.replies = comment._count.replies + 1;
                     return comment;
                 }
                 return comment;
-            });
+            })
             setComments(newComments);
+            setReplies((replies) => {
+                return [...replies, { id: commentId, replies: [res?.data, ...replies.find(reply => reply.id === commentId)?.replies || []] }];
+            });
         }
     };
 
     const handleAddComment = async (comment) => {
         if (!session?.user || !comment || (comment === '')) return;
-        let aId = (data?.data?.id === article?.author?.id) ? data?.data?.id : null
-        const res = await articleCommentAction({ postId: articleId, body: comment, ...(aId && { authorId: aId }) })
+        let aId = (data?.data?.id === contentAuthor?.id) ? data?.data?.id : null
+        const res = await commentAction({ body: comment, ...(aId && { authorId: aId }) })
         if (res?.status === 200) {
-            if (res.status === 200) {
-                let newRes = await articleCommentsListAction(articleId)
-                if (newRes?.status === 200) {
-                    setComments(newRes?.data);
-                }
-            }
+            setComments([]);
+            await fetchComments();
+            // setComments((comments) => {
+            //     return [res?.data, ...comments];
+            // });
         }
     };
 
-    const handleUpdateComment = async (comment, commentId) => {
-        if (!session?.user || !comment || (comment === '')) return;
-        const res = await articleCommentAction({ id: commentId, body: comment });
-        if (res?.status === 200) {
-            setComments((comments) => {
-                return comments.map((c) => {
-                    if (c.id === commentId) {
-                        return { ...c, ...res?.data };
-                    }
-                    return c;
-                });
-            });
-        }
-    }
-
-    const handleDeleteComment = async (id) => {
-        if (!session?.user) return;
-        const res = await articleCommentDeleteAction({ id: id }, 'delete');
-        if (res?.status === 200) {
-            let newComments = comments?.filter(comment => comment.id !== commentId);
-            setComments(newComments);
-        }
-    }
-
     const onAddComment = async (comment, isReply = false, parentId = null, toUpdate = false, commentId = null) => {
+        if (!session?.user || !comment || (comment === '')) return;
         if (toUpdate) {
-            handleUpdateComment(comment, commentId);
+            const res = await commentAction({ id: commentId, body: comment });
+            if (res?.status === 200) {
+                setComments([]);
+                await fetchComments();
+            }
+            return res;
         } else {
             if (isReply) {
-                handleAddComment(comment);
+                return await handleAddReply(parentId, comment);
             } else {
-                handleAddReply(parentId, comment);
+                return await handleAddComment(comment);
             }
         }
+    }
+
+    const handleDeleteComment = async (id, isReply) => {
+        if (!session?.user) return;
+        const res = await deleteComment(id);
+        if (res?.status === 200) {
+            setComments([]);
+            fetchComments();
+        }
+    }
+
+
+    const getReplies = async (commentId, options) => {
+        let res = await getCommentReplies(commentId, { ...options });
+        if (options?.skip > 0) {
+            if (res?.status === 200) {
+                let newReplies = replies.map(reply => {
+                    if (reply.id === commentId) {
+                        return { id: commentId, replies: [...reply.replies, ...res?.data] };
+                    }
+                    return reply;
+                });
+                setReplies(newReplies);
+                return { status: 200 };
+            }
+        }
+        return res;
     }
 
     const contextData = {
         contentAuthor: contentAuthor || article?.author,
         onAddComment: onAddComment,
         user: session?.user,
-        onClap: articleCommentClapAction,
-        handleUpdate: handleUpdateComment,
+        onClap: clapAction,
         handleDelete: handleDeleteComment,
         commentState: { comments, setComments },
-        getReplies: articleCommentRepliesListAction
+        getReplies: getReplies,
+        replieState: { replies, setReplies },
     }
 
     return (
@@ -121,13 +161,11 @@ export const CommentsView = ({ articleId, article, contentAuthor }) => {
                     <div className="flex justify-between items-center">
                         <h3 className="text-lg font-semibold mb-2">Comments</h3>
                         <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-500 dark:text-gray-300">{comments?.length}</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-300">{comments?.length >= count ? comments?.length : count}</span>
                         </div>
                     </div>
                     <CommentForm />
-                    {loading ? (
-                        <CommentsLoader count={3} />
-                    ) : (comments.length > 0) ? (
+                    {(comments.length > 0) ? (
                         comments?.map((comment, index) => {
                             return (
                                 <div key={index} className="mb-2">
@@ -135,9 +173,14 @@ export const CommentsView = ({ articleId, article, contentAuthor }) => {
                                 </div>
                             );
                         })
-                    ) :
-                        <div className="text-sm text-center text-gray-500 dark:text-gray-300 my-4">No Comments Found</div>
+                    ) : (error === null && !loading) ? <div className="text-sm text-center text-gray-500 dark:text-gray-300 my-4">No Comments Found</div> : null}
+                    {loading ? (
+                        <CommentsLoader count={3} />
+                    ) : null}
+                    {
+                        (error !== null && !loading) ? <ErrorBox error={error} onRetry={() => fetchComments(cursor)} /> : null
                     }
+                    <div ref={lastItemRef}></div>
                 </CommentContext.Provider>
             </section>
         </>
@@ -145,7 +188,7 @@ export const CommentsView = ({ articleId, article, contentAuthor }) => {
 };
 
 const CommentView = ({ comment, parentId }) => {
-    const { user, handleUpdate, handleDelete, commentState } = useContext(CommentContext);
+    const { user } = useContext(CommentContext);
     const [showForm, setShowForm] = useState(false);
     const router = useRouter();
 
@@ -163,7 +206,7 @@ const CommentView = ({ comment, parentId }) => {
                 <div className="flex flex-col grow">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                            <h4 onClick={comment?.author ? () => router.push(`/@${username}`) : null} className={`text-sm font-bold ${comment?.author ? 'dark:text-accentDark text-accentLight' : 'dark:text-slate-100 text-gray-900'}`}>{`@${username}`}</h4>
+                            <h4 onClick={comment?.author ? () => router.push(`/@${username}`) : null} className={`text-sm font-bold ${comment?.author ? 'dark:text-darkButton text-accentLight' : 'dark:text-slate-100 text-gray-900'}`}>{`@${username}`}</h4>
                             {/* <Link href={"#"}> */}
                             <Tooltip title={<>{new Date(comment?.createdAt).toUTCString()}</>} placement="top" arrow>
                                 <time dateTime={comment?.createdAt} className="text-xs font-semibold dark:text-slate-200 text-gray-800">{formatDate(comment?.createdAt)}</time>
@@ -177,7 +220,7 @@ const CommentView = ({ comment, parentId }) => {
                                 )
                             }
                         </div>
-                        {user ? <CommentMenu id={comment?.id} commentAuthor={comment?.author?.id} isOwn={comment?.user?.id === user?.id} onEdit={() => setShowForm(true)} /> : null}
+                        {user ? <CommentMenu id={comment?.id} commentAuthor={comment?.author?.id} isOwn={comment?.user?.id === user?.id} onEdit={() => setShowForm(true)} isReply={parentId} /> : null}
                     </div>
                     <div id="comment_body">
                         <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
@@ -192,17 +235,17 @@ const CommentView = ({ comment, parentId }) => {
                     ) : null}
                 </div>
             </div>) : (
-            <CommentFormField showButtons={true} setShowButtons={setShowForm} commentText={comment?.content} toUpdate={true} commentId={commentId} />
+            <CommentFormField showButtons={true} setShowButtons={setShowForm} commentText={comment?.content} toUpdate={true} commentId={commentId} isReply={parentId} parentId={parentId} />
         )
     )
 }
 
-const CommentMenu = ({ id, commentAuthor, isOwn, onEdit }) => {
+const CommentMenu = ({ id, commentAuthor, isOwn, onEdit, isReply }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { data } = useContext(StudioContext);
-    const { onDelete, onUpdate, contentAuthor } = useContext(CommentContext);
+    const { handleDelete } = useContext(CommentContext);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -210,22 +253,23 @@ const CommentMenu = ({ id, commentAuthor, isOwn, onEdit }) => {
     }
 
     const handleClose = () => {
+        setAnchorEl(null);
         setOpen(false)
     }
 
-    const handleDelete = async () => {
+    const onDelete = async () => {
         try {
             if (await confirm('Are you sure you want to delete this comment?', { okLabel: 'Yes', cancelLabel: 'No' })) {
                 setIsLoading(true);
                 try {
-                    await onDelete(id);
+                    await handleDelete(id, isReply);
                     toast.success('Comment deleted successfully');
                 } catch (error) {
                     console.error(error);
                     toast.error('Failed to delete comment');
                 } finally {
                     setIsLoading(false);
-                    setAnchorEl(null);
+                    handleClose();
                 }
             } else null;
         } catch { }
@@ -261,7 +305,7 @@ const CommentMenu = ({ id, commentAuthor, isOwn, onEdit }) => {
                                     </ListItemIcon>
                                     Edit
                                 </MenuItem>,
-                                <MenuItem key="___2" onClick={handleDelete}>
+                                <MenuItem key="___2" onClick={onDelete}>
                                     <ListItemIcon >
                                         <MdOutlineDeleteOutline className='w-5 h-5' />
                                     </ListItemIcon>
@@ -311,7 +355,7 @@ const CommentFormField = ({ showButtons, setShowButtons, isMc, parentId, comment
     const handleCommentSubmit = async () => {
         setIsPosting(true);
         try {
-            onAddComment(comment, !!!parentId, parentId, toUpdate, commentId);
+            await onAddComment(comment, parentId, parentId, toUpdate, commentId);
             setShowButtons(false);
             setComment('');
         }
@@ -364,8 +408,8 @@ const CommentFormField = ({ showButtons, setShowButtons, isMc, parentId, comment
             <Button disabled={isPosting} size="small" onClick={handleCancle} variant="outlined" color="primary">
                 Cancle
             </Button>
-            <Button size="small" className={!(comment?.length === 0 || isPosting) ? "text-white dark:text-black" : ''} disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="button">
-                {toReply ? 'Reply' : commentText ? 'Update' : 'Comment'}
+            <Button size="small" className={!(comment?.length === 0 || isPosting) ? "text-white dark:text-black" : ''} disabled={comment?.length === 0 || isPosting} onClick={handleCommentSubmit} variant="contained" color="inherit">
+                {toUpdate ? 'Update' : parentId ? 'Reply' : 'Comment'}
             </Button>
         </div>}
     </div> : <UnAuthorizedActionWrapper description={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} link={'#'} >
@@ -391,7 +435,7 @@ const CommentFormField = ({ showButtons, setShowButtons, isMc, parentId, comment
 }
 
 const CommentBottomControl = ({ commentId, parentId, claps, clapsCount }) => {
-    const { contentAuthor, onClap, user } = useContext(CommentContext);
+    const { onClap, user } = useContext(CommentContext);
     const [showForm, setShowForm] = useState(false);
     const [isClapped, setIsClapped] = useState({ is: false, commentId: null, id: null });
     const [isLoading, setIsLoading] = useState(false);
@@ -415,12 +459,14 @@ const CommentBottomControl = ({ commentId, parentId, claps, clapsCount }) => {
         try {
             if (isClapped.is && isClapped.id) {
                 let res = await onClap({ id: isClapped.id }, 'delete');
+                console.log(res);
                 if (res?.status === 200) {
                     setIsClapped({ is: false, commentId: null, id: null });
-                    setClapsCount(ClapsCount - 1);
+                    setClapsCount(ClapsCount > 0 ? ClapsCount - 1 : 0);
                 }
             } else {
                 let res = await onClap({ id: commentId }, 'create');
+                console.log(res);
                 if (res?.status === 200) {
                     let clapped = res?.data;
                     if (clapped) {
@@ -448,10 +494,14 @@ const CommentBottomControl = ({ commentId, parentId, claps, clapsCount }) => {
                     :
                     <>
                         <UnAuthorizedActionWrapper description={'You need to be logged in to clap the comment'} >
-                            <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? null : <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span>} />
+                            <span>
+                                <Button sx={{ px: 1.5, height: '28px' }} size='small' variant='outlined' color='secondary' startIcon={<PiHandsClappingLight className={`w-4 h-4 ${(ClapsCount === 0) ? 'ml-2.5' : ''}`} />} endIcon={(ClapsCount === 0) ? null : <span className='!text-xs'>{(ClapsCount === null || ClapsCount === undefined) ? '--' : ClapsCount}</span>} />
+                            </span>
                         </UnAuthorizedActionWrapper>
                         <UnAuthorizedActionWrapper description={'You need to be logged in to reply the comment'} >
-                            <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
+                            <span>
+                                <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' />
+                            </span>
                         </UnAuthorizedActionWrapper>
                     </>
                 }
@@ -479,37 +529,50 @@ const BottomControlReplies = ({ commentId, parentId, count }) => {
 }
 
 const RepliesView = ({ commentId, parentId, count }) => {
-    const [replies, setReplies] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { getReplies, commentState } = useContext(CommentContext);
+    const [error, setError] = useState(null);
+    const { getReplies, replieState } = useContext(CommentContext);
 
-    useMemo(async () => {
+    const replies = replieState.replies.find(reply => reply.id === commentId)?.replies || [];
+
+    useEffect(() => {
+        getters();
+    }, [commentId]);
+
+    async function getters() {
         try {
+            if (replies !== undefined && replies?.length === count) return;
             setLoading(true);
-            let res = await getReplies(commentId);
+            let res = await getReplies(commentId, { ...(replies?.length > 0) && { skip: replies?.length, take: count - replies?.length } });
             if (res?.status === 200) {
-                setReplies(res?.data);
-                let newComments = commentState?.comments?.map(comment => {
-                    return comment.id === commentId ? comment.replyData = res?.data : comment;
-                })
-                commentState?.setComments(newComments);
+                if (res?.data?.length > 0) {
+                    replieState.setReplies((prev) => [...prev, { id: commentId, replies: [...prev.find(reply => reply.id === commentId)?.replies || [], ...res?.data] }]);
+                }
+            } else {
+                throw new Error('Failed to fetch replies');
             }
-        }
-        finally {
+        } catch (error) {
+            console.error(error);
+            setError(error);
+        } finally {
             setLoading(false);
         };
-    }, [commentId, count]);
+    }
 
     return (
         <>
-            {!loading ? (replies ? replies.map((reply, index) => {
+            {replies.map((reply, index) => {
                 return (
                     <div key={index} className="mb-2">
                         <CommentView comment={reply} parentId={parentId} />
                     </div>
                 );
-            }) : <div className="text-sm text-gray-500 dark:text-gray-300">No replies found</div>) :
-                <CommentsLoader count={(count >= 10) ? 10 : count} />
+            })}
+            {!loading ?
+                (count > replies.length) && <Button onClick={getters} sx={{ px: 1, height: '28px' }} startIcon={<MdChevronRight className={`w-6 h-6 transition-all duration-300`} />} size='small' variant='text' endIcon={<><span className='!text-sm -ml-1'>Load More</span></>} color='button' />
+                : null}
+            {!loading ? null :
+                <CommentsLoader count={(count - replies?.length >= 10) ? 10 : count - replies?.length} />
             }
         </>
     )

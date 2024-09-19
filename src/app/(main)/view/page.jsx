@@ -1,4 +1,4 @@
-import { MicorPostAuthor, MicroPostActions, MicroPostPageContent } from "@/components/post/_micropost";
+import { MicorPostAuthor, MicroPostActions, MicroPostCommentsView, MicroPostPageContent } from "@/components/post/_micropost";
 import { getMicroPost } from "@/lib/actions/getContent";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
@@ -29,6 +29,7 @@ const ViewPage = async ({ searchParams }) => {
                             </div>
                         </div>
                     </div>
+                    <MicroPostCommentsView post={post} />
                 </section>
             </>
         )

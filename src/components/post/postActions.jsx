@@ -8,7 +8,6 @@ import { AiOutlineComment } from 'react-icons/ai';
 import { PiHandsClappingLight } from 'react-icons/pi';
 import { BookmarkBtn, BtnWithMenu, PostEditButton } from '../Buttons';
 import { Button, SwipeableDrawer, Tooltip } from '../rui';
-import { ArticleComments } from './_client';
 import { useState, useEffect, useContext, Suspense } from 'react';
 import { articleClapsAction, articleClapsList, bookmarkAction, checkBookmarkAction, isPostAuthor } from '@/lib/actions/author';
 import { useSession } from 'next-auth/react';
@@ -17,6 +16,7 @@ import { toast } from 'react-toastify';
 import { StudioContext } from '@/lib/context';
 import { ShareView } from '../Home/_client';
 import { BiSolidUserCircle } from 'react-icons/bi';
+import { ArticleCommentsView } from './_client';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
@@ -50,7 +50,7 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                 }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
                 <div>
                     <Suspense fallback={'Loading...'}>
-                        <ArticleComments articleId={id} article={article} />
+                        <ArticleCommentsView article={article} />
                     </Suspense>
                 </div>
             </SwipeableDrawer>}

@@ -181,7 +181,7 @@ const ShareModal = ({ isOpen, setIsOpen, data, meta }) => {
                     <ShareContentPreview data={data} />
                     <ShareViewContent meta={meta} />
                     <div>
-                        <TextField fullWidth variant="outlined" value={`${window.location.origin}${meta?.url}`} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full dark:!text-black font-semibold -mr-2" color="button" size="small" onClick={() => copyText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
+                        <TextField fullWidth variant="outlined" value={`${window.location.origin}${meta?.url}`} size="small" InputProps={{ endAdornment: <Button variant="contained" className="h-full dark:!text-black font-semibold -mr-2" color="inherit" size="small" onClick={() => copyText(`${window.location.origin}${meta?.url}`)}>Copy</Button> }} />
                     </div>
                 </div>
             </div>
@@ -236,7 +236,7 @@ const ShareViewContent = ({ meta }) => {
                     {shareOptions.map((item, index) => (
                         <span key={index} className={`inline-block ${shareOptions.length === (index + 1) ? '' : 'mr-5'}`}>
                             <Tooltip title={item.name}>
-                                <IconButton className="!w-14 !h-14 p-3 flex items-center justify-center bg-lightButton dark:bg-darkButton" onClick={item?.onClick}>
+                                <IconButton className="!w-14 !h-14 p-3 flex items-center justify-center !bg-lightButton dark:!bg-darkButton" onClick={item?.onClick}>
                                     <item.icon className="w-10 h-10 dark:text-dark text-zinc-800" />
                                 </IconButton>
                             </Tooltip>

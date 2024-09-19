@@ -36,6 +36,9 @@ const mui = createTheme({
         button: {
           main: 'rgb(213, 118, 108)', // Japonica
         },
+        Button: {
+          inheritContainedBg: 'rgb(213, 118, 108)', // Japonica
+        },
         // modelBg: {
         //   main: 'rgb(253, 236, 236)', // Wisp Pink
         // },
@@ -92,6 +95,9 @@ const mui = createTheme({
         },
         button: {
           main: 'rgb(198, 215, 240)', // Spindle
+        },
+        Button: {
+          inheritContainedBg: 'rgb(198, 215, 240)', // Spindle
         },
         // modelBg: {
         //   main: 'rgb(26, 45, 76)', // Big Stone

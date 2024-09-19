@@ -604,5 +604,15 @@ const ImageSliderView = ({ slides = [], url, }) => {
     );
 };
 
+const ErrorBox = ({ error, onRetry }) => {
+    return (
+        <div className="w-full flex justify-center items-center h-48">
+            <div className="flex flex-col items-center justify-center gap-3">
+                <p className="text-gray-500 dark:text-gray-400">{error}</p>
+                <Button onClick={onRetry} variant="outlined" size="small">Retry</Button>
+            </div>
+        </div>
+    );
+}
 
-export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView, ImageSliderView };
+export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView, ImageSliderView, ErrorBox };

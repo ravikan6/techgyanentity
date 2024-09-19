@@ -181,6 +181,9 @@ const checkAuthorFollowAction = async (authorId) => {
     return res;
 }
 
+/**
+ * @deprecated 
+ */
 const articleCommentsListAction = async (articleId) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -225,6 +228,59 @@ const articleCommentsListAction = async (articleId) => {
     }
 }
 
+const getArtcileComments = async (articleId, options = {}) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let comments = await prisma.comment.findMany({
+            where: {
+                postId: articleId,
+                parent: null
+            },
+            include: {
+                user: true,
+                author: true,
+                _count: {
+                    select: { replies: true, claps: true },
+                },
+                claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: options.orderBy || 'desc'
+            },
+            take: options.take || 10,
+            skip: options.cursor && options.cursor !== 'undefined' ? 1 : options.skip || 0,
+            ...(options.cursor && {
+                cursor: {
+                    id: options.cursor,
+                }
+            }),
+        })
+
+        res = { ...res, data: comments, status: 200 };
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+/**
+ * @deprecated 
+ */
 const articleCommentRepliesListAction = async (commentId, options) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -257,6 +313,49 @@ const articleCommentRepliesListAction = async (commentId, options) => {
             orderBy: {
                 createdAt: 'desc'
             },
+        })
+        res = { ...res, data: replies, status: 200 };
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const getArticleCommentReplies = async (commentId, options = {}) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let replies = await prisma.comment.findMany({
+            where: {
+                parentId: commentId
+            },
+            include: {
+                user: true,
+                author: true,
+                _count: {
+                    select: { replies: true, claps: true },
+                },
+                claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: options.orderBy || 'asc'
+            },
+            take: options.take || 10,
+            skip: options.skip || 0,
         })
         res = { ...res, data: replies, status: 200 };
         return res;
@@ -304,34 +403,19 @@ const articleCommentAction = async (data) => {
                     user: true,
                     author: true,
                     _count: {
-                        select: {
-                            replies: true,
-                            claps: true
-                        }
+                        select: { replies: true, claps: true },
                     },
-                    parent: {
-                        include: {
-                            _count: {
-                                select: {
-                                    replies: true,
-                                    claps: true
-                                }
-                            },
-                            user: true,
-                            author: true,
-                            claps: {
+                    claps: {
+                        select: {
+                            id: true,
+                            user: {
                                 select: {
                                     id: true,
-                                    user: {
-                                        select: {
-                                            id: true,
-                                        }
-                                    },
-                                    comment: {
-                                        select: {
-                                            id: true,
-                                        }
-                                    }
+                                }
+                            },
+                            comment: {
+                                select: {
+                                    id: true,
                                 }
                             }
                         }
@@ -368,7 +452,7 @@ const articleCommentClapAction = async (data, action) => {
             let clap = await prisma.commentClap.create({
                 data: {
                     user: { connect: { id: session.user.id } },
-                    comment: { connect: { id: data.commentId } }
+                    comment: { connect: { id: data.id } }
                 }
             })
             res = { ...res, data: clap, status: 200 };
@@ -667,3 +751,5 @@ export const cloudinaryProvider = async (data) => {
 }
 
 export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction, articleClapsList, articleClapsAction, checkBookmarkAction, bookmarkAction, isPostAuthor, getAuthorPosts, getAuthorForTip }
+
+export { getArticleCommentReplies, getArtcileComments };

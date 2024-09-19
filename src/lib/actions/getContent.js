@@ -6,9 +6,20 @@ const getMicoPosts = async () => {
         include: {
             author: {
                 select: {
+                    id: true,
                     name: true,
                     handle: true,
                     image: true,
+                }
+            },
+            _count: {
+                select: {
+                    comments: {
+                        where: {
+                            parent: null,
+                            isDeleted: false,
+                        }
+                    }
                 }
             }
         }
@@ -78,9 +89,20 @@ const getMicroPost = async (shortId) => {
         include: {
             author: {
                 select: {
+                    id: true,
                     name: true,
                     handle: true,
                     image: true,
+                }
+            },
+            _count: {
+                select: {
+                    comments: {
+                        where: {
+                            parent: null,
+                            isDeleted: false,
+                        }
+                    }
                 }
             }
         }

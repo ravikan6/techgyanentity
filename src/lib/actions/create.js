@@ -216,4 +216,245 @@ const pollAnsSubmit = async (pollId, option) => {
     return res;
 }
 
+
+const getPostComments = async (postId, options = {}) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let comments = await prisma.microPostComment.findMany({
+            where: {
+                postId: postId,
+                parent: null
+            },
+            include: {
+                user: true,
+                author: true,
+                _count: {
+                    select: { replies: true, claps: true },
+                },
+                claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: options.orderBy || 'desc'
+            },
+            take: options.take || 10,
+            skip: options.cursor && options.cursor !== 'undefined' ? 1 : options.skip || 0,
+            ...(options.cursor && {
+                cursor: {
+                    id: options.cursor,
+                }
+            }),
+        })
+
+        res = { ...res, data: comments, status: 200 };
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+
+const getPostCommentReplies = async (commentId, options = {}) => {
+    let res = { data: null, status: 500, errors: [] };
+    try {
+        let replies = await prisma.microPostComment.findMany({
+            where: {
+                parentId: commentId
+            },
+            include: {
+                user: true,
+                author: true,
+                _count: {
+                    select: { replies: true, claps: true },
+                },
+                claps: {
+                    select: {
+                        id: true,
+                        user: {
+                            select: {
+                                id: true,
+                            }
+                        },
+                        comment: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: options.orderBy || 'asc'
+            },
+            take: options.take || 10,
+            skip: options.skip || 0,
+        })
+        res = { ...res, data: replies, status: 200 };
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const postCommentAction = async (data) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    if (!data.body || data.body.trim() == '') {
+        res.errors.push({ message: 'Comment body is required' });
+        return res;
+    }
+
+    try {
+        if (data?.id) {
+            let comment = await prisma.microPostComment.update({
+                where: {
+                    id: data.id
+                },
+                data: {
+                    content: data.body
+                },
+            });
+            res = { ...res, data: comment, status: 200 };
+            return res;
+        } else {
+            let comment = await prisma.microPostComment.create({
+                data: {
+                    content: data.body,
+                    user: { connect: { id: session.user.id } },
+                    post: { connect: { shortId: data.postId } },
+                    ...(data.parentId && { parent: { connect: { id: data.parentId } } }),
+                    ...(data.authorId && { author: { connect: { id: data.authorId } } })
+                },
+                include: {
+                    user: true,
+                    author: true,
+                    _count: {
+                        select: { replies: true, claps: true },
+                    },
+                    claps: {
+                        select: {
+                            id: true,
+                            user: {
+                                select: {
+                                    id: true,
+                                }
+                            },
+                            comment: {
+                                select: {
+                                    id: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            res = { ...res, data: comment, status: 200 };
+            return res;
+        }
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const postCommentClapAction = async (data, action) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user || !action) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        if (action == 'delete') {
+            let clap = await prisma.microPostCommentClap.delete({
+                where: {
+                    id: data.id
+                }
+            });
+            res = { ...res, data: clap, status: 200 };
+            return res;
+        } else if (action == 'create') {
+            let clap = await prisma.microPostCommentClap.create({
+                data: {
+                    user: { connect: { id: session.user.id } },
+                    comment: { connect: { id: data.id } }
+                }
+            })
+            res = { ...res, data: clap, status: 200 };
+            return res;
+        }
+        throw new Error('Invalid action');
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+const postCommentDeleteAction = async (data) => {
+    let res = { data: null, status: 500, errors: [] };
+    const session = await auth();
+    if (!session || !session.user) {
+        res = { ...res, errors: [{ message: 'Unauthorized' }] };
+        return res;
+    }
+
+    try {
+        let comment = await prisma.microPostComment.findUnique({
+            where: {
+                id: data.id
+            },
+            include: {
+                user: true,
+            }
+        });
+        if (!comment) {
+            res.errors.push({ message: 'Comment not found' });
+            return res;
+        }
+        if (comment.userId !== session.user.id) {
+            res.errors.push({ message: 'Unauthorized' });
+            return res;
+        }
+        await prisma.microPostComment.deleteMany({
+            where: {
+                parentId: data.id
+            }
+        })
+        let dt = await prisma.microPostComment.delete({
+            where: {
+                id: data.id
+            }
+        });
+        res = { ...res, data: dt, status: 200 };
+        return res;
+    } catch (e) {
+        res.errors.push({ message: e.message });
+        return res;
+    }
+}
+
+
 export { createMicroPost, pollAnsSubmit }
+
+export { getPostComments, getPostCommentReplies, postCommentAction, postCommentClapAction, postCommentDeleteAction }

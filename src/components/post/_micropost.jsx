@@ -9,6 +9,9 @@ import confirm from "@/lib/confirm";
 import { deleteMicroPost } from "@/lib/actions/delete";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { getPostCommentReplies, getPostComments, postCommentAction, postCommentClapAction, postCommentDeleteAction } from "@/lib/actions/create";
+import { CommentsView } from "./comment";
+import Link from "next/link";
 
 
 const MicroPostView = ({ post, session }) => {
@@ -34,7 +37,9 @@ const MicroPostView = ({ post, session }) => {
 const CommunityPostContent = ({ post, session }) => {
     switch (post.type) {
         case 'TEXT':
-            return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
+            return <Link href={`view?type=post&id=${post.shortId}`}>
+                <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>
+            </Link>;
         case 'IMAGE':
             return <ImagePostView post={post.typeContent} url={`view?type=post&id=${post.shortId}`} />;
         case 'LINK':
@@ -83,6 +88,8 @@ const MicroPostViewPage = ({ post, session }) => {
                             }
                         }}
                     </p>
+
+                    <MicroPostCommentsView post={post} />
                 </div>
             </div>
         </div>
@@ -98,7 +105,7 @@ const MicroPostPageContent = ({ post, session, imgRounded, className, addPad = t
                     case 'TEXT':
                         return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
                     case 'IMAGE':
-                        return <div className={`max-w-md ${imgRounded ? 'rounded-md overflow-hidden mx-auto' : ''}`}><ImageSliderView slides={post.typeContent.list} url={`@${post?.author?.handle}/post/${post.shortId}`} /></div>;
+                        return <div className={`max-w-xl mx-auto ${imgRounded ? 'rounded-md overflow-hidden ' : ''}`}><ImageSliderView slides={post.typeContent.list} url={`@${post?.author?.handle}/post/${post.shortId}`} /></div>;
                     case 'LINK':
                         return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
                     case 'POLL':
@@ -166,5 +173,55 @@ const MicroPostActions = ({ id, list = [] }) => {
     );
 }
 
+const MicroPostCommentsView = ({ post }) => {
 
-export { MicroPostView, CommunityPostContent, MicroPostViewPage, MicroPostPageContent, MicorPostAuthor, MicroPostActions };
+    async function getComments(options = {}) {
+        try {
+            let res = await getPostComments(post.id, options);
+            return res;
+        } catch (error) {
+            return { status: 500, data: null };
+        }
+    }
+    async function commentAction(obj = {}) {
+        try {
+            let res = await postCommentAction({ postId: post.shortId, ...obj });
+            return res;
+        } catch (error) {
+            return { status: 500, data: null };
+        }
+    }
+    async function getCommentReplies(id, options = {}) {
+        try {
+            let res = await getPostCommentReplies(id, options);
+            return res;
+        } catch (error) {
+            return { status: 500, data: null };
+        }
+    }
+    async function deleteComment(id) {
+        try {
+            let res = await postCommentDeleteAction({ id });
+            return res;
+        } catch (error) {
+            return { status: 500, data: null };
+        }
+    }
+    async function clapAction(data, action) {
+        try {
+            let res = await postCommentClapAction(data, action);
+            return res;
+        } catch (error) {
+            return { status: 500, data: null };
+        }
+    }
+
+    return (
+        <div className="mt-4">
+            <CommentsView contentAuthor={post?.author} count={post?._count?.comments} getComments={getComments} commentAction={commentAction} getCommentReplies={getCommentReplies} deleteComment={deleteComment} clapAction={clapAction} />
+        </div>
+    );
+};
+
+
+export { MicroPostView, CommunityPostContent, MicroPostViewPage, MicroPostPageContent, MicorPostAuthor, MicroPostActions, MicroPostCommentsView };

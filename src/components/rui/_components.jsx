@@ -62,8 +62,8 @@ const RuiButton = styled(Button)(({ theme }) => ({
     borderRadius: 999,
     '& .MuiButton-contained': {
         boxShadow: theme.shadows[2],
-        backgroundColor: `${theme.palette?.accent?.main} !important`,
-    }
+        backgroundColor: `${theme.palette?.button?.main} !important`,
+    },
 }));
 
 const RuiToolTip = styled(({ className, ...props }) =>

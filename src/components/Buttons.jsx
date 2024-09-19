@@ -519,7 +519,7 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
     <>
       <div className={`rounded-full justify-center cursor-pointer border border-transparent chetlnam active:border flex items-center transition-all text-sm duration-300 ${classes}`}>
         <IconButton disabled={loading} onClick={handleOpen} size='small' sx={{ ...sx }} >
-          <DrawOutlined htmlColor={iconColor} />
+          <DrawOutlined htmlColor={iconColor} className='w-5 h-5' />
         </IconButton>
       </div>
       <Menu
