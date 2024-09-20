@@ -530,7 +530,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
     }, [slides.length]);
 
     return (
-        <div className="relative group aspect-[4/5] mx-auto bg-gray-300/30 dark:bg-zinc-700/30">
+        <div className="relative group aspect-[4/5] mx-auto">
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                 {/* Images Slider */}
                 {slides.map((slide, index) => (
@@ -549,20 +549,6 @@ const ImageSliderView = ({ slides = [], url, }) => {
                 ))}
             </div>
 
-            {/* Navigation buttons */}
-            <BackBtn
-                className={`absolute left-4 top-1/2 transform -translate-y-1/2  rounded-full opacity-80 hover:opacity-100 ${hasPrev ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
-                onClick={goToPrevSlide}
-                disabled={!hasPrev}
-            >
-            </BackBtn>
-            <NextBtn
-                className={`absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full opacity-80 hover:opacity-100 ${hasNext ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
-                onClick={goToNextSlide}
-                disabled={!hasNext}
-            >
-            </NextBtn>
-
             {/* Original Image Button */}
             <div className={`absolute right-4 ${showMeta ? 'top-4 bottom-auto' : 'bottom-4'} bg-lightHead dark:bg-darkHead ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
                 <IconButton
@@ -573,26 +559,39 @@ const ImageSliderView = ({ slides = [], url, }) => {
                 </IconButton>
             </div>
 
-            {/* Radio Controls */}
-            <div className="absolute bottom-0.5 z-10 w-full flex justify-center space-x-2 items-center">
-                {slides.map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => radioBtnClick(index)}
-                        className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-2.5 h-2.5' : 'bg-lightHead dark:bg-darkHead w-2 h-2'}`}
-                    />
-                ))}
-            </div>
+            {slides.length > 1 ? <>
+                <BackBtn
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2  rounded-full opacity-80 hover:opacity-100 ${hasPrev ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                    onClick={goToPrevSlide}
+                    disabled={!hasPrev}
+                >
+                </BackBtn>
+                <NextBtn
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full opacity-80 hover:opacity-100 ${hasNext ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                    onClick={goToNextSlide}
+                    disabled={!hasNext}
+                >
+                </NextBtn>
+                <div className="absolute bottom-0.5 z-10 w-full flex justify-center space-x-2 items-center">
+                    {slides.map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => radioBtnClick(index)}
+                            className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-2.5 h-2.5' : 'bg-lightHead dark:bg-darkHead w-2 h-2'}`}
+                        />
+                    ))}
+                </div> </> : null
+            }
 
             {/* Caption */}
             {slides[currentIndex]?.caption && (
                 <div className="absolute bottom-0 left-0 w-full">
                     <div className="bg-lightHead dark:bg-darkHead transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
-                        <button className="w-full h-full flex justify-center items-center relative" onClick={() => setShowMeta(!showMeta)}>{
+                        <IconButton sx={{ width: '20px', height: '20px' }} onClick={() => setShowMeta(!showMeta)}>{
                             showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />
-                        } </button>
+                        } </IconButton>
                     </div>
-                    <div className="w-full transition-all duration-300 text-sm bg-light/65 dark:bg-dark/65 backdrop-blur-lg px-2 py-1 pb-3 rounded-t-md max-h-32 overflow-y-auto"
+                    <div className="w-full transition-all duration-300 text-sm bg-light/75 dark:bg-dark/75 backdrop-blur-2xl px-2 py-1 pb-3 rounded-t-md max-h-32 overflow-y-auto"
                         style={{
                             display: showMeta ? 'block' : 'none',
                         }}>

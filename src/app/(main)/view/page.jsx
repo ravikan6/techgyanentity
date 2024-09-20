@@ -7,11 +7,11 @@ const ViewPage = async ({ searchParams }) => {
     const query = searchParams;
     const session = await auth();
 
-    if (!query) return notFound();
+    if (!query) notFound();
 
     if (query?.type === 'post' && query?.id) {
         const post = await getMicroPost(query.id);
-        if (!post) return notFound();
+        if (!post) notFound();
         return (
             <>
                 <section className="max-w-3xl mx-auto my-5">

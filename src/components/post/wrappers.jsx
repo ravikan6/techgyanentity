@@ -64,10 +64,10 @@ const ViewLayoutWrapper = ({ children }) => {
             >
                 <progressContext.Provider value={{ inProgress, setInProgress }}>
                     <div className='absolute top-0 left-0 w-full' >{inProgress && <LinearProgress color="accent" />}</div>
-                    <div className='absolute -top-4 -right-4 z-[99999]'>
+                    {/* <div className='absolute -top-4 -right-4 z-[99999]'>
                         <RouterBackBtn />
-                    </div>
-                    <div className='min-w-[calc(100vw-80px)] min-[850px]:min-w-[768px] min-h-[calc(100%-100px)] '>
+                    </div> */}
+                    <div className='min-w-[calc(100vw-80px)] min-h-[calc(100vh-80px)] min-[850px]:min-w-[768px] min-[850px]:h-[480px] min-[850px]:w-[768px] min-[850px]:min-h-[480px] lg:min-w-[928px] lg:min-h-[580px] lg:w-[928px] lg:h-[580px] '>
                         <Suspense fallback={() => setInProgress(true)}>
                             {children}
                         </Suspense>

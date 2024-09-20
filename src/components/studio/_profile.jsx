@@ -76,7 +76,7 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
 
     return (
         <Fragment>
-            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', pr: '2px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', pr: '2px', position: 'relative' }}>
                 <Tooltip title="Account settings">
                     <IconButton
                         onClick={(e) => { handleClick(e); setAnchorEl(e.currentTarget) }}
@@ -87,6 +87,9 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
                     >
                         <Avatar alt='Avatar' className='uppercase font-medium text-base' src={currentData?.image} sx={{ width: 32, height: 32 }}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                     </IconButton>
+                    <div className='rounded-full w-4 h-4 box-border border-2 border-solid border-light/90 dark:border-dark/90 absolute -top-1 -right-1'>
+                        <Avatar alt='Avatar' className='uppercase font-xs text-base' src={session?.user?.image} sx={{ width: 14, height: 14 }}>{session?.user?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                    </div>
                 </Tooltip>
             </Box>
             <Menu
