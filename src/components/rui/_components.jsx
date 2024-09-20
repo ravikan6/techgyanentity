@@ -1,6 +1,6 @@
 'use client'
 import React, { forwardRef, useState } from 'react'
-import { Menu, alpha, styled, Button, MenuItem, Tooltip, Zoom, tooltipClasses, Dialog, TextField, Box, Snackbar, IconButton, ToggleButtonGroup, ToggleButton, Switch, SwipeableDrawer } from "@mui/material";
+import { Menu, alpha, styled, Button, MenuItem, Tooltip, Zoom, tooltipClasses, Dialog, TextField, Box, Snackbar, IconButton, ToggleButtonGroup, ToggleButton, Switch, SwipeableDrawer, CircularProgress } from "@mui/material";
 import { Puller } from '../post/_client';
 import { CloseBtn } from '../Buttons';
 
@@ -145,6 +145,25 @@ const UnstyledTextField = ({ counter, ...props }) => {
     </>);
 };
 
+function GradientCircularProgress({ size }) {
+    return (
+        <React.Fragment>
+            <svg width={0} height={0}>
+                <defs>
+                    <linearGradient id="progress_bar_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{
+                            stopColor: 'var(--rb-palette-button-main)',
+                        }} />
+                        <stop offset="100%" style={{
+                            stopColor: 'var(--rb-palette-accent-main)',
+                        }} />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <CircularProgress size={size} sx={{ 'svg circle': { stroke: 'url(#progress_bar_gradient)' } }} />
+        </React.Fragment>
+    );
+}
 
 const RuiTextField = styled(UnstyledTextField)(({ theme }) => ({
     '& .MuiInputBase-root': {
@@ -256,11 +275,11 @@ const RuiSwipeableDrawer = ({ children, puller = true, showClose = true, addPd =
 
     return (
         <RuiSwipeableDrawerStyled {...props}>
-            {puller && <Puller className="block sm:hidden" />}
+            {puller && <Puller className="block sm:hidden z-20" />}
             {showClose && <div className='absolute right-1.5 top-1.5 sm:block hidden'>
                 <CloseBtn onClick={props?.onClose} />
             </div>}
-            <div className={`max-h-[calc(100%-14px)] overflow-y-auto ${puller && 'mt-3'} ${addPd && 'p-3'}`}>
+            <div className={`max-h-[calc(100%-14px)] overflow-y-auto ${puller && addPd && 'mt-3'} ${addPd && 'p-3'}`}>
                 {children}
             </div>
         </RuiSwipeableDrawerStyled>
@@ -292,7 +311,7 @@ const RuiSwipeableDrawerStyled = styled(SwipeableDrawer)(({ theme }) => ({
     },
 }))
 
-export { RuiMenu, RuiIcoBtn, RuiMenuItem, RuiButton, RuiTextField, RuiDialog, RuiToolTip, RuiSnakBar, RuiToggleButtonGroup, RuiToggleButton, RuiSwitch, RuiSwipeableDrawer };
+export { RuiMenu, RuiIcoBtn, RuiMenuItem, RuiButton, RuiTextField, RuiDialog, RuiToolTip, RuiSnakBar, RuiToggleButtonGroup, RuiToggleButton, RuiSwitch, RuiSwipeableDrawer, GradientCircularProgress };
 export { RuiButton as Button };
 export { RuiIcoBtn as Btn };
 export { RuiToolTip as Tooltip };

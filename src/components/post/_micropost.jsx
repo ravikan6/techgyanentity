@@ -58,13 +58,13 @@ const MicroPostViewPage = ({ post, session }) => {
     const router = useRouter();
 
     return (
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 items-start h-full">
-            <div className="w-full sm:w-1/2">
+        <div className="flex flex-col sm:flex-row items-start h-full">
+            <div className="w-full sm:w-1/2 bg-lightHead dark:bg-darkHead">
                 <MicroPostPageContent post={post} session={session} />
             </div>
             <div className="w-full relative sm:w-1/2 sm:flex-1 overflow-y-auto sm:max-h-[calc(100vh-80px)] md:max-h-[480px] lg:max-h-[580px]">
                 <div className="sm:sticky top-0 right-0 w-full">
-                    <div className="p-3 rounded-xl bg-lightHead/40 dark:bg-darkHead/40 backdrop-blur-md flex justify-between items-center w-full">
+                    <div className="p-3 pt-4 sm:pt-3 bg-lightHead dark:bg-darkHead backdrop-blur-md flex justify-between items-center w-full">
                         <div className="flex items-center">
                             <div className="flex-shrink-0">
                                 <AuthorAvatar data={{ url: post.author?.image?.url }} sx={{ width: '32px', height: '32px' }} />
@@ -80,7 +80,7 @@ const MicroPostViewPage = ({ post, session }) => {
                         </div>
                     </div>
                 </div>
-                <div className="sm:mt-20 px-2">
+                <div className="sm:mt-2 px-2">
                     {post.type === 'IMAGE' ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.content}</p> : null}
                     <section className="px-2">
                         <MicroPostCommentsView post={post} />
@@ -92,15 +92,15 @@ const MicroPostViewPage = ({ post, session }) => {
 }
 
 
-const MicroPostPageContent = ({ post, session, imgRounded, className, addPad = true }) => {
+const MicroPostPageContent = ({ post, session, imgRounded, className, addPad = true, imgBg = false }) => {
     return (
         <div className={className}>
             {(() => {
                 switch (post.type) {
                     case 'TEXT':
-                        return <p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p>;
+                        return <div className={`${addPad ? 'p-4' : ''}`}><p className="text-base text-gray-900 dark:text-gray-100">{post.content}</p> </div>;
                     case 'IMAGE':
-                        return <div className={`max-w-xl mx-auto ${imgRounded ? 'rounded-md overflow-hidden ' : ''}`}><ImageSliderView slides={post.typeContent.list} url={`@${post?.author?.handle}/post/${post.shortId}`} /></div>;
+                        return <div className={`max-w-xl mx-auto ${imgRounded ? 'rounded-md overflow-hidden ' : ''}`}><ImageSliderView slides={post.typeContent.list} url={`@${post?.author?.handle}/post/${post.shortId}`} bg={imgBg} /></div>;
                     case 'LINK':
                         return <a href={post.content} target="_blank" rel="noreferrer">{post.content}</a>;
                     case 'POLL':

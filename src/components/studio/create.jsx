@@ -7,19 +7,22 @@ import { createMicroPost } from "@/lib/actions/create";
 import { toast } from "react-toastify";
 import { CloseRounded, ImageRounded, LinkRounded, Paragliding, Poll, TextFields } from "@mui/icons-material";
 import { MicroPostImageUploader } from "../uploader";
+import { useRouter } from "next-nprogress-bar";
 
 const MicroPostCreate = () => {
     const [type, setType] = useState('TEXT')
     const [content, setContent] = useState({ title: '' })
     const [loading, setLoading] = useState(false)
     const [disabled, setDisabled] = useState(false)
-    const { data, setLoading: contextLoading } = useContext(StudioContext);
+    const { data, setLoading: setContextLoading, loading: contextLoading } = useContext(StudioContext);
 
-    const types = [{ t: 'TEXT', i: <TextFields fontSize="small" /> }, { t: 'IMAGE', i: <ImageRounded fontSize="small" /> }, { t: 'POLL', i: <Poll fontSize="small" /> }, { t: 'LINK', i: <LinkRounded fontSize="small" /> }, { t: 'ARTICLE', i: <Paragliding fontSize="small" /> }]
+    const types = [{ t: 'TEXT', i: <TextFields fontSize="small" /> }, { t: 'IMAGE', i: <ImageRounded fontSize="small" /> }, { t: 'POLL', i: <Poll fontSize="small" /> }]
 
     useEffect(() => {
-        contextLoading(false)
+        if (contextLoading) setContextLoading(false)
     }, [])
+
+    const router = useRouter();
 
     useEffect(() => {
         if (content?.title) {
@@ -51,19 +54,10 @@ const MicroPostCreate = () => {
                     }
                     break;
                 } case "LINK": {
-                    if (content?.title.length > 0) {
-                        setDisabled(false)
-                    } else {
-                        setDisabled(true)
-                    }
+                    // For next version
                     break;
                 } case "ARTICLE": {
-                    if (content?.title.length > 0) {
-                        setDisabled(false)
-                    } else {
-                        setDisabled(true)
-                    }
-                    break;
+                    // For next version
                 } default: {
                     setDisabled(true)
                 }
@@ -81,8 +75,9 @@ const MicroPostCreate = () => {
             } case "POLL": {
                 setContent((c) => ({ title: c.title, options: ['', ''] }))
                 break;
+                // More ...
             } default: {
-                setContent((c) => ({ title: c.title }))
+                setContent((c) => ({ title: c?.title }))
             }
         }
         setType(type)
@@ -92,20 +87,23 @@ const MicroPostCreate = () => {
         if (content?.title && type) {
             try {
                 setLoading(true)
-
+                setContextLoading(true)
                 let dt = { content: content, type, authorId: data?.data?.id }
                 let res = await createMicroPost(dt);
-
                 if (res && res.data, res.status === 200) {
-                    toast.info('Post Published')
+                    toast.success('Post created successfully')
+                    setContent({ title: '' })
+                    structSetter('TEXT')
+                    router.push(`/view?type=post&id=${res.data.shortId}`)
                 } else {
-                    res.errors.map((e) => toast.error(e?.message))
+                    if (res.errors) res.errors.map((e) => toast.error(e?.message));
+                    else throw new Error('Something went wrong.')
                 }
             } catch (e) {
-                console.log(e)
                 toast.error('An error occured')
             } finally {
                 setLoading(false)
+                setContextLoading(false)
             }
         }
     }
@@ -122,10 +120,10 @@ const MicroPostCreate = () => {
                 </div>
                 <div className="flex justify-end items-center gap-4">
                     <Button size="small" disabled={loading} variant="text" color="primary" onClick={() => { structSetter("TEXT") }}>Cancle</Button>
-                    <Button size="small" disabled={loading || disabled} variant="contained" color="button" className={`${(loading || disabled) ? null : 'dark:!text-black'}`} onClick={() => onSubmit()}>Post</Button>
+                    <Button size="small" disabled={loading || disabled} variant="contained" color="inherit" className={''} onClick={() => onSubmit()}>Post</Button>
                 </div>
             </Box>
-            {(type.toLowerCase() === 'text') ? <div className="flex gap-2 mt-4 flex-wrap">
+            {(type.toLowerCase() === 'text') && !loading ? <div className="flex gap-2 mt-4 flex-wrap">
                 {types.map(({ t, i: iconComp }, l) => (
                     <Chip key={l} variant={type === t ? "filled" : "outlined"} color={type === t ? "accent" : "primary"} icon={<span className="mr-3">{iconComp}</span>} label={t.slice(0, 1).concat(t.slice(1).toLowerCase())} onClick={() => { structSetter(t) }} sx={{ px: 1.2 }} />
                 ))}
@@ -139,7 +137,7 @@ const MicroPostEditor = ({ type, setter, getter, onCancle, disabled }) => {
         case 'TEXT':
             return <MicroPostText setter={setter} getter={getter} />
         case 'IMAGE':
-            return <MicroPostImage setter={setter} getter={getter} />
+            return <MicroPostImage setter={setter} getter={getter} onCancle={onCancle} disabled={disabled} />
         case 'POLL':
             return <MicroPostPoll setter={setter} getter={getter} onCancle={onCancle} disabled={disabled} />
         case 'LINK':
@@ -154,15 +152,15 @@ const MicroPostEditor = ({ type, setter, getter, onCancle, disabled }) => {
 const MicroPostText = ({ setter, getter }) => {
     return (
         <div>
-            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} getter={getter?.title} counter={true} />
+            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} value={getter?.title} counter={true} />
         </div>
     )
 }
 
-const MicroPostImage = ({ setter, getter }) => {
+const MicroPostImage = ({ setter, getter, onCancle, disabled }) => {
     return (
         <div>
-            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} getter={getter?.title} placeholder="Image Title" />
+            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} value={getter?.title} placeholder="Image Title" />
             <MicroPostImageUploader setter={setter} getter={getter} />
         </div>
     )
@@ -173,7 +171,7 @@ const MicroPostPoll = ({ setter, getter, onCancle, disabled }) => {
 
     return (
         <div>
-            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} getter={getter?.title} placeholder="Poll Question" />
+            <MicroPostTextField onChange={(e) => setter((dt) => ({ ...dt, title: e.target.value }))} value={getter?.title} placeholder="Poll Question" />
             <div className="flex flex-col gap-3 mt-2.5">
                 {getter.options?.map((v, i) => {
                     const onChange = (e) => {
@@ -192,7 +190,7 @@ const MicroPostPoll = ({ setter, getter, onCancle, disabled }) => {
                             <IconButton disabled={disabled} size="small" onClick={() => { onRemove() }}>
                                 <CloseRounded fontSize="small" />
                             </IconButton>
-                            <div className="rounded-full overflow-hidden bg-lightHead/70 dark:bg-darkHead/70 px-2 w-3/4 flex items-center h-10" key={i}>
+                            <div className="rounded-full overflow-hidden bg-lightHead/70 dark:bg-darkHead/70 px-2 w-full md:w-3/4 flex items-center h-10" key={i}>
                                 <TextField
                                     size="small"
                                     disabled={disabled}
@@ -221,19 +219,11 @@ const MicroPostPoll = ({ setter, getter, onCancle, disabled }) => {
 }
 
 const MicroPostLink = ({ setter, getter }) => {
-    return (
-        <div>
-            <input type="text" onChange={(e) => setter({ title: e.target.value })} />
-        </div>
-    )
+    return null; // For next version
 }
 
 const MicroPostArticle = ({ setter, getter }) => {
-    return (
-        <div>
-            <input type="text" onChange={(e) => setter({ title: e.target.value })} />
-        </div>
-    )
+    return null; // for next version
 }
 
 const MicroPostTextField = ({ value, onChange, length, counter, placeholder, fieldProps }) => {

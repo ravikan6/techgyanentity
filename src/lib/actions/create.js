@@ -21,8 +21,7 @@ const createMicroPost = async (data) => {
                 }
                 let images = data.content.images.map((i, index) => {
                     let file = i.file?.has("data") ? i.file.get("data") : i.file;
-                    console.log(file)
-                    console.log(i, typeof i.file)
+
                     if (!file) {
                         res.errors.push({ message: `No file provided for image ${index + 1}` })
                         return res
@@ -36,11 +35,10 @@ const createMicroPost = async (data) => {
 
                 let newImages = await Promise.all(images.map(async (i) => {
                     let url = await uploadImage(i.file, 'TechGyan');
-                    console.log(url)
                     return {
                         url: url.data.public_id,
-                        caption: i.caption,
-                        location: i.location,
+                        caption: i?.caption,
+                        location: i?.location,
                     }
                 }));
 
@@ -75,12 +73,14 @@ const createMicroPost = async (data) => {
                     res.errors.push({ message: 'No link provided' })
                     return res
                 }
+                // for next version
                 break;
             } case "ARTICLE": {
                 if (!data.content?.article) {
                     res.errors.push({ message: 'No article provided' })
                     return res
                 }
+                // for next version
                 break;
             } default: {
                 if (!data.content?.title) {
@@ -90,12 +90,12 @@ const createMicroPost = async (data) => {
             }
         }
     } catch (e) {
-        console.log(e)
-        res.errors.push({ message: JSON.stringify(e) })
+        res.errors.push({ message: 'Something went wrong' })
         return res
     }
 
     if (data.type !== 'TEXT' && !objectId) {
+        res.errors.push({ message: 'Something went wrong' })
         return res
     }
 
@@ -117,8 +117,7 @@ const createMicroPost = async (data) => {
         res.data = post
         res.status = 200
     } catch (e) {
-        console.log(e)
-        res.errors.push({ message: JSON.stringify(e) })
+        res.errors.push({ message: 'An error occurred' })
     }
     return res;
 }

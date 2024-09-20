@@ -314,7 +314,7 @@ const PollView = ({ post, session, url }) => {
 
 const ImagePostView = ({ post, url }) => {
     return (
-        <div className="aspect-[4/5] relative">
+        <div className="aspect-square relative">
             <Link href={url}>
                 <Image
                     className="w-full h-full object-cover rounded-md"
@@ -496,7 +496,7 @@ const PostListLoadingSkelton = ({ count }) => {
     )
 }
 
-const ImageSliderView = ({ slides = [], url, }) => {
+const ImageSliderView = ({ slides = [], url, bg }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
@@ -530,7 +530,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
     }, [slides.length]);
 
     return (
-        <div className="relative group aspect-[4/5] mx-auto">
+        <div className={`relative group aspect-[4/5] mx-auto ${bg ? 'bg-light dark:bg-dark' : 'bg-transparent'}`}>
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                 {/* Images Slider */}
                 {slides.map((slide, index) => (
@@ -550,7 +550,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
             </div>
 
             {/* Original Image Button */}
-            <div className={`absolute right-4 ${showMeta ? 'top-4 bottom-auto' : 'bottom-4'} bg-lightHead dark:bg-darkHead ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
+            <div className={`absolute right-4 ${showMeta ? 'top-4 bottom-auto' : 'bottom-4'} bg-accentLight dark:bg-accentDark ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
                 <IconButton
                     onClick={() => setOriginal(!original)}
                     className="rounded-full"
@@ -561,13 +561,13 @@ const ImageSliderView = ({ slides = [], url, }) => {
 
             {slides.length > 1 ? <>
                 <BackBtn
-                    className={`absolute left-4 top-1/2 transform -translate-y-1/2  rounded-full opacity-80 hover:opacity-100 ${hasPrev ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2  rounded-full opacity-80 hover:opacity-100 ${hasPrev ? 'bg-accentLight/90 dark:bg-accentDark/90 shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
                     onClick={goToPrevSlide}
                     disabled={!hasPrev}
                 >
                 </BackBtn>
                 <NextBtn
-                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full opacity-80 hover:opacity-100 ${hasNext ? 'bg-lightHead dark:bg-darkHead shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full opacity-80 hover:opacity-100 ${hasNext ? 'bg-accentLight/90 dark:bg-accentDark/90 shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
                     onClick={goToNextSlide}
                     disabled={!hasNext}
                 >
@@ -577,7 +577,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
                         <button
                             key={index}
                             onClick={() => radioBtnClick(index)}
-                            className={`rounded-full transition-all ${index === currentIndex ? 'bg-lightButton dark:bg-darkButton w-2.5 h-2.5' : 'bg-lightHead dark:bg-darkHead w-2 h-2'}`}
+                            className={`rounded-full transition-all ${index === currentIndex ? 'bg-accentLight dark:bg-accentDark w-2.5 h-2.5' : 'bg-accentLight/70 dark:bg-accentDark/70 w-2 h-2'}`}
                         />
                     ))}
                 </div> </> : null
@@ -586,7 +586,7 @@ const ImageSliderView = ({ slides = [], url, }) => {
             {/* Caption */}
             {slides[currentIndex]?.caption && (
                 <div className="absolute bottom-0 left-0 w-full">
-                    <div className="bg-lightHead dark:bg-darkHead transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
+                    <div className="bg-accentLight/90 dark:bg-accentDark/90 transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
                         <IconButton sx={{ width: '20px', height: '20px' }} onClick={() => setShowMeta(!showMeta)}>{
                             showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />
                         } </IconButton>

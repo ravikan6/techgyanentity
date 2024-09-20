@@ -5,23 +5,34 @@ import { Fullscreen, FullscreenExit } from "@mui/icons-material";
 import { InputHeader } from "./studio/author/_edit-funcs";
 import { LuImagePlus } from "react-icons/lu";
 import { useDropzone } from 'react-dropzone'
+import { IoIosImages } from "react-icons/io";
 
 const MicroPostImageUploader = ({ setter, getter }) => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(0);
     const [meta, setMeta] = useState([]);
     const [isCover, setIsCover] = useState(true);
-    const [error, setError] = useState("");
+    const [error, setError] = useState([]);
 
-    const onDrop = (acceptedFiles) => {
-        if (acceptedFiles.length > 5) {
+    const onDrop = (acceptedFiles, fileRejections) => {
+        if (fileRejections.length > 0) {
+            setError(fileRejections);
             return;
         }
-        setFiles([...acceptedFiles]);
+        if (files.length + acceptedFiles.length > 5) {
+            return;
+        }
+        setFiles([...files, ...acceptedFiles]);
         setMeta([...meta, ...Array(acceptedFiles.length).fill({ caption: "", location: "" })]);
     }
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: 'image/*', multiple: true, maxFiles: 5 });
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop, accept: {
+            "image/jpeg": [".jpg", ".jpeg", ".jpe"],
+            "image/png": [".png", ".apng"],
+            "image/gif": [".gif", ".webp"]
+        }, multiple: true, maxFiles: 5 - files.length,
+    });
 
     const handleCaption = (value) => {
         const newMeta = [...meta];
@@ -29,11 +40,12 @@ const MicroPostImageUploader = ({ setter, getter }) => {
         setMeta(newMeta);
     }
 
-    const handleLocation = (value) => {
-        const newMeta = [...meta];
-        newMeta[selectedFile] = { ...newMeta[selectedFile], location: value };
-        setMeta(newMeta);
-    }
+    // Will be used in future
+    // const handleLocation = (value) => {
+    //     const newMeta = [...meta];
+    //     newMeta[selectedFile] = { ...newMeta[selectedFile], location: value };
+    //     setMeta(newMeta);
+    // }
 
     const onRemove = (index) => {
         setFiles(files.filter((_, i) => i !== index));
@@ -42,7 +54,7 @@ const MicroPostImageUploader = ({ setter, getter }) => {
     }
 
     useEffect(() => {
-        if (files.length > 0 && files.length <= 5 && !error) {
+        if (files.length > 0 && files.length <= 5 && error.length === 0) {
             let data = [];
             files.forEach((file, index) => {
                 let f = new FormData();
@@ -50,7 +62,7 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                 data.push({
                     file: f,
                     caption: meta[index]?.caption,
-                    location: meta[index]?.location,
+                    // location: meta[index]?.location, // location is not used (Will be used in future)
                 });
             });
             setter((prev) => {
@@ -66,27 +78,41 @@ const MicroPostImageUploader = ({ setter, getter }) => {
         <div className="bg-lightHead dark:bg-darkHead p-2 rounded-md">
             {
                 files.length === 0 ? (
-                    <div className="">
+                    <section className="w-full p-4">
                         <div
                             {...getRootProps()}
-                            className={`${isDragActive ? "border-4" : "border-2"
-                                } mx-auto flex flex-col w-full max-w-xs h-72 items-center justify-center`}
+                            className={`${isDragActive ? "border-accent dark:border-accentDark" : "border-accent/40 dark:border-accentDark/40"
+                                } relative flex flex-col w-full border border-dashed rounded-md min-h-72 items-center justify-center`}
                         >
+                            <div className="flex justify-center gap-3 items-center flex-col text-black/85 dark:text-white/85">
+                                <IoIosImages className="w-16 h-16" />
+                                <p className="text-sm">Drag and drop your images here</p>
+                                <p className="text-xs">or</p>
+                                <Button
+                                    variant="text"
+                                    size="small"
+                                >
+                                    Browse files to upload
+                                </Button>
+                            </div>
                             <label
                                 htmlFor="file"
-                                className="h-full flex flex-col justify-center text-center"
+                                className="hidden"
                             >
                                 Click to upload or drag and drop
                             </label>
                             <input
                                 id="file"
+                                multiple
                                 {...getInputProps()}
                                 className="hidden"
-                                accept="image/*"
-                                multiple
                             />
+                            <div className="absolute bottom-2 w-full flex flex-col justify-center items-center text-gray-600 dark:text-zinc-400 text-xs">
+                                <p>You can upload up to 5 images.</p>
+                                <p className="text-center">Images must be in JPG, PNG, or GIF format, under 5MB, and have an aspect ratio between 1:1 and 4:5.</p>
+                            </div>
                         </div>
-                    </div>
+                    </section>
                 )
                     :
                     <div className="flex">
@@ -105,7 +131,7 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                             ))}
                             {
                                 files.length < 5 && (
-                                    <div className="w-16 h-16 rounded-md flex justify-center items-center bg-light dark:bg-dark">
+                                    <div {...getRootProps()} className="w-16 h-16 rounded-md flex justify-center items-center bg-light dark:bg-dark">
                                         <label
                                             htmlFor="file"
                                             className="hidden"
@@ -116,15 +142,10 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                                             id="file"
                                             type="file"
                                             className="hidden"
-                                            accept="image/*"
                                             multiple
-                                            onChange={(e) => {
-                                                onDrop([...files, ...e.target.files]);
-                                            }}
+                                            {...getInputProps()}
                                         />
-                                        <IconButton onClick={() => {
-                                            document.getElementById("file").click();
-                                        }} sx={{
+                                        <IconButton sx={{
                                             width: "2.5rem",
                                             height: "2.5rem"
                                         }}>
@@ -140,10 +161,10 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                                     <InputHeader label={"Caption"} desc={"Write a caption"} tip={"Add a caption"} />
                                     <TextField value={meta[selectedFile]?.caption} required={false} onChange={(e) => handleCaption(e.target.value)} size='small' />
                                 </div>
-                                <div>
+                                {/* <div>
                                     <InputHeader label={"Location"} required={false} desc={"Tell your followers where you are or where you took the photo"} tip={"Add a location"} />
                                     <TextField size='small' value={meta[selectedFile]?.location} onChange={(e) => handleLocation(e.target.value)} />
-                                </div>
+                                </div> */}
                             </div>
 
                             <div className="flex flex-col space-y-2">
@@ -176,6 +197,17 @@ const MicroPostImageUploader = ({ setter, getter }) => {
                             </div>
                         </div>
                     </div>
+            }
+            {
+                error.length > 0 && (
+                    <div className="text-red-500 text-xs mt-2">
+                        {
+                            error.map((e, i) => (
+                                <p key={i}>{e.errors[0].message}</p>
+                            ))
+                        }
+                    </div>
+                )
             }
         </div>
     );

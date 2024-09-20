@@ -22,10 +22,10 @@ const ViewPage = async ({ searchParams }) => {
                         </div>
                         <div className="mt-2 px-2">
                             <p>
-                                {post.type === 'IMAGE' ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.content}</p> : null}
+                                {post?.type === 'IMAGE' ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.content}</p> : null}
                             </p>
                             <div className="">
-                                <MicroPostPageContent post={post} session={session} imgRounded addPad={false} />
+                                <MicroPostPageContent post={post} session={session} imgRounded addPad={false} imgBg />
                             </div>
                         </div>
                     </div>

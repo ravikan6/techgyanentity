@@ -4,7 +4,7 @@ import { useContext, useEffect, useState, createContext, useRef } from "react";
 import { formatDate } from "@/lib/utils";
 import { UnAuthorizedActionWrapper } from "./postActions";
 import { Avatar, ListItemIcon, Skeleton } from "@mui/material";
-import { Button, IconButton, Menu, MenuItem, TextField, Tooltip } from "../rui";
+import { Button, CircularProgress, IconButton, Menu, MenuItem, TextField, Tooltip } from "../rui";
 import { MoreVert } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -281,7 +281,7 @@ const CommentMenu = ({ id, commentAuthor, isOwn, onEdit, isReply }) => {
                 <span onClick={handleClick}>
                     {isLoading ? <BetaLoader /> :
                         <IconButton size='small' sx={{ width: '24px', height: '24px', p: 0 }} >
-                            <MoreVert className="w-4 h-4" />
+                            <MoreVert sx={{ width: '1rem', height: '1rem' }} />
                         </IconButton>
                     }
                 </span>
@@ -580,12 +580,7 @@ const RepliesView = ({ commentId, parentId, count }) => {
 
 const BetaLoader = () => {
     return (
-        <div className="flex items-center justify-center">
-            <span className="animate-spin flex h-5 w-5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-darkHead dark:bg-lightHead opacity-75"></span>
-                <span className="relative animate-bounce to-lightHead from-pink-300 dark:to-darkHead dark:from-blue-200 inline-flex rounded-full h-5 w-5 bg-gradient-radial"></span>
-            </span>
-        </div>
+        <CircularProgress size={20} />
     )
 }
 

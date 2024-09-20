@@ -4,11 +4,11 @@ import Box from '@mui/material/Box';
 import { StudioSidebar } from './_sidebar';
 import { DrawerContext } from '../mainlayout';
 import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import { Backdrop, Drawer, LinearProgress, useMediaQuery } from '@mui/material';
 import { MainLogo } from '@/lib/client';
 import { StudioContext } from '@/lib/context';
+import { CgMenuLeft } from 'react-icons/cg';
 
 const drawerWidth = 240;
 const drawerWidthClose = 80;
@@ -151,21 +151,20 @@ const StudioLayout = ({ children, session }) => {
                             aria-label="open drawer"
                             onClick={handleDrawerOpen}
                             edge="start"
-                        > <MenuIcon /> </IconButton>
+                        > <CgMenuLeft className='w-5 h-5 ' /> </IconButton>
                         <MainLogo className={'ml-4'} />
                     </div></>}
                     <StudioSidebar session={session} variant={variant} open={open} />
                 </Drawer>
                 <Main aria-busy={loading} open={open} variant={variant}>
                     <Backdrop sx={theme => ({
-                        color: '#fff',
                         zIndex: theme.zIndex.drawer
                     })}
                         open={open && variant === 'persistent'}
                         onClick={handleDrawerOpen}
                     > </Backdrop>
                     <Backdrop open={loading} invisible sx={{ zIndex: 1, opacity: 0.1, left: drawerWidth_get(open, variant) }} />
-                    <LinearProgress className="!h-0.5 !fixed !top-[54px] !-ml-6 !z-[99] w-full" hidden={!loading} color="accent" />
+                    {loading ? <LinearProgress className="!h-0.5 !fixed !top-[54px] !-ml-6 !z-[99] w-full" color="accent" /> : null}
                     {children}
                 </Main>
             </Box>

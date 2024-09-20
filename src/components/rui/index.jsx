@@ -1,4 +1,4 @@
-import { RuiMenu, RuiIcoBtn, RuiMenuItem, RuiButton, RuiTextField, RuiDialog, RuiToolTip, RuiSnakBar, RuiToggleButtonGroup, RuiToggleButton, RuiSwitch, RuiSwipeableDrawer } from "./_components";
+import { RuiMenu, RuiIcoBtn, RuiMenuItem, RuiButton, RuiTextField, RuiDialog, RuiToolTip, RuiSnakBar, RuiToggleButtonGroup, RuiToggleButton, RuiSwitch, RuiSwipeableDrawer, GradientCircularProgress } from "./_components";
 
 export { RuiTextField as TextField };
 export { RuiButton as Button };
@@ -12,3 +12,4 @@ export { RuiToggleButtonGroup as ToggleButtonGroup };
 export { RuiToggleButton as ToggleButton };
 export { RuiSwitch as Switch };
 export { RuiSwipeableDrawer as SwipeableDrawer };
+export { GradientCircularProgress as CircularProgress };

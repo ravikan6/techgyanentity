@@ -87,8 +87,10 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
                     >
                         <Avatar alt='Avatar' className='uppercase font-medium text-base' src={currentData?.image} sx={{ width: 32, height: 32 }}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                     </IconButton>
-                    <div className='rounded-full w-4 h-4 box-border border-2 border-solid border-light/90 dark:border-dark/90 absolute -top-1 -right-1'>
-                        <Avatar alt='Avatar' className='uppercase font-xs text-base' src={session?.user?.image} sx={{ width: 14, height: 14 }}>{session?.user?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                    <div className='rounded-full w-4 h-4 box-border border-2 border-solid border-light dark:border-dark absolute -top-1 -right-1 flex justify-center items-center'>
+                        <Link href={'/account'}>
+                            <Avatar alt='Avatar' className='uppercase font-xs text-base' src={session?.user?.image} sx={{ width: 14, height: 14 }}>{session?.user?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                        </Link>
                     </div>
                 </Tooltip>
             </Box>

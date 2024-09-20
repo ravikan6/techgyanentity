@@ -49,9 +49,8 @@ const Confirmation = ({
                         <Button
                             variant="contained"
                             size="small"
-                            color="button"
+                            color="inherit"
                             onClick={proceed}
-                            className='dark:!text-black'
                         >
                             {okLabel}
                         </Button>
@@ -92,7 +91,7 @@ const Confirmation = ({
                         <Button
                             variant="contained"
                             size="small"
-                            color="accent"
+                            color="primary"
                             onClick={proceed}
                         >
                             {okLabel}
