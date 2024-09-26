@@ -9,25 +9,37 @@ import mui from '@/styles/mui';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import { ThemeProvider } from '@mui/material';
 import {
-  ApolloNextAppProvider,
+  
+  ApolloLink,
+  HttpLink,
+} from "@apollo/client";
+import {
   ApolloClient,
+  ApolloNextAppProvider,
   InMemoryCache,
+  SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support";
-import { HttpLink } from "@apollo/client";
 
 function makeClient() {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/",
-    fetchOptions: { cache: "no-store" },
   });
 
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link: httpLink,
+    link:
+      typeof window === "undefined"
+        ? ApolloLink.from([
+          new SSRMultipartLink({
+            stripDefer: true,
+          }),
+          httpLink,
+        ])
+        : httpLink,
   });
 }
 
-export function Providers({ session, children }) {
+export const  Providers = ({ session, children }) => {
 
   const color = 'var(--rb-palette-button-main)';
   const height = '1.7px';

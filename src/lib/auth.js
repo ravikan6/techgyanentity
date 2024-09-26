@@ -2,8 +2,8 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "./db";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { apiGql } from "./resolver";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -21,31 +21,33 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             },
             async authorize(credentials) {
                 try {
-                    const response = await prisma.user.findUnique({
-                        where: {
-                            email: credentials.identifier,
-                        },
-                        include: {
-                            Author: {
-                                select: {
-                                    id: true,
+                    const response = await apiGql(`
+                            mutation UserLogin {
+                                login(email: "${credentials.identifier}", password: "${credentials.password}") {
+                                  user {
+                                    image
+                                    key
+                                    name
+                                    username
+                                    email
+                                  }
+                                  sessionId
+                                  success
                                 }
-                            },
-                        },
-                    });
-                    if (response) {
-                        if (response.image.url) {
-                            delete response.image;
+                        }`
+                    );
+                    if (response.data && response.data.login.success) {
+                        return {
+                            ...response.data.login.user,
+                            sessionId: response.data.login.sessionId
                         }
-                        return { ...response };
                     } else {
-                        return null;
+                        throw new Error("Invalid credentials");
                     }
                 } catch (error) {
                     console.log(error?.message, '_________________________error_from_auth_creditainls'); //TODO: Will be removed in production
                     return null;
                 }
-                // return Promise.resolve(credentials)
             }
         }),
     ],
@@ -94,22 +96,46 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             }
             if (token.id) {
                 try {
-                    const url = headers().get('origin') || process.env.APP_URL;
-                    let fdata = new FormData();
-                    fdata.append('id', token.id);
-                    const res = await fetch(`${url}/api/user`, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                        },
-                        body: fdata,
-                        next: {
-                            revalidate: 20,
+                    const response = await apiGql(`
+                        query Me {
+                            Me {
+                                name
+                                image {
+                                    url
+                                }
+                                username
+                                email
+                                creatorSet {
+                                  edges {
+                                    node {
+                                      key
+                                    }
+                                  }
+                                }
+                            }
+                        }`,
+                        {
+                            'Cookie': `sessionid=${token.sessionId}`
                         }
-                    });
-                    const response = await res.json();
-                    token = { ...token, ...response };
-                    delete token.password;
+                    );
+                    if (response.data && response.data.Me) {
+                        response.data.Me.image = response.data.Me.image?.url || null;
+                        if (response.data.Me.creatorSet.edges.length > 0) {
+                            response.data.Me.creators = response.data.Me.creatorSet.edges.map(({ node }) => ({ key: node.key }));
+                        } else {
+                            response.data.Me.creators = [];
+                        }
+
+                        token = {
+                            ...token,
+                            name: response.data.Me.name,
+                            image: response.data.Me.image,
+                            username: response.data.Me.username,
+                            email: response.data.Me.email,
+                            creators: response.data.Me.creators,
+                            authors: response.data.Me.creators
+                        }
+                    }
                 } catch (error) {
                     console.log("Error from auth callback:", JSON.stringify(error)) //TODO: Will be removed in production
                 }
@@ -117,11 +143,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             return Promise.resolve(token)
         },
         async session({ session, token }) {
-            session.user = token
+            session.user = {
+                ...session.user,
+                id: token.id,
+                name: token.name,
+                image: token.image,
+                username: token.username,
+                email: token.email,
+                creators: token.creators,
+                authors: token.authors,
+                sessionId: token.sessionId
+            }
             return Promise.resolve(session)
         },
     },
-
     pages: {
         signIn: `/auth/v2/login`,
     },

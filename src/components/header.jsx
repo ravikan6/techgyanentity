@@ -75,7 +75,7 @@ const Header = async () => {
                                                 <NotificationBtn classes={'border border-solid border-secondary dark:border-secondaryDark'} />
                                             </div>
                                             <div className="">
-                                                {(session?.user?.Author?.length > 0) ? (<StudioServiceSelecterMenu session={session} />) : (<UserProfileModel user={{ user: session?.user }} />)}
+                                                {(session?.user?.creators?.length > 0) ? (<StudioServiceSelecterMenu session={session} />) : (<UserProfileModel user={{ user: session?.user }} />)}
                                             </div>
                                         </>
                                     ) : (

@@ -35,7 +35,37 @@ const followAuthor = async (authorId) => {
     }
 }
 
-export { followAuthor };
+async function apiGql(query, headers = {}) {
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers,
+            },
+            body: JSON.stringify({ query }),
+        });
+
+        let res = { status: response.status, data: null, errors: null };
+        const data = await response.json();
+        if (data?.data) {apiGql
+            res = {...res, data: data.data };
+        }
+        if (data?.errors) {
+            res = {...res, errors: [...data.errors] };
+        }
+        return res;
+    } catch (error) {
+        console.error(`Something went Wrong (RK-HACKER)=> `, error);
+        return {
+            status: 500,
+            data: null,
+            errors: [{ message: 'Something went wrong. Please try again.' }]
+        };
+    };
+};
+
+export { followAuthor, apiGql };
 
 
 

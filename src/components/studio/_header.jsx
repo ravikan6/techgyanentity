@@ -35,7 +35,7 @@ const StudioHeader = async () => {
     return (
         <>
             <header className='w-full dark:bg-darkHead bg-lightHead fixed z-[999] max-w-full top-0 left-0 px-5'>
-                <div className="min-h-[54px] max-h-[54px] overflow-hidden">
+                <div className="min-h-[54px] max-h-[54px] overflow-x-hidden">
                     <div id="header" className='w-full bg-opacity-0 backdrop-blur-3xl border-b-slate-200 dark:border-b-slate-700 '>
                         <div className='min-h-[54px] max-h-[54px] flex justify-between m-auto'>
                             <div className='flex justify-start items-center logo'>
@@ -56,7 +56,7 @@ const StudioHeader = async () => {
                                         <div className="">
                                             <NotificationBtn />
                                         </div>
-                                        {session?.user?.id ? (
+                                        {session?.user ? (
                                             <>
                                                 <div className="">
                                                     <StudioServiceSelecterMenu session={session} />

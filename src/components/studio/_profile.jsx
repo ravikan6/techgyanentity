@@ -22,11 +22,10 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
     const [menuOpen, setMenuOpen] = useState(false);
     const [insiderData, setInsiderData] = useState(null);
 
-    const [currentData, setCurrentData] = useState({ name: session?.user?.name, image: session?.user?.picture, handle: session?.user?.username, url: `/@${session?.user?.username}`, createUrl: '/auth/login' });
+    const [currentData, setCurrentData] = useState({ name: session?.user?.name, image: session?.user?.image, handle: session?.user?.username, url: `/@${session?.user?.username}`, createUrl: '/auth/login' });
 
     const context = useContext(StudioContext);
     const page = context?.data?.page;
-
     useMemo(() => {
         setCurrentData({ ...currentData, ...context?.data?.data, url: `/author/@${context?.data?.data?.handle}` });
     }, [context]);
@@ -67,13 +66,6 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
         handleInsiderClose: handleInsiderClose,
     }
 
-    const protectEmail = (email) => {
-        const [username, domain] = email.split('@');
-        const usernameLength = username.length;
-        const protectedUsername = usernameLength <= 2 ? username : `${username.slice(0, 2)}${'*'.repeat(usernameLength - 2)}`;
-        return `${protectedUsername}@${domain}`;
-    };
-
     return (
         <Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', pr: '2px', position: 'relative' }}>
@@ -85,7 +77,7 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
                         aria-haspopup="true"
                         aria-expanded={menuOpen ? 'true' : undefined}
                     >
-                        <Avatar alt='Avatar' className='uppercase font-medium text-base' src={currentData?.image} sx={{ width: 32, height: 32 }}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                        <Avatar alt='Avatar' className='uppercase font-medium text-base' src={currentData?.image?.url} sx={{ width: 32, height: 32 }}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                     </IconButton>
                     <div className='rounded-full w-4 h-4 box-border border-2 border-solid border-light dark:border-dark absolute -top-1 -right-1 flex justify-center items-center'>
                         <Link href={'/account'}>
@@ -111,11 +103,11 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
                 <div className='px-2'>
                     <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
                         <div className="flex my-4 flex-col items-center justify-center">
-                            <Avatar alt='Avatar' className="!w-20 !h-20 rounded-full" src={currentData?.image}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                            <Avatar alt='Avatar' className="!w-20 !h-20 rounded-full" src={currentData?.image?.url}>{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                             <span className="mt-2 text-xl max-w-60 truncate font-medium cheltenham">Hi, {currentData?.name}</span>
                         </div>
                         <Tooltip title="Manage your Account">
-                            <Button href='/account' variant="outlined" startIcon={<Avatar alt='Avatar' className='uppercase font-medium text-base' src={session?.user?.image} sx={{ width: 24, height: 24 }}>{session?.user?.name?.slice(0, 1)?.toUpperCase()}</Avatar>} color='secondary' ><span className='ml-2.5 truncate'>{session?.user?.email && protectEmail(session?.user?.email)}</span></Button>
+                            <Button href='/account' variant="outlined" startIcon={<Avatar alt='Avatar' className='uppercase font-medium text-base' src={session?.user?.image} sx={{ width: 24, height: 24 }}>{session?.user?.name?.slice(0, 1)?.toUpperCase()}</Avatar>} color='secondary' ><span className='ml-2.5 truncate'>{session?.user?.email}</span></Button>
                         </Tooltip>
                     </Box>
 

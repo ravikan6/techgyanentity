@@ -220,7 +220,7 @@ const UserBox = ({ currentData, open }) => {
                 <a target='_blank' href={currentData?.url} className={`${open ? 'w-[100px] h-[100px]' : 'w-8 h-8'} mx-auto rounded-full`}>
                     <Tooltip title='View' placement='bottom'>
                         <div className='flex flex-col group justify-center items-center'>
-                            <Avatar draggable={false} className={`${open ? '!w-[100px] !h-[100px] text-2xl' : '!w-8 !h-8 text-base'} font-semibold rounded-full`} alt={currentData?.name || 'A'} src={currentData?.image} >{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
+                            <Avatar draggable={false} className={`${open ? '!w-[100px] !h-[100px] text-2xl' : '!w-8 !h-8 text-base'} font-semibold rounded-full`} alt={currentData?.name || 'A'} src={currentData?.image?.url} >{currentData?.name?.slice(0, 1)?.toUpperCase()}</Avatar>
                             <div className={`hidden ${open ? 'w-[100px] h-[100px]' : 'w-8 h-8'} rounded-full justify-center items-center group-hover:flex absolute bg-dark/50`}>
                                 <TbExternalLinkOff className={`${open ? 'w-6 h-6' : 'w-2 h-2'}`} />
                             </div>

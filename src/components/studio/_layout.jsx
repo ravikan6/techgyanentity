@@ -6,7 +6,7 @@ import { DrawerContext } from '../mainlayout';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import { Backdrop, Drawer, LinearProgress, useMediaQuery } from '@mui/material';
-import { MainLogo } from '@/lib/client';
+import { MainLogo } from '@/lib/client_components';
 import { StudioContext } from '@/lib/context';
 import { CgMenuLeft } from 'react-icons/cg';
 

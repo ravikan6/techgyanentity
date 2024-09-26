@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { MainLogo } from '@/lib/client';
+import { MainLogo } from '@/lib/client_components';
 import { CgMenuLeft } from 'react-icons/cg';
 import { toast } from 'react-toastify';
 import { usePathname } from 'next/navigation';

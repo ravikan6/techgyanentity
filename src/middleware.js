@@ -12,14 +12,13 @@ export default auth(async (req) => {
   try {
 
     if (req.auth) {
-      async function setAuthor(res) {
-        let author = (await req.auth?.user?.Author?.length) > 0 ? req.auth?.user?.Author[0].id : null;
-        
-        if (author) {
-          author = encrypt(author, secret);
+      async function setCreator(res) {
+        let creator = (await req.auth?.user?.creators?.length) > 0 ? await req.auth?.user?.creators[0].key : null;
+        if (creator) {
+          creator = encrypt(creator, secret);
           res.cookies.set({
             name: "__Secure-RSUAUD",
-            value: author,
+            value: creator,
             httpOnly: false,
             secure: true,
             sameSite: "lax",
@@ -30,12 +29,12 @@ export default auth(async (req) => {
       }
 
       if (!cookies.has("__Secure-RSUAUD")) {
-        await setAuthor(res);
+        await setCreator(res);
       } else {
         let aud = await cookies.get("__Secure-RSUAUD");
         aud = decrypt(aud.value, secret);
         if (!aud) {
-          await setAuthor(res);
+          await setCreator(res);
         }
       }
 
