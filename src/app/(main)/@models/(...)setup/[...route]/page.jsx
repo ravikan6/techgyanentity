@@ -3,10 +3,10 @@ import React from 'react'
 import { useContext, memo } from 'react'
 import { notFound } from 'next/navigation';
 import CreateAuthor from '@/components/author/create';
-import { progressContext } from '../layout';
+import { ProgressContext } from '../layout';
 
 const InterceptSetupPage = ({ params }) => {
-  let progress = useContext(progressContext);
+  let progress = useContext(ProgressContext);
   const route = params?.route;
   let path = route && route[0];
 

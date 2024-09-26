@@ -8,6 +8,24 @@ import CssBaseline from '@mui/material/CssBaseline';
 import mui from '@/styles/mui';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import { ThemeProvider } from '@mui/material';
+import {
+  ApolloNextAppProvider,
+  ApolloClient,
+  InMemoryCache,
+} from "@apollo/experimental-nextjs-app-support";
+import { HttpLink } from "@apollo/client";
+
+function makeClient() {
+  const httpLink = new HttpLink({
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/",
+    fetchOptions: { cache: "no-store" },
+  });
+
+  return new ApolloClient({
+    cache: new InMemoryCache(),
+    link: httpLink,
+  });
+}
 
 export function Providers({ session, children }) {
 
@@ -90,11 +108,13 @@ export function Providers({ session, children }) {
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">
-        <SessionProvider session={session}>
-          {children}
-          <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />
-          <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={10} position='bottom-center' draggable autoClose={4000} hideProgressBar transition={Zoom} />
-        </SessionProvider>
+        <ApolloNextAppProvider makeClient={makeClient} >
+          <SessionProvider session={session}>
+            {children}
+            <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />
+            <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={10} position='bottom-center' draggable autoClose={4000} hideProgressBar transition={Zoom} />
+          </SessionProvider>
+        </ApolloNextAppProvider>
       </NextTheme>
       {/* </AppRouterCacheProvider> */}
     </ThemeProvider>
