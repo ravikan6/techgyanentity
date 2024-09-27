@@ -27,32 +27,25 @@ import { ArticleImage } from '../post/_client';
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
 
 const GET_AUTHOR_POSTS = gql`
-query MyQuery($key: String = "") {
-  Creators(key: $key) {
+query GetAuthorStories($author_Key: String!) {
+  Stories(author_Key: $author_Key) {
     edges {
       node {
-        storySet {
-          edges {
-            node {
-              updatedAt
-              title
-              state
-              slug
-              scheduledAt
-              publishedAt
-              privacy
-              key
-              isDeleted
-              id
-              description
-              deletedAt
-              createdAt
-              image {
-                url
-                alt
-              }
-            }
-          }
+        title
+        state
+        slug
+        scheduledAt
+        publishedAt
+        privacy
+        key
+        isDeleted
+        id
+        description
+        createdAt
+        commentsCount
+        image {
+          url
+          alt
         }
       }
     }
@@ -66,21 +59,21 @@ const StudioContent = () => {
     const { variant, open } = useContext(DrawerContext);
     const theme = useTheme();
 
-    const [loadStories, { data: creatorStories, loading, called }] = useLazyQuery(GET_AUTHOR_POSTS, {
-        variables: {
-            key: data?.data?.key
-        }
-    })
+    const [loadStories, { data: creatorStories, loading, called }] = useLazyQuery(GET_AUTHOR_POSTS);
 
     useEffect(() => {
         if (data?.data?.key && !called) {
-            loadStories();
+            loadStories({
+                variables: {
+                    author_Key: data?.data?.key
+                }
+            });
         }
     }, [data]);
 
     useEffect(() => {
         if (creatorStories) {
-            const stories = creatorStories?.Creators?.edges[0]?.node?.storySet?.edges;
+            const stories = creatorStories?.Stories?.edges;
             const data = stories.map((edge) => {
                 const node = edge.node;
                 return {
@@ -91,10 +84,11 @@ const StudioContent = () => {
                         label: node?.publishedAt ? 'Published' : node?.scheduledAt ? 'Scheduled' : 'Draft'
                     },
                     claps: 0,
-                    comments: 0,
+                    comments: node?.commentsCount,
                 }
             });
-            setStories(stories);
+            setStories(data);
+            setLoading(false);
         }
     }, [creatorStories]);
 
@@ -199,7 +193,7 @@ const StudioContent = () => {
             },
         },
         state: {
-            showSkeletons: loading,
+            showSkeletons: stories.length === 0 ? !contextLoading ? loading : contextLoading : false,
         },
         muiTableBodyProps: {
             sx: (theme) => ({
@@ -255,7 +249,7 @@ const StudioContent = () => {
                 <>
                     <div className="flex items-center justify-between w-full px-7 md:px-2 mb-1 pt-2 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                         {
-                            [{ name: 'Post', value: 'story' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
+                            [{ name: 'Stories', value: 'story' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
                                 return (
                                     <Button disabled={contextLoading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'story' === item.value ? '!bg-lightButton dark:!bg-darkButton !text-black dark:!text-black' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="button" size="small" >
                                         {item.name}

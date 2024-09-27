@@ -5,8 +5,7 @@ import { StudioContext } from "@/lib/context";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { InputHeader } from "../author/_edit-funcs";
-import { getCldImageUrl } from "next-cloudinary";
-import { getCImageUrl, imgUrl } from "@/lib/helpers";
+import { imgUrl } from "@/lib/helpers";
 import { Box, Chip, InputAdornment, Select } from '@mui/material';
 import { default as NextImage } from 'next/image';
 import { PostDetailsActionMenu, PostDetailsImageMenu } from "@/components/Buttons";
@@ -54,6 +53,7 @@ const PostDetailsEditor = () => {
             let file = new FormData();
             if (npst?.image && npst?.image?.provider === 'file') {
                 file.append('image', npst?.image?.url)
+                npstData.image.action = post.image ? 'UPDATE' : 'CREATE';
                 npstData.image.url = post?.image?.url;
             }
             if (doPublish) {
@@ -327,13 +327,13 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
     const [image, setImage] = useState({});
     const { data, setData, loading, setLoading } = useContext(StudioContext)
     const [imageUrl, setImageUrl] = useState(null);
-
+    console.log(img, 'img')
     useMemo(() => {
         if (img?.url) {
-            if (img?.provider === 'cloudinary') {
-                setImageUrl(img?.url);
-            } else if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
+            if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
                 setImageUrl(URL.createObjectURL(img?.url));
+            } else {
+                setImageUrl(img?.url);
             }
         } else {
             setImageUrl(null)
@@ -341,13 +341,13 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
     }, [img])
 
     const handleFeaturedImageUpload = () => {
-        const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+        const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
         const MIN_WIDTH = 600;
         const MIN_HEIGHT = Math.round((MIN_WIDTH / 16) * 9);
 
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = 'image/png, image/jpeg, image/gif';
+        input.accept = 'image/png, image/jpeg, image/gif, image/webp';
         input.onchange = (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -400,7 +400,7 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
         <div className="flex flex-col space-y-2">
             {imageUrl ?
                 <div className="relative">
-                    <NextImage width={320} height={168} src={imgUrl(imageUrl)} alt={img?.alt} className="w-full object-cover rounded-lg aspect-video bg-black/5 dark:bg-white/5" />
+                    <NextImage width={320} height={168} src={imageUrl} alt={img?.alt} className="w-full object-cover rounded-lg aspect-video bg-black/5 dark:bg-white/5" />
                     <div className="absolute top-2 right-2">
                         <PostDetailsImageMenu disabled={loading} onFistClick={handleFeaturedImageUpload} />
                     </div>

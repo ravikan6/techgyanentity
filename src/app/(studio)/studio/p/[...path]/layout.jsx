@@ -2,7 +2,6 @@ import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components
 import { WriteHeader } from "@/components/studio/write/_header_focus";
 import { DecryptAuthorIdStudioCookie } from "@/lib/actions/studio";
 import { auth } from "@/lib/auth";
-import { getCImageUrl } from "@/lib/helpers";
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers'
 import { gql } from "@apollo/client";
@@ -19,10 +18,11 @@ const WriteLayout = async ({ children, params }) => {
             cookies = cookies?.split('=')[1];
             cookies = decodeURIComponent(cookies);
             const author = await DecryptAuthorIdStudioCookie(cookies);
-            if (!author) {
+            if (!author.key) {
                 redirect('/studio/content')
             }
             const article = await getArticle(path[0], author?.key);
+            console.log(article, '----article')
             if (!article) {
                 redirect('/studio/content')
             }
@@ -53,48 +53,47 @@ const WriteLayout = async ({ children, params }) => {
     )
 }
 
+const GET_ARTICLE = gql`
+query GetAuthorArticle($key: String!, $author_Key: String!) {
+  Stories(key: $key, author_Key: $author_Key) {
+    edges {
+      node {
+        createdAt
+        deletedAt
+        description
+        id
+        isDeleted
+        key
+        privacy
+        publishedAt
+        scheduledAt
+        slug
+        image {
+          url
+          id
+        }
+        state
+        title
+        updatedAt
+        tags {
+          name
+        }
+        author {
+          key
+          name
+          handle
+        }
+      }
+    }
+  }
+}`;
+
 const getArticle = async (id, authorId) => {
     try {
-        const GET_ARTICLE = gql`
-        query MyQuery($key: String = "") {
-          Stories(key: $key) {
-            edges {
-              node {
-                createdAt
-                deletedAt
-                description
-                id
-                isDeleted
-                key
-                privacy
-                publishedAt
-                scheduledAt
-                slug
-                image {
-                  url
-                  id
-                }
-                state
-                title
-                updatedAt
-                tags {
-                  name
-                }
-                author {
-                    key
-                    name
-                    handle
-                }
-              }
-            }
-          }
-        }`;
-
-        const { data } = await query(GET_ARTICLE, { key: id });
+        const { data } = await query({ query: GET_ARTICLE, variables: { key: id, author_Key: authorId } });
         const article = data?.Stories?.edges[0]?.node;
         return article;
     } catch (e) {
-        console.log(e, '-----errror-from')
         return null;
     }
 }

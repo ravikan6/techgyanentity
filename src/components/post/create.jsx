@@ -9,10 +9,26 @@ import { toast } from "react-toastify";
 const CreatePost = (props) => {
     const [post, setPost] = useState({ ...props.data });
     const [keyPress, setKeyPress] = useState(false);
-    const [blocks, setBlocks] = useState(JSON.parse(props.data.content) || []);
+    const [blocks, setBlocks] = useState(jsonToObject(props.data.content) || []);
 
     const { loading, setState, state } = useContext(StudioWriterContext);
     const { data, setData } = useContext(StudioContext);
+
+    function jsonToObject(json) {
+        try {
+            return JSON.parse(json);
+        } catch (error) {
+            return json;
+        }
+    }
+
+    function objectToJson(obj) {
+        try {
+            return JSON.stringify(obj);
+        } catch (error) {
+            return obj;
+        }
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,10 +56,11 @@ const CreatePost = (props) => {
             return;
         }
         try {
-            const dt = await updatePostAction({ title: post.title, key: props.data.key, content: blocks });
+            const dt = await updatePostAction({ title: post.title, key: props.data.key, content: objectToJson(blocks) });
             if (dt?.status === 200 && dt?.data) {
                 setPost({ ...post, ...dt?.data });
                 setData({ ...data, article: { ...data?.article, title: dt.data?.title } });
+                setBlocks(jsonToObject(dt.data?.content));
                 toast.success('Post updated successfully');
             }
         } catch {
@@ -54,14 +71,14 @@ const CreatePost = (props) => {
 
     const handleCancle = () => {
         setPost({ ...post, title: props?.data?.title });
-        setBlocks(JSON.parse(props?.data?.content) || []);
+        setBlocks(jsonToObject(props?.data?.content));
         setState({ ...state, save: false, cancle: false });
     }
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            e.stopPropagation();
+            e.stopPropagation(); button
             setKeyPress(true);
         } else {
             setKeyPress(false);
@@ -96,7 +113,9 @@ const CreatePost = (props) => {
                 />
             </div>
             <div className="my-2 lg:-mx-8">
-                <Editor content={post.content} setBlocks={setBlocks} focus={keyPress} />
+                <Editor content={
+                    jsonToObject(post.content)
+                } setBlocks={setBlocks} focus={keyPress} />
             </div>
         </div>
     </>);

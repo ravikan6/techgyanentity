@@ -107,8 +107,8 @@ const StudioSidebar = (props) => {
     useMemo(() => {
         const page = context?.data?.page;
         if (page === 'p') {
-            setCurrentData({ ...currentData, ...context?.data?.article, url: `/@${context?.data?.article?.author?.handle}/${context?.data?.article?.shortId}` });
-            setStaticMenu(postMenu(`/${process.env.STUDIO_URL_PREFIX}/p/${context?.data?.article?.shortId}`));
+            setCurrentData({ ...currentData, ...context?.data?.article, url: `/@${context?.data?.article?.author?.handle}/${context?.data?.article?.key}` });
+            setStaticMenu(postMenu(`/${process.env.STUDIO_URL_PREFIX}/p/${context?.data?.article?.key}`));
         } else { setCurrentData({ ...currentData, ...context?.data?.data, url: `/author/@${context?.data?.data?.handle}` }); setStaticMenu(mainMenu); }
     }, [context]);
 

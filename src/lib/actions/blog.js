@@ -6,7 +6,9 @@ import { generateUniqueId } from '../helpers';
 import { deleteCloudinaryImage, uploadImage } from './upload';
 import { cloudinaryProvider } from './author';
 import { gql } from '@apollo/client';
-import { query } from '../client';
+import { api, query } from '../client';
+
+import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 
 export const getBlogs = async () => {
 
@@ -111,18 +113,76 @@ export const updatePostAction = async (data) => {
     }`;
 
     try {
-        let updatedPost = await query(UPDATE_POST, { key: data.key, title: data.title, content: JSON.stringify(data.content) });
-        if (updatedPost?.data?.updateStory?.story) {
-            res = { ...res, data: updatedPost?.data?.updateStory?.story, status: 200 };
-            return res;
-        } else {
-            throw new Error('An error occurred while updating the post. Please try again later.');
+        let client = await api();
+        const { data: updatedPost, errors } = await client.mutate({
+            mutation: UPDATE_POST,
+            variables: {
+                key: data.key,
+                content: data.content,
+                title: data.title,
+            },
+            errorPolicy: 'all',
+        });
+        if (updatedPost?.updateStory?.story) {
+            res = { ...res, data: updatedPost?.updateStory?.story, status: 200 };
         }
+
+        res = { ...res, errors: errors || [] };
+
+        return res;
     } catch (error) {
         res.errors.push({ message: error.message });
         return res;
     }
 }
+
+const UPDATE_POST = gql`
+mutation MyMutation($key: String = "", $category: String = "", $description: String = "", $privacy: PrivacyEnum = PUBLIC, $state: StateEnum = DRAFT, $tags: [String] = "", $title: String = "", $slug: String = "", $doPublish: Boolean = false, $image: ImageInput) {
+  updateStory(
+    data: {
+      category: $category
+      description: $description
+      doPublish: $doPublish
+      privacy: $privacy
+      state: $state
+      tags: $tags
+      title: $title
+      slug: $slug
+      image: $image
+    }
+    key: $key
+  ) {
+    story {
+      title
+      updatedAt
+      state
+      slug
+      scheduledAt
+      publishedAt
+      privacy
+      key
+      isDeleted
+      id
+      description
+      deletedAt
+      createdAt
+      content
+      image {
+        id
+        url
+        caption
+      }
+      category {
+        name
+        id
+      }
+      tags {
+        name
+        id
+      }
+    }
+  }
+}`;
 
 export const updatePostDetailsAction = async (data) => {
     let res = { data: null, status: 500, errors: [] };
@@ -134,7 +194,7 @@ export const updatePostDetailsAction = async (data) => {
 
     let setter = { ...data?.data };
     let file = data?.file ? data?.file : new FormData();
-    let cat = setter?.category.id;
+    let cat = setter?.category?.id;
     let tags = setter?.tags.map((t) => t.name);
     delete setter.category;
     if (setter?.doPublish) {
@@ -145,13 +205,9 @@ export const updatePostDetailsAction = async (data) => {
         let image = file.get('image')
         try {
             let ftImage = await uploadImage(image);
-            setter.image.action = 'CREATE';
             if (ftImage.success) {
                 ftImage = await cloudinaryProvider(ftImage?.data);
                 setter.image = { ...data?.data?.image, ...ftImage }
-                if (setter?.image?.url && setter?.image?.provider) {
-                    // delete the file from the server
-                }
             } else {
                 throw new Error(ftImage?.message);
             }
@@ -163,78 +219,37 @@ export const updatePostDetailsAction = async (data) => {
         }
     }
 
-    const UPDATE_POST = gql`
-    mutation MyMutation($key: String = "", $category: String = "", $description: String = "", $privacy: PrivacyEnum = PUBLIC, $state: StateEnum = DRAFT, $tags: [String] = "", $title: String = "", $slug: String = "", $doPublish: Boolean = false, $image: ImageInput) {
-      updateStory(
-        data: {
-          category: $category
-          description: $description
-          doPublish: $doPublish
-          privacy: $privacy
-          state: $state
-          tags: $tags
-          title: $title
-          slug: $slug
-          image: { url: $url, provider: $provider, action: $action }
-        }
-        key: $key
-      ) {
-        story {
-          title
-          updatedAt
-          state
-          slug
-          scheduledAt
-          publishedAt
-          privacy
-          key
-          isDeleted
-          id
-          description
-          deletedAt
-          createdAt
-          content
-          image {
-            id
-            url
-            caption
-          }
-          category {
-            name
-            id
-          }
-          tags {
-            name
-            id
-          }
-        }
-      }
-    }`;
-
     try {
-        const updatedPost = await query(UPDATE_POST, {
-            key: setter.key,
-            category: cat,
-            description: setter.description,
-            privacy: setter.privacy,
-            state: setter.state,
+        let vars = {
+            key: data.key,
+            category: cat || null,
+            description: setter?.description,
+            privacy: setter?.privacy,
+            state: setter?.state,
             tags: tags,
-            title: setter.title,
-            slug: setter.slug,
-            doPublish: setter?.doPublish,
-            image: {
+            title: setter?.title,
+            slug: setter?.slug,
+            doPublish: setter?.doPublish || false,
+            image: setter?.image?.url ? {
                 url: setter?.image?.url,
                 provider: setter?.image?.provider,
                 action: setter?.image?.action || 'UPDATE',
                 id: setter?.image?.id,
-            }
-        });
-        if (updatedPost?.data?.updateStory?.story) {
-            res = { ...res, data: updatedPost?.data?.updateStory?.story, status: 200 };
-            return res;
-        } else {
-            throw new Error('An error occurred while updating the post. Please try again later.');
+            } : null,
         }
+        let client = await api();
+        const { data: updatedPost, errors } = await client.mutate({
+            mutation: UPDATE_POST,
+            variables: vars,
+            errorPolicy: 'all',
+        });
+        if (updatedPost?.updateStory?.story) {
+            res = { ...res, data: updatedPost?.updateStory?.story, status: 200 };
+        }
+
+        res = { ...res, errors: errors || [] };
+
+        return res;
     } catch (error) {
         res.errors.push({ message: error.message });
         return res;
@@ -359,57 +374,50 @@ const getArticleContent = async (id) => {
     }
 }
 
-const getArticledetails = async (key, authorId, alsoCat) => {
-    let res = { data: null, status: 500, errors: [], categories: [] };
-
-    const GET_ARTICLE = gql`
-    query MyQuery($key: String = "") {
-  Stories(key: $key) {
+const GET_ARTICLE_WITH_CATEGORIES = gql`
+query GetAuthorArticle($key: String!, $author_Key: String!) {
+  Stories(key: $key, author_Key: $author_Key) {
     edges {
       node {
+        createdAt
+        deletedAt
+        description
+        id
+        isDeleted
+        key
+        privacy
+        publishedAt
+        scheduledAt
+        slug
+        image {
+          url
+          id
+        }
+        state
         title
         updatedAt
-        state
-        slug
-        scheduledAt
-        publishedAt
-        privacy
-        key
-        isDeleted
-        id
-        description
-        deletedAt
-        createdAt
-        content
-        image {
-          id
-          url
-          caption
-        }
-        category {
-          name
-          id
-        }
-        author {
-          id
-          key
-          name
-        }
         tags {
           name
-          id
+        }
+        author {
+          key
+          name
+          handle
         }
       }
     }
   }
-  categories {
+  Categories {
     id
     name
   }
 }`;
 
+const getArticledetails = async (key, authorKey, alsoCat) => {
+    let res = { data: null, status: 500, errors: [], categories: [] };
+
     try {
-        let article = await query(GET_ARTICLE, { key: key });
+        let article = await query({ query: GET_ARTICLE_WITH_CATEGORIES, variables: { key: key, author_Key: authorKey } });
         if (article?.data?.Stories?.edges[0]?.node) {
             res = { ...res, data: article?.data?.Stories?.edges[0]?.node, status: 200 };
             if (alsoCat && article?.data?.categories) {

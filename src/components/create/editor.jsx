@@ -7,7 +7,7 @@ import '@/styles/editor.css';
 const Editor = ({ setBlocks, focus, content }) => {
 
     const editor = useMemo(() => {
-        if (!content) {
+        if (content === undefined || content === null) {
             return undefined;
         }
         if (content && typeof content === "object" && content.length > 0) {

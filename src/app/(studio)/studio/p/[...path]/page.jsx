@@ -5,6 +5,8 @@ import { query } from '@/lib/client';
 import { gql } from '@apollo/client';
 import { redirect } from 'next/navigation';
 import React from 'react'
+import { cookies } from 'next/headers';
+import { DecryptAuthorIdStudioCookie } from '@/lib/actions/studio';
 
 const PostEditPage = async ({ params }) => {
     const session = await auth();
@@ -13,9 +15,13 @@ const PostEditPage = async ({ params }) => {
     if (path?.length === 2) {
         if (path[1] === 'editor') {
             const id = path[0];
+            let authorCookie = cookies().get('__Secure-RSUAUD');
+            let author = DecryptAuthorIdStudioCookie(authorCookie);
             try {
-                let data = await getArticle(id, null);
+                let data = await getArticle(id, author?.key);
+                console.log(data, '----data')
                 if (data && !data.isDeleted) {
+                    data = { ...data }
                     delete data.isDeleted;
                     return (
                         <div className='pt-10'>
@@ -61,7 +67,7 @@ const getArticle = async (id, authorId) => {
           }
         }`;
 
-        const { data } = await query(GET_ARTICLE, { key: id });
+        const { data } = await query({ query: GET_ARTICLE, variables: { key: id } });
         const article = data?.Stories?.edges[0]?.node;
         return article;
     } catch (e) {

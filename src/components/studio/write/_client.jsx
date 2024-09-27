@@ -149,7 +149,7 @@ export const UpdateEditorArticle = () => {
                         size="small"
                         disabled={loading || !save}
                         variant="contained"
-                        color="button"
+                        color="inherit"
                         className={`${loading || !save ? '' : 'dark:!text-black'}`}
                     >
                         Save
