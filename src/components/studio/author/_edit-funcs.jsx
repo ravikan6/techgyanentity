@@ -1,7 +1,7 @@
 'use client';
 import { Button, TextField, Tooltip, IconButton } from "@/components/rui";
 import { StudioContext } from "@/lib/context";
-import { InputAdornment, Grid, Avatar, Grid2 } from "@mui/material";
+import { InputAdornment, Avatar, Grid2 } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { BsPatchQuestion } from "react-icons/bs";

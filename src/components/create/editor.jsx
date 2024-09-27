@@ -3,8 +3,10 @@ import React, { useEffect, useMemo } from "react";
 import { BlockNoteView } from "@blocknote/mantine";
 import { BlockNoteEditor } from "@blocknote/core";
 import '@/styles/editor.css';
+import { useColorScheme } from "@mui/material";
 
 const Editor = ({ setBlocks, focus, content }) => {
+    const { mode, systemMode } = useColorScheme();
 
     const editor = useMemo(() => {
         if (content === undefined || content === null) {
@@ -31,9 +33,11 @@ const Editor = ({ setBlocks, focus, content }) => {
 
     return (
         <>
-            <BlockNoteView editor={editor} onChange={() => {
-                setBlocks(editor.document);
-            }} />
+            <BlockNoteView editor={editor}
+                theme={mode === 'system' ? systemMode : mode}
+                onChange={() => {
+                    setBlocks(editor.document);
+                }} />
         </>
     );
 }

@@ -5,7 +5,7 @@ import { useContext, useEffect, useState, useMemo } from "react";
 import { Button, IconButton, Tooltip } from '../rui';
 import { useRouter } from 'next/navigation';
 import { MdOutlineAnalytics, MdOutlineComment, MdOutlineEdit } from 'react-icons/md';
-import { formatDate } from '@/lib/utils';
+import { formatDate, capitlize } from '@/lib/utils';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
@@ -81,7 +81,7 @@ const StudioContent = () => {
                     visibility: node?.privacy,
                     date: {
                         value: node?.publishedAt || node?.scheduledAt || node?.createdAt,
-                        label: node?.publishedAt ? 'Published' : node?.scheduledAt ? 'Scheduled' : 'Draft'
+                        label: capitlize(node?.state),
                     },
                     claps: 0,
                     comments: node?.commentsCount,
@@ -115,7 +115,7 @@ const StudioContent = () => {
                     <div className='flex items-center'>
                         <PrivacyHandlerBtn privacy={v?.toLowerCase()} />
                         <span className='text-[16px] mt-0.5 ml-2'>
-                            {v?.slice(0, 1) + v?.slice(1).toLowerCase()   /* Capitalize first letter */}
+                            {capitlize(v)}
                         </span>
                     </div>
                 )

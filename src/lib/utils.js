@@ -238,6 +238,14 @@ function _formatDateToString(dateString) {
     }
 }
 
+function capitlize(str) {
+    try {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    } catch (error) {
+        return str;
+    }
+}
+
 /**
  * @deprecated : This function is deprecated and will be removed in a future release (using old API or For Old Data).
  * Generates a URL for a UI avatar image based on the given name and size.
@@ -377,4 +385,5 @@ export {
     getFevicon,
     generateListId,
     AnimalMain,
+    capitlize
 };

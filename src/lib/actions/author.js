@@ -2,9 +2,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { uploadImage } from "./upload";
-import { getCImageUrl } from "../helpers";
 import { followAuthor } from "../resolver";
-import { query } from "../client";
+import { api, query } from "../client";
 import { gql } from "@apollo/client";
 
 
@@ -45,8 +44,9 @@ const updateAuthorAction = async (obj) => {
     }`;
 
     try {
-        let author = await query({
-            query: UPDATE_AUTHOR,
+        let client = await api()
+        let { data: author, errors } = await client.mutate({
+            mutation: UPDATE_AUTHOR,
             variables: {
                 key: obj.key,
                 social: obj.data?.social,
@@ -56,11 +56,12 @@ const updateAuthorAction = async (obj) => {
                 handle: obj.data.handle
             }
         });
-        if (author?.data?.updateCreator?.creator) {
-            author = author?.data?.updateCreator?.creator;
+        if (author?.updateCreator?.creator) {
+            author = author?.updateCreator?.creator;
             res = { ...res, data: author, status: 200 };
-        } else {
-            res = { ...res, errors: [{ message: 'An error occurred while updating author. Please try again later.' }] };
+        }
+        if (errors) {
+            res = { ...res, errors: errors };
         }
     } catch (error) {
         console.log(error);
@@ -103,13 +104,15 @@ const updateAuthorImagesAction = async (data, files, actions) => {
           }
         }`;
 
+        let client = await api();
+
         if (!!logo && actions?.image !== 'DELETE') {
             try {
                 let logoData = await uploadImage(logo);
                 if (logoData?.success) {
                     lgData = await cloudinaryProvider(logoData?.data);
-                    let res = await query({
-                        query: IMAGE_ACTION,
+                    let res = await client.mutate({
+                        mutation: IMAGE_ACTION,
                         variables: {
                             action: actions?.image,
                             provider: lgData.provider,
@@ -133,8 +136,8 @@ const updateAuthorImagesAction = async (data, files, actions) => {
         } else {
             if (data?.media?.image?.id && actions?.image === 'DELETE') {
                 try {
-                    let res = await query({
-                        query: IMAGE_ACTION,
+                    let res = await client.mutate({
+                        mutation: IMAGE_ACTION,
                         variables: {
                             action: 'DELETE',
                             id: data?.media?.image?.id,
@@ -175,8 +178,8 @@ const updateAuthorImagesAction = async (data, files, actions) => {
                 let bannerData = await uploadImage(banner);
                 if (bannerData?.success) {
                     bnData = await cloudinaryProvider(bannerData?.data);
-                    let res = await query({
-                        query: BANNER_ACTION,
+                    let res = await client.mutate({
+                        mutation: BANNER_ACTION,
                         variables: {
                             action: actions?.banner,
                             provider: bnData.provider,
@@ -198,8 +201,8 @@ const updateAuthorImagesAction = async (data, files, actions) => {
         } else {
             if (data?.media?.banner?.id && actions?.banner === 'DELETE') {
                 try {
-                    let res = await query({
-                        query: BANNER_ACTION,
+                    let res = await client.mutate({
+                        mutation: BANNER_ACTION,
                         variables: {
                             action: 'DELETE',
                             id: data?.media?.banner?.id,
@@ -228,6 +231,9 @@ const updateAuthorImagesAction = async (data, files, actions) => {
     }
 };
 
+/**
+ * @deprecated - Use new Api
+ */
 const followAuthorAction = async (authorId) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -244,6 +250,9 @@ const followAuthorAction = async (authorId) => {
     return res;
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const checkAuthorFollowAction = async (authorId) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -266,7 +275,7 @@ const checkAuthorFollowAction = async (authorId) => {
 }
 
 /**
- * @deprecated 
+ * @deprecated - Use new Api
  */
 const articleCommentsListAction = async (articleId) => {
     let res = { data: null, status: 500, errors: [] };
@@ -312,6 +321,9 @@ const articleCommentsListAction = async (articleId) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const getArtcileComments = async (articleId, options = {}) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -363,7 +375,7 @@ const getArtcileComments = async (articleId, options = {}) => {
 }
 
 /**
- * @deprecated 
+ * @deprecated - Use new Api
  */
 const articleCommentRepliesListAction = async (commentId, options) => {
     let res = { data: null, status: 500, errors: [] };
@@ -406,6 +418,9 @@ const articleCommentRepliesListAction = async (commentId, options) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const getArticleCommentReplies = async (commentId, options = {}) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -449,6 +464,9 @@ const getArticleCommentReplies = async (commentId, options = {}) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const articleCommentAction = async (data) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -515,6 +533,9 @@ const articleCommentAction = async (data) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const articleCommentClapAction = async (data, action) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -549,6 +570,9 @@ const articleCommentClapAction = async (data, action) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const articleCommentDeleteAction = async (data) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -592,6 +616,9 @@ const articleCommentDeleteAction = async (data) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const articleClapsList = async (id) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -608,6 +635,9 @@ const articleClapsList = async (id) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const articleClapsAction = async (id, action) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -642,6 +672,9 @@ const articleClapsAction = async (id, action) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const checkBookmarkAction = async (id) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -668,6 +701,9 @@ const checkBookmarkAction = async (id) => {
     return res;
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const bookmarkAction = async (id) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -718,6 +754,9 @@ const bookmarkAction = async (id) => {
     return res;
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const isPostAuthor = async (postId, userId) => {
     let res = { data: null, status: 500, errors: [] };
     const session = await auth();
@@ -747,6 +786,9 @@ const isPostAuthor = async (postId, userId) => {
     }
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const getAuthorPosts = async (params) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -798,6 +840,9 @@ const getAuthorPosts = async (params) => {
     return res;
 }
 
+/**
+ * @deprecated - Use new Api
+ */
 const getAuthorForTip = async (params) => {
     let res = { data: null, status: 500, errors: [] };
     try {
@@ -834,6 +879,8 @@ export const cloudinaryProvider = async (data) => {
     return { provider, url: await data.public_id }
 }
 
-export { updateAuthorAction, updateAuthorImagesAction, followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction, articleClapsList, articleClapsAction, checkBookmarkAction, bookmarkAction, isPostAuthor, getAuthorPosts, getAuthorForTip }
+export { followAuthorAction, checkAuthorFollowAction, articleCommentsListAction, articleCommentAction, articleCommentRepliesListAction, articleCommentClapAction, articleCommentDeleteAction, articleClapsList, articleClapsAction, checkBookmarkAction, bookmarkAction, isPostAuthor, getAuthorPosts, getAuthorForTip }
 
 export { getArticleCommentReplies, getArtcileComments };
+
+export { updateAuthorAction, updateAuthorImagesAction };

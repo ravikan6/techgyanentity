@@ -40,7 +40,7 @@ const CreatePost = (props) => {
 
     useEffect(() => {
         if ((post.title !== '' || blocks.length !== 0 || !loading)) {
-            if ((post.title === data?.article?.title) && (JSON.stringify(blocks) === JSON.stringify(post?.content))) {
+            if ((post.title === data?.article?.title) && (JSON.stringify(blocks) === post?.content)) {
                 setState({ ...state, save: false, cancle: false })
             } else {
                 setState({ ...state, save: true, cancle: true, runner: handleSubmit, onCancle: handleCancle })
@@ -60,7 +60,6 @@ const CreatePost = (props) => {
             if (dt?.status === 200 && dt?.data) {
                 setPost({ ...post, ...dt?.data });
                 setData({ ...data, article: { ...data?.article, title: dt.data?.title } });
-                setBlocks(jsonToObject(dt.data?.content));
                 toast.success('Post updated successfully');
             }
         } catch {
