@@ -4,7 +4,8 @@ import { RouterBackBtn } from '@/components/Buttons'
 import { Dialog } from '@/components/rui/_components';
 import { DialogContent, LinearProgress, Zoom } from '@mui/material';
 import { Suspense } from 'react';
-import { MainLogo } from '@/lib/client';
+import { MainLogo } from '@/lib/client_components';
+
 
 export const ProgressContext = React.createContext();
 

@@ -27,23 +27,23 @@ const PostDetailsEditor = () => {
     useEffect(() => {
         const dtHandler = async () => {
             !loading && setLoading(true)
-            let dt = await getArticledetails(data?.article?.shortId, data?.data?.id, true);
+            let dt = await getArticledetails(data?.article?.key, data?.data?.key, true);
             if (dt?.data) {
                 setPost(dt.data)
                 setCategories(dt.categories)
-                setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, published: dt.data?.published, category: dt.data?.category })
+                setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, state: dt.data?.state, category: dt.data?.category })
             } else {
                 toast.warn('Something went worng while fetching data from servers, Please reload the page to retry.')
                 router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
             }
         }
-        if (data?.article?.shortId) dtHandler().finally(() => setLoading(false));
-    }, [data?.article?.shortId])
+        if (data?.article?.key) dtHandler().finally(() => setLoading(false));
+    }, [data?.article?.key])
 
     let ref = useRef(null);
 
     const undoHandler = () => {
-        setNpst({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published, category: post?.category })
+        setNpst({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, state: post?.state, category: post?.category })
         setState({ ...state, canUndo: false, canSave: false })
     }
 
@@ -59,15 +59,11 @@ const PostDetailsEditor = () => {
             if (doPublish) {
                 npstData.doPublish = true;
             }
-            let res = await updatePostDetailsAction({ id: data?.article?.shortId, data: npstData, file: file })
+            let res = await updatePostDetailsAction({ key: data?.article?.key, data: npstData, file: file })
             if (res?.status === 200 && res.data) {
-                let img;
-                if (res.data?.image?.provider === 'cloudinary') {
-                    img = await getCImageUrl(res.data?.image?.url, { width: 640, height: 360, crop: 'fill', quality: 'auto' });
-                }
                 setPost({ ...post, ...res.data })
                 setState({ ...state, canUndo: false, canSave: false })
-                setData({ ...data, article: { ...data?.article, ...res.data, image: img } })
+                setData({ ...data, article: { ...data?.article, ...res.data } })
                 toast.success('Post details saved successfully.')
             }
             res?.errors.map((e) => toast.error(e.message))
@@ -108,7 +104,7 @@ const PostDetailsEditor = () => {
     }
 
     const handleSetCategory = ({ target }) => {
-        let cat = categories.find((c) => c.slug === target.value);
+        let cat = categories.find((c) => c.id === target.id);
         setNpst({ ...npst, category: cat });
     }
 
@@ -117,13 +113,13 @@ const PostDetailsEditor = () => {
     }
 
     const handlePublishButton = async () => {
-        if (post?.published === false && !post?.publishedAt) {
+        if (post?.state === 'DRAFT') {
             await publishHandler(true);
         }
     }
 
     useEffect(() => {
-        if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, published: post?.published, category: post?.category })) {
+        if (JSON.stringify(npst) !== JSON.stringify({ title: post?.title, slug: post?.slug, description: post?.description, tags: post?.tags, image: post?.image, privacy: post?.privacy, state: post?.state, category: post?.category })) {
             setState({ ...state, canSave: true, canUndo: true })
         } else {
             setState({ ...state, canSave: false, canUndo: false })
@@ -181,8 +177,8 @@ const PostDetailsEditor = () => {
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label="Slug" desc={((post?.published === false) && !post?.publishedAt) ? 'The slug is the URL of your post. It is automatically generated based on the title of your post, but you can customize it.' : 'You cannot change the slug of a published post.'} tip={'The slug is the URL of your post.'} />
                                 {((post?.published === false) && !post?.publishedAt) ?
-                                    <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} label="Slug" value={npst?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
-                                    : <TextField disabled={true} readOnly size="small" helperText={''} InputProps={{ endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.shortId}</div></InputAdornment> }} value={npst?.slug || ''} />
+                                    <TextField disabled={loading} size="small" helperText={''} counter InputProps={{ maxLength: 250, endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.key}</div></InputAdornment> }} label="Slug" value={npst?.slug || ''} onChange={(e) => handleUpdateNewPost(e, 'slug')} />
+                                    : <TextField disabled={true} readOnly size="small" helperText={''} InputProps={{ endAdornment: <InputAdornment position="end"><div className="mx-1 text-gray-600 dark:text-gray-400 stymie">-{post?.key}</div></InputAdornment> }} value={npst?.slug || ''} />
                                 }
                             </div>
                             <div className="flex flex-col space-y-3">
@@ -208,17 +204,18 @@ const PostDetailsEditor = () => {
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <InputHeader label={'Category'} desc={'Choose the category for your post. You can select a category from the list of available categories.'} tip={'Choose the category for your post.'} />
-                                <Select size="small" className="!rounded-full" value={npst?.category?.slug || ''} label="" onChange={handleSetCategory} disabled={loading}>
+                                <Select size="small" className="!rounded-full" value={npst?.category?.id || ''} label="" onChange={handleSetCategory} disabled={loading}>
                                     {categories?.map((cat, index) => (
-                                        <MenuItem key={index} value={cat?.slug}>{cat?.name}</MenuItem>
+                                        <MenuItem key={index} value={cat?.id}>{cat?.name}</MenuItem>
                                     ))}
                                 </Select>
                             </div>
-                            {((post?.published === false) && !post?.publishedAt) ? <>
-                                <Button fullWidth disabled={loading} variant="contained" color="button" className="dark:text-black" onClick={() => handlePublishButton()}>
-                                    Publish
-                                </Button>
-                            </> : null}
+                            {((post?.state === 'DRAFT'))
+                                ? <>
+                                    <Button fullWidth disabled={loading} variant="contained" color="button" className="dark:text-black" onClick={() => handlePublishButton()}>
+                                        Publish
+                                    </Button>
+                                </> : null}
 
                             {/* <div className="flex flex-col space-y-3">
                                 <InputHeader label="Published" desc={'Choose whether you want to publish your post immediately or schedule it for a later date.'} tip={'Choose whether you want to publish your post immediately or schedule it for a later date.'} />
@@ -244,7 +241,7 @@ const TagInput = ({ tags, setTags }) => {
     const handleAddTag = (event) => {
         if (event.key === 'Enter' && inputValue.trim() !== '') {
             let value = inputValue?.trim()
-            setTags([...tags, value]);
+            setTags([...tags, { name: value }]);
             setInputValue('');
         }
     };
@@ -285,7 +282,7 @@ const TagInput = ({ tags, setTags }) => {
         value = value?.trim()
         if (value && value.includes(',')) {
             let arr = value.split(',')
-            setTags([...tags, ...arr.filter((a) => { if (a?.trim()?.length >= 3) { return a?.trim() } })])
+            setTags([...tags, ...arr.filter((a) => { if (a?.trim()?.length >= 3) { return { name: a?.trim() } } })])
             setInputValue('')
         } else setInputValue(e.target.value)
     }
@@ -300,7 +297,7 @@ const TagInput = ({ tags, setTags }) => {
                 {tags.map((tag, index) => (
                     <Chip
                         key={index}
-                        label={tag}
+                        label={tag?.name}
                         onDelete={() => handleDeleteTag(tag)}
                         className="!m-1"
                     />
@@ -334,11 +331,7 @@ const FtImage = ({ img, handleImageData, handleUpdateNewPost }) => {
     useMemo(() => {
         if (img?.url) {
             if (img?.provider === 'cloudinary') {
-                setImageUrl(getCldImageUrl({
-                    width: 320,
-                    height: 160,
-                    src: img?.url,
-                }));
+                setImageUrl(img?.url);
             } else if ((img?.provider === 'file') && (typeof img?.url === 'object')) {
                 setImageUrl(URL.createObjectURL(img?.url));
             }

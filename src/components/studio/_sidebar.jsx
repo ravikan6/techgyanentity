@@ -134,7 +134,7 @@ const StudioSidebar = (props) => {
     return (<>
         <div className='w-full transition-all duration-500 dark:bg-darkHead bg-lightHead'>
             <div className="flex w-full transition-all duration-500 flex-col h-[calc(100vh-54px)] items-start">
-                {(context?.data?.page === 'p') ? <PostBox url={currentData?.url} title={currentData?.title} image={currentData?.image} open={open} /> : <div className={`flex w-full px-3 items-center ${open ? 'h-40' : 'h-14'}`}>
+                {(context?.data?.page === 'p') ? <PostBox url={currentData?.url} title={currentData?.title} image={currentData?.image?.url} open={open} /> : <div className={`flex w-full px-3 items-center ${open ? 'h-40' : 'h-14'}`}>
                     <UserBox currentData={currentData} open={open} />
                 </div>}
 

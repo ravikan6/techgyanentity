@@ -1,7 +1,8 @@
 import { CreatePost } from '@/components/post/create'
 import PostDetailsEditor from '@/components/studio/write/_post-details';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/db';
+import { query } from '@/lib/client';
+import { gql } from '@apollo/client';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
@@ -13,17 +14,7 @@ const PostEditPage = async ({ params }) => {
         if (path[1] === 'editor') {
             const id = path[0];
             try {
-                let data = await prisma.post.findUnique({
-                    where: {
-                        shortId: id,
-                    },
-                    select: {
-                        title: true,
-                        content: true,
-                        shortId: true,
-                        isDeleted: true,
-                    },
-                })
+                let data = await getArticle(id, null);
                 if (data && !data.isDeleted) {
                     delete data.isDeleted;
                     return (
@@ -51,5 +42,33 @@ const PostEditPage = async ({ params }) => {
         </div>
     )
 }
+
+const getArticle = async (id, authorId) => {
+    try {
+        const GET_ARTICLE = gql`
+        query MyQuery($key: String = "") {
+          Stories(key: $key) {
+            edges {
+              node {
+                deletedAt
+                isDeleted
+                key
+                slug
+                title
+                content
+              }
+            }
+          }
+        }`;
+
+        const { data } = await query(GET_ARTICLE, { key: id });
+        const article = data?.Stories?.edges[0]?.node;
+        return article;
+    } catch (e) {
+        console.log(e, '-----errror-from')
+        return null;
+    }
+}
+
 
 export default PostEditPage;

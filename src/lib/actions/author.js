@@ -1,9 +1,11 @@
 'use server';
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { deleteCloudinaryImage, uploadImage } from "./upload";
+import { uploadImage } from "./upload";
 import { getCImageUrl } from "../helpers";
 import { followAuthor } from "../resolver";
+import { query } from "../client";
+import { gql } from "@apollo/client";
 
 
 const updateAuthorAction = async (obj) => {
@@ -14,25 +16,60 @@ const updateAuthorAction = async (obj) => {
         return res;
     }
 
+    const UPDATE_AUTHOR = gql`
+    mutation UpdateAuthor($key: String = "", $social: [SocialLinkInput], $name: String = "", $description: String = "", $contactEmail: String = "", $handle: String = "") {
+      updateCreator(
+        data: {
+          contactEmail: $contactEmail
+          description: $description
+          handle: $handle
+          name: $name
+          social: $social
+        }
+        key: $key
+      ) {
+        creator {
+          social {
+            id
+            name
+            url
+          }
+          updatedAt
+          name
+          key
+          handle
+          description
+          contactEmail
+        }
+      }
+    }`;
+
     try {
-        let author = await prisma.author.update({
-            where: { id: obj.id },
-            data: {
-                ...obj.data,
-            },
+        let author = await query({
+            query: UPDATE_AUTHOR,
+            variables: {
+                key: obj.key,
+                social: obj.data?.social,
+                name: obj.data?.name,
+                description: obj.data?.description,
+                contactEmail: obj.data?.contactEmail,
+                handle: obj.data.handle
+            }
         });
-
-        author.image = author?.image?.url ? await getCImageUrl(author?.image?.url) : null;
-        author.banner = author?.banner?.url ? await getCImageUrl(author?.banner?.url) : null;
-
-        res = { ...res, data: author }
+        if (author?.data?.updateCreator?.creator) {
+            author = author?.data?.updateCreator?.creator;
+            res = { ...res, data: author, status: 200 };
+        } else {
+            res = { ...res, errors: [{ message: 'An error occurred while updating author. Please try again later.' }] };
+        }
     } catch (error) {
+        console.log(error);
         res = { ...res, errors: [{ message: error.message }] };
     }
     return res;
 }
 
-const updateAuthorImagesAction = async (data, files) => {
+const updateAuthorImagesAction = async (data, files, actions) => {
     try {
         let res = { data: null, status: 500, errors: [] };
         const session = await auth();
@@ -45,27 +82,46 @@ const updateAuthorImagesAction = async (data, files) => {
         logo = logo == 'undefined' ? null : logo == 'null' ? null : logo;
         let banner = files.get('banner') ? files.get('banner') : null;
         banner = banner == 'undefined' ? null : banner == 'null' ? null : banner;
-        let rmLogo = files.get('rmLogo') ? files.get('rmLogo') : 'false';
-        let rmBanner = files.get('rmBanner') ? files.get('rmBanner') : 'false';
 
         let lgData = null;
         let bnData = null;
+        let imageDeleted, bannerDeleted;
 
-        let author = await prisma.author.findUnique({
-            where: { id: data?.id },
-            select: { id: true, image: true, banner: true }
-        });
+        const IMAGE_ACTION = gql`
+        mutation CreatorImageAction($action: ImageActionEnum = CREATE, $provider: String = "", $url: String = "", $key: String = "", $id: String = "") {
+          updateCreator(
+            data: { image: { url: $url, provider: $provider, action: $action, id: $id } }
+            key: $key
+          ) {
+            creator {
+              image {
+                id
+                url
+              }
+              key
+            }
+          }
+        }`;
 
-        if (!!logo && (rmLogo == 'false')) {
+        if (!!logo && actions?.image !== 'DELETE') {
             try {
                 let logoData = await uploadImage(logo);
                 if (logoData?.success) {
                     lgData = await cloudinaryProvider(logoData?.data);
-                    if (author?.image?.url) {
-                        let rmData = await deleteCloudinaryImage(author?.image?.url);
-                        if (!rmData?.success) {
-                            throw new Error(rmData?.message);
+                    let res = await query({
+                        query: IMAGE_ACTION,
+                        variables: {
+                            action: actions?.image,
+                            provider: lgData.provider,
+                            url: lgData.url,
+                            key: data?.key,
+                            id: data?.media?.image?.id || null
                         }
+                    })
+                    if (res?.data?.updateCreator?.creator) {
+                        lgData = res?.data?.updateCreator?.creator?.image;
+                    } else {
+                        throw new Error(res?.errors[0]?.message);
                     }
                 } else {
                     throw new Error(logoData?.message);
@@ -75,31 +131,62 @@ const updateAuthorImagesAction = async (data, files) => {
                 lgData = null;
             }
         } else {
-            if (author?.image?.url && rmLogo == 'true') {
+            if (data?.media?.image?.id && actions?.image === 'DELETE') {
                 try {
-                    let logoData = await deleteCloudinaryImage(author?.image?.url);
-                    if (logoData?.success) {
-                        lgData = 'rm';
-                    } else {
-                        throw new Error(logoData?.message);
+                    let res = await query({
+                        query: IMAGE_ACTION,
+                        variables: {
+                            action: 'DELETE',
+                            id: data?.media?.image?.id,
+                            url: data?.media?.image?.url,
+                            provider: data?.media?.image?.provider || 'cloudinary'
+                        }
+                    })
+                    if (res?.data?.updateCreator?.creator) {
+                        lgData = null;
+                        imageDeleted = true;
                     }
                 } catch (error) {
-                    console.log({ message: 'An error occurred while deleting logo. Please try again later.' });
                     lgData = null;
+                    res.errors.push({ message: 'An error occurred while deleting logo. Please try again later.' });
                 }
             }
         }
 
-        if (!!banner && (rmBanner == 'false')) {
+        const BANNER_ACTION = gql`
+        mutation CreatorBannerAction($action: ImageActionEnum = CREATE, $provider: String = "", $url: String = "", $key: String = "", $id: String = "") {
+          updateCreator(
+            data: { banner: { url: $url, provider: $provider, action: $action, id: $id } }
+            key: $key
+          ) {
+            creator {
+              banner {
+                id
+                url
+              }
+              key
+            }
+          }
+        }`;
+
+
+        if (!!banner && actions?.banner !== 'DELETE') {
             try {
                 let bannerData = await uploadImage(banner);
                 if (bannerData?.success) {
                     bnData = await cloudinaryProvider(bannerData?.data);
-                    if (author?.banner?.url) {
-                        let rmData = await deleteCloudinaryImage(author?.banner?.url);
-                        if (!rmData?.success) {
-                            throw new Error(rmData?.message);
+                    let res = await query({
+                        query: BANNER_ACTION,
+                        variables: {
+                            action: actions?.banner,
+                            provider: bnData.provider,
+                            url: bnData.url,
+                            key: data?.key,
+                            id: data?.media?.banner?.id || null
                         }
+                    })
+                    if (res?.data?.updateCreator?.creator) {
+                        bnData = res?.data?.updateCreator?.creator?.banner;
                     }
                 } else {
                     throw new Error(bannerData?.message);
@@ -109,34 +196,31 @@ const updateAuthorImagesAction = async (data, files) => {
                 bnData = null;
             }
         } else {
-            if (author?.banner?.url && rmBanner == 'true') {
+            if (data?.media?.banner?.id && actions?.banner === 'DELETE') {
                 try {
-                    let bannerData = await deleteCloudinaryImage(author?.banner?.url);
-                    if (bannerData?.success) {
-                        bnData = 'rm';
-                    } else {
-                        throw new Error(bannerData?.message);
+                    let res = await query({
+                        query: BANNER_ACTION,
+                        variables: {
+                            action: 'DELETE',
+                            id: data?.media?.banner?.id,
+                            url: data?.media?.banner?.url,
+                            provider: data?.media?.banner?.provider || 'cloudinary',
+                            key: data?.key
+                        }
+                    })
+                    if (res?.data?.updateCreator?.creator) {
+                        bnData = null;
+                        bannerDeleted = true;
                     }
                 } catch (error) {
                     bnData = null;
-                    console.log({ message: 'An error occurred while deleting banner. Please try again later.' });
+                    res.errors.push({ message: 'An error occurred while deleting banner. Please try again later.' });
                 }
             }
         }
 
-        if (lgData || bnData) {
-            let author = await prisma.author.update({
-                where: { id: data?.id },
-                data: {
-                    ...(lgData ? (lgData == 'rm' ? { image: null } : { image: { set: lgData } }) : null),
-                    ...(bnData ? (bnData == 'rm' ? { banner: null } : { banner: { set: bnData } }) : null),
-                }
-            });
-
-            author.logo = author?.image?.url ? await getCImageUrl(author?.image?.url, { quality: 100 }) : null;
-            author.banner = author?.banner?.url ? await getCImageUrl(author?.banner?.url, { quality: 100 }) : null;
-            res = { ...res, data: author, status: 200 };
-        }
+        let resdata = { image: lgData === undefined ? data?.media?.image : lgData, banner: bnData === undefined ? data?.media?.banner : bnData, imageDeleted, bannerDeleted };
+        res = { ...res, data: resdata, status: 200 };
         return res;
     } catch (error) {
         res.errors.push({ message: 'An error occurred while updating images. Please try again later.' });

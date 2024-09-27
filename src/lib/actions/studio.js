@@ -15,7 +15,19 @@ query GetAuthor($key: String!) {
         name
         deletedAt
         image {
-          url
+            id
+            url
+        }
+        banner {
+            id
+            url
+        }
+        contactEmail
+        description
+        social {
+            id
+            name
+            url
         }
       }
     }

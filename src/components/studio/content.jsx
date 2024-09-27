@@ -1,8 +1,6 @@
 "use client";
 import * as React from 'react';
-import { getAuthorPosts } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
-import { CldImage } from "next-cloudinary";
 import { useContext, useEffect, useState, useMemo } from "react";
 import { Button, IconButton, Tooltip } from '../rui';
 import { useRouter } from 'next/navigation';
@@ -25,55 +23,90 @@ import {
 import { DrawerContext } from '../mainlayout';
 import { PostDetailsTableViewMenu, PrivacyHandlerBtn } from '../Buttons';
 import { RiLinkUnlinkM } from 'react-icons/ri';
-import { imgUrl } from '@/lib/helpers';
 import { ArticleImage } from '../post/_client';
+import { gql, useQuery, useLazyQuery } from '@apollo/client';
 
+const GET_AUTHOR_POSTS = gql`
+query MyQuery($key: String = "") {
+  Creators(key: $key) {
+    edges {
+      node {
+        storySet {
+          edges {
+            node {
+              updatedAt
+              title
+              state
+              slug
+              scheduledAt
+              publishedAt
+              privacy
+              key
+              isDeleted
+              id
+              description
+              deletedAt
+              createdAt
+              image {
+                url
+                alt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}`;
 
 const StudioContent = () => {
-    const [posts, setPosts] = useState([]);
-    const [postData, setPostData] = useState([]);
-    const [isMapping, setIsMapping] = useState(true);
-    const { data, setLoading, loading } = useContext(StudioContext);
+    const [stories, setStories] = useState([]);
+    const { data, setLoading, loading: contextLoading } = useContext(StudioContext);
 
     const { variant, open } = useContext(DrawerContext);
     const theme = useTheme();
 
+    const [loadStories, { data: creatorStories, loading, called }] = useLazyQuery(GET_AUTHOR_POSTS, {
+        variables: {
+            key: data?.data?.key
+        }
+    })
+
     useEffect(() => {
-        setLoading(true);
-        const handler = async () => {
-            if (data?.data?.id) {
-                const dt = await getAuthorPosts(data?.data?.id);
-                if (dt?.data) setPosts(dt.data);
-            }
-            setLoading(false);
-            setIsMapping(false);
-        };
-        handler();
+        if (data?.data?.key && !called) {
+            loadStories();
+        }
     }, [data]);
 
     useEffect(() => {
-        const data = posts?.map((post) => {
-            return {
-                id: post?.shortId,
-                post: post,
-                visibility: post?.privacy,
-                date: post?.publishedAt ? { value: post?.publishedAt, label: 'Published' } : { value: post?.createdAt, label: 'Created' },
-                claps: post?._count?.claps,
-                comments: post?._count?.comments,
-            };
-        });
-        setPostData(data || []);
-    }, [posts]);
+        if (creatorStories) {
+            const stories = creatorStories?.Creators?.edges[0]?.node?.storySet?.edges;
+            const data = stories.map((edge) => {
+                const node = edge.node;
+                return {
+                    story: node,
+                    visibility: node?.privacy,
+                    date: {
+                        value: node?.publishedAt || node?.scheduledAt || node?.createdAt,
+                        label: node?.publishedAt ? 'Published' : node?.scheduledAt ? 'Scheduled' : 'Draft'
+                    },
+                    claps: 0,
+                    comments: 0,
+                }
+            });
+            setStories(stories);
+        }
+    }, [creatorStories]);
 
     const columns = useMemo(() => [
         {
-            accessorFn: (row) => row?.post?.title,
-            id: 'post',
+            accessorFn: (row) => row?.story?.title,
+            id: 'story',
             header: 'Post',
             size: 320,
             maxSize: 320,
             Cell: ({ renderedCellValue, row }) => {
-                return <SidePostView post={row.original.post} title={renderedCellValue} setPosts={setPosts} />
+                return <SidePostView story={row.original.story} title={renderedCellValue} setStories={setStories} />
             },
             columnFilterModeOptions: ['fuzzy', 'contains', 'startsWith'],
         },
@@ -124,7 +157,7 @@ const StudioContent = () => {
 
     const table = useMaterialReactTable({
         columns,
-        data: postData,
+        data: stories,
         enableColumnFilterModes: true,
         enableColumnOrdering: false,
         enableGrouping: false,
@@ -139,7 +172,7 @@ const StudioContent = () => {
             showGlobalFilter: true,
             ...((variant === 'permanent') && {
                 columnPinning: {
-                    left: ['mrt-row-select', 'post'],
+                    left: ['mrt-row-select', 'story'],
                 }
             })
         },
@@ -166,8 +199,7 @@ const StudioContent = () => {
             },
         },
         state: {
-            showSkeletons: isMapping,
-
+            showSkeletons: loading,
         },
         muiTableBodyProps: {
             sx: (theme) => ({
@@ -215,7 +247,7 @@ const StudioContent = () => {
         renderTopToolbar: ({ table }) => {
             const handleDeactivate = () => {
                 table.getSelectedRowModel().flatRows.map((row) => {
-                    alert('deactivating ' + row.original?.post?.shortId);
+                    alert('deactivating ' + row.original?.story?.shortId);
                 });
             };
 
@@ -223,9 +255,9 @@ const StudioContent = () => {
                 <>
                     <div className="flex items-center justify-between w-full px-7 md:px-2 mb-1 pt-2 sm:w-auto sm:justify-start space-x-2 md:space-x-3 lg:space-x-5">
                         {
-                            [{ name: 'Post', value: 'post' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
+                            [{ name: 'Post', value: 'story' }, { name: 'Web Stories', value: 'webstories' }, { name: 'Short Article', value: 'shortarticle' }].map((item, index) => {
                                 return (
-                                    <Button disabled={loading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'post' === item.value ? '!bg-lightButton dark:!bg-darkButton !text-black dark:!text-black' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="button" size="small" >
+                                    <Button disabled={contextLoading} key={index} onClick={() => console.log('Clicked')} variant="contained" sx={{ px: { xs: 3, sm: 1.4, md: 2.3, lg: 3 } }} className={`font-semibold truncate !text-nowrap cheltenham ${'story' === item.value ? '!bg-lightButton dark:!bg-darkButton !text-black dark:!text-black' : '!bg-light dark:!bg-dark !text-slate-900 dark:!text-slate-100'}`} color="button" size="small" >
                                         {item.name}
                                     </Button>
                                 );
@@ -242,7 +274,7 @@ const StudioContent = () => {
                     >
                         <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                             <MRT_ToggleFiltersButton table={table} />
-                            <MRT_GlobalFilterTextField sx={{ border: 'none' }} InputProps={{ startAdornment: null, endAdornment: null, disableUnderline: true }} table={table} />
+                            <MRT_GlobalFilterTextField sx={{ border: 'none' }} slotProps={{ input: { startAdornment: null, endAdornment: null, disableUnderline: true } }} table={table} />
                         </Box>
                         {/* <Box>
                             <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -270,25 +302,25 @@ const StudioContent = () => {
 
 };
 
-const SidePostView = ({ post, title, setPosts }) => {
+const SidePostView = ({ story, title, setStories }) => {
     const router = useRouter();
     const { data } = useContext(StudioContext);
 
     return (
-        <div key={post?.shortId} className="flex max-w-[370px] min-w-[370px] items-center h-full w-[99%] space-x-4">
+        <div key={story?.key} className="flex max-w-[370px] min-w-[370px] items-center h-full w-[99%] space-x-4">
             <div className="w-[100px] flex-shrink-0">
-                <ArticleImage image={post?.image} width={100} height={56} className={'bg-black/5 dark:bg-white/5 !rounded'} />
+                <ArticleImage image={story?.image} width={100} height={56} className={'bg-black/5 dark:bg-white/5 !rounded'} />
             </div>
             <div className="flex flex-col flex-grow justify-start w-[calc(100%-100px)] items-start">
                 <h3 className="text-base cheltenham block w-[99%] font-semibold line-clamp-1 truncate">{title}</h3>
                 <div className="h-10 relative transition-all duration-300 w-[99%]">
-                    <p className="text-gray-600 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{post?.description}</p>
+                    <p className="text-gray-600 rb__studio__content__desc dark:text-gray-400 line-clamp-2 text-xs text-pretty">{story?.description}</p>
                     <div className="space-x-4 md:space-x-6 top-1.5 rb__studio__content__action absolute flex justify-start items-center w-full">
-                        <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${post?.shortId}/edit`)} tip='Edit' />
-                        <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${post?.shortId}/comments`)} tip='Comments' />
-                        <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${post?.shortId}/analytics`)} tip='Analytics' />
-                        <IconView Icon={RiLinkUnlinkM} onClick={() => window.open(`/${data?.data?.handle ? `@${data?.data?.handle}` : 'post'}/${post?.slug}`, '_blank')} tip='Read it on Post Page' />
-                        <PostDetailsTableViewMenu url={post?.slug} data={{ id: post?.shortId, img: post?.image?.url, title: title, description: post?.description }} setPosts={setPosts} />
+                        <IconView Icon={MdOutlineEdit} onClick={() => router.push(`/studio/p/${story?.key}/edit`)} tip='Edit' />
+                        <IconView Icon={MdOutlineComment} onClick={() => router.push(`/studio/p/${story?.key}/comments`)} tip='Comments' />
+                        <IconView Icon={MdOutlineAnalytics} onClick={() => router.push(`/studio/p/${story?.key}/analytics`)} tip='Analytics' />
+                        <IconView Icon={RiLinkUnlinkM} onClick={() => window.open(`/${data?.data?.handle ? `@${data?.data?.handle}` : 'story'}/${story?.slug}`, '_blank')} tip='Read it on Post Page' />
+                        <PostDetailsTableViewMenu url={story?.slug} data={{ id: story?.key, img: story?.image?.url, title: title, description: story?.description }} setStories={setStories} />
                     </div>
                 </div>
             </div>

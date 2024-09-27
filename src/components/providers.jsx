@@ -9,7 +9,7 @@ import mui from '@/styles/mui';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import { ThemeProvider } from '@mui/material';
 import {
-  
+
   ApolloLink,
   HttpLink,
 } from "@apollo/client";
@@ -20,9 +20,12 @@ import {
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support";
 
-function makeClient() {
+function makeClient(sessionId) {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/",
+    headers: {
+      Cookie: sessionId ? `sessionid=${sessionId}` : null,
+    }
   });
 
   return new ApolloClient({
@@ -39,7 +42,7 @@ function makeClient() {
   });
 }
 
-export const  Providers = ({ session, children }) => {
+export const Providers = ({ session, children }) => {
 
   const color = 'var(--rb-palette-button-main)';
   const height = '1.7px';
@@ -120,7 +123,7 @@ export const  Providers = ({ session, children }) => {
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">
-        <ApolloNextAppProvider makeClient={makeClient} >
+        <ApolloNextAppProvider makeClient={() => makeClient(session?.user?.sessionId)} >
           <SessionProvider session={session}>
             {children}
             <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />

@@ -1,7 +1,7 @@
 'use client';
 import { Button, TextField, Tooltip, IconButton } from "@/components/rui";
 import { StudioContext } from "@/lib/context";
-import { InputAdornment, Grid, Avatar } from "@mui/material";
+import { InputAdornment, Grid, Avatar, Grid2 } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { BsPatchQuestion } from "react-icons/bs";
@@ -27,13 +27,13 @@ const ChannelEditLayoutFunc = (props) => {
 }
 
 const ChannelBrandFunc = ({ data }) => {
-    const [bData, setBData] = useState(data || {});
+    const [bData, setBData] = useState({ ...data, } || {});
     const context = useContext(StudioContext);
     const { state, setState } = useContext(ChannelEditContext);
     const [files, setFiles] = useState({ logo: null, banner: null, rml: false, rmb: false });
     const [error, setError] = useState({ error: false, message: { logo: null, banner: null } });
 
-    let authorId = context?.data?.data?.id;
+    let authorId = context?.data?.data?.key;
 
     useMemo(() => {
         if (JSON.stringify(bData) !== JSON.stringify(data)) {
@@ -47,13 +47,16 @@ const ChannelBrandFunc = ({ data }) => {
                 let formData = new FormData();
                 formData.append('logo', files?.logo);
                 formData.append('banner', files?.banner);
-                formData.append('rmLogo', files?.rml);
-                formData.append('rmBanner', files?.rmb);
-                let dt = await updateAuthorImagesAction(bData, formData);
+                let actions = {
+                    image: files?.rml ? 'DELETE' : bData?.media?.image ? 'UPDATE' : 'CREATE',
+                    banner: files?.rmb ? 'DELETE' : bData?.media?.banner ? 'UPDATE' : 'CREATE'
+                }
+                let dt = await updateAuthorImagesAction(bData, formData, actions);
 
                 if (dt?.data) {
-                    setBData({ ...bData, ...dt?.data });
-                    context?.setData({ ...context?.data, data: { ...context?.data?.data, image: dt?.data?.logo, logo: dt?.data?.logo } });
+                    let image = dt?.data?.image, banner = dt?.data?.banner;
+                    setBData({ ...bData, logo: image?.url, banner: banner?.url, media: { image: image, banner: banner } });
+                    context?.setData({ ...context?.data, data: { ...context?.data?.data, image: image, logo: image?.url } });
                     context.loading && context.setLoading(false);
                     setState({ ...state, data: { isRunnable: false }, run: false });
                     toast.success('Your have successfully updated your profile branding.');
@@ -193,13 +196,13 @@ const ChannelBrandFunc = ({ data }) => {
     };
 
     useMemo(() => {
-        if (authorId != data?.id) {
+        if (authorId != data?.key) {
             !context?.loading && context?.setLoading(true);
-            context?.data?.data?.id && setState({ ...state, data: { isRunnable: false } });
+            context?.data?.data?.key && setState({ ...state, data: { isRunnable: false } });
         } else {
             context?.loading && context.setLoading(false);
         }
-    }, [context?.loading, data?.id, authorId]);
+    }, [context?.loading, data?.key, authorId]);
 
     return (
         <>
@@ -265,12 +268,12 @@ const AuthorInfoUpdate = ({ data }) => {
     const [links, setLinks] = useState(data?.social || []);
     const { state, setState } = useContext(ChannelEditContext);
 
-    const authorId = context?.data?.data?.id;
+    const authorId = context?.data?.data?.key;
 
     function setDataFromData() {
         setName({ value: data?.name, error: false, errorText: null });
         setHandle({ value: data?.handle, error: false });
-        setDescription({ value: data?.bio, error: false });
+        setDescription({ value: data?.description, error: false });
         setEmail({ value: data?.contactEmail, error: false });
         setLinks(data?.social);
     }
@@ -296,9 +299,9 @@ const AuthorInfoUpdate = ({ data }) => {
     useMemo(async () => {
         if (state?.run) {
             try {
-                let newData = await updateAuthorAction({ id: data?.id, data: { name: name.value, handle: handle.value, bio: description?.value, social: links, contactEmail: email?.value } });
+                let newData = await updateAuthorAction({ key: data?.key, data: { name: name.value, handle: handle.value, description: description?.value, social: links, contactEmail: email?.value } });
                 if (newData?.data) {
-                    context?.setData({ ...context?.data, data: newData?.data });
+                    context?.setData({ ...context?.data, data: { ...context?.data?.data, ...newData?.data } });
                     context.loading && context.setLoading(false);
                     // setAllDisabled(true);
                     setState({ ...state, data: { isRunnable: false }, run: false });
@@ -363,13 +366,13 @@ const AuthorInfoUpdate = ({ data }) => {
     };
 
     useMemo(() => {
-        if (authorId != data?.id) {
+        if (authorId != data?.key) {
             !context?.loading && context?.setLoading(true);
-            context?.data?.data?.id && setState({ ...state, data: { isRunnable: false } });
+            context?.data?.data?.key && setState({ ...state, data: { isRunnable: false } });
         } else {
             context?.loading && context.setLoading(false);
         }
-    }, [context?.loading, data?.id, authorId]);
+    }, [context?.loading, data?.key, authorId]);
 
     return (
         <div className="mt-10 max-w-[900px]">
@@ -499,7 +502,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     const handleChange = (index, field, value) => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
-        if (field === 'title') {
+        if (field === 'name') {
             if (value.trim() === '') {
                 updatedItems[index].error = 'T';
                 updatedItems[index].T = 'Title is required';
@@ -524,7 +527,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
             if (JSON.stringify(set.links) === JSON.stringify(items)) {
                 state.setState({ ...state, data: { isRunnable: false } });
             } else {
-                if (items?.map(item => item.error).includes('T') || items?.map(item => item.error).includes('U') || items?.map(item => item.title.trim()).includes('') || items?.map(item => item.url.trim()).includes('')) state.setState({ ...state, data: { isRunnable: false } });
+                if (items?.map(item => item.error).includes('T') || items?.map(item => item.error).includes('U') || items?.map(item => item.name.trim()).includes('') || items?.map(item => item.url.trim()).includes('')) state.setState({ ...state, data: { isRunnable: false } });
                 else {
                     let s = items?.map((item, index) => {
                         let { error, T, U, ...rest } = item;
@@ -545,7 +548,7 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
         setItems(updatedItems);
     };
     const handleAddLink = () => {
-        setItems([...items, { id: String(items.length + 1), title: '', url: '', error: 'T', T: 'Title is required', U: '' }]);
+        setItems([...items, { id: items.length + 1, name: '', url: '', error: 'T', T: 'Title is required', U: '' }]);
         setTimeout(() => {
             if (titleRef.current) {
                 titleRef.current.focus();
@@ -557,25 +560,25 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
             <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="droppable">
                     {(provided) => (
-                        <Grid container spacing={2} {...provided.droppableProps} className="transition-all duration-500" ref={provided.innerRef}>
+                        <Grid2 container spacing={2} {...provided.droppableProps} className="transition-all duration-500" ref={provided.innerRef}>
                             {items?.map((item, index) => (
-                                <Draggable key={item.id} draggableId={item.id} index={index}>
+                                <Draggable key={String(item.id)} draggableId={String(item.id)} index={index}>
                                     {(provided, snapshot) => (
-                                        <Grid item xs={12} key={item.id} >
+                                        <Grid2 item xs={12} key={item.id} >
                                             <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
                                                 className={`px-1 rounded-md ${snapshot.isDragging ? 'bg-gray-100/10 dark:bg-darkHead/10' : ''}`}
                                             >
-                                                <Grid container spacing={2} className={`group/d`} >
-                                                    <Grid item xs={1}>
+                                                <Grid2 container spacing={2} className={`group/d`} >
+                                                    <Grid2 item xs={1}>
                                                         <div className="mt-1.5" {...provided.dragHandleProps}>
                                                             <IconButton color="primary" className="!cursor-grab" aria-label="drag">
                                                                 <RiDraggable className="w-4 h-4" />
                                                             </IconButton>
                                                         </div>
-                                                    </Grid>
-                                                    <Grid item xs={3.5}>
+                                                    </Grid2>
+                                                    <Grid2 item xs={3.5}>
                                                         <TextField
                                                             label="Title"
                                                             variant="outlined"
@@ -584,13 +587,13 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                                                             error={item.error === 'T'}
                                                             required
                                                             helperText={item.error === 'T' ? item.T : ' '}
-                                                            value={item.title}
+                                                            value={item?.name}
                                                             inputRef={titleRef}
                                                             disabled={disabled}
-                                                            onChange={(e) => handleChange(index, 'title', e.target.value)}
+                                                            onChange={(e) => handleChange(index, 'name', e.target.value)}
                                                         />
-                                                    </Grid>
-                                                    <Grid item xs={6.5}>
+                                                    </Grid2>
+                                                    <Grid2 item xs={6.5}>
                                                         <TextField
                                                             label="URL"
                                                             variant="outlined"
@@ -603,20 +606,20 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                                                             value={item.url}
                                                             onChange={(e) => handleChange(index, 'url', e.target.value)}
                                                         />
-                                                    </Grid>
-                                                    <Grid item xs={1}>
+                                                    </Grid2>
+                                                    <Grid2 item xs={1}>
                                                         <IconButton className="transition-all duration-500 !hidden group-hover/d:!flex mt-1.5 hover:!flex" color="error" aria-label="delete" onClick={() => handleDelete(index)}>
                                                             <MdOutlineDeleteOutline className="w-4 h-4" />
                                                         </IconButton>
-                                                    </Grid>
-                                                </Grid>
+                                                    </Grid2>
+                                                </Grid2>
                                             </div>
-                                        </Grid>
+                                        </Grid2>
                                     )}
                                 </Draggable>
                             ))}
                             {provided.placeholder}
-                        </Grid>
+                        </Grid2>
                     )}
                 </Droppable>
             </DragDropContext>
@@ -627,10 +630,10 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
     );
 };
 
-export const SetDynmicAuthor = ({ author }) => {
+export const SetDynmicAuthor = ({ key }) => {
     const router = useRouter();
     useEffect(() => {
-        SetAuthorStudioCookie(author?.id).then((res) => {
+        SetAuthorStudioCookie(key).then((res) => {
             if (res)
                 router.push(`/${process.env.STUDIO_URL_PREFIX}/edit?t=info`);
             else {

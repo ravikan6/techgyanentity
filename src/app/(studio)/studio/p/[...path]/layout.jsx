@@ -2,10 +2,11 @@ import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components
 import { WriteHeader } from "@/components/studio/write/_header_focus";
 import { DecryptAuthorIdStudioCookie } from "@/lib/actions/studio";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { getCImageUrl } from "@/lib/helpers";
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers'
+import { gql } from "@apollo/client";
+import { query } from "@/lib/client";
 
 const WriteLayout = async ({ children, params }) => {
     const { path } = params;
@@ -14,14 +15,14 @@ const WriteLayout = async ({ children, params }) => {
 
         if (path?.length === 2) {
             let cookies = headers().get('cookie');
-            cookies = cookies.split(';').find(c => c.trim().startsWith('__Secure-RSUAUD='));
-            cookies = cookies.split('=')[1];
+            cookies = cookies?.split(';').find(c => c.trim().startsWith('__Secure-RSUAUD='));
+            cookies = cookies?.split('=')[1];
             cookies = decodeURIComponent(cookies);
             const author = await DecryptAuthorIdStudioCookie(cookies);
             if (!author) {
                 redirect('/studio/content')
             }
-            const article = await getArticle(path[0], author?.id);
+            const article = await getArticle(path[0], author?.key);
             if (!article) {
                 redirect('/studio/content')
             }
@@ -54,37 +55,43 @@ const WriteLayout = async ({ children, params }) => {
 
 const getArticle = async (id, authorId) => {
     try {
-        const article = await prisma.post.findFirst({
-            where: {
-                shortId: id,
-                authorId: authorId
-            },
-            select: {
-                shortId: true,
-                title: true,
-                description: true,
-                isDeleted: true,
-                image: {
-                    select: {
-                        url: true,
-                        alt: true,
-                        provider: true
-                    }
-                },
-                published: true,
-                author: {
-                    select: {
-                        id: true,
-                        handle: true,
-                    }
-                },
+        const GET_ARTICLE = gql`
+        query MyQuery($key: String = "") {
+          Stories(key: $key) {
+            edges {
+              node {
+                createdAt
+                deletedAt
+                description
+                id
+                isDeleted
+                key
+                privacy
+                publishedAt
+                scheduledAt
+                slug
+                image {
+                  url
+                  id
+                }
+                state
+                title
+                updatedAt
+                tags {
+                  name
+                }
+                author {
+                    key
+                    name
+                    handle
+                }
+              }
             }
-        });
+          }
+        }`;
 
-        if (!article || article?.isDeleted) return null;
-        if (article?.image && (article?.image?.provider === 'cloudinary')) {
-            article.image = await getCImageUrl(article?.image?.url, { width: 640, crop: 'fill', quality: 'auto', aspectRatio: "16:9" });
-        }
+        const { data } = await query(GET_ARTICLE, { key: id });
+        const article = data?.Stories?.edges[0]?.node;
         return article;
     } catch (e) {
         console.log(e, '-----errror-from')

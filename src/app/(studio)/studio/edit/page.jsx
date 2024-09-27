@@ -1,5 +1,5 @@
 import { AuthorEditBranding, AuthorInfoUpdate, ChannelEditSections } from '@/components/studio/author';
-import { DecryptChannelStudioCookie, DecryptAuthorStudioCookie } from '@/lib/actions/studio';
+import { DecryptAuthorStudioCookie } from '@/lib/actions/studio';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
@@ -42,8 +42,10 @@ const ChannelEditPage = async ({ searchParams }) => {
     }
     if (page === 'sections') {
     } else if (page === 'branding') {
-        data = authorInfo;
-        data.logo = authorInfo?.image;
+        data = { ...authorInfo };
+        data.media = { image: authorInfo?.image, banner: authorInfo?.banner };
+        data.logo = authorInfo?.image.url;
+        data.banner = authorInfo?.banner.url;
     } else if (page === 'info') {
         data = authorInfo;
     }

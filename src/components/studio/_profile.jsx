@@ -9,7 +9,7 @@ import { ListItemRdX, ListInsideModel, ThemeSelect, SecondaryMenu } from '@/comp
 import { StudioContext } from '@/lib/context';
 import { SetAuthorStudioCookie } from '@/lib/actions/studio';
 import { toast } from 'react-toastify';
-import { getUserAuthors } from '@/lib/actions/user';
+import { gql, useQuery } from '@apollo/client';
 
 
 export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) => {
@@ -22,7 +22,7 @@ export const StudioServiceSelecterMenu = ({ session, canSwitchAuthor = true }) =
     const [menuOpen, setMenuOpen] = useState(false);
     const [insiderData, setInsiderData] = useState(null);
 
-    const [currentData, setCurrentData] = useState({ name: session?.user?.name, image: session?.user?.image, handle: session?.user?.username, url: `/@${session?.user?.username}`, createUrl: '/auth/login' });
+    const [currentData, setCurrentData] = useState({ name: session?.user?.name, image: { url: session?.user?.image }, handle: session?.user?.username, url: `/@${session?.user?.username}`, createUrl: '/auth/login' });
 
     const context = useContext(StudioContext);
     const page = context?.data?.page;
@@ -222,36 +222,43 @@ const SwitchAccount = ({ state, context }) => {
             name: `Switch ${pageInfo?.serviceName}`,
             icon: Person4Outlined,
         }} data={{
-            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.id, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: AccountProfilesSwitcherView, isJsx: true, componentProps: { pageInfo: pageInfo },
+            title: `Switch ${pageInfo?.serviceName}`, width: '320px', selected: context?.data?.data?.key, message: `Please select an ${pageInfo?.serviceName?.toLowerCase()} to switch to.`, component: AccountProfilesSwitcherView, isJsx: true, componentProps: { pageInfo: pageInfo },
         }} state={state} />
     )
 }
 
 const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
-    const { data: session } = useSession();
-    const [thisData, setThisData] = useState(null);
-
     const context = useContext(StudioContext);
     let page = context?.data?.page;
 
-    useMemo(async () => {
-        if (state?.insiderOpen) {
-            try {
-                const fdata = await getUserAuthors();
-                setThisData(fdata?.data);
-            } catch (error) {
-                toast.error('An error occurred while fetching data. Please try again.');
+    const GET_USER_CREATORS = gql`
+    query MyCretorAccounts {
+      Me {
+        creatorSet {
+          edges {
+            node {
+                key
+                name
+                handle
+                image {
+                    url
+                }
             }
+          }
         }
-    }, [session, state?.insiderOpen]);
-    console.log(thisData, 'thisData', state);
+      }
+    }`;
+
+    const { data, loading, refetch, error } = useQuery(GET_USER_CREATORS);
+    console.log(data, loading, error)
+
     const updateContextCookie = (data) => {
         try {
-            SetAuthorStudioCookie(data?.id).then((res) => {
+            SetAuthorStudioCookie(data?.key).then((res) => {
                 if (res) {
                     state.handleInsiderClose();
                     // window.location.reload();
-                    context.setData({ ...context.data, data: data }); // Commented because it is usefull while reloading the page
+                    context.setData({ ...context.data, data: data });
                 }
             });
         }
@@ -268,29 +275,7 @@ const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
             </div>
             <Divider />
             <List className='mx-1 max-w-[320px]'>
-                {thisData ? thisData?.map((item, index) => {
-                    item = { ...item, image: item?.image || item?.logo };
-                    return (
-                        <Fragment key={index} >
-                            <MenuItem onClick={() => { !(context?.data?.data?.id === item?.id) ? updateContextCookie(item) : null }}>
-                                <Tooltip title={`${item?.name} (${item?.handle})`}>
-                                    <div className="flex items-center space-x-2 justify-between w-full">
-                                        <ListItemIcon>
-                                            <Avatar src={item?.image} className='uppercase font-semibold' sx={{ width: 40, height: 40 }}>{item?.name?.slice(0, 1)}</Avatar>
-                                        </ListItemIcon>
-                                        <div className="flex-1 flex-col ml-6 w-[calc(100%-80px)]">
-                                            <h3 className='truncate text-base ml-0.5 font-semibold'>{item?.name}</h3>
-                                            <p className='truncate text-sm' >@{item?.handle}</p>
-                                        </div>
-                                        <div className='w-5 flex justify-center items-center'>
-                                            {context?.data?.data?.id === item?.id ? <Check className='text-accentLight dark:text-accentDark' fontSize="small" /> : null}
-                                        </div>
-                                    </div>
-                                </Tooltip>
-                            </MenuItem>
-                        </Fragment>
-                    )
-                }) :
+                {loading ?
                     [1, 2].map((_, index) => (
                         <MenuItem key={index} sx={{ my: 1 }} >
                             <div className="flex items-center space-x-2 justify-between w-full">
@@ -304,7 +289,40 @@ const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
                                 </div>
                             </div>
                         </MenuItem>
-                    ))
+                    )) :
+                    error == undefined ? data?.Me?.creatorSet?.edges?.map((item, index) => {
+                        item = item.node
+                        return (
+                            <Fragment key={index} >
+                                <MenuItem onClick={() => { !(context?.data?.data?.key === item?.key) ? updateContextCookie(item) : null }}>
+                                    <Tooltip title={`${item?.name} (${item?.handle})`}>
+                                        <div className="flex items-center space-x-2 justify-between w-full">
+                                            <ListItemIcon>
+                                                <Avatar src={item?.image?.url} className='uppercase font-semibold' sx={{ width: 40, height: 40 }}>{item?.name?.slice(0, 1)}</Avatar>
+                                            </ListItemIcon>
+                                            <div className="flex-1 flex-col ml-6 w-[calc(100%-80px)]">
+                                                <h3 className='truncate text-base ml-0.5 font-semibold'>{item?.name}</h3>
+                                                <p className='truncate text-sm' >@{item?.handle}</p>
+                                            </div>
+                                            <div className='w-5 flex justify-center items-center'>
+                                                {context?.data?.data?.key === item?.key ? <Check className='text-accentLight dark:text-accentDark' fontSize="small" /> : null}
+                                            </div>
+                                        </div>
+                                    </Tooltip>
+                                </MenuItem>
+                            </Fragment>
+                        )
+                    })
+                        : <>
+                            <div className='flex flex-col gap-2 items-center  justify-center p-2'>
+                                <p>
+                                    Something went wrong!
+                                </p>
+                                <Button variant='outlined' size="small" onClick={refetch}>
+                                    Retry
+                                </Button>
+                            </div>
+                        </>
                 }
             </List>
             <Divider />

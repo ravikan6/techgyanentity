@@ -16,8 +16,10 @@ const { getClient, query, PreloadQuery } = registerApolloClient(async () => {
         link: new HttpLink({
             uri: url,
             // fetchOptions: { cache: "no-store" },
+            credentials: 'include',
             headers: {
                 Cookie: session.user ? `sessionid=${session.user.sessionId}` : null,
+                'Access-Control-Allow-Origin': '*',
             }
         }),
     });

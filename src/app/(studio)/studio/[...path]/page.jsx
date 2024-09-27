@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React from 'react'
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { SetDynmicAuthor } from '@/components/studio/author/_edit-funcs';
 import StudioContent from '@/components/studio/content';
@@ -16,12 +15,7 @@ const page = async ({ params, }) => {
       const subroute = decodeURIComponent(path[1]);
       if (subroute.startsWith('@')) {
         let author = subroute.slice(1);
-        author = await prisma.author.findUnique({
-          where: {
-            handle: author,
-            userId: session?.user?.id
-          }
-        });
+        // TODO: Fetch Author
         if (!author && author?.id) {
           return redirect(`/${process.env.STUDIO_URL_PREFIX}/dashboard`);
         }

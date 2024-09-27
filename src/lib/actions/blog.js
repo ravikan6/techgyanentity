@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { generateUniqueId } from '../helpers';
 import { deleteCloudinaryImage, uploadImage } from './upload';
 import { cloudinaryProvider } from './author';
+import { gql } from '@apollo/client';
+import { query } from '../client';
 
 export const getBlogs = async () => {
 
@@ -98,23 +100,24 @@ export const updatePostAction = async (data) => {
         return res;
     }
 
+    const UPDATE_POST = gql`
+    mutation MyMutation($key: String = "", $content: String = "", $title: String = "") {
+      updateStory(data: { title: $title, content: $content }, key: $key) {
+        story {
+          content
+          title
+        }
+      }
+    }`;
+
     try {
-        const updatedPost = await prisma.post.update({
-            where: {
-                shortId: data.id,
-                isDeleted: false,
-            },
-            data: {
-                title: data.title,
-                content: data.content,
-            },
-            select: {
-                title: true,
-                content: true,
-            }
-        });
-        res = { ...res, data: updatedPost, status: 200 };
-        return res;
+        let updatedPost = await query(UPDATE_POST, { key: data.key, title: data.title, content: JSON.stringify(data.content) });
+        if (updatedPost?.data?.updateStory?.story) {
+            res = { ...res, data: updatedPost?.data?.updateStory?.story, status: 200 };
+            return res;
+        } else {
+            throw new Error('An error occurred while updating the post. Please try again later.');
+        }
     } catch (error) {
         res.errors.push({ message: error.message });
         return res;
@@ -131,26 +134,23 @@ export const updatePostDetailsAction = async (data) => {
 
     let setter = { ...data?.data };
     let file = data?.file ? data?.file : new FormData();
-    let cat = setter?.category;
+    let cat = setter?.category.id;
+    let tags = setter?.tags.map((t) => t.name);
     delete setter.category;
     if (setter?.doPublish) {
-        setter.publishedAt = new Date();
-        setter.published = true;
-        delete setter.doPublish;
+        setter.state = 'PUBLISHED';
     }
 
     if (file.has('image') && setter?.image?.provider === 'file') {
         let image = file.get('image')
         try {
             let ftImage = await uploadImage(image);
+            setter.image.action = 'CREATE';
             if (ftImage.success) {
                 ftImage = await cloudinaryProvider(ftImage?.data);
                 setter.image = { ...data?.data?.image, ...ftImage }
-                if (data?.data?.image?.url) {
-                    let rmImg = await deleteCloudinaryImage(data?.data?.image?.url);
-                    if (!rmImg?.success) {
-                        throw new Error(rmImg?.message);
-                    }
+                if (setter?.image?.url && setter?.image?.provider) {
+                    // delete the file from the server
                 }
             } else {
                 throw new Error(ftImage?.message);
@@ -159,51 +159,82 @@ export const updatePostDetailsAction = async (data) => {
             res.errors.push({ message: 'An error occurred while uploading post Image. Please try again later.' });
             setter?.image?.url && delete setter.image.url;
             setter?.image?.provider && delete setter.image.provider;
+            setter?.image?.action && delete setter.image.action;
         }
     }
 
+    const UPDATE_POST = gql`
+    mutation MyMutation($key: String = "", $category: String = "", $description: String = "", $privacy: PrivacyEnum = PUBLIC, $state: StateEnum = DRAFT, $tags: [String] = "", $title: String = "", $slug: String = "", $doPublish: Boolean = false, $image: ImageInput) {
+      updateStory(
+        data: {
+          category: $category
+          description: $description
+          doPublish: $doPublish
+          privacy: $privacy
+          state: $state
+          tags: $tags
+          title: $title
+          slug: $slug
+          image: { url: $url, provider: $provider, action: $action }
+        }
+        key: $key
+      ) {
+        story {
+          title
+          updatedAt
+          state
+          slug
+          scheduledAt
+          publishedAt
+          privacy
+          key
+          isDeleted
+          id
+          description
+          deletedAt
+          createdAt
+          content
+          image {
+            id
+            url
+            caption
+          }
+          category {
+            name
+            id
+          }
+          tags {
+            name
+            id
+          }
+        }
+      }
+    }`;
+
     try {
-        const updatedPost = await prisma.post.update({
-            where: {
-                shortId: data.id,
-                isDeleted: false,
-            },
-            data: {
-                ...setter,
-                ...(cat?.slug && {
-                    category: {
-                        connect: {
-                            slug: cat?.slug,
-                        }
-                    }
-                })
-            },
-            select: {
-                id: false,
-                content: false,
-                slug: true,
-                shortId: true,
-                title: true,
-                description: true,
-                published: true,
-                privacy: true,
-                publishedAt: true,
-                createdAt: false,
-                updatedAt: true,
-                deletedAt: true,
-                isDeleted: true,
-                tags: true,
-                image: true,
-                category: {
-                    select: {
-                        name: true,
-                        slug: true,
-                    }
-                }
-            },
+        const updatedPost = await query(UPDATE_POST, {
+            key: setter.key,
+            category: cat,
+            description: setter.description,
+            privacy: setter.privacy,
+            state: setter.state,
+            tags: tags,
+            title: setter.title,
+            slug: setter.slug,
+            doPublish: setter?.doPublish,
+            image: {
+                url: setter?.image?.url,
+                provider: setter?.image?.provider,
+                action: setter?.image?.action || 'UPDATE',
+                id: setter?.image?.id,
+            }
         });
-        res = { ...res, data: updatedPost, status: 200 };
-        return res;
+        if (updatedPost?.data?.updateStory?.story) {
+            res = { ...res, data: updatedPost?.data?.updateStory?.story, status: 200 };
+            return res;
+        } else {
+            throw new Error('An error occurred while updating the post. Please try again later.');
+        }
     } catch (error) {
         res.errors.push({ message: error.message });
         return res;
@@ -328,52 +359,66 @@ const getArticleContent = async (id) => {
     }
 }
 
-const getArticledetails = async (id, authorId, alsoCat) => {
+const getArticledetails = async (key, authorId, alsoCat) => {
     let res = { data: null, status: 500, errors: [], categories: [] };
-    try {
-        const dt = await prisma.post.findFirst({
-            where: {
-                shortId: id,
-                authorId: authorId,
-            },
-            select: {
-                id: false,
-                content: false,
-                slug: true,
-                shortId: true,
-                title: true,
-                description: true,
-                published: true,
-                privacy: true,
-                publishedAt: true,
-                createdAt: true,
-                updatedAt: true,
-                deletedAt: true,
-                isDeleted: true,
-                tags: true,
-                image: true,
-                category: {
-                    select: {
-                        name: true,
-                        slug: true,
-                    }
-                }
-            },
-        });
 
-        if (dt && !dt.isDeleted) {
-            if (alsoCat) {
-                const cats = await prisma.category.findMany({
-                    select: {
-                        name: true,
-                        slug: true,
-                    }
-                });
-                res = { ...res, categories: cats };
-            }
-            res = { ...res, data: dt, status: 200 };
+    const GET_ARTICLE = gql`
+    query MyQuery($key: String = "") {
+  Stories(key: $key) {
+    edges {
+      node {
+        title
+        updatedAt
+        state
+        slug
+        scheduledAt
+        publishedAt
+        privacy
+        key
+        isDeleted
+        id
+        description
+        deletedAt
+        createdAt
+        content
+        image {
+          id
+          url
+          caption
         }
-        return res;
+        category {
+          name
+          id
+        }
+        author {
+          id
+          key
+          name
+        }
+        tags {
+          name
+          id
+        }
+      }
+    }
+  }
+  categories {
+    id
+    name
+  }
+}`;
+
+    try {
+        let article = await query(GET_ARTICLE, { key: key });
+        if (article?.data?.Stories?.edges[0]?.node) {
+            res = { ...res, data: article?.data?.Stories?.edges[0]?.node, status: 200 };
+            if (alsoCat && article?.data?.categories) {
+                res = { ...res, categories: article?.data?.categories };
+            }
+            return res;
+        } else {
+            throw new Error('Post not found');
+        }
     } catch (e) {
         res.errors.push({ message: e.message });
         return res;

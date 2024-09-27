@@ -62,12 +62,12 @@ const StudioWriteLayoutWrapper = ({ children, article }) => {
     const { data, setData } = useContext(StudioContext);
 
     useEffect(() => {
-        if (article && data?.data?.id) {
-            if (data?.data?.id === article?.author?.id) {
+        if (article && data?.data?.key) {
+            if (data?.data?.key === article?.author?.key) {
                 setData({ ...data, page: 'p', article: article })
             }
         }
-    }, [article, data?.data?.id]);
+    }, [article, data?.data?.key]);
 
     return (
         children

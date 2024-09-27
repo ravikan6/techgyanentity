@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 const CreatePost = (props) => {
     const [post, setPost] = useState({ ...props.data });
     const [keyPress, setKeyPress] = useState(false);
-    const [blocks, setBlocks] = useState(props.data?.content || []);
+    const [blocks, setBlocks] = useState(JSON.parse(props.data.content) || []);
 
     const { loading, setState, state } = useContext(StudioWriterContext);
     const { data, setData } = useContext(StudioContext);
@@ -40,7 +40,7 @@ const CreatePost = (props) => {
             return;
         }
         try {
-            const dt = await updatePostAction({ title: post.title, id: props.data.shortId, content: blocks });
+            const dt = await updatePostAction({ title: post.title, key: props.data.key, content: blocks });
             if (dt?.status === 200 && dt?.data) {
                 setPost({ ...post, ...dt?.data });
                 setData({ ...data, article: { ...data?.article, title: dt.data?.title } });
@@ -54,7 +54,7 @@ const CreatePost = (props) => {
 
     const handleCancle = () => {
         setPost({ ...post, title: props?.data?.title });
-        setBlocks(post.content);
+        setBlocks(JSON.parse(props?.data?.content) || []);
         setState({ ...state, save: false, cancle: false });
     }
 
