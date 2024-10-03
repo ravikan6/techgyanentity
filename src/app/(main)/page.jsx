@@ -1,7 +1,5 @@
 import { auth } from "@/lib/auth";
 import { TestToastify } from "@/components/Home/_client";
-import { PostView_TIA } from "@/components/post/_struct";
-import { MicroPostView } from "@/components/post/_micropost";
 import { PostCardView } from "@/components/post";
 import { query } from "@/lib/client";
 import { GET_POSTS } from "@/lib/types/post";
