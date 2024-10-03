@@ -533,7 +533,6 @@ const ChannelLinkDragEdit = ({ set, state, disabled }) => {
                         let { error, T, U, ...rest } = item;
                         return { ...rest };
                     });
-                    console.log((JSON.stringify(s) !== JSON.stringify(set.links)), 'from ____ nowhere')
                     if (JSON.stringify(s) !== JSON.stringify(set.links)) {
                         state.setState({ ...state, data: { isRunnable: true } });
                         set.setLinks(s);

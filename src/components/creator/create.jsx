@@ -50,10 +50,10 @@ const CreateAuthor = ({ context, modern = true }) => {
                 <author-create-page className="block">
                     <div className={`${modern && 'bg-lightHead dark:bg-darkHead'} px-6 py-4 rounded-xl`}>
                         <div className='text-center text-xl font-bold mb-1 cheltenham'>
-                            Become an Author
+                            Become an Creator
                         </div>
                         <div className='text-xs mb-4 text-gray-700 dark:text-gray-300' >
-                            Create an author account to start writing your own stories. authors can write stories, publish them and earn money.
+                            Create an creator account to start writing your own stories. creators can write stories, publish them and earn money.
                         </div>
                         <div className='text-sm mb-2' >
                             <TextField

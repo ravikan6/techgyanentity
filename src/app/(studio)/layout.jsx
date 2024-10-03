@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import { Providers } from '@/components/providers';
 import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
+import { auth } from '@/lib/auth';
 
 export function metadata() {
   return {
@@ -10,7 +11,8 @@ export function metadata() {
   }
 };
 
-export default function StudioLayout({ children, studio_models, models }) {
+export default async function StudioLayout({ children, studio_models, models }) {
+  let session = await auth();
   return (
     <>
       <html lang='en' suppressHydrationWarning>
@@ -28,7 +30,7 @@ export default function StudioLayout({ children, studio_models, models }) {
           />
         </head>
         <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
-          <Providers>
+          <Providers session={session}>
             <CssBaseline />
             {children}
             {studio_models}

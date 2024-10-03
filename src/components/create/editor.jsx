@@ -36,7 +36,7 @@ const Editor = ({ setBlocks, focus, content }) => {
             <BlockNoteView editor={editor}
                 theme={mode === 'system' ? systemMode : mode}
                 onChange={() => {
-                    setBlocks(editor.document);
+                    setBlocks(editor?.document);
                 }} />
         </>
     );

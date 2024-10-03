@@ -16,7 +16,7 @@ const updateAuthorAction = async (obj) => {
     }
 
     const UPDATE_AUTHOR = gql`
-    mutation UpdateAuthor($key: String = "", $social: [SocialLinkInput], $name: String = "", $description: String = "", $contactEmail: String = "", $handle: String = "") {
+    mutation UpdateAuthor($key: String!, $social: [SocialLinkInput], $name: String = "", $description: String = "", $contactEmail: String = "", $handle: String = "") {
       updateCreator(
         data: {
           contactEmail: $contactEmail
@@ -43,18 +43,24 @@ const updateAuthorAction = async (obj) => {
       }
     }`;
 
+    let social = (obj.data?.social || [])?.map((item, index) => ({
+        id: item?.id || index + 1,
+        name: item?.name,
+        url: item?.url,
+    }))
+
     try {
         let client = await api()
         let { data: author, errors } = await client.mutate({
             mutation: UPDATE_AUTHOR,
             variables: {
                 key: obj.key,
-                social: obj.data?.social,
+                social: social,
                 name: obj.data?.name,
                 description: obj.data?.description,
-                contactEmail: obj.data?.contactEmail,
+                contactEmail: obj.data?.contactEmail || null,
                 handle: obj.data.handle
-            }
+            },
         });
         if (author?.updateCreator?.creator) {
             author = author?.updateCreator?.creator;
@@ -64,7 +70,7 @@ const updateAuthorAction = async (obj) => {
             res = { ...res, errors: errors };
         }
     } catch (error) {
-        console.log(error);
+        console.log(JSON.stringify(error));
         res = { ...res, errors: [{ message: error.message }] };
     }
     return res;

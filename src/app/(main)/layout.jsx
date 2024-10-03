@@ -41,7 +41,7 @@ export default async function RootLayout({ children, models }) {
         />
       </head>
       <body className='bg-light text-black !p-0 dark:text-white dark:bg-dark'>
-        <Providers>
+        <Providers session={session}>
           <CssBaseline enableColorScheme />
           <AuthorProvider session={session} authorData={authorData}>
             <MainLayout session={session} >

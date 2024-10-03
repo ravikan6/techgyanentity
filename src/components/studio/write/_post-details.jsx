@@ -5,13 +5,13 @@ import { StudioContext } from "@/lib/context";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { InputHeader } from "../author/_edit-funcs";
-import { imgUrl } from "@/lib/helpers";
 import { Box, Chip, InputAdornment, Select } from '@mui/material';
 import { default as NextImage } from 'next/image';
 import { PostDetailsActionMenu, PostDetailsImageMenu } from "@/components/Buttons";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import confirm from "@/lib/confirm";
+import { updateStoryDetails } from "@/lib/actions/setters/story";
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
@@ -59,8 +59,8 @@ const PostDetailsEditor = () => {
             if (doPublish) {
                 npstData.doPublish = true;
             }
-            let res = await updatePostDetailsAction({ key: data?.article?.key, data: npstData, file: file })
-            if (res?.status === 200 && res.data) {
+            let res = await updateStoryDetails({ key: data?.article?.key, data: npstData, file: file })
+            if (res?.success && res.data) {
                 setPost({ ...post, ...res.data })
                 setState({ ...state, canUndo: false, canSave: false })
                 setData({ ...data, article: { ...data?.article, ...res.data } })

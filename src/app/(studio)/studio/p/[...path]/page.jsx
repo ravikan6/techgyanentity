@@ -1,4 +1,3 @@
-import { CreatePost } from '@/components/post/create'
 import PostDetailsEditor from '@/components/studio/write/_post-details';
 import { auth } from '@/lib/auth';
 import { query } from '@/lib/client';
@@ -7,6 +6,15 @@ import { redirect } from 'next/navigation';
 import React from 'react'
 import { cookies } from 'next/headers';
 import { DecryptAuthorIdStudioCookie } from '@/lib/actions/studio';
+import { CreateStory } from '@/components/story';
+
+function jsonToObject(json) {
+    try {
+        return JSON.parse(json);
+    } catch (error) {
+        return [];
+    }
+}
 
 const PostEditPage = async ({ params }) => {
     const session = await auth();
@@ -19,13 +27,16 @@ const PostEditPage = async ({ params }) => {
             let author = DecryptAuthorIdStudioCookie(authorCookie);
             try {
                 let data = await getArticle(id, author?.key);
-                console.log(data, '----data')
                 if (data && !data.isDeleted) {
-                    data = { ...data }
+                    data = {
+                        ...data,
+                        content: jsonToObject(data.content),
+                    }
                     delete data.isDeleted;
+                    delete data.deletedAt;
                     return (
                         <div className='pt-10'>
-                            <CreatePost data={data} />
+                            <CreateStory data={data} />
                         </div>
                     )
                 } else {
@@ -71,7 +82,6 @@ const getArticle = async (id, authorId) => {
         const article = data?.Stories?.edges[0]?.node;
         return article;
     } catch (e) {
-        console.log(e, '-----errror-from')
         return null;
     }
 }

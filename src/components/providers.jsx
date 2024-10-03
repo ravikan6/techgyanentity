@@ -20,11 +20,12 @@ import {
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support";
 
-function makeClient(sessionId) {
+function makeClient(session) {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/",
+    credentials: 'include',
     headers: {
-      Cookie: sessionId ? `sessionid=${sessionId}` : null,
+      Cookie: `${session?.user ? `sessionid=${session.user.sessionId};` : null}test="hello"`,
     }
   });
 
@@ -39,6 +40,7 @@ function makeClient(sessionId) {
           httpLink,
         ])
         : httpLink,
+
   });
 }
 
@@ -123,8 +125,8 @@ export const Providers = ({ session, children }) => {
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">
-        <ApolloNextAppProvider makeClient={() => makeClient(session?.user?.sessionId)} >
-          <SessionProvider session={session}>
+        <ApolloNextAppProvider makeClient={() => makeClient(session)} >
+          <SessionProvider refetchWhenOffline={false} session={session}>
             {children}
             <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />
             <ToastContainer stacked toastClassName={'rb_toast'} icon={false} limit={10} position='bottom-center' draggable autoClose={4000} hideProgressBar transition={Zoom} />

@@ -11,6 +11,9 @@ import { UnAuthorizedActionWrapper } from "../post/postActions";
 import { AuthorAvatar } from "./_client";
 import { Skeleton } from "@mui/material";
 
+/**
+ * @deprecated
+ */
 const FollowButton = ({ authorId, buttonProps }) => {
     const [isFollowing, setIsFollowing] = useState({ status: false, id: null });
     const [isLoaded, setIsLoaded] = useState(false);
@@ -97,6 +100,83 @@ const FollowButton = ({ authorId, buttonProps }) => {
             </UnAuthorizedActionWrapper>
     )
 }
+
+const CreatorFollowButton = ({ creatorKey, key, isFollowed, buttonProps }) => {
+    const [isFollowing, setIsFollowing] = useState(isFollowed);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const { data: session } = useSession();
+
+    const handleFollowSystem = async () => {
+        setLoading(true);
+        handleMenuClose();
+        try {
+            if (session) {
+                let res = await followAuthorAction(key)
+                if (res?.data) {
+                    setIsFollowing(res?.data);
+                    if (res?.data?.status) {
+                        toast.success('Followed');
+                    } else {
+                        toast.success('Unfollowed');
+                    }
+                } else {
+                    setError(res?.errors);
+                }
+            }
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        session?.user ?
+            <>
+                <Button disabled={loading || error} onClick={isFollowing ? handleMenuOpen : handleFollowSystem} variant="contained" sx={isFollowing && { backgroundColor: (theme) => theme.palette.divider }} color={isFollowing ? "divider" : "primary"} size="small" endIcon={isFollowing && <BiChevronDown />} {...buttonProps} >
+                    {isFollowing ? 'Following' : 'Follow'}
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={!!anchorEl}
+                    onClose={handleMenuClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'Author Follow Menu',
+                    }}
+                    slotProps={{
+                        paper: {
+                            sx: {
+                                borderRadius: '12px !important',
+                            }
+                        }
+                    }}>
+                    <ListItemRdX link={{ name: 'Notify all', icon: HeartBrokenOutlined }} />
+                    <ListItemRdX link={{ name: 'Don\'t Notify', icon: HeartBrokenOutlined }} />
+                    <ListItemRdX link={{ name: 'Unfollow', icon: HeartBrokenOutlined }} onClick={handleFollowSystem} />
+                </Menu>
+            </> :
+            <UnAuthorizedActionWrapper description={'Login to follow this author'} >
+                <Button variant="contained" color="primary" size="small" {...buttonProps}>
+                    Follow
+                </Button>
+            </UnAuthorizedActionWrapper>
+    )
+}
+
+/**
+ * @deprecated
+ */
 const AuthorTipWrapper = ({ children, shortId }) => {
     return (
         <Tooltip title={<AuthorTipView shortId={shortId} />} arrow enterDelay={1300} leaveDelay={300}
@@ -113,7 +193,25 @@ const AuthorTipWrapper = ({ children, shortId }) => {
     )
 }
 
+export const CreatorWrapper = ({ children, keyId }) => {
+    return (
+        <Tooltip title={<>We are working on it.</>} arrow enterDelay={1300} leaveDelay={300}
+            enterNextDelay={800}
+            PopperProps={{
+                onClick(e) {
+                    e.stopPropagation();
+                }
+            }}>
+            <span>
+                {children}
+            </span>
+        </Tooltip>
+    )
+}
 
+/**
+ * @deprecated
+ */
 const AuthorTipView = ({ shortId }) => {
     const [data, setData] = useState(null);
 
@@ -163,3 +261,5 @@ const AuthorTipView = ({ shortId }) => {
 }
 
 export { FollowButton, AuthorTipWrapper }
+
+export { CreatorFollowButton };

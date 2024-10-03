@@ -1,7 +1,6 @@
 import { StudioWriteEditorWrapper, StudioWriteLayoutWrapper } from "@/components/studio/wrappers";
 import { WriteHeader } from "@/components/studio/write/_header_focus";
 import { DecryptAuthorIdStudioCookie } from "@/lib/actions/studio";
-import { auth } from "@/lib/auth";
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers'
 import { gql } from "@apollo/client";
@@ -22,7 +21,6 @@ const WriteLayout = async ({ children, params }) => {
                 redirect('/studio/content')
             }
             const article = await getArticle(path[0], author?.key);
-            console.log(article, '----article')
             if (!article) {
                 redirect('/studio/content')
             }

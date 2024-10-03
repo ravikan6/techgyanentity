@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
-import { cookies, headers } from "next/headers";
 import { apiGql } from "./resolver";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({

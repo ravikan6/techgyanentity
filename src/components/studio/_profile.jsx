@@ -230,6 +230,7 @@ const SwitchAccount = ({ state, context }) => {
 const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
     const context = useContext(StudioContext);
     let page = context?.data?.page;
+    const { data: session } = useSession();
 
     const GET_USER_CREATORS = gql`
     query MyCretorAccounts {
@@ -249,7 +250,9 @@ const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
       }
     }`;
 
-    const { data, loading, refetch, error } = useQuery(GET_USER_CREATORS);
+    const { data, loading, refetch, error } = useQuery(GET_USER_CREATORS, {
+        fetchPolicy: 'network-only'
+    });
     console.log(data, loading, error)
 
     const updateContextCookie = (data) => {
@@ -316,7 +319,7 @@ const AccountProfilesSwitcherView = ({ state, pageInfo }) => {
                         : <>
                             <div className='flex flex-col gap-2 items-center  justify-center p-2'>
                                 <p>
-                                    Something went wrong!
+                                    {error.message || 'Something went wrong.'}
                                 </p>
                                 <Button variant='outlined' size="small" onClick={refetch}>
                                     Retry

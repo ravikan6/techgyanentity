@@ -109,7 +109,7 @@ export const UserProfileModel = ({ user }) => {
                         icon: Person4Outlined,
                     }} />
 
-                    {(data?.user?.Author?.length > 0) && <ListItemRdX link={{
+                    {(data?.user?.creators?.length > 0) && <ListItemRdX link={{
                         name: `${process.env.NEXT_PUBLIC_STUDIO_NAME}`,
                         url: `/${process.env.STUDIO_URL_PREFIX}/dashboard`,
                         icon: DashboardCustomizeOutlined,
@@ -124,13 +124,13 @@ export const UserProfileModel = ({ user }) => {
 
                     <Divider />
 
-                    <div className='flex flex-col max-w-[230px] pb-3 mx-auto items-center'>
+                    {(data?.user?.creators?.length === 0) && <div className='flex flex-col max-w-[230px] pb-3 mx-auto items-center'>
                         <p className='text-sm mb-2 text-slate-600 text-center dark:text-slate-300'>Become an author and start publishing your articles.</p>
                         <Link href='/setup/author'>
                             <Button variant='outlined' size='small' sx={{ minWidth: '80px' }} startIcon={<TbUserPlus />}>Become Author</Button>
                         </Link>
                     </div>
-
+                    }
                     <Divider />
 
                     <ListItemRdX link={{

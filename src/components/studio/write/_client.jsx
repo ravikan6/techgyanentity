@@ -27,17 +27,13 @@ export const WriteMenu = () => {
 
     const onBackToContent = async (url) => {
         try {
-            console.log('Navigating to URL:', url);
             if (save || loading) {
                 if (await confirm('Are you sure you want to leave this page?')) {
                     setLoading(true);
-                    console.log('Confirmed, navigating...');
                     router.push(url);
                 }
-                // No need for else null here
             } else {
                 setLoading(true);
-                console.log('Navigating...');
                 router.push(url);
             }
         } catch (e) {
@@ -84,7 +80,7 @@ export const WriteMenu = () => {
                         name: 'Edit Details',
                         url: '#',
                         icon: EditOutlined,
-                    }} onClick={() => onBackToContent(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.shortId}/edit`)} />
+                    }} onClick={() => onBackToContent(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/p/${data?.article?.key}/edit`)} />
 
                     <Divider sx={{ my: 1 }} />
 
@@ -140,7 +136,7 @@ export const UpdateEditorArticle = () => {
                         color="primary"
                         className="!text-nowrap"
                     >
-                        Undo Changes
+                        Undo
                     </Button>
                 </Tooltip>
                 <Tooltip title="Save or Update the Post">

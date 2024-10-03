@@ -1,4 +1,4 @@
-import CreateAuthor from '@/components/author/create';
+import CreateAuthor from '@/components/creator/create';
 import { notFound } from 'next/navigation';
 import React from 'react'
 

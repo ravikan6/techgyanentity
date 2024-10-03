@@ -1,129 +1,127 @@
-'use server';
-import React from 'react';
-import { VariantPersistent } from "../header";
-import { ArticleImage, ArticleSidebar, ArticleTopMeta } from "./_client";
-import styles from '@/styles/post.module.css';
-import { Skeleton } from '@mui/material';
+import { Avatar, Card } from "@mui/material";
+import { MetaMoreMenu, MetaTypePollView } from "./client";
+import { PostCommentView } from ".";
+import { RouterBackBtn } from "../Buttons";
+import Link from "next/link";
 
-export const PostView = async ({ article }) => {
-    if (article?.id) {
-        if (article?.privacy === 'PRIVATE') {
-            return (
-                <main className="container m-auto">
-                    <div className="bg-red-100 mt-20 border w-4/6 m-auto text-center border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <strong className="font-bold">Sorry, this article is private!</strong>
-                        <br></br>
-                        <span className="block sm:inline">Please check back later.</span>
+
+const View = ({ post, options }) => {
+
+    return (
+        <>
+            <section className="max-w-3xl mx-auto my-5">
+                <div className="bg-lightHead/40 dark:bg-darkHead/40 rounded-xl w-full md:p-4 p-2">
+                    <div className="flex justify-between items-center">
+                        <MetaAuthorView author={post?.author} />
+                        <MetaMoreMenu />
                     </div>
-                </main>
-            );
-        } else if (article?.privacy === 'PUBLIC' || article?.privacy === 'UNLISTED') {
-            return (
-                <main className="overflow-clip max-w-[2400px] mx-auto">
-                    <VariantPersistent />
-                    <section className={`flex flex-col lg:flex-row lg:space-x-18 justify-between md:px-0 `}>
-                        <div className={`lg:w-[calc(100%-475px)] w-full py-3`}>
-                            <div className="max-w-xl w-full mx-auto">
-                                <div className='mb-2'>
-                                    {article?.image && (
-                                        <figure
-                                            key={article?.url}
-                                            className="block mb-5 text-center break-inside-avoid-column"
-                                        >
-                                            <ArticleImage image={article.image} />
-                                            <figcaption className="mt-2 text-sm italic text-black/40 dark:text-white/40">
-                                                {article?.image?.caption}
-                                            </figcaption>
-                                        </figure>
-                                    )}
-                                </div>
-                                <ArticleTopMeta article={article} />
-                                <div id="article_topMeta" className="mb-6 pb-4 border-b block lg:hidden border-gray-500 border-t pt-4">
-                                    <div className="">
-                                        <div className="flex items-center w-full">
-                                            <div className="mr-2">
-                                                <Skeleton variant="circular" width={40} height={40} />
-                                            </div>
-                                            <div>
-                                                <Skeleton variant="text" width={100} height={24} />
-                                            </div>
-                                            <div className="ml-auto">
-                                                <Skeleton variant="text" width={100} height={40} />
-                                            </div>
-                                        </div>
-                                        <div className='flex items-center justify-between'>
-                                            <div className='flex items-center mt-3 gap-3'>
-                                                {new Array(3).fill(0).map((_, index) => (
-                                                    <Skeleton key={index} variant="circular" width={32} height={32} />
-                                                ))}
-                                            </div>
+                    <div className="mt-2 px-2">
+                        <MetaTypeContentView post={post} options={{
+                            image: {
+                                showText: true,
+                            },
+                            ...options?.meta?.content,
+                        }} />
+                    </div>
+                </div>
+                <div className="relative">
+                    <PostCommentView post={post} />
+                </div>
+            </section>
+        </>
+    )
+}
 
-                                            <div className='flex items-center mt-3 gap-3'>
-                                                {new Array(2).fill(0).map((_, index) => (
-                                                    <Skeleton key={index} variant="circular" width={32} height={32} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={`pb-7 ${styles.container}`}>
-                                    {article?.content && <RenderBlock blocks={article?.content} />}
-                                </div>
-                                <div className="mt-8 flex items-center flex-wrap justify-evenly">
-                                    {
-                                        article.tags && article.tags.map((tag) => <div className="bg-lightHead mt-2 dark:bg-darkHead w-auto px-6 py-1.5 rounded-full text-sm font-semibold shadow hover:bg-accentLight dark:hover:bg-accentDark hover:text-white cursor-pointer" key={tag}>{tag}</div>)
-                                    }
-                                </div>
+const View2 = ({ post, options }) => {
+
+    return (
+        <>
+            <div className="flex flex-col sm:flex-row items-start h-full">
+                <div className="w-full sm:w-1/2 h-full">
+                    <MetaTypeContentView post={post} options={options?.meta?.content} />
+                </div>
+                <div className="w-full relative sm:w-1/2 sm:flex-1 overflow-y-auto h-full sm:max-h-[calc(100vh-80px)] md:max-h-[480px] lg:max-h-[580px]">
+                    <div className="sm:absolute top-0 right-0 w-full h-16">
+                        <div className="p-3 pt-4 sm:pt-3 bg-lightHead dark:bg-darkHead backdrop-blur-md flex justify-between items-center w-full">
+                            <MetaAuthorView author={post?.author} />
+                            <div className="flex items-center gap-2 justify-end">
+                                <MetaMoreMenu />
+                                <RouterBackBtn />
                             </div>
                         </div>
-                        <div className="lg:block hidden" id="article_sidebar_dr" >
-                            <ArticleSidebar article={article} />
-                        </div>
-                    </section>
-                </main>
+                    </div>
+                    <div className="sm:mt-2 px-2 mt-16 relative h-[calc(100%-68px)] overflow-y-scroll">
+                        <PostCommentView post={post} />
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+const CardView = ({ post, options }) => {
+    return (
+        <>
+            <Card sx={{ padding: 2 }} raised >
+                <MetaAuthorView author={post?.author} />
+                <div className="my-2 px-2">
+                    <MetaTypeContentView post={post} options={{
+                        image: {
+                            showText: true,
+                        },
+                        ...options?.meta?.content,
+                    }} />
+                </div>
+                <Link href={{
+                    pathname: '/view',
+                    query: `type=post&id=${post?.key}`,
+                }} >
+                    Go to ...
+                </Link>
+            </Card>
+        </>
+    )
+}
+
+const MetaAuthorView = ({ author }) => {
+    return (
+        <div className="flex items-center">
+            <div className="flex-shrink-0">
+                <Avatar src={author?.image?.url} sx={{ width: '32px', height: '32px' }} />
+            </div>
+            <div className="ml-4">
+                <div className="text-sm karnak font-bold text-zinc-900 dark:text-slate-100">{author?.name}</div>
+                <div className="text-xs text-zinc-600 -mt-px dark:text-slate-400">{author?.handle}</div>
+            </div>
+        </div>
+    )
+}
+
+const MetaTypeContentView = ({ post, options }) => {
+    switch (post?.typeOf) {
+        case 'IMAGE':
+            return (
+                <>
+                    {options?.image?.showText ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.text}</p> : null}
+                    <div className={`max-w-xl mx-auto ${options?.image?.rounded ? 'rounded-md overflow-hidden ' : ''}`}>
+                        {/* <ImageSliderView slides={post.typeContent.list} url={`@${post?.author?.handle}/post/${post.shortId}`} bg={imgBg} /> */}
+                    </div>
+                </>
             );
-        }
-    } else {
-        return notFound();
+        case 'POLL':
+            return (
+                <div className={`${options?.p4 ? 'p-4' : ''}`}>
+                    <MetaTypePollView poll={post?.typePoll} options={{ key: post?.key }} />
+                </div>
+            );
+        default:
+            return (
+                <div className={`${options?.p4 ? 'p-4' : ''}`}>
+                    <p className="text-base text-gray-900 dark:text-gray-100">{post?.text}</p>
+                </div>
+            );
     }
 }
 
-
-const RenderBlock = ({ blocks }) => {
-    const renderContent = (content) => {
-        return content.map((contentItem, index) => {
-            if (contentItem.type === 'text') {
-                if (contentItem.styles?.code) {
-                    return <code key={index} className={styles.code}>{contentItem.text}</code>;
-                }
-                return contentItem.text;
-            }
-            if (contentItem.type === 'link') {
-                return <a key={index} href={contentItem.href} className={styles.link}>{contentItem.content.map((linkContent, linkIndex) => renderContent([linkContent]))}</a>;
-            }
-            return null;
-        });
-    };
-
-    const renderBlock = (block) => {
-        switch (block.type) {
-            case 'heading':
-                if (block.props.level === 1) {
-                    return <h1 key={block.id} className={`${styles.heading} ${styles.h1}`}>{renderContent(block.content)}</h1>;
-                }
-                if (block.props.level === 2) {
-                    return <h2 key={block.id} className={`${styles.heading} ${styles.h2}`}>{renderContent(block.content)}</h2>;
-                }
-                if (block.props.level === 3) {
-                    return <h3 key={block.id} className={`${styles.heading} ${styles.h3}`}>{renderContent(block.content)}</h3>;
-                }
-                break;
-            case 'paragraph':
-                return <p key={block.id} className={styles.paragraph}>{renderContent(block.content)}</p>;
-            default:
-                return null;
-        }
-    };
-
-    return <>{blocks.map(renderBlock)}</>;
-};
+export default View;
+export { View2, CardView };

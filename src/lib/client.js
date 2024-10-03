@@ -18,7 +18,7 @@ const { getClient, query, PreloadQuery } = registerApolloClient(async () => {
             // fetchOptions: { cache: "no-store" },
             credentials: 'include',
             headers: {
-                Cookie: session.user ? `sessionid=${session.user.sessionId}` : null,
+                Cookie: session?.user ? `sessionid=${session.user.sessionId}` : null,
                 'Access-Control-Allow-Origin': '*',
             }
         }),

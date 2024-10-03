@@ -44,8 +44,8 @@ const ChannelEditPage = async ({ searchParams }) => {
     } else if (page === 'branding') {
         data = { ...authorInfo };
         data.media = { image: authorInfo?.image, banner: authorInfo?.banner };
-        data.logo = authorInfo?.image.url;
-        data.banner = authorInfo?.banner.url;
+        data.logo = authorInfo?.image?.url;
+        data.banner = authorInfo?.banner?.url;
     } else if (page === 'info') {
         data = authorInfo;
     }

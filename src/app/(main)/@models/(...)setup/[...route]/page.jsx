@@ -2,7 +2,7 @@
 import React from 'react'
 import { useContext, memo } from 'react'
 import { notFound } from 'next/navigation';
-import CreateAuthor from '@/components/author/create';
+import CreateAuthor from '@/components/creator/create';
 import { ProgressContext } from '../layout';
 
 const InterceptSetupPage = ({ params }) => {

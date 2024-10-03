@@ -8,6 +8,7 @@ import Image from "next/image";
 import { getFevicon } from '@/lib/utils';
 import Link from "next/link";
 import { Avatar } from "@mui/material";
+import { CreatorPageContext } from "@/lib/context";
 
 const AuthorBanner = ({ id }) => {
     const [banner, setBanner] = useState(null);
@@ -120,4 +121,15 @@ const AuthorAvatar = ({ data, className, width, height, sx }) => {
     )
 }
 
+const CreatorPageWrapper = ({ creator, children }) => {
+
+    return (
+        <CreatorPageContext.Provider value={creator} >
+            {children}
+        </CreatorPageContext.Provider>
+    )
+}
+
 export { AuthorBanner, BannerImage, AuthorBottomButtons, AuthorLayoutNav, AuthorAvatar };
+
+export { CreatorPageWrapper };

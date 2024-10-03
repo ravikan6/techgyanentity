@@ -1,56 +1,59 @@
-import AuthorPosts from '@/components/author/_posts';
-import { AuthorAbout, AuthorSingleViewPage } from '@/components/author/view';
+import AuthorPosts from '@/components/creator/_posts';
 import { UserBookmarks, UserClappedPost } from '@/components/Home/_client';
-import { MicroPostView } from '@/components/post/_micropost';
-import { PostView } from '@/components/post/view';
 import { getAuthorPosts } from '@/lib/actions/author';
-import { getMicroPost } from '@/lib/actions/getContent';
 import { getUserBookmarks, getUserClappedPost } from '@/lib/actions/user';
+
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/db';
-import { getCImageUrl } from '@/lib/helpers';
-import { getCldOgImageUrl } from 'next-cloudinary';
+import { query } from '@/lib/client';
 import { notFound } from 'next/navigation';
+import { StoryView } from '@/components/story';
+import { GET_CREATOR_STORY } from '@/lib/types/story';
+import { GET_CREATOR_FOR_OG, VERIFY_GET_AUTHOR } from '@/lib/types/creator';
+import { getPostBykey } from '@/lib/actions/getters/content';
+import { CreatorAboutView } from '@/components/creator';
+import { PostView } from '@/components/post';
 
 export async function generateMetadata({ params, searchParams }) {
     const route = params.path;
     const path = decodeURIComponent(params?.path[0]);
-    const query = searchParams;
     const session = await auth();
 
-    if (path.startsWith('post') && route?.length === 2) {
+    if (path.startsWith('story') && route?.length === 2) {
         const meta = await articleMeta(route[1]);
         return meta;
     } else if (path === 'list') {
-        if ((query?.type === 'bookmarks') && session?.user?.id) {
+        if ((searchParams?.type === 'bookmarks') && session?.user?.id) {
             return {
                 title: 'Bookmarks',
                 description: 'Your bookmarked posts',
             }
-        } else if ((query?.type === 'clapped') && session?.user?.id) {
+        } else if ((searchParams?.type === 'clapped') && session?.user?.id) {
             return {
                 title: 'Clapped Posts',
                 description: 'Posts you clapped',
             }
         }
     } else {
-        const author = await getAuthor(path)
-        if (author) {
+        let creator = await getCreatorForOg(path);
+
+        if (creator) {
             if (route?.length === 1) {
                 return {
-                    title: author.name,
-                    description: author.bio,
+                    title: creator?.name,
+                    description: creator?.description,
                     openGraph: {
-                        title: author.name,
-                        description: author.bio,
+                        title: creator?.name,
+                        description: creator?.description,
                         siteName: process.env.APP_NAME,
-                        images: [
-                            {
-                                url: author?.image?.url ? getCldOgImageUrl({ src: author?.image?.url }) : null,
-                                width: 800,
-                                height: 600,
-                            },
-                        ],
+                        ...creator?.image && {
+                            images: [
+                                {
+                                    url: creator?.image?.url,
+                                    width: 800,
+                                    height: 600,
+                                },
+                            ]
+                        },
                         locale: 'en_US',
                         type: 'profile',
                     }
@@ -64,26 +67,45 @@ export async function generateMetadata({ params, searchParams }) {
     }
 }
 
+async function getCreatorForOg(path) {
+    let handle = await path.startsWith('@') ? path.slice(1) : path
+    try {
+        let { data, error } = await query({
+            query: GET_CREATOR_FOR_OG,
+            variables: {
+                handle: String(handle),
+            }
+        })
+        if (await data && data.Creators?.edges?.at(0)?.node) {
+            return data.Creators?.edges?.at(0)?.node;
+        }
+        return null
+        // ..
+    } catch (e) {
+        console.log(e, '___while getting author og.')
+        return null;
+    }
+}
+
 const DynamicPages = async ({ params, searchParams }) => {
     const session = await auth();
     const route = params.path;
     const path = decodeURIComponent(params?.path[0]);
-    const query = searchParams;
 
-    if (path.startsWith('post') && route?.length === 2) {
-        const article = await getArticle(decodeURIComponent(route[1]))
-        if (article) {
+    if (path.startsWith('story') && route?.length === 2) {
+        const story = await getArticle(decodeURIComponent(route[1]))
+        if (story) {
             return (
-                <PostView article={article} />
+                <StoryView story={story} />
             )
         }
     } else if (path === 'list') {
-        if ((query?.type === 'bookmarks') && session?.user?.id) {
+        if ((searchParams?.type === 'bookmarks') && session?.user?.id) {
             const res = await getUserBookmarks({ userId: session?.user?.id });
             return (
                 <UserBookmarks data={session?.user} initialPosts={res?.data?.bookmarks} />
             )
-        } else if ((query?.type === 'clapped') && session?.user?.id) {
+        } else if ((searchParams?.type === 'clapped') && session?.user?.id) {
             const res = await getUserClappedPost({ userId: session?.user?.id });
             console.log(res.data)
             let dt = await res?.data?.map((post) => post?.post);
@@ -92,29 +114,29 @@ const DynamicPages = async ({ params, searchParams }) => {
             )
         }
     } else {
-        const author = await getAuthor(path)
-        if (author) {
+        const creator = await getCreator(path)
+        if (creator) {
             if (route?.length === 1) {
                 return (
-                    <span>This is Author Home Page</span>
+                    <span>This is Creators Home Page</span>
                 )
             } else if (route?.length === 3 && route[1] === 'post') {
-                const post = await getMicroPost(route[2]);
-                if (!post) return notFound();
+                const post = await getPostBykey(route[2]);
+                if (!post.success) return notFound();
                 return (
-                    <MicroPostView post={post} session={session} />
+                    <PostView post={post.data} />
                 )
             } else if (route?.length === 2 && route[1] === 'about') {
-                return <AuthorAbout author={author} />
+                return <CreatorAboutView />
             } else if (route?.length === 2 && route[1] === 'posts') {
-                const response = await getAuthorPosts({ handle: author?.handle });
-                return <AuthorPosts data={author} initialPosts={response?.data} />
+                const response = await getAuthorPosts({ handle: creator?.handle });
+                return <AuthorPosts data={creator} initialPosts={response?.data} />
             }
             else if (route?.length === 2) {
-                const article = await getArticle(decodeURIComponent(route[1]), author.id)
-                if (article) {
+                const story = await getArticle(decodeURIComponent(route[1]), creator.key)
+                if (story) {
                     return (
-                        <PostView article={article} />
+                        <StoryView story={story} />
                     )
                 }
             }
@@ -123,92 +145,41 @@ const DynamicPages = async ({ params, searchParams }) => {
     }
 };
 
-const getArticle = async (slug, id) => {
+const getArticle = async (slug, key) => {
     try {
-        const post = await prisma.post.findFirst({
-            where: {
+        let { data, errors } = await query({
+            query: GET_CREATOR_STORY,
+            variables: {
                 slug: slug,
-                ...(id && {
-                    authorId: id,
-                }),
-            },
-            include: {
-                author: {
-                    select: {
-                        handle: true,
-                        name: true,
-                        image: true,
-                        id: true,
-                        shortId: true,
-                        _count: {
-                            select: {
-                                followers: true,
-                            }
-                        }
-                    }
-                },
-                _count: {
-                    select: {
-                        comments: {
-                            where: {
-                                parent: {
-                                    is: null,
-                                },
-                                isDeleted: false,
-                            }
-                        },
-                    }
-                }
+                author_Key: key
             }
-        });
-        if (post?.isDeleted && !post.published) return null;
-        if (post?.author?.image?.url)
-            post.author.image.url = await getCImageUrl(post?.author?.image?.url);
-        return post
+        })
+
+        if (await data && data.Stories?.edges[0]?.node) {
+            let story = await data.Stories?.edges[0]?.node
+            return story;
+        }
     } catch (error) {
         console.error(error);
         return null
     }
 }
 
-const getAuthor = async (handle) => {
-    handle = (await handle?.startsWith('@')) ? handle.slice(1) : handle;
+const getCreator = async ([path]) => {
+    let handle = path?.startsWith('@') ? path.slice(1) : path;
 
     try {
-        let author = await prisma.author.findFirst({
-            where: {
-                handle: handle,
-            },
-            select: {
-                shortId: true,
-                handle: true,
-                name: true,
-                bio: true,
-                social: true,
-                image: true,
-                banner: true,
-                isDeleted: true,
-                _count: {
-                    select: {
-                        followers: true,
-                        Post: {
-                            where: {
-                                isDeleted: false,
-                                published: true,
-                                privacy: {
-                                    equals: 'PUBLIC',
-                                }
-                            }
-                        }
-                    }
-                }
+        let { data, errors } = await query({
+            query: VERIFY_GET_AUTHOR,
+            variables: {
+                handle: handle
             }
         })
 
-        if (author && !author.isDeleted) {
-            (author?.image?.provider === 'cloudinary' && author?.image?.url) && (author.image.url = await getCImageUrl(author.image.url));
-            (author?.banner?.provider === 'cloudinary' && author?.banner?.url) && (author.banner.url = await getCImageUrl(author.banner.url));
-            return author;
+        if (await data && data.Creators?.edges[0]?.node) {
+            let res = await data.Creators?.edges[0]?.node;
+            console.log('Getting Creator in Page', data.Creators?.edges)
+            return res;
         }
     } catch (e) {
         return null;
@@ -216,19 +187,18 @@ const getAuthor = async (handle) => {
 }
 
 const articleMeta = async (slug) => {
-    const article = await getArticle(decodeURIComponent(slug))
-    const url = article?.image?.url ? getCldOgImageUrl({ src: article?.image?.url }) : null
+    const story = await getArticle(decodeURIComponent(slug))
     return {
-        title: article?.title,
-        description: article?.description,
+        title: story?.title,
+        description: story?.description,
         openGraph: {
-            title: article?.title,
-            description: article?.description,
+            title: story?.title,
+            description: story?.description,
             siteName: process.env.APP_NAME,
-            ...(url && {
+            ...(story?.image && {
                 images: [
                     {
-                        url,
+                        url: story.image.url,
                         width: 800,
                         height: 600,
                     },
@@ -236,8 +206,8 @@ const articleMeta = async (slug) => {
             }),
             locale: 'en_US',
             type: 'article',
-            publishedTime: article?.publishedAt,
-            authors: [article?.author?.name]
+            publishedTime: story?.publishedAt,
+            authors: [story?.author?.name]
         }
     };
 }

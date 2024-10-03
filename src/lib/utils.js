@@ -218,9 +218,9 @@ function _formatDateToString(dateString) {
     const daysDifference = Math.floor(hoursDifference / 24);
 
     if (secondsDifference < 60) {
-        return `${secondsDifference} second${secondsDifference === 1 ? '' : 's'} ago`;
+        return `${secondsDifference} sec${secondsDifference === 1 ? '' : '\'s'} ago`;
     } else if (minutesDifference < 60) {
-        return `${minutesDifference} minute${minutesDifference === 1 ? '' : 's'} ago`;
+        return `${minutesDifference} min${minutesDifference === 1 ? '' : 's'} ago`;
     } else if (hoursDifference < 24) {
         return `${hoursDifference} hour${hoursDifference === 1 ? '' : 's'} ago`;
     } else if (daysDifference < 7) {

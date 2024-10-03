@@ -420,8 +420,8 @@ const getArticledetails = async (key, authorKey, alsoCat) => {
         let article = await query({ query: GET_ARTICLE_WITH_CATEGORIES, variables: { key: key, author_Key: authorKey } });
         if (article?.data?.Stories?.edges[0]?.node) {
             res = { ...res, data: article?.data?.Stories?.edges[0]?.node, status: 200 };
-            if (alsoCat && article?.data?.categories) {
-                res = { ...res, categories: article?.data?.categories };
+            if (alsoCat && article?.data?.Categories) {
+                res = { ...res, categories: article?.data?.Categories };
             }
             return res;
         } else {

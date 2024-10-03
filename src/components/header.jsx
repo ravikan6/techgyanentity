@@ -7,7 +7,6 @@ import { SearchBar } from "./Home/head";
 import { Skeleton } from '@mui/material';
 import { NavMenu, UserProfileModel } from './Home/_profile-model';
 import { auth } from '@/lib/auth';
-import { VariantpPersistentClient } from './post/_client';
 import { StudioServiceSelecterMenu } from './studio/_profile';
 
 const ManinLogo = async ({ className }) => {
