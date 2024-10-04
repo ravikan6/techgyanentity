@@ -108,4 +108,6 @@ const RenderBlock = ({ blocks }) => {
     return <>{blocks.map(renderBlock)}</>;
 };
 
+export const dynamic = 'force-dynamic';
+
 export default View;

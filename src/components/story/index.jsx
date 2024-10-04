@@ -3,7 +3,7 @@ export {
     TopbarView as StoryTopbar,
     SidebarView as StorySidebar
 } from "./client";
-export { View as StoryView } from "./view";
+export { default as StoryView } from "./view";
 
 export {
     ClapView as StoryClapView,

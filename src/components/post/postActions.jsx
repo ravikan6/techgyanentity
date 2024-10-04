@@ -16,7 +16,6 @@ import { toast } from 'react-toastify';
 import { StudioContext } from '@/lib/context';
 import { ShareView } from '../Home/_client';
 import { BiSolidUserCircle } from 'react-icons/bi';
-import { ArticleCommentsView } from './_client';
 
 /**
  * Renders the buttons for a post, including claps, comments, bookmarks, share, and more options.
@@ -50,7 +49,6 @@ export const PostActions = ({ id, className, modern, commentCount, isExpanded, a
                 }} anchor="bottom" open={drawable} onClose={() => setDrawable(false)} onOpen={() => setDrawable(true)}>
                 <div>
                     <Suspense fallback={'Loading...'}>
-                        <ArticleCommentsView article={article} />
                     </Suspense>
                 </div>
             </SwipeableDrawer>}

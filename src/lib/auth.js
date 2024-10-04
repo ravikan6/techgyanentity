@@ -1,4 +1,3 @@
-"use server";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";

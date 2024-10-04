@@ -1,3 +1,4 @@
+"user server";
 const { query } = require("@/lib/client")
 const { GET_POST_BY_KEY } = require("@/lib/types/post")
 

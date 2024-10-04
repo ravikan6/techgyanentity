@@ -41,7 +41,6 @@ const ManinLogo = async ({ className }) => {
  */
 const Header = async () => {
     const session = await auth();
-    const token = await session?.user?.jwt;
 
     return (
         <>
