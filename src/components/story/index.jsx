@@ -1,10 +1,9 @@
-import { ImageView, TopbarView, SidebarView } from "./client";
-import View from "./view";
-
-export { ImageView as StoryImage };
-export { TopbarView as StoryTopbar };
-export { SidebarView as StorySidebar };
-export { View as StoryView }
+export {
+    ImageView as StoryImage,
+    TopbarView as StoryTopbar,
+    SidebarView as StorySidebar
+} from "./client";
+export { View as StoryView } from "./view";
 
 export {
     ClapView as StoryClapView,
