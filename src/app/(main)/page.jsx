@@ -3,6 +3,7 @@ import { TestToastify } from "@/components/Home/_client";
 import { PostCardView } from "@/components/post";
 import { query } from "@/lib/client";
 import { GET_POSTS } from "@/lib/types/post";
+import React from "react";
 
 export default async function Home() {
   const session = await auth();
@@ -11,7 +12,9 @@ export default async function Home() {
 
   try {
     let dt = await query({
-      query: GET_POSTS
+      query: GET_POSTS,
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all',
     })
     if (dt.data) {
       communityPosts = dt.data.Posts.edges;
@@ -42,7 +45,9 @@ const CommunityPosts = ({ posts, session }) => {
       <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
         {
           posts.map((post, _) => (
-            <PostCardView post={post?.node} key={_} />
+            <React.Fragment key={_}>
+              <PostCardView post={post?.node} />
+            </React.Fragment>
           ))
         }
       </div>

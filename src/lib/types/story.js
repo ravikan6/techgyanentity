@@ -148,6 +148,7 @@ query GetStoryComments($key: String!, $parent_Id: ID = "") {
         updatedAt
         id
         myVote
+        replyCount
         author {
           image {
             url

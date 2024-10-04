@@ -1,7 +1,7 @@
 import React from 'react';
-import { VariantPersistent } from "@/components/header";
 import { StoryImage, StorySidebar, StoryTopbar } from '.';
 import styles from '@/styles/post.module.css';
+import { ServerVariantPersistent } from '@/components/common/helpers';
 
 function jsonToObject(json) {
     try {
@@ -26,7 +26,7 @@ const View = async ({ story }) => {
         } else if (story?.privacy === 'PUBLIC' || story?.privacy === 'UNLISTED') {
             return (
                 <main className="overflow-clip max-w-[2400px] mx-auto">
-                    <VariantPersistent />
+                    <ServerVariantPersistent />
                     <section className={`flex flex-col lg:flex-row lg:space-x-18 justify-between md:px-0 `}>
                         <div className={`lg:w-[calc(100%-475px)] w-full py-3`}>
                             <div className="max-w-xl w-full mx-auto">

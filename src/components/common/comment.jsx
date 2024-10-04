@@ -43,7 +43,7 @@ const WriteField = () => {
                     multiline
                     variant="outlined"
                     size="small"
-                    maxRows={1}
+                    maxRows={2}
                     fullWidth
                     placeholder="Write a comment..."
                     sx={{
