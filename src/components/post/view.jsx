@@ -3,6 +3,7 @@ import { MetaMoreMenu, MetaTypePollView } from "./client";
 import { PostCommentView } from ".";
 import { RouterBackBtn } from "../Buttons";
 import Link from "next/link";
+import { ImageSliderView } from "./_struct";
 
 
 const View = ({ post, options }) => {
@@ -50,7 +51,7 @@ const View2 = ({ post, options }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="sm:mt-2 px-2 mt-16 relative h-[calc(100%-68px)] overflow-y-scroll">
+                    <div className="px-2 sm:mt-16 relative sm:h-[calc(100%-68px)] overflow-y-scroll">
                         <PostCommentView post={post} />
                     </div>
                 </div>
@@ -62,7 +63,7 @@ const View2 = ({ post, options }) => {
 const CardView = ({ post, options }) => {
     return (
         <>
-            <Card sx={{ padding: 2 }} raised >
+            <Card sx={{ padding: 2 }} >
                 <MetaAuthorView author={post?.author} />
                 <div className="my-2 px-2">
                     <MetaTypeContentView post={post} options={{
@@ -104,7 +105,7 @@ const MetaTypeContentView = ({ post, options }) => {
                 <>
                     {options?.image?.showText ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.text}</p> : null}
                     <div className={`max-w-xl mx-auto ${options?.image?.rounded ? 'rounded-md overflow-hidden ' : ''}`}>
-                        {/* <ImageSliderView slides={post.typeContent.list} url={`@${post?.author?.handle}/post/${post.shortId}`} bg={imgBg} /> */}
+                        <ImageSliderView slides={post?.typeImage?.images} url={`@${post?.author?.handle}/post/${post?.key}`} bg={false} />
                     </div>
                 </>
             );

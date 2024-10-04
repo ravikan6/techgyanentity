@@ -29,8 +29,11 @@ query GetPostByKey($key: String!) {
         typeImage {
           id
           images {
+            caption
             url
+            alt
           }
+          caption
         }
         typeOf
         updatedAt
@@ -117,8 +120,11 @@ query GetPosts {
         typeImage {
           id
           images {
+            caption
             url
+            alt
           }
+          caption
         }
         typeOf
         updatedAt
@@ -164,6 +170,57 @@ mutation CreatePostImage($images: [ImageInput]!, $caption: String = "") {
   }
 }`;
 
+const ADD_POST_COMMENT = gql`
+mutation AddComment($postKey: String!, $text: String!, $parentId: String, $authorKey: String = "") {
+  createPostComment(
+    postKey: $postKey
+    text: $text
+    parentId: $parentId
+    authorKey: $authorKey
+  ) {
+    comment {
+      content
+      createdAt
+      updatedAt
+      id
+      myVote
+      replyCount
+      author {
+        image {
+          url
+          alt
+        }
+        handle
+        name
+        key
+      }
+      user {
+        username
+        name
+        image {
+          alt
+          url
+        }
+      }
+      votes
+    }
+  }
+}`;
+
+const UPDATE_POST_COMMENT = gql`
+mutation UpdateComment($commentId: String!, $text: String!) {
+  updatePostComment(commentId: $commentId, text: $text) {
+    comment {
+      id
+      content
+      replyCount
+      updatedAt
+      myVote
+      votes
+    }
+  }
+}`;
+
 const VOTE_ON_POST_COMMENT = gql`
 mutation PostCommentVote($id: String!) {
   voteOnPostComment(commentId: $id) {
@@ -193,7 +250,7 @@ mutation PostPollVote($postKey: String!, $optionId: Int!) {
 
 export { GET_POST_BY_KEY, GET_POST_COMMENTS, GET_POSTS };
 
-export { VOTE_ON_POST_COMMENT } // MUTATE: Post -> Comment
+export { ADD_POST_COMMENT, UPDATE_POST_COMMENT, VOTE_ON_POST_COMMENT } // MUTATE: Post -> Comment
 
 export { CREATE_POST } // MUTATE: Post
 

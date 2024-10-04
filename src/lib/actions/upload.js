@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 
 export async function uploadImage(file, folder) {
   if (!file) {
-    return { status: 400, message: 'No file uploaded' };
+    return { success: false, message: 'No file uploaded' };
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());

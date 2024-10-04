@@ -541,8 +541,8 @@ const ImageSliderView = ({ slides = [], url, bg }) => {
                         <Image
                             fill
                             className={`w-full h-full ${original ? 'object-contain' : 'object-cover'}`}
-                            src={imageUrl(slide.url, slide?.provider)}
-                            alt={slide.alt || 'Slide image'}
+                            src={slide?.url}
+                            alt={slide?.alt || 'Slide image'}
                             draggable={false}
                         />
                     </div>

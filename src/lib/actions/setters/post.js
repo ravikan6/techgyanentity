@@ -1,7 +1,7 @@
 "use server";
 
 import { api } from "@/lib/client";
-import { VOTE_ON_POST_COMMENT, VOTE_ON_POST_POLL, CREATE_POST_POLL, CREATE_POST, CREATE_POST_IMAGE } from "@/lib/types/post";
+import { VOTE_ON_POST_COMMENT, VOTE_ON_POST_POLL, CREATE_POST_POLL, CREATE_POST, CREATE_POST_IMAGE, UPDATE_POST_COMMENT, ADD_POST_COMMENT } from "@/lib/types/post";
 import { uploadImage } from "../upload";
 
 const createPost = async (input) => {
@@ -36,6 +36,10 @@ const createPost = async (input) => {
 
                 let newImages = await Promise.all(images.map(async (i) => {
                     let url = await uploadImage(i.file, 'TechGyan');
+                    if (!url.success) {
+                        res.errors.push({ message: `Error uploading image: ${url.message}` })
+                        return res
+                    }
                     return {
                         url: url.data.public_id,
                         caption: i?.caption,
@@ -53,8 +57,9 @@ const createPost = async (input) => {
                 if (data && data?.createPostImage?.postImage) {
                     typeOfId = await data?.createPostImage?.postImage?.id;
                 } else {
-                    throw new Error('Something went wrong while creating poll.')
+                    throw new Error('Something went wrong while creating image post.')
                 }
+                break;
             } case "POLL": {
                 if (!input.content?.options) {
                     res.errors.push({ message: 'No options provided' })
@@ -118,6 +123,93 @@ const createPost = async (input) => {
         res.errors.push({ message: 'An error occurred' })
     }
     return res;
+}
+
+const addPostComment = async (postKey, text, action, parentId, authorKey = null) => {
+    let res = { data: null, success: false, errors: [] }
+
+    if (!text || !action || !postKey) return res;
+    if (action === 'REPLY' && !parentId) return res;
+
+    try {
+        let client = await api();
+
+        if (action === 'CREATE') {
+            let { data, errors } = await client.mutate({
+                mutation: ADD_POST_COMMENT,
+                variables: {
+                    postKey: postKey,
+                    text: text,
+                    authorKey: authorKey
+                }
+            })
+            if (data && data.createPostComment?.comment) {
+                let comment = await data.createPostComment.comment;
+                res.data = comment
+                res.success = true
+            }
+            if (errors) {
+                res.errors = errors
+            }
+            return res;
+        } else if (action === 'REPLY') {
+            let { data, errors } = await client.mutate({
+                mutation: ADD_POST_COMMENT,
+                variables: {
+                    postKey: postKey,
+                    text: text,
+                    parentId: parentId,
+                    authorKey: authorKey
+                }
+            })
+            if (data && data.createPostComment?.comment) {
+                let comment = await data.createPostComment.comment;
+                res.data = comment
+                res.success = true
+            }
+            if (errors) {
+                res.errors = errors
+            }
+            return res
+        }
+        throw new Error("Action is not allowed.")
+    } catch (e) {
+        res.errors = [...res.errors, { message: e?.message }]
+        res.success = false
+        return res;
+    }
+
+}
+
+const updatePostComment = async (commentId, text) => {
+    let res = { data: null, success: false, errors: [] }
+
+    if (!text || !commentId) return res;
+
+    try {
+        let client = await api();
+
+        let { data, errors } = await client.mutate({
+            mutation: UPDATE_POST_COMMENT,
+            variables: {
+                commentId: commentId,
+                text: text
+            }
+        })
+        if (data && data.updatePostComment?.comment) {
+            let comment = await data.updatePostComment.comment;
+            res.data = comment
+            res.success = true
+        }
+        if (errors) {
+            res.errors = errors
+        }
+        return res;
+    } catch (e) {
+        res.errors = [...res.errors, { message: e?.message }]
+        res.success = false
+        return res;
+    }
 }
 
 const updatePostCommentVote = async (id) => {
@@ -185,6 +277,7 @@ const updatePostPollVote = async (postKey, optionId) => {
 
 }
 
-export { updatePostCommentVote, updatePostPollVote }
+export { updatePostCommentVote, updatePostPollVote };
+export {addPostComment, updatePostComment}
 
 export { createPost };

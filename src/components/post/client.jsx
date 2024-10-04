@@ -5,13 +5,13 @@ import { Button, Tooltip } from "../rui";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useLazyQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { CommentContext } from "@/lib/context";
+import { useContext, useEffect, useState } from "react";
+import { CommentContext, StudioContext } from "@/lib/context";
 import { GET_POST_COMMENTS } from "@/lib/types/post";
 import { CommentContainer } from "../common";
 import { ActionMenu } from "../Buttons";
 import { Delete, HeartBroken } from "@mui/icons-material";
-import { updatePostCommentVote, updatePostPollVote } from "@/lib/actions/setters/post";
+import { addPostComment, updatePostComment, updatePostCommentVote, updatePostPollVote } from "@/lib/actions/setters/post";
 
 const MetaTypePollView = ({ poll, options }) => {
     const [pollData, setPollData] = useState(poll);
@@ -114,6 +114,7 @@ const CommentView = ({ post }) => {
         data: null,
         id: null,
     })
+    const { creator } = useContext(StudioContext);
 
     const [getComments, { data, loading, error, called }] = useLazyQuery(GET_POST_COMMENTS);
 
@@ -133,12 +134,64 @@ const CommentView = ({ post }) => {
         }
     }, [post, called, data])
 
-    const onSend = () => {
-        // TODO: ---
+    const onSend = async () => {
+        if (!form.text || !form.show || !form.action || !post.key) return null;
+        if (form.action === 'REPLY' && !form.parentId) return null;
+        if (form.action === 'UPDATE' && !form?.commentId) return null;
+        let authorKey = creator?.data?.key === post?.author?.key ? creator?.data?.key : null;
+        try {
+            setSending(true)
+            if (form.action === 'UPDATE') {
+                let res = await updatePostComment(form.commentId, form.text);
+
+                if (res.success) {
+                    let comment = res.data;
+                    if (form.parentId) {
+                        setReply({
+                            data: comment,
+                            action: 'UPDATE'
+                        })
+                    } else {
+                        let newComments = comments.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
+                        setComments(newComments)
+                    }
+                    setForm({
+                        text: '',
+                        show: false,
+                        action: 'CREATE',
+                        parentId: null,
+                    })
+                }
+
+            } else {
+                let res = await addPostComment(post.key, form.text, form.action, form.parentId, authorKey)
+
+                if (res.success) {
+                    if (form.action === 'REPLY') {
+                        setReply({
+                            data: res.data,
+                            action: 'NEW'
+                        })
+                    } else {
+                        setComments((prev) => [{ cursor: null, node: res.data, ...prev }])
+                    }
+                    setForm({
+                        text: '',
+                        show: false,
+                        action: 'CREATE',
+                        parentId: null,
+                    })
+                }
+            }
+        } catch (e) {
+            console.log(e) // #remove
+        } finally {
+            setSending(false)
+        }
     }
 
     const onVote = async (id) => {
-        if (!id) return null;
+        if (id === null || id === undefined) return null;
 
         try {
             let res = await updatePostCommentVote(id);
@@ -150,7 +203,7 @@ const CommentView = ({ post }) => {
             }
             return null;
         } catch (e) {
-            console.log(e)
+            console.log(e) // #remove
         }
     }
 

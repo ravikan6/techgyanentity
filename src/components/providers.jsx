@@ -24,9 +24,6 @@ function makeClient(session) {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/",
     credentials: 'include',
-    headers: {
-      Cookie: `${session?.user ? `sessionid=${session.user.sessionId};` : null}test="hello"`,
-    }
   });
 
   return new ApolloClient({

@@ -179,14 +179,15 @@ query GetStoryComments($key: String!, $parent_Id: ID = "") {
 }`;
 
 const ADD_STORY_COMMENT = gql`
-mutation AddComment($storyKey: String!, $text: String!, $parentId: String) {
-  createStoryComment(storyKey: $storyKey, text: $text, parentId: $parentId) {
+mutation AddComment($storyKey: String!, $text: String!, $parentId: String, $authorKey: String = "") {
+  createStoryComment(storyKey: $storyKey, text: $text, parentId: $parentId, authorKey: $authorKey) {
     comment {
       content
       createdAt
       updatedAt
       id
       myVote
+      replyCount
       author {
         image {
           url
@@ -216,6 +217,7 @@ mutation UpdateComment($commentId: String!, $text: String!) {
       id
       content
       updatedAt
+      replyCount
       myVote
       votes
     }

@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react";
 import { AnonymousAction, MoreMenuButton } from ".";
 import { Avatar, Backdrop, Grid2, List, ListItem, Skeleton } from "@mui/material";
-import { CommentBankTwoTone, Delete, Edit, Report, SendOutlined } from "@mui/icons-material";
+import { CommentOutlined, Delete, Edit, Report, SendOutlined } from "@mui/icons-material";
 import { useContext, useEffect, useState } from "react";
 import { CommentContext, CommentMetaContext, StudioContext } from "@/lib/context";
 import { CreatorWrapper } from "../creator/utils";
@@ -15,7 +15,7 @@ import { useLazyQuery } from "@apollo/client";
 import { BackBtn } from "../Buttons";
 import { MenuListItem } from "./client";
 import { TextField } from "@/components/styled";
-import { BiCommentEdit, BiSolidComment } from "react-icons/bi";
+import { BiCommentEdit } from "react-icons/bi";
 import { FaReplyd } from "react-icons/fa";
 
 
@@ -28,8 +28,8 @@ const WriteField = () => {
         form.set((prev) => ({ ...prev, text: e.target.value }))
     };
 
-    const userData = (creator?.data?.key === content?.authorKey) ? {
-        ...creator?.data
+    const userData = (creator?.key === content?.authorKey) ? {
+        ...creator
     } : {
         ...session.user
     }
@@ -52,12 +52,13 @@ const WriteField = () => {
                         },
                         '& .MuiOutlinedInput-root': {
                             borderRadius: '8px !important',
+                            py: '3.5px !important',
+                            fontSize: '0.75rem',
+                            lineHeight: '1rem'
                         },
-                        py: '4px'
                     }}
                     value={form.data.text}
                     onChange={handleCommentChange}
-                    className="text-xs"
                     slotProps={{
                         input: {
                             endAdornment: (form.data.text?.trim()?.length > 0) ? <>
@@ -73,7 +74,7 @@ const WriteField = () => {
                     }}
                 ></TextField>
             </div>
-        </AnonymousAction>
+        </AnonymousAction >
     );
 };
 
@@ -82,16 +83,21 @@ const ActionButton = () => {
     const { data: session } = useSession();
     const { form, content } = useContext(CommentContext);
 
-    const userData = (creator?.data?.key === content?.authorKey) ? {
-        ...creator?.data
+    const userData = (creator?.key === content?.authorKey) ? {
+        ...creator
     } : {
         ...session.user
     }
 
     return (
-        <div className="flex gap-3 items-center my-2">
+        <div className="flex gap-3 items-center">
             <Avatar src={userData?.image?.url} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={userData?.name} >{userData?.name?.slice(0, 1)}</Avatar>
-            <div className="bg-black/10 cursor-pointer dark:bg-white/10 rounded-full h-8 flex items-center px-2.5 py-1 text-sm text-black/60 dark:text-white/60 w-full" onClick={() => form.set({ ...form.data, show: true })}>
+            <div className="bg-black/10 cursor-pointer dark:bg-white/10 rounded-full h-8 flex items-center px-2.5 py-1 text-sm text-black/60 dark:text-white/60 w-full" onClick={() => form.set({
+                show: true,
+                text: '',
+                action: 'CREATE',
+                parentId: null,
+            })}>
                 Share your thoughts...
             </div>
         </div>
@@ -109,11 +115,11 @@ const Container = ({ }) => {
                 reply: { show: rView.show, parentId: rView.parentId, set: setrView }
             }}>
                 <div className={`w-full`}>
-                    <div className="mb-3">
+                    <div className="mb-4">
                         <h3 className="text-lg font-semibold franklin">Comments ({comment?.count})</h3>
                     </div>
                     <ActionButton />
-                    <div className={`${rView.show ? 'opacity-10' : 'opacity-100'} mt-2`}>
+                    <div className={`${rView.show ? 'opacity-10' : 'opacity-100'}`}>
                         <CommentsContainer />
                     </div>
                     {(rView.show && rView.parentId) ? <div className="absolute top-0 left-0 bottom-0 h-full w-full bg-light dark:bg-dark">
@@ -190,10 +196,14 @@ const ReplyContainer = () => {
     }, [reply, data, called, content?.key])
 
     useEffect(() => {
-        if (re?.reply && re?.reply?.id && re?.reply?.data) {
+        if (re?.reply && re?.reply?.action && re?.reply?.data) {
             let comment = re?.reply?.data;
-            let newReplies = replies.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
-            setReplies(newReplies);
+            if (re.reply.action === 'UPDATE') {
+                let newReplies = replies.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
+                setReplies(newReplies);
+            } else {
+                setReplies((prev) => [{ cursor: null, node: res.data, ...prev }])
+            }
             re.setReply({
                 id: null,
                 data: null,
@@ -222,12 +232,14 @@ const ReplyContainer = () => {
                     </List>
                     : null
             }
-            {
-                (loading || !called) ? <CommentSkeletons count={2} /> : replies.length === 0 ?
-                    <div className="p-4 h-20 flex justify-center items-center">
-                        No Replies found.
-                    </div> : null
-            }
+            <div className="px-2">
+                {
+                    (loading || !called) ? <CommentSkeletons count={5} /> : replies.length === 0 ?
+                        <div className="p-4 h-20 flex justify-center items-center">
+                            No Replies found.
+                        </div> : null
+                }
+            </div>
         </>
     )
 }
@@ -238,9 +250,8 @@ const View = ({ item }) => {
         <>
             <ListItem sx={{
                 px: 0,
-                my: 1
             }}>
-                <Grid2 container direction='column' gap={0.24} width="100%">
+                <Grid2 container direction='column' width="100%">
                     <Grid2 container flexDirection='row' wrap="nowrap" justifyContent='space-between' alignItems='center'>
                         <Grid2 container flexDirection='row' justifyContent='flex-start' alignItems='center' gap={2.3}>
                             {
@@ -271,7 +282,7 @@ const View = ({ item }) => {
                             <MetaMoreMenuView comment={comment} />
                         </Grid2>
                     </Grid2>
-                    <Grid2 container direction='column' gap={1.6} marginLeft={'35px'}>
+                    <Grid2 container direction='column' gap={1} marginLeft={'35px'}>
                         <p className="text-sm text-gray-500 dark:text-gray-300">{comment?.content}</p>
                         <Grid2 container direction='row' gap={2.5}>
                             <MetaView comment={comment} />
@@ -319,17 +330,19 @@ const MetaView = ({ comment }) => {
                     endIcon={votes?.count == 0 ? null : <span className='!text-xs'>{(votes?.count === null || votes?.count === undefined) ? '--' : votes?.count}</span>}
                 />
             </AnonymousAction>
-            <AnonymousAction >
+            {comment?.replyCount ? <AnonymousAction >
                 <Button
                     sx={[{ px: 2, height: '28px' }]}
                     onClick={() => { reply?.set({ show: true, parentId: comment?.id }) }}
                     size='small'
                     variant='outlined'
                     color='secondary'
-                    startIcon={<BiSolidComment className="w-3.5 h-3.5" />}
-                    endIcon={<span className='!text-xs'>--</span>}
+                    startIcon={<CommentOutlined className="w-3.5 h-3.5" />}
+                    endIcon={<span className='!text-xs'>{comment?.replyCount}</span>}
                 />
             </AnonymousAction>
+                : null
+            }
             <AnonymousAction >
                 <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' onClick={
                     () => {

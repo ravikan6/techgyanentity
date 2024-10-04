@@ -3,6 +3,7 @@ import Google from "next-auth/providers/google";
 import Auth0 from "next-auth/providers/auth0";
 import Credentials from "next-auth/providers/credentials";
 import { apiGql } from "./resolver";
+import { cookies } from "next/headers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -36,6 +37,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         }`
                     );
                     if (response.data && response.data.login.success) {
+                        cookies().set('sessionid', response.data.login.sessionId, {
+                            httpOnly: true,
+                            sameSite: 'None',
+                            secure: true,
+                        });
                         return {
                             ...response.data.login.user,
                             sessionId: response.data.login.sessionId

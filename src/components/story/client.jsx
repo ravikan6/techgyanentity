@@ -9,7 +9,7 @@ import { CreatorFollowButton, CreatorWrapper } from "../creator/utils";
 import Link from "next/link";
 import { LuUser } from "react-icons/lu";
 import { formatDate } from "@/lib/utils";
-import { CommentContext } from "@/lib/context";
+import { CommentContext, StudioContext } from "@/lib/context";
 import { CommentContainer } from "../common";
 import { GET_STORY_CLIENT_INFO, GET_STORY_COMMENTS } from "@/lib/types/story";
 import { storyCommentAction, updateStoryComment, updateStoryCommentVote } from "@/lib/actions/setters/story";
@@ -371,10 +371,10 @@ const CommentView = () => {
     const [sending, setSending] = useState(false);
     const [reply, setReply] = useState({
         data: null,
-        id: null,
+        action: 'NEW'
     })
     const { story } = useContext(MetaContext);
-
+    const { creator } = useContext(StudioContext);
     const [getComments, { data, loading, error, called }] = useLazyQuery(GET_STORY_COMMENTS);
 
     useEffect(() => {
@@ -398,7 +398,7 @@ const CommentView = () => {
         if (!form.text || !form.show || !form.action || !story.key) return null;
         if (form.action === 'REPLY' && !form.parentId) return null;
         if (form.action === 'UPDATE' && !form?.commentId) return null;
-
+        let authorKey = creator?.key === story?.author?.key ? creator?.key : null;
         try {
             setSending(true)
             if (form.action === 'UPDATE') {
@@ -406,8 +406,15 @@ const CommentView = () => {
 
                 if (res.success) {
                     let comment = res.data;
-                    let newComments = comments.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
-                    setComments(newComments)
+                    if (form.parentId) {
+                        setReply({
+                            data: comment,
+                            action: 'UPDATE'
+                        })
+                    } else {
+                        let newComments = comments.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
+                        setComments(newComments)
+                    }
                     setForm({
                         text: '',
                         show: false,
@@ -417,16 +424,17 @@ const CommentView = () => {
                 }
 
             } else {
-                let res = await storyCommentAction(story.key, form.text, form.action, form.parentId)
+                let res = await storyCommentAction(story.key, form.text, form.action, form.parentId, authorKey)
 
                 if (res.success) {
-                    getComments({
-                        variables: {
-                            key: story.key,
-                            parent_Id: null,
-                        },
-                        fetchPolicy: 'network-only',
-                    })
+                    if (form.action === 'REPLY') {
+                        setReply({
+                            data: res.data,
+                            action: 'NEW'
+                        })
+                    } else {
+                        setComments((prev) => [{ cursor: null, node: res.data, ...prev }])
+                    }
                     setForm({
                         text: '',
                         show: false,
@@ -436,7 +444,7 @@ const CommentView = () => {
                 }
             }
         } catch (e) {
-            console.log(e)
+            console.log(e) // #remove
         } finally {
             setSending(false)
         }
@@ -456,7 +464,7 @@ const CommentView = () => {
             }
             return null;
         } catch (e) {
-            console.log(e)
+            console.log(e) // #remove
         }
     }
 

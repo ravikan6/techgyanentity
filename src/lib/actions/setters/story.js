@@ -108,7 +108,7 @@ const updateStoryDetails = async (data) => {
     }
 }
 
-const addStoryComment = async (storyKey, text, action, parentId) => {
+const addStoryComment = async (storyKey, text, action, parentId, authorKey = null) => {
     let res = { data: null, success: false, errors: [] }
 
     if (!text || !action || !storyKey) return res;
@@ -122,7 +122,8 @@ const addStoryComment = async (storyKey, text, action, parentId) => {
                 mutation: ADD_STORY_COMMENT,
                 variables: {
                     storyKey: storyKey,
-                    text: text
+                    text: text,
+                    authorKey: authorKey
                 }
             })
             if (data && data.createStoryComment?.comment) {
@@ -140,7 +141,8 @@ const addStoryComment = async (storyKey, text, action, parentId) => {
                 variables: {
                     storyKey: storyKey,
                     text: text,
-                    parentId: parentId
+                    parentId: parentId,
+                    authorKey: authorKey
                 }
             })
             if (data && data.createStoryComment?.comment) {
