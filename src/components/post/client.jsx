@@ -115,6 +115,8 @@ const CommentView = ({ post }) => {
         id: null,
     })
     const { creator } = useContext(StudioContext);
+    const observer = useRef();
+    const lastItemRef = useRef(null);
 
     const [getComments, { data, loading, error, called }] = useLazyQuery(GET_POST_COMMENTS);
 
@@ -129,10 +131,30 @@ const CommentView = ({ post }) => {
         }
         if (data && data.PostComments.edges) {
             setComments(
-                data.PostComments.edges
+                [...comments, ...data.PostComments.edges]
             )
         }
     }, [post, called, data])
+
+    useEffect(() => {
+        if (loading || !data?.PostComments?.pageInfo?.hasNextPage) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && data?.PostComments?.pageInfo?.hasNextPage) {
+                getComments({
+                    variables: {
+                        key: post.key,
+                        parent_Id: null,
+                        after: data?.PostComments?.pageInfo?.endCursor
+                    }
+                });
+            }
+        });
+
+        if (lastItemRef.current) observer.current.observe(lastItemRef.current);
+    }, [loading]);
+
 
     const onSend = async () => {
         if (!form.text || !form.show || !form.action || !post.key) return null;
@@ -217,6 +239,8 @@ const CommentView = ({ post }) => {
                 loading: loading === undefined ? true : loading,
                 sending: sending,
                 setSending: setSending,
+                lastItemRef: lastItemRef,
+                hasMore: data?.PostComments?.pageInfo?.hasNextPage || false,
             },
             content: {
                 key: post?.key,
@@ -232,7 +256,7 @@ const CommentView = ({ post }) => {
                 resolver: (data, setReplies) => {
                     if (data && data?.PostComments?.edges) {
                         setReplies(
-                            data.PostComments.edges
+                            (prev) => [...prev, ...data.PostComments.edges]
                         )
                     }
                 },

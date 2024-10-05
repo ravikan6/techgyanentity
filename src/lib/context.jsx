@@ -29,6 +29,8 @@ export const CommentContext = React.createContext({
         sending: false,
         setLoading: () => { },
         setSending: () => { },
+        lastItemRef: null,
+        hasMore: true,
     },
     content: {
         key: null,
@@ -53,6 +55,7 @@ export const CommentMetaContext = React.createContext({
     reply: {
         show: false,
         set: () => { },
-        parentId: null
+        parentId: null,
+        lastItemRef: null
     }
 })

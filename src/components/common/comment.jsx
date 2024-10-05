@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { AnonymousAction, MoreMenuButton } from ".";
 import { Avatar, Backdrop, Grid2, List, ListItem, Skeleton } from "@mui/material";
 import { CommentOutlined, Delete, Edit, Report, SendOutlined } from "@mui/icons-material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CommentContext, CommentMetaContext, StudioContext } from "@/lib/context";
 import { CreatorWrapper } from "../creator/utils";
 import { Button, CircularProgress, IconButton, Tooltip, Menu } from "../rui";
@@ -17,6 +17,7 @@ import { MenuListItem } from "./client";
 import { TextField } from "@/components/styled";
 import { BiCommentEdit } from "react-icons/bi";
 import { FaReplyd } from "react-icons/fa";
+import { isNonNullObject } from "@apollo/client/utilities";
 
 
 const WriteField = () => {
@@ -108,11 +109,12 @@ const ActionButton = () => {
 const Container = ({ }) => {
     const [rView, setrView] = useState({ show: false, parentId: null })
     const { form, comment } = useContext(CommentContext);
+    const lastItemRef = useRef(null)
 
     return (
         <>
             <CommentMetaContext.Provider value={{
-                reply: { show: rView.show, parentId: rView.parentId, set: setrView }
+                reply: { show: rView.show, parentId: rView.parentId, set: setrView, lastItemRef: lastItemRef }
             }}>
                 <div className={`w-full`}>
                     <div className="mb-4">
@@ -172,6 +174,7 @@ const CommentsContainer = () => {
                         No Comments found.
                     </div> : null
             }
+            <span ref={state?.lastItemRef}></span>
         </>
     )
 }
@@ -180,6 +183,7 @@ const ReplyContainer = () => {
     const [replies, setReplies] = useState([]);
     const { form, state, content, comment, re } = useContext(CommentContext);
     const { reply } = useContext(CommentMetaContext);
+    const observer = useRef()
 
     const [getReplies, { called, data, loading, error }] = useLazyQuery(re.query);
 
@@ -196,13 +200,32 @@ const ReplyContainer = () => {
     }, [reply, data, called, content?.key])
 
     useEffect(() => {
+        if (loading || !replies?.pageInfo?.hasNextPage) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && replies?.pageInfo?.hasNextPage) {
+                getReplies({
+                    variables: {
+                        key: content.key,
+                        parent_Id: reply.parentId,
+                        after: replies?.pageInfo?.endCursor
+                    }
+                });
+            }
+        });
+
+        if (reply.lastItemRef.current) observer.current.observe(reply.lastItemRef.current);
+    }, [loading]);
+
+    useEffect(() => {
         if (re?.reply && re?.reply?.action && re?.reply?.data) {
             let comment = re?.reply?.data;
             if (re.reply.action === 'UPDATE') {
                 let newReplies = replies.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
                 setReplies(newReplies);
             } else {
-                setReplies((prev) => [{ cursor: null, node: res.data, ...prev }])
+                setReplies((prev) => [{ cursor: null, node: comment, ...prev }])
             }
             re.setReply({
                 id: null,
@@ -234,12 +257,13 @@ const ReplyContainer = () => {
             }
             <div className="px-2">
                 {
-                    (loading || !called) ? <CommentSkeletons count={5} /> : replies.length === 0 ?
+                    (loading) ? <CommentSkeletons count={5} /> : replies.length === 0 ?
                         <div className="p-4 h-20 flex justify-center items-center">
                             No Replies found.
                         </div> : null
                 }
             </div>
+            <span ref={reply?.lastItemRef}></span>
         </>
     )
 }

@@ -324,10 +324,12 @@ const MetaActionView = ({ options }) => {
                 }} />
                 {options?.commentButton ? <MetaCommentButtonView count={story?.commentsCount} /> : null}
                 <StoryBookmarkView value={{
-                    is: story?.bookmarkedByMe,
+                    is: story?.savedByMe,
                     storyKey: story?.key
                 }} />
-                <StoryShareView />
+                <StoryShareView href={{
+                    path: `/@${story?.author?.handle}/${story?.slug}`,
+                }} />
                 <StoryMoreMenuView />
             </div>
         </>
@@ -376,6 +378,8 @@ const CommentView = () => {
     const { story } = useContext(MetaContext);
     const { creator } = useContext(StudioContext);
     const [getComments, { data, loading, error, called }] = useLazyQuery(GET_STORY_COMMENTS);
+    const observer = useRef();
+    const lastItemRef = useRef(null);
 
     useEffect(() => {
         if (story.key && !called) {
@@ -388,11 +392,29 @@ const CommentView = () => {
         }
         if (data && data.StoryComments.edges) {
             setComments(
-                data.StoryComments.edges
+                [...comments, ...data.StoryComments.edges]
             );
         }
     }, [story, called, data])
 
+    useEffect(() => {
+        if (loading || !data?.StoryComments?.pageInfo?.hasNextPage) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && data?.StoryComments?.pageInfo?.hasNextPage) {
+                getComments({
+                    variables: {
+                        key: story.key,
+                        parent_Id: null,
+                        after: data?.StoryComments?.pageInfo?.endCursor
+                    }
+                });
+            }
+        });
+
+        if (lastItemRef.current) observer.current.observe(lastItemRef.current);
+    }, [loading]);
 
     const onSend = async () => {
         if (!form.text || !form.show || !form.action || !story.key) return null;
@@ -478,6 +500,8 @@ const CommentView = () => {
                 loading: loading === undefined ? true : loading,
                 sending: sending,
                 setSending: setSending,
+                lastItemRef: lastItemRef,
+                hasMore: data?.StoryComments?.pageInfo?.hasNextPage,
             },
             content: {
                 key: story?.key,
@@ -494,7 +518,7 @@ const CommentView = () => {
                 resolver: (data, setReplies) => {
                     if (data && data?.StoryComments?.edges) {
                         setReplies(
-                            data.StoryComments.edges
+                            (prev) => [...prev, ...data.StoryComments.edges]
                         )
                     }
                 },

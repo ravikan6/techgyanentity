@@ -73,7 +73,7 @@ query GetStoryClientSide($key: String!) {
         commentsCount
         clapsCount
         clappedByMe
-        bookmarkedByMe
+        savedByMe
       }
     }
   }
@@ -139,8 +139,8 @@ mutation UpdateStoryDetails($key: String = "", $category: String = "", $descript
 }`;
 
 const GET_STORY_COMMENTS = gql`
-query GetStoryComments($key: String!, $parent_Id: ID = "") {
-  StoryComments(story_Key: $key, parent_Id: $parent_Id) {
+query GetStoryComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $first: Int = 10, $after: String = "") {
+  StoryComments(story_Key: $key, parent_Id: $parent_Id, first: $first, offset: $offset, after: $after) {
     edges {
       node {
         content
@@ -247,9 +247,20 @@ mutation StoryClap($storyKey: String!) {
   }
 }`;
 
+const UPDATE_STORY_SAVED = gql`
+mutation StorySaved($storyKey: String!) {
+  saveStory(storyKey: $storyKey) {
+    story {
+      key
+      savedByMe
+    }
+  }
+}`;
+
 export { GET_CREATOR_STORY, GET_STORY_CLIENT_INFO }; // QUERY: Story
 export { GET_STORY_COMMENTS }; // QUERY: Story -> Comment
 
 export { UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS }; // MUTATE: Story
 export { UPDATE_STORY_CLAP }; // MUTATE: Story -> Clap
+export { UPDATE_STORY_SAVED }; // MUTATE: Story -> Save
 export { ADD_STORY_COMMENT, VOTE_ON_STORY_COMMENT, UPDATE_STORY_COMMENT }; // MUTATE: Story -> Comment

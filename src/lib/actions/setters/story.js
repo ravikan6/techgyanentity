@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { api } from "@/lib/client";
-import { ADD_STORY_COMMENT, UPDATE_STORY_CLAP, UPDATE_STORY_COMMENT, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS, VOTE_ON_STORY_COMMENT } from "@/lib/types/story";
+import { ADD_STORY_COMMENT, UPDATE_STORY_CLAP, UPDATE_STORY_COMMENT, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS, UPDATE_STORY_SAVED, VOTE_ON_STORY_COMMENT } from "@/lib/types/story";
 import { uploadImage } from "../upload";
 import { cloudinaryProvider } from "../author";
 
@@ -257,8 +257,38 @@ const updateStoryClap = async (storyKey) => {
 
 }
 
+const updateStorySaved = async (storyKey) => {
+    let res = { data: null, success: false, errors: [] }
+
+    try {
+        let client = await api();
+
+        let { data, errors } = await client.mutate({
+            mutation: UPDATE_STORY_SAVED,
+            variables: {
+                storyKey: storyKey,
+            }
+        })
+        if (data && data.saveStory?.story) {
+            let story = await data.saveStory.story;
+            res.data = story
+            res.success = true
+        }
+        if (errors) {
+            res.errors = errors
+        }
+        return res;
+
+    } catch (e) {
+        res.errors = [...res.errors, { message: e?.message }]
+        res.success = false
+        return res;
+    }
+
+}
+
 export { addStoryComment as storyCommentAction };
 
-export { updateStoryClap, updateStoryCommentVote, updateStoryComment };
+export { updateStoryClap, updateStoryCommentVote, updateStoryComment, updateStorySaved };
 
 export { updateStoryContent, updateStoryDetails } // Story

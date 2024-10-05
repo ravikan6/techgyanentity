@@ -6,8 +6,11 @@ import { PiHandsClappingLight } from "react-icons/pi";
 import { FaHandsClapping } from "react-icons/fa6";
 import { BookmarkButton, CommonShareView, MoreMenuButton, ShareButton } from "../common";
 import { AiOutlineComment } from "react-icons/ai";
-import { updateStoryClap } from "@/lib/actions/setters/story";
+import { updateStoryClap, updateStorySaved } from "@/lib/actions/setters/story";
 import { toast } from "react-toastify";
+import { Menu } from "../styled";
+import { MenuListItem } from "../common/client";
+import { Report } from "@mui/icons-material";
 
 
 const ClapView = ({ value, options }) => {
@@ -76,22 +79,49 @@ const CommentButtonView = ({ count, options }) => {
 
 const BookmarkView = ({ value, options }) => {
     const [is, setIs] = useState(value?.is);
+    const [loading, setLoading] = useState(false);
+
+    async function onAction() {
+        if (value?.storyKey) {
+            try {
+                setLoading(true)
+                let res = await updateStorySaved(value?.storyKey);
+                if (res.success) {
+                    setIs(res.data?.savedByMe)
+                };
+                if (res.errors) {
+                    res.errors.forEach((e) => {
+                        toast.error(e.message);
+                    });
+                }
+            } catch (e) {
+                toast.error('Something went wrong!')
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
 
     return (
         <>
             <BookmarkButton is={is} options={{
-                button: options?.button,
+                button: {
+                    disabled: loading,
+                    onClick: onAction,
+                    ...options?.button
+                }
             }} />
         </>
     );
 }
 
-const ShareView = ({ }) => {
+const ShareView = ({ href = { path: null, query: null }, options }) => {
+    let url = href?.path ? `${href?.path}${href?.query ? `?${href?.query}` : ''}` : null;
     return (
         <>
             <CommonShareView options={{
                 meta: {
-                    url: '/hello-world'
+                    url: url,
                 }
             }} />
         </>
@@ -99,10 +129,40 @@ const ShareView = ({ }) => {
 }
 
 const MoreMenuView = ({ }) => {
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleOpen = (e) => {
+        setAnchorEl(e.currentTarget);
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+        setAnchorEl(null);
+    }
 
     return (
         <>
-            <MoreMenuButton />
+            <MoreMenuButton options={{
+                button: {
+                    onClick: handleOpen
+                },
+            }} />
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                sx={{ mt: 1 }}
+            >
+                <MenuListItem item={{ name: 'Report', icon: Report }} options={{
+                    onClick: () => {
+                        toast.info('Reported');
+                        handleClose();
+                    }
+                }} />
+            </Menu>
         </>
     );
 }
