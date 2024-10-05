@@ -5,7 +5,7 @@ import { Button, Tooltip } from "../rui";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useLazyQuery } from "@apollo/client";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CommentContext, StudioContext } from "@/lib/context";
 import { GET_POST_COMMENTS } from "@/lib/types/post";
 import { CommentContainer } from "../common";

@@ -109,7 +109,7 @@ const ActionButton = () => {
 const Container = ({ }) => {
     const [rView, setrView] = useState({ show: false, parentId: null })
     const { form, comment } = useContext(CommentContext);
-    const lastItemRef = useRef(null)
+    const lastItemRef = useRef(null);
 
     return (
         <>

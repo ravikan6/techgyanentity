@@ -2,7 +2,7 @@
 import { useLazyQuery } from "@apollo/client";
 import { Avatar, Skeleton, useMediaQuery } from "@mui/material";
 import Image from "next/image";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Button, IconButton, SwipeableDrawer, Tooltip } from "../rui";
 import { EmailRounded } from "@mui/icons-material";
 import { CreatorFollowButton, CreatorWrapper } from "../creator/utils";
