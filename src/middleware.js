@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { decrypt, encrypt, getAuthorFirst } from "./lib/utils";
+import { decrypt, encrypt } from "./lib/utils";
 import { auth } from "@/lib/auth";
 
 export default auth(async (req) => {

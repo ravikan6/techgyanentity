@@ -79,6 +79,45 @@ query GetStoryClientSide($key: String!) {
   }
 }`;
 
+const GET_STORY_WITH_CATEGORIES = gql`
+query GetAuthorStory($key: String!, $author_Key: String!) {
+  Stories(key: $key, author_Key: $author_Key) {
+    edges {
+      node {
+        createdAt
+        deletedAt
+        description
+        id
+        isDeleted
+        key
+        privacy
+        publishedAt
+        scheduledAt
+        slug
+        image {
+          url
+          id
+        }
+        state
+        title
+        updatedAt
+        tags {
+          name
+        }
+        author {
+          key
+          name
+          handle
+        }
+      }
+    }
+  }
+  Categories {
+    id
+    name
+  }
+}`;
+
 const UPDATE_STORY_CONTENT = gql`
 mutation UpdateStoryContent($key: String = "", $content: String = "", $title: String = "") {
   updateStory(data: { title: $title, content: $content }, key: $key) {
@@ -259,6 +298,7 @@ mutation StorySaved($storyKey: String!) {
 
 export { GET_CREATOR_STORY, GET_STORY_CLIENT_INFO }; // QUERY: Story
 export { GET_STORY_COMMENTS }; // QUERY: Story -> Comment
+export { GET_STORY_WITH_CATEGORIES }; // QUERY: Story -> _ Category
 
 export { UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS }; // MUTATE: Story
 export { UPDATE_STORY_CLAP }; // MUTATE: Story -> Clap

@@ -1,25 +1,16 @@
 'use client';
 import { Dialog, Button } from "../rui";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { Avatar, LinearProgress } from "@mui/material";
-import { userImage } from "@/lib/actions/user";
 import { CloseBtn } from "../Buttons";
 import { toast } from "react-toastify";
+import { updateUserImage } from "@/lib/actions/setters/user";
 
-const UserProfileImageHandler = ({ open, setOpen }) => {
+const UserProfileImageHandler = ({ open, setOpen, user: _user }) => {
     const [tab, setTab] = useState('upload');
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [session, setSession] = useState({});
-
-    const { data } = useSession();
-
-    useEffect(() => {
-        if (data?.user) {
-            setSession(data);
-        }
-    }, [data?.user]);
+    const [user, setUser] = useState(_user);
 
     const handleUpload = async () => {
         const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
@@ -59,9 +50,14 @@ const UserProfileImageHandler = ({ open, setOpen }) => {
                             const formData = new FormData();
                             formData.append('image', file);
                             formData.append('rm', false);
-                            const response = await userImage(formData);
-                            if (response?.data) {
-                                setSession({ ...session, user: { ...session.user, ...response.data } });
+                            const response = await updateUserImage(formData, {
+                                action: user?.image ? 'UPDATE' : 'CREATE',
+                                id: user?.image?.id,
+                                url: user?.image?.url,
+                                provider: user?.image?.provider
+                            });
+                            if (response?.success) {
+                                setUser((prev) => ({ ...prev, ...response.data }))
                                 setDisabled(false);
                                 setLoading(false);
                                 toast.success('Profile picture updated successfully');
@@ -94,9 +90,14 @@ const UserProfileImageHandler = ({ open, setOpen }) => {
             const formData = new FormData();
             formData.append('image', null);
             formData.append('rm', true);
-            const response = await userImage(formData);
-            if (response?.data) {
-                setSession({ ...session, user: { ...session.user, ...response.data } });
+            const response = await updateUserImage(formData, {
+                action: 'DELETE',
+                id: user?.image?.id,
+                url: user?.image?.url,
+                provider: user?.image?.provider
+            });
+            if (response?.success) {
+                setUser((prev) => ({ ...prev, ...response.data }))
                 setTimeout(() => {
                     setDisabled(false);
                     setLoading(false);
@@ -139,10 +140,10 @@ const UserProfileImageHandler = ({ open, setOpen }) => {
                 {
                     tab === 'upload' && (<>
                         <div className="w-full h-full flex-col flex items-center justify-center">
-                            <Avatar sx={{ boxShadow: 3 }} width={128} height={128} className='w-32 h-32 rounded-full overflow-hidden' src={session?.user?.image} alt={session?.user?.name} />
+                            <Avatar sx={{ boxShadow: 3 }} width={128} height={128} className='w-32 h-32 rounded-full overflow-hidden' src={user?.image?.url} alt={user?.name} />
                             <div className="mt-5 flex space-x-10">
                                 <Button sx={{ px: 2.5 }} disabled={disabled || loading} onClick={() => handleUpload()} variant="contained" className="font-bold -tracking-tighter cheltenham !text-white dark:!text-black" color="button" size="small" > Update </Button>
-                                <Button sx={{ px: 2.5 }} disabled={disabled || loading || !session?.user?.image} onClick={handleRemove} variant="outlined" className="font-bold -tracking-tighter cheltenham" color="button" size="small" > Remove </Button>
+                                <Button sx={{ px: 2.5 }} disabled={disabled || loading || !user?.image} onClick={handleRemove} variant="outlined" className="font-bold -tracking-tighter cheltenham" color="button" size="small" > Remove </Button>
                             </div>
                         </div><p className="px-5 pb-2 text-justify text-sm">
                             Upload a profile picture to make your account more personal. It will be visible to other users. You can change it at any time. The image must be in JPG, PNG or GIF format and not exceed 5MB.

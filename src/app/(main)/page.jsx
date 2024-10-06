@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { TestToastify } from "@/components/Home/_client";
 import { PostCardView } from "@/components/post";
 import { query } from "@/lib/client";
 import { GET_POSTS } from "@/lib/types/post";
@@ -20,19 +19,12 @@ export default async function Home() {
       communityPosts = dt.data.Posts.edges;
     }
   } catch (e) {
-    console.log(e, '___while getting posts')
   }
 
   return (
     <>
       <div className="py-2 max-w-5xl mx-auto">
-        {/* <PostView_TIA data={{ list: blogPosts, loading: false, ref: null, hasMore: false, }}
-          className={'2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1'}
-        /> */}
         <CommunityPosts posts={communityPosts} />
-        <div className="mt-5">
-          <TestToastify />
-        </div>
       </div>
     </>
   );

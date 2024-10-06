@@ -256,12 +256,19 @@ const CommentView = ({ post }) => {
                 resolver: (data, setReplies) => {
                     if (data && data?.PostComments?.edges) {
                         setReplies(
-                            (prev) => [...prev, ...data.PostComments.edges]
+                            data.PostComments.edges
                         )
                     }
                 },
                 reply: reply,
-                setReply: setReply
+                setReply: setReply,
+                reResolver: (data, setReplies) => {
+                    if (data && data?.PostComments?.edges) {
+                        setReplies(
+                            (prev) => [...prev, ...data.PostComments.edges]
+                        )
+                    }
+                },
             },
             onVote: onVote,
         }}>

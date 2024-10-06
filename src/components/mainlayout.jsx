@@ -1,14 +1,12 @@
 'use client';
 import { MainSidebar } from './Home/sidebar';
-import { Backdrop, Drawer, useMediaQuery } from '@mui/material';
+import { Drawer, useMediaQuery } from '@mui/material';
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import { MainLogo } from '@/lib/client_components';
 import { CgMenuLeft } from 'react-icons/cg';
-import { toast } from 'react-toastify';
 import { usePathname } from 'next/navigation';
 
 const drawerWidth = 240;

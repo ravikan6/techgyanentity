@@ -1,9 +1,8 @@
 "use client";
 import { DecryptAuthorStudioCookie } from '@/lib/actions/studio';
 import { StudioContext, StudioWriterContext } from '@/lib/context';
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useEffect } from 'react';
-import { Button } from '@/components/rui';
 import { usePathname } from 'next/navigation'
 
 const StudioMainLayoutWrapper = ({ children, session, authorData }) => {

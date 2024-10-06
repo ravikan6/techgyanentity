@@ -7,6 +7,8 @@ import { Avatar, Skeleton } from '@mui/material';
 import { Button } from '@/components/rui/_components';
 import { UserProfileImageHandler } from '../_profile_image';
 import { useSession } from 'next-auth/react';
+import { useQuery } from '@apollo/client';
+import { GET_USER_FOR_UPDATE } from '@/lib/types/user';
 
 const Account = ({ session }) => {
   return (
@@ -19,10 +21,15 @@ const Account = ({ session }) => {
 const PersonalInfo = ({ user }) => {
   const [open, setOpen] = useState(false);
   const [infoModel, setInfoModel] = useState(false);
+  const [_user, setUser] = useState(user)
 
-  const { data } = useSession();
+  const { data } = useQuery(GET_USER_FOR_UPDATE)
 
-  data?.user ? user = data.user : user = user;
+  useEffect(() => {
+    if (data?.Me) {
+      setUser(data?.Me)
+    }
+  }, [data])
 
   const profileModelHandler = () => setOpen(!open);
   const infoModelHandler = () => setInfoModel(!infoModel);
@@ -51,18 +58,18 @@ const PersonalInfo = ({ user }) => {
             <div onClick={profileModelHandler} className='flex cursor-pointer w-full transition-all duration-500 group/infoItem text-gray-700 dark:text-gray-300 bg-light dark:bg-dark hover:bg-accentLight dark:hover:bg-accentDark hover:text-gray-200 dark:hover:text-gray-100 px-8 items-center py-3 rounded-xl justify-between' >
               <p className='text-sm ' >Profile Picture</p>
               <p>A profile picture helps personalise your account</p>
-              <Avatar width={32} height={32} className='w-8 h-8 rounded-full overflow-hidden' src={user?.image} alt={user?.name} />
+              <Avatar width={32} height={32} className='w-8 h-8 rounded-full overflow-hidden' src={_user?.image?.url} alt={user?.name} />
             </div>
-            <InfoItem title="Name" value={user?.name} onClick={infoModelHandler} />
-            <InfoItem title="Username" value={user?.username} onClick={infoModelHandler} />
-            <InfoItem title="Gender" value={user?.sex || 'Not Provided'} onClick={infoModelHandler} />
-            <InfoItem title="Birthday" value={formatLocalDate(user?.dob) || 'Not Provided'} onClick={infoModelHandler} />
+            <InfoItem title="Name" value={_user?.name} onClick={infoModelHandler} />
+            <InfoItem title="Username" value={_user?.username} onClick={infoModelHandler} />
+            <InfoItem title="Gender" value={_user?.sex || 'Not Provided'} onClick={infoModelHandler} />
+            <InfoItem title="Birthday" value={formatLocalDate(_user?.dob) || 'Not Provided'} onClick={infoModelHandler} />
           </div>
         </InfoBox>
 
       </profile-info>
-      <BasicInfoUpdate open={infoModel} setOpen={setInfoModel} user={user} />
-      <UserProfileImageHandler open={open} setOpen={setOpen} />
+      <BasicInfoUpdate open={infoModel} setOpen={setInfoModel} user={_user} />
+      <UserProfileImageHandler open={open} setOpen={setOpen} user={_user} />
     </>
   )
 };

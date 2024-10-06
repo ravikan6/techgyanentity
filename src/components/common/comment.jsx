@@ -124,7 +124,7 @@ const Container = ({ }) => {
                     <div className={`${rView.show ? 'opacity-10' : 'opacity-100'}`}>
                         <CommentsContainer />
                     </div>
-                    {(rView.show && rView.parentId) ? <div className="absolute top-0 left-0 bottom-0 h-full w-full bg-light dark:bg-dark">
+                    {(rView.show && rView.parentId) ? <div className="absolute top-0 left-0 bottom-0 h-full w-full bg-light dark:bg-dark overflow-y-auto">
                         <ReplyContainer />
                     </div> : null}
                 </div>
@@ -181,6 +181,7 @@ const CommentsContainer = () => {
 
 const ReplyContainer = () => {
     const [replies, setReplies] = useState([]);
+    const [isNext, setIsNext] = useState(false)
     const { form, state, content, comment, re } = useContext(CommentContext);
     const { reply } = useContext(CommentMetaContext);
     const observer = useRef()
@@ -196,7 +197,10 @@ const ReplyContainer = () => {
                 }
             })
         }
-        re.resolver(data, setReplies);
+        if (isNext) {
+            re.reResolver(data, setReplies);
+            setIsNext(false);
+        } else re.resolver(data, setReplies);
     }, [reply, data, called, content?.key])
 
     useEffect(() => {
@@ -205,6 +209,7 @@ const ReplyContainer = () => {
 
         observer.current = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && replies?.pageInfo?.hasNextPage) {
+                setIsNext(true);
                 getReplies({
                     variables: {
                         key: content.key,

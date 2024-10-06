@@ -11,12 +11,12 @@ import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { RiDraggable } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { default as NextImage } from 'next/image';
-import { updateAuthorAction, updateAuthorImagesAction } from "@/lib/actions/author";
 import { SetAuthorStudioCookie } from "@/lib/actions/studio";
+import { updateCreatorBrand, updateCreatorProfile } from "@/lib/actions/setters/creator";
 
 const ChannelEditContext = React.createContext();
 
-const ChannelEditLayoutFunc = (props) => {
+const CreatorEditFeedLayout = (props) => {
     return (
         <div className="w-full h-[calc(100vh-100px)] flex items-center justify-center">
             <h3 className="text-2xl stymie font-semibold">
@@ -26,7 +26,7 @@ const ChannelEditLayoutFunc = (props) => {
     );
 }
 
-const ChannelBrandFunc = ({ data }) => {
+const CreatorImagesEdit = ({ data }) => {
     const [bData, setBData] = useState({ ...data, } || {});
     const context = useContext(StudioContext);
     const { state, setState } = useContext(ChannelEditContext);
@@ -51,7 +51,7 @@ const ChannelBrandFunc = ({ data }) => {
                     image: files?.rml ? 'DELETE' : bData?.media?.image ? 'UPDATE' : 'CREATE',
                     banner: files?.rmb ? 'DELETE' : bData?.media?.banner ? 'UPDATE' : 'CREATE'
                 }
-                let dt = await updateAuthorImagesAction(bData, formData, actions);
+                let dt = await updateCreatorBrand(bData, formData, actions);
 
                 if (dt?.data) {
                     let image = dt?.data?.image, banner = dt?.data?.banner;
@@ -258,7 +258,7 @@ const ChannelBrandFunc = ({ data }) => {
     );
 }
 
-const AuthorInfoUpdate = ({ data }) => {
+const CreatorInfoEdit = ({ data }) => {
     const context = useContext(StudioContext);
     const [allDisabled, setAllDisabled] = useState(false);
     const [name, setName] = useState({ value: '', error: false, errorText: null });
@@ -299,7 +299,7 @@ const AuthorInfoUpdate = ({ data }) => {
     useMemo(async () => {
         if (state?.run) {
             try {
-                let newData = await updateAuthorAction({ key: data?.key, data: { name: name.value, handle: handle.value, description: description?.value, social: links, contactEmail: email?.value } });
+                let newData = await updateCreatorProfile({ key: data?.key, data: { name: name.value, handle: handle.value, description: description?.value, social: links, contactEmail: email?.value } });
                 if (newData?.data) {
                     context?.setData({ ...context?.data, data: { ...context?.data?.data, ...newData?.data } });
                     context.loading && context.setLoading(false);
@@ -416,7 +416,7 @@ export const InputHeader = ({ label, desc, tip }) => {
 };
 
 
-const ChannelEditLayout = ({ children }) => {
+const CreatorEditLayout = ({ children }) => {
     const [state, setState] = useState({ data: null, run: false, cancle: false });
     const q = useSearchParams().get('t');
     const router = useRouter();
@@ -650,4 +650,4 @@ export const SetDynmicAuthor = ({ key }) => {
     )
 }
 
-export { ChannelEditLayoutFunc, ChannelBrandFunc, AuthorInfoUpdate, ChannelEditLayout };
+export { CreatorEditFeedLayout, CreatorImagesEdit, CreatorInfoEdit, CreatorEditLayout };

@@ -7,27 +7,22 @@ import { IoMdPeople } from 'react-icons/io';
 import { PiDotsThreeOutline, PiShareFat } from 'react-icons/pi';
 import { TbHeartHandshake, TbLockCheck } from 'react-icons/tb';
 import { BiChevronDown } from 'react-icons/bi';
-import { HiOutlineDotsVertical, HiOutlineGlobe } from 'react-icons/hi';
+import { HiOutlineGlobe } from 'react-icons/hi';
 import { AiOutlineClose } from 'react-icons/ai';
-import { IoCreateOutline } from 'react-icons/io5';
 import { ArticleReportModal } from '@/components/popup';
-import { MdBookmarkAdd, MdBookmarkAdded, MdNavigateNext, MdOutlineBookmarkAdd, MdOutlineKeyboardArrowLeft, MdOutlineReport } from 'react-icons/md';
-import { MenuList, Zoom, ListItemIcon, alpha } from '@mui/material';
-import { AccountCircleOutlined, Add, DrawOutlined, NotificationsOutlined, Menu as MenuIcon, MoreVert } from '@mui/icons-material';
-import { Btn } from './rui/_components';
+import { MdBookmarkAdded, MdNavigateNext, MdOutlineBookmarkAdd, MdOutlineKeyboardArrowLeft, MdOutlineReport } from 'react-icons/md';
+import { MenuList, Zoom, ListItemIcon } from '@mui/material';
+import { AccountCircleOutlined,  DrawOutlined, NotificationsOutlined, MoreVert } from '@mui/icons-material';
 import { Button, IconButton, Tooltip, Menu, MenuItem } from '@/components/rui';
 import { DrawerContext } from './mainlayout';
 import { useRouter } from 'next/navigation';
 import { BsPatchQuestion, BsTrash } from 'react-icons/bs';
 import { StudioContext } from '@/lib/context';
-import { deletePostAction, handleCreatePostRedirectAction } from '@/lib/actions/blog';
 import { LuImagePlus } from "react-icons/lu";
 import { FiShare2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import confirm from '@/lib/confirm';
-import { CldImage } from 'next-cloudinary';
-import { imgUrl } from '@/lib/helpers';
-import { ArticleImage } from './post/_client';
+import { StoryImage } from './story';
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -324,7 +319,7 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
   const View = () => (
     <>
       <div className='bg-light dark:bg-dark truncate rounded-xl p-2 flex space-x-4'>
-        <ArticleImage image={{ url: data?.img, alt: data?.title }} width={100} height={56} className={'!rounded-md'} />
+        <StoryImage image={{ url: data?.img, alt: data?.title }} width={100} height={56} className={'!rounded-md'} />
         <div className='flex flex-col max-w-[300px]'>
           <h3 className='text-sm line-clamp-1 text-black dark:text-white truncate text-wrap font-semibold'>{data?.title}</h3>
           <p className='text-xs line-clamp-2 text-gray-600 dark:text-gray-400 truncate text-wrap mt-0.5'>{data?.description}</p>
@@ -338,13 +333,7 @@ const PostDetailsTableViewMenu = ({ url, data, disabled, setPosts }) => {
       if (await confirm(<View />, { title: 'Are you sure you want to delete this post?', okLabel: 'Delete', cancelLabel: 'Cancel' })) {
         try {
           context?.setLoading(true)
-          let res = await deletePostAction(data?.id)
-          if (res?.status === 200 && res.data) {
-            setPosts((prev) => prev.filter((post) => post.shortId !== data?.id))
-            toast.success('Post deleted successfully.')
-          } else {
-            throw new Error('Something went wrong while deleting post, Please try again.')
-          }
+          // Will be updated with the new route
         } catch (e) {
           toast.error(e.message)
         } finally {
@@ -505,12 +494,7 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
   const handleClick = async () => {
     try {
       if (loading) return;
-      let dt = await handleCreatePostRedirectAction(data.data?.id);
-      if (dt?.status === 200 && dt.url) {
-        router.push(dt.url);
-      } else {
-        throw new Error('Something went wrong while creating post, Please try again.')
-      }
+      // Will be updated with the new route
     } catch (e) {
       toast.error('Something went wrong while creating post, Please try again.')
     } finally { setLoading(false) }

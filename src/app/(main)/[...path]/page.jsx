@@ -1,8 +1,3 @@
-import AuthorPosts from '@/components/creator/_posts';
-import { UserBookmarks, UserClappedPost } from '@/components/Home/_client';
-import { getAuthorPosts } from '@/lib/actions/author';
-import { getUserBookmarks, getUserClappedPost } from '@/lib/actions/user';
-
 import { auth } from '@/lib/auth';
 import { query } from '@/lib/client';
 import { notFound } from 'next/navigation';
@@ -101,17 +96,9 @@ const DynamicPages = async ({ params, searchParams }) => {
         }
     } else if (path === 'list') {
         if ((searchParams?.type === 'bookmarks') && session?.user?.id) {
-            const res = await getUserBookmarks({ userId: session?.user?.id });
-            return (
-                <UserBookmarks data={session?.user} initialPosts={res?.data?.bookmarks} />
-            )
+            // --- Stories saved by User
         } else if ((searchParams?.type === 'clapped') && session?.user?.id) {
-            const res = await getUserClappedPost({ userId: session?.user?.id });
-            console.log(res.data)
-            let dt = await res?.data?.map((post) => post?.post);
-            return (
-                <UserClappedPost data={session?.user} initialPosts={dt || []} />
-            )
+            // --- Stories clapped by User
         }
     } else {
         const creator = await getCreator(path)
@@ -129,8 +116,7 @@ const DynamicPages = async ({ params, searchParams }) => {
             } else if (route?.length === 2 && route[1] === 'about') {
                 return <CreatorAboutView />
             } else if (route?.length === 2 && route[1] === 'posts') {
-                const response = await getAuthorPosts({ handle: creator?.handle });
-                return <AuthorPosts data={creator} initialPosts={response?.data} />
+                // Creator Posts
             }
             else if (route?.length === 2) {
                 const story = await getArticle(decodeURIComponent(route[1]), creator.key)

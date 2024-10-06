@@ -9,7 +9,6 @@ import mui from '@/styles/mui';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import { ThemeProvider } from '@mui/material';
 import {
-
   ApolloLink,
   HttpLink,
 } from "@apollo/client";
@@ -20,10 +19,10 @@ import {
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support";
 
-function makeClient(session) {
+function makeClient() {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "https://techgyan.collegejaankaar.in/api/",
-    credentials: 'include',
+    credentials: 'include', // Ensure credentials are included
   });
 
   return new ApolloClient({
@@ -37,7 +36,6 @@ function makeClient(session) {
           httpLink,
         ])
         : httpLink,
-
   });
 }
 
@@ -122,7 +120,7 @@ export const Providers = ({ session, children }) => {
       <CssBaseline />
       {/* <AppRouterCacheProvider options={{ enableCssLayer: true, key: 'rb' }} > */}
       <NextTheme disableTransitionOnChange attribute="class">
-        <ApolloNextAppProvider makeClient={() => makeClient(session)} >
+        <ApolloNextAppProvider makeClient={makeClient} >
           <SessionProvider refetchWhenOffline={false} session={session}>
             {children}
             <ProgressBar style={styles} options={{ showSpinner: false, disableSameURL: true, memo: true }} />

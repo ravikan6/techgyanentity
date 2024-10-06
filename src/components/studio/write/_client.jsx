@@ -1,12 +1,13 @@
 'use client';
 import { Fragment, useState, useContext } from 'react';
-import { Button, IconButton, Menu, Tooltip } from '@/components/rui'
+import { Button, IconButton, Tooltip } from '@/components/rui'
 import { Divider, Box, LinearProgress } from '@mui/material';
 import { ListItemRdX } from '@/components/Home/_profile-model';
 import { FeedbackOutlined, HelpOutlineOutlined, MoreVert, EditOutlined, KeyboardArrowLeft } from '@mui/icons-material';
 import { StudioContext, StudioWriterContext } from '@/lib/context';
 import { useRouter } from 'next/navigation';
 import confirm from '@/lib/confirm';
+import { Menu } from '@/components/styled';
 
 export const WriteMenu = () => {
     const [anchorEl, setAnchorEl] = useState(null);

@@ -10,7 +10,6 @@ import { AiFillGithub, AiFillGoogleCircle } from "react-icons/ai";
 import React, { useSearchParams, useRouter } from "next/navigation";
 import { Button, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { MdOutlineFacebook, MdMailLock, MdChevronLeft, MdOutlineAccountCircle } from "react-icons/md";
-import { createUser } from "@/lib/actions/user";
 
 const AuthFooter = () => {
     return (
@@ -434,7 +433,7 @@ const CreateAccount = () => {
 
     const onSubmit = async () => {
         if (data.email && data.name) {
-            let st = await createUser(data);
+            // Send data to the server
             if (st && st.status === 200 && st.data) {
                 toast.success("Account Created Successfully", { toastId: "createAccount" });
                 router.push("/auth/v2/login/identifier");

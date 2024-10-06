@@ -1,6 +1,5 @@
 "use client";
 import { Button, MenuItem, Switch, TextField } from "@/components/rui";
-import { deletePostAction, getArticledetails, updatePostDetailsAction } from "@/lib/actions/blog";
 import { StudioContext } from "@/lib/context";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -12,6 +11,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import confirm from "@/lib/confirm";
 import { updateStoryDetails } from "@/lib/actions/setters/story";
+import { getStoryDetailsForEdit } from "@/lib/actions/getters/story";
 
 const PostDetailsEditor = () => {
     const [state, setState] = useState({ canSave: false, canUndo: false });
@@ -26,8 +26,10 @@ const PostDetailsEditor = () => {
     useEffect(() => {
         const dtHandler = async () => {
             !loading && setLoading(true)
-            let dt = await getArticledetails(data?.article?.key, data?.data?.key, true);
-            if (dt?.data) {
+            let dt = await getStoryDetailsForEdit(data?.article?.key, data?.data?.key, {
+                include: { cat: true }
+            });
+            if (dt?.success) {
                 setPost(dt.data)
                 setCategories(dt.categories)
                 setNpst({ title: dt.data?.title, slug: dt.data?.slug, description: dt.data?.description, tags: dt.data?.tags, image: dt.data?.image, privacy: dt.data?.privacy, state: dt.data?.state, category: dt.data?.category })
@@ -131,13 +133,7 @@ const PostDetailsEditor = () => {
             if (await confirm('Are you sure you want to delete this post?')) {
                 try {
                     setLoading(true)
-                    let res = await deletePostAction(data?.article?.shortId)
-                    if (res?.status === 200 && res.data) {
-                        toast.success('Post deleted successfully.')
-                        router.replace(`/${process.env.NEXT_PUBLIC_STUDIO_PATH}/content`)
-                    } else {
-                        throw new Error('Something went wrong while deleting post, Please try again.')
-                    }
+                    // Will be...
                 } catch (e) {
                     toast.error(e.message)
                 } finally {

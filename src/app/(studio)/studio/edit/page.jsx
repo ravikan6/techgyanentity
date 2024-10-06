@@ -1,4 +1,4 @@
-import { AuthorEditBranding, AuthorInfoUpdate, ChannelEditSections } from '@/components/studio/author';
+import { CreatorEditBrand, CreatorInfoEdit, CreatorEditSections } from '@/components/studio/author';
 import { DecryptAuthorStudioCookie } from '@/lib/actions/studio';
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -53,19 +53,19 @@ const ChannelEditPage = async ({ searchParams }) => {
     if (page === 'sections') {
         return (
             <channel-edit-page>
-                <ChannelEditSections data={data} />
+                <CreatorEditSections data={data} />
             </channel-edit-page>
         )
     } else if (page === 'branding') {
         return (
             <channel-edit-page>
-                <AuthorEditBranding data={data} />
+                <CreatorEditBrand data={data} />
             </channel-edit-page>
         )
     } else if (page === 'info') {
         return (
             <channel-edit-page>
-                <AuthorInfoUpdate data={data} />
+                <CreatorInfoEdit data={data} />
             </channel-edit-page>
         )
     }

@@ -3,7 +3,7 @@ import { Button, TextField } from '@/components/rui';
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
-import { createAuthor } from "@/lib/actions/user";
+import { createCreatorProfile } from '@/lib/actions/setters/creator';
 
 const CreateAuthor = ({ context, modern = true }) => {
     const [name, setName] = useState('');
@@ -24,20 +24,17 @@ const CreateAuthor = ({ context, modern = true }) => {
         }
     }, [session]);
 
-    const createAuthorx = () => {
+    const createAuthorx = async () => {
         handleLoading(true);
         try {
-            createAuthor({ name: name }).then((res) => {
-                handleLoading(false);
-                if (res?.status === 200 && res?.data) {
-                    toast.success('Author created successfully');
-                    window.location.href = `/${process.env.STUDIO_URL_PREFIX}/dashboard/@${res?.data?.handle}`;
-                } else {
-                    for (let i in res?.errors) {
-                        toast.error(res?.errors[i]?.message);
-                    }
-                }
+            let res = await createCreatorProfile({
+                name: name,
+                handle: name.replace(/\s/g, '').toLowerCase(),
             });
+            if (res.success) {
+                handleLoading(false);
+                toast.success('Your creator account has been created successfully.');
+            }
         } catch (error) {
             handleLoading(false);
             toast.error('Something went wrong. Please try again.');

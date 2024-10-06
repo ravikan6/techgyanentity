@@ -1,12 +1,12 @@
 import React from 'react'
-import { AuthorEditLayoutWrapper } from '@/components/studio/author';
+import { CreatorEditLayoutWrapper } from '@/components/studio/author';
 
-const ChannelEditLayout = async ({ children }) => {
+const CreatorEditLayout = async ({ children }) => {
     return (
-        <AuthorEditLayoutWrapper >
+        <CreatorEditLayoutWrapper >
             {children}
-        </AuthorEditLayoutWrapper>
+        </CreatorEditLayoutWrapper>
     )
 }
 
-export default ChannelEditLayout;
+export default CreatorEditLayout;

@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { ArticleImage } from "./_client";
 import { formatDate, formatDateToString, formatNumber } from "@/lib/utils";
 import { useCallback, useState } from "react";
 import { Button, IconButton, Menu, Tooltip } from "../rui";
@@ -9,20 +8,17 @@ import { ListItemRdX } from "../Home/_profile-model";
 import { HeartBrokenOutlined, ShareOutlined } from "@mui/icons-material";
 import { AuthorAvatar } from "../creator/_client";
 import { BsNutFill, BsThreeDots } from "react-icons/bs";
-import { Bookmark } from "./postActions";
 import { PiHandsClappingLight } from "react-icons/pi";
 import { AiOutlineComment } from "react-icons/ai";
-import { ShareView } from "../Home/_client";
-import { AuthorTipWrapper } from "../creator/utils";
-import { pollAnsSubmit } from "@/lib/actions/create";
+import { CreatorWrapper } from "../creator/utils";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
 import { imageUrl } from "@/lib/helpers";
 import { BackBtn, NextBtn } from "../Buttons";
 import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
 import { IoResize } from "react-icons/io5";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
+import { StoryImage } from "../story";
 
 
 const PostView_TIA = ({ data, hidden, className }) => {
@@ -35,7 +31,7 @@ const PostView_TIA = ({ data, hidden, className }) => {
                         <article key={post?.slug}>
                             <div className="relative group/g_pst transition-opacity duration-300">
                                 <Link href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                    <ArticleImage className="rounded-xl" image={post?.image} />
+                                    <StoryImage className="rounded-xl" image={post?.image} />
                                 </Link>
                                 <div className="mt-2 flex flex-nowrap items-start justify-between">
                                     <div className="grow">
@@ -87,7 +83,7 @@ const PostListView_TIA = ({ data }) => {
                     data?.list?.map((post) => (
                         <div key={post?.slug} className="relative mb-4 flex items-start space-x-4 group/g_pst transition-opacity duration-300">
                             <Link className=" w-3/12" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                <ArticleImage className="rounded-lg" image={post?.image} />
+                                <StoryImage className="rounded-lg" image={post?.image} />
                             </Link>
                             <div className="w-[calc(75%-16px)] flex flex-col ">
                                 <div className="flex flex-nowrap items-start justify-between mb-3">
@@ -141,12 +137,12 @@ const PostListView2 = ({ data, hidden }) => {
                     <section className="flex flex-col gap-1.5 sm:gap-2">
                         <div className="flex justify-between items-center">
                             <Link href={`/@${post?.author?.handle || data?.author?.handle}`} className="">
-                                <AuthorTipWrapper shortId={post?.author?.shortId}>
+                                <CreatorWrapper shortId={post?.author?.shortId}>
                                     <div className="flex items-center cursor-pointer space-x-3">
                                         <AuthorAvatar data={{ url: post?.author?.image?.url }} className={'!w-6 !h-6'} />
                                         <span className="font-semibold text-[14px] cheltenham-small text-slate-800 dark:text-slate-100">{post?.author?.name || data?.author?.name}</span>
                                     </div>
-                                </AuthorTipWrapper>
+                                </CreatorWrapper>
                             </Link>
                             <PostViewActions id={post?.id} post={post} />
                         </div>
@@ -168,7 +164,7 @@ const PostListView2 = ({ data, hidden }) => {
                             </div>
                             <div className="rounded-md md:rounded-lg relative cursor-pointer w-full md:basis-[180px] md:h-[108px] shrink-0 self-center">
                                 <Link className="block w-full h-full overflow-hidden rounded-md md:rounded-lg" href={`/@${post?.author?.handle || data?.author?.handle}/${post.slug}`}>
-                                    <ArticleImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
+                                    <StoryImage image={post?.image} className="rounded-md md:rounded-lg" style={{ objectFit: "cover" }} />
                                 </Link>
                             </div>
                         </div>
@@ -184,7 +180,6 @@ const PostListView2 = ({ data, hidden }) => {
                                 </Link>
                                 {!hidden?.bookmark && <div data-orientation="horizontal" role="separator" className="h-3 w-px bg-lightHead dark:bg-darkHead" />}
                             </div>}
-                            {!hidden?.bookmark && <Bookmark id={post?.shortId} variant="text" />}
                         </div>
                     </section>
                 </article>
@@ -224,7 +219,7 @@ const PostMetaView = ({ data }) => {
 
 const PostAuthorView = ({ author }) => {
     return (
-        <AuthorTipWrapper shortId={author?.shortId}>
+        <CreatorWrapper shortId={author?.shortId}>
             <div className="flex items-center gap-3">
                 <Link href={`/@${author?.handle}`}>
                     <AuthorAvatar data={{ url: author?.image?.url }} className={'!w-8 !h-8'} />
@@ -235,7 +230,7 @@ const PostAuthorView = ({ author }) => {
                     </Link>
                 </div>
             </div>
-        </AuthorTipWrapper>
+        </CreatorWrapper>
     )
 }
 
@@ -247,12 +242,7 @@ const PollView = ({ post, session, url }) => {
     const onSubmit = async (option) => {
         setDisabled(true);
         try {
-            const response = await pollAnsSubmit(
-                post.typeContent.poll.id,
-                option);
-            if (response.status == 200)
-                setPollData(response.data);
-            else toast.error('Something Went Wrong While Submiting poll answer.')
+            //
         } catch (error) {
             toast.error('Something went wrong.')
         } finally {
@@ -311,21 +301,6 @@ const PollView = ({ post, session, url }) => {
         </div>
     )
 }
-
-const ImagePostView = ({ post, url }) => {
-    return (
-        <div className="aspect-square relative">
-            <Link href={url}>
-                <Image
-                    className="w-full h-full object-cover rounded-md"
-                    src={imageUrl(post.list?.at(0)?.url, post.list?.at(0)?.provider)}
-                    alt={post.list?.at(0)?.alt || 'Slide image'}
-                    fill
-                />
-            </Link>
-        </div>
-    );
-};
 
 const ImageSlider = ({ slides = [], url }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -459,7 +434,7 @@ const PostViewActions = ({ id, post }) => {
                 <ListItemRdX link={{ name: 'Add to Bookmark', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Report', icon: HeartBrokenOutlined }} />
                 <ListItemRdX link={{ name: 'Say Thanks', icon: HeartBrokenOutlined }} />
-                <ShareView data={{ image: post?.image?.url, title: post?.title, info: post?.description }} meta={{ url: `/@${post?.author?.handle}/${post?.slug}` }} component={{ button: ListItemRdX, props: { link: { name: 'Share', icon: ShareOutlined } } }} />
+                share ----
             </Menu>
         </>
     );

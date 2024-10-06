@@ -1,14 +1,12 @@
 "use client";
 import React, { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { Button, Dialog, MenuItem, TextField } from '@/components/rui'
 import { InputAdornment, LinearProgress, Skeleton } from "@mui/material"
-import { useRouter } from "next/navigation";
 import { MdOutlineArrowRight } from "react-icons/md"
 import { CloseBtn } from '@/components/Buttons';
 import { InputHeader } from '@/components/studio/author/_edit-funcs';
 import { toast } from 'react-toastify';
-import { updateUserBasic } from '@/lib/actions/user';
+import { updateUser } from '@/lib/actions/setters/user';
 
 const InfoItem = ({ title, value, icon, onClick }) => {
     let data = { icon: icon }
@@ -33,32 +31,40 @@ const InfoItem = ({ title, value, icon, onClick }) => {
     )
 }
 
-const BasicInfoUpdate = ({ open, setOpen, user }) => {
+const BasicInfoUpdate = ({ open, setOpen, user: _user }) => {
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [noSave, setNoSave] = useState(false);
-    const [session, setSession] = useState({});
+    const [user, setUser] = useState(_user);
 
-    const [info, setInfo] = useState({
-        name: {
-            value: user?.name,
-            error: false,
-            errorText: '',
-        },
-        username: {
-            value: user?.username,
-            error: false,
-            errorText: '',
-        },
-        sex: {
-            value: user?.sex
-        },
-        dob: {
-            value: user?.dob,
-            error: false,
-            errorText: '',
-        },
-    });
+    const [info, setInfo] = useState({});
+
+    useEffect(() => {
+        setInfo({
+            name: {
+                value: user?.firstName,
+                error: false,
+                errorText: '',
+            },
+            name2: {
+                value: user?.lastName,
+                error: false,
+                errorText: '',
+            },
+            username: {
+                value: user?.username,
+                error: false,
+                errorText: '',
+            },
+            sex: {
+                value: user?.sex
+            },
+            dob: {
+                value: user?.dob,
+                error: false,
+                errorText: '',
+            },
+        })
+    }, [user])
 
     const sex = [
         { key: 'male', value: 'Male' },
@@ -71,10 +77,11 @@ const BasicInfoUpdate = ({ open, setOpen, user }) => {
         return regex.test(value);
     };
 
-    const handleChangeName = (e) => {
+    const handleChangeName = (e, is2) => {
         const value = e.target.value;
         const isValid = validateName(value);
-        setInfo({ ...info, name: { value, error: !isValid, errorText: !isValid && 'Name cannot contain angle brackets < >' } });
+        if (is2) setInfo({ ...info, name2: { value, error: !isValid, errorText: !isValid && 'Name cannot contain angle brackets < >' } });
+        else setInfo({ ...info, name: { value, error: !isValid, errorText: !isValid && 'Name cannot contain angle brackets < >' } });
     };
 
     const handleChangeHandle = (e) => {
@@ -83,8 +90,6 @@ const BasicInfoUpdate = ({ open, setOpen, user }) => {
         let isValid = regex.test(value);
         setInfo({ ...info, username: { value, error: !isValid, errorText: !isValid && 'Username can only contain letters, numbers, and underscores. ' } });
     };
-
-    const { data } = useSession();
 
     const handleChangeInfo = (e, key) => {
         if (key === 'dob') {
@@ -105,12 +110,6 @@ const BasicInfoUpdate = ({ open, setOpen, user }) => {
         }
     };
 
-    useEffect(() => {
-        if (data?.user) {
-            setSession(data);
-        }
-    }, [data]);
-
     const isDisabled = disabled || loading;
 
     const handleOnSave = async () => {
@@ -118,33 +117,15 @@ const BasicInfoUpdate = ({ open, setOpen, user }) => {
         setDisabled(true);
         try {
             let data = {
-                name: info.name.value,
+                firstName: info.name.value,
+                lastName: info.name2?.value,
                 username: info.username.value,
                 dob: info.dob.value ? new Date(info.dob.value).toISOString() : null,
                 sex: info.sex.value,
             };
-            let res = await updateUserBasic(data);
-            if (res?.data) {
-                setInfo({
-                    name: {
-                        value: res?.data?.name,
-                        error: false,
-                        errorText: '',
-                    },
-                    username: {
-                        value: res?.data?.username,
-                        error: false,
-                        errorText: '',
-                    },
-                    dob: {
-                        value: res?.data?.dob,
-                        error: false,
-                        errorText: '',
-                    },
-                    sex: {
-                        value: res?.data?.sex,
-                    }
-                });
+            let res = await updateUser(data);
+            if (res?.success) {
+                setUser((prev) => ({ ...prev, ...res.data }))
                 toast.success('Basic information updated successfully.');
                 setOpen(false);
             }
@@ -159,7 +140,12 @@ const BasicInfoUpdate = ({ open, setOpen, user }) => {
     const handleOnClose = () => {
         setInfo({
             name: {
-                value: user?.name,
+                value: user?.firstName,
+                error: false,
+                errorText: '',
+            },
+            name2: {
+                value: user?.lastName,
                 error: false,
                 errorText: '',
             },
@@ -198,8 +184,12 @@ const BasicInfoUpdate = ({ open, setOpen, user }) => {
 
                     <div className="flex flex-col px-5 overflow-auto space-y-7 pt-12 pb-16">
                         <div className="flex flex-col space-y-2">
-                            <InputHeader label={'Name'} desc={'Your name will be visible to other users on this website.'} tip={'Name cannot contain angle brackets < >'} />
-                            <TextField disabled={isDisabled} size="small" required error={info?.name?.error} helperText={info?.name?.error && info?.name?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name.value} onChange={(e) => handleChangeName(e)} />
+                            <InputHeader label={'First Name'} desc={'Your name will be visible to other users on this website.'} tip={'Name cannot contain angle brackets < >'} />
+                            <TextField disabled={isDisabled} size="small" required error={info?.name?.error} helperText={info?.name?.error && info?.name?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name.value} onChange={(e) => handleChangeName(e, false)} />
+                        </div>
+                        <div className="flex flex-col space-y-2">
+                            <InputHeader label={'Last Name'} desc={'Your name will be visible to other users on this website.'} tip={'Name cannot contain angle brackets < >'} />
+                            <TextField disabled={isDisabled} size="small" error={info?.name2?.error} helperText={info?.name2?.error && info?.name2?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name2.value} onChange={(e) => handleChangeName(e, true)} />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'Username'} desc={'Your username will be visible to other users on this website.'} tip={'Username cannot contain angle brackets < >'} />

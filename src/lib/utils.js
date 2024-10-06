@@ -1,5 +1,4 @@
 import CryptoJS from "crypto-js";
-import { prisma } from "./db";
 
 const encrypt = (data, key) => {
     try {
@@ -27,20 +26,6 @@ function generateDisplayNameOptions(name, nickname) {
     options.push(`${nickname} ${name}`);
     options.push(`${name} ${nickname}`);
     return options;
-}
-
-const getAuthorFirst = async (id) => {
-    const author = await prisma.author.findFirst({
-        where: {
-            userId: id
-        },
-        select: {
-            id: true,
-        },
-    })
-
-    console.log(author, '______-Author____________-from_________getAuthorFirst_________');
-    return author;
 }
 
 function formatDateToString(dateString) {

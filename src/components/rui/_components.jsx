@@ -1,9 +1,17 @@
 'use client'
 import React, { forwardRef, useState } from 'react'
 import { Menu, alpha, styled, Button, MenuItem, Tooltip, Zoom, tooltipClasses, Dialog, TextField, Box, Snackbar, IconButton, ToggleButtonGroup, ToggleButton, Switch, SwipeableDrawer, CircularProgress } from "@mui/material";
-import { Puller } from '../post/_client';
 import { CloseBtn } from '../Buttons';
 
+export const Puller = styled('div')(({ theme }) => ({
+    width: 40,
+    height: 5,
+    backgroundColor: theme.palette?.accent?.main,
+    borderRadius: 3,
+    position: 'absolute',
+    top: 4,
+    left: 'calc(50% - 20px)',
+}));
 
 const RuiMenu = styled(React.forwardRef((props, ref) => (
     <Menu

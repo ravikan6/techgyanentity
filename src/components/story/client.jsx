@@ -518,12 +518,19 @@ const CommentView = () => {
                 resolver: (data, setReplies) => {
                     if (data && data?.StoryComments?.edges) {
                         setReplies(
-                            (prev) => [...prev, ...data.StoryComments.edges]
+                            data.StoryComments.edges
                         )
                     }
                 },
                 reply: reply,
                 setReply: setReply,
+                reResolver: (data, setReplies) => {
+                    if (data && data?.StoryComments?.edges) {
+                        setReplies(
+                            (prev) => [...prev, ...data.StoryComments.edges]
+                        )
+                    }
+                }
             },
             onVote: onVote,
         }}>

@@ -12,7 +12,7 @@ const updateStoryContent = async (input) => {
         res = { ...res, errors: [{ message: 'Unauthorized' }] };
         return res;
     }
-    PostAction
+
     try {
         let client = await api();
         const { data, errors } = await client.mutate({

@@ -57,3 +57,8 @@ export async function deleteCloudinaryImage(public_id) {
     return { success: false, message: 'Delete from Cloudinary failed', error: error.message };
   }
 }
+
+export const cloudinaryProvider = async (data) => {
+  let provider = 'cloudinary';
+  return { provider, url: await data.public_id }
+}

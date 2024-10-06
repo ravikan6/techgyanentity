@@ -47,6 +47,7 @@ export const CommentContext = React.createContext({
         resolver: (d, s) => { },
         reply: null,
         setReply: () => { },
+        reResolver: (d, s) => { }
     },
     onVote: async (i) => { },
 });

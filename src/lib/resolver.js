@@ -1,35 +1,10 @@
 "use server";
 import { auth } from "./auth";
-import { prisma } from "./db";
 
 const followAuthor = async (authorId) => {
     const session = await auth();
     try {
-        if (!session && !session?.user && !session?.user?.id && !authorId) return throwError("Unauthorized or Invalid Request");
-
-        const isFollowing = await prisma.follower.findFirst({
-            where: {
-                authorId: authorId,
-                followerId: session.user.id,
-            },
-        });
-
-        if (isFollowing) {
-            await prisma.follower.delete({
-                where: {
-                    id: isFollowing.id,
-                },
-            });
-            return { status: false };
-        } else {
-            let isF = await prisma.follower.create({
-                data: {
-                    author: { connect: { id: authorId } },
-                    follower: { connect: { id: session.user.id } },
-                },
-            });
-            return { status: true, id: isF?.id };
-        }
+        return { status: true, id: null };
     } catch (error) {
         return { status: null, error: error, message: "An error occurred while following author. Please try again later." };
     }
@@ -48,11 +23,12 @@ async function apiGql(query, headers = {}) {
 
         let res = { status: response.status, data: null, errors: null };
         const data = await response.json();
-        if (data?.data) {apiGql
-            res = {...res, data: data.data };
+        if (data?.data) {
+            apiGql
+            res = { ...res, data: data.data };
         }
         if (data?.errors) {
-            res = {...res, errors: [...data.errors] };
+            res = { ...res, errors: [...data.errors] };
         }
         return res;
     } catch (error) {
