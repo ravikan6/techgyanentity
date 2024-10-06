@@ -2,7 +2,7 @@
 
 import { api } from "@/lib/client";
 import { VOTE_ON_POST_COMMENT, VOTE_ON_POST_POLL, CREATE_POST_POLL, CREATE_POST, CREATE_POST_IMAGE, UPDATE_POST_COMMENT, ADD_POST_COMMENT } from "@/lib/types/post";
-import { uploadImage } from "../upload";
+import { uploadImage } from "@/lib/actions/upload";
 
 const createPost = async (input) => {
     let res = { data: null, success: false, errors: [] };

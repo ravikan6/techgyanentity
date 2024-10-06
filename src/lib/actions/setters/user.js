@@ -1,7 +1,7 @@
 "use server";
 
 import { api } from "@/lib/client";
-import { cloudinaryProvider, uploadImage } from "../upload";
+import { uploadImage, cloudinaryProvider } from "@/lib/actions/upload";
 import { UPDATE_USER, UPDATE_USER_IMAGE } from "@/lib/types/user";
 import { auth } from "@/lib/auth";
 

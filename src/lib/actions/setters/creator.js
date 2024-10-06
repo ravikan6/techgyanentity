@@ -4,9 +4,7 @@ import { api } from "@/lib/client";
 import { CREATE_CREATOR_PROFILE, UPDATE_CREATOR, UPDATE_CREATOR_BANNER, UPDATE_CREATOR_IMAGE } from "@/lib/types/creator";
 
 import { auth } from "@/lib/auth";
-import { uploadImage } from "./upload";
-import { cloudinaryProvider } from "../upload";
-
+import { uploadImage, cloudinaryProvider } from "@/lib/actions/upload";
 
 const createCreatorProfile = async (input = { name: null, handle: null }) => {
     const res = { success: false, data: null, errors: [] };

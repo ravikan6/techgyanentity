@@ -1,6 +1,6 @@
 "use server"
 import { cookies } from 'next/headers';
-import { decrypt, encrypt } from "../utils";
+import { decrypt, encrypt } from "@/lib/utils";
 import { query } from '@/lib/client';
 import { gql } from '@apollo/client';
 

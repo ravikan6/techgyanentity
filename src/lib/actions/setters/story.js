@@ -2,8 +2,7 @@
 import { auth } from "@/lib/auth";
 import { api } from "@/lib/client";
 import { ADD_STORY_COMMENT, UPDATE_STORY_CLAP, UPDATE_STORY_COMMENT, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS, UPDATE_STORY_SAVED, VOTE_ON_STORY_COMMENT } from "@/lib/types/story";
-import { uploadImage } from "../upload";
-import { cloudinaryProvider } from "../author";
+import { uploadImage, cloudinaryProvider } from "@/lib/actions/upload";
 
 const updateStoryContent = async (input) => {
     let res = { data: null, success: false, errors: [] };
