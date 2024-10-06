@@ -117,11 +117,11 @@ const BasicInfoUpdate = ({ open, setOpen, user: _user }) => {
         setDisabled(true);
         try {
             let data = {
-                firstName: info.name.value,
-                lastName: info.name2?.value,
-                username: info.username.value,
-                dob: info.dob.value ? new Date(info.dob.value).toISOString() : null,
-                sex: info.sex.value,
+                firstName: info?.name?.value,
+                lastName: info?.name2?.value,
+                username: info?.username?.value,
+                dob: info?.dob?.value ? new Date(info?.dob?.value).toISOString() : null,
+                sex: info?.sex?.value,
             };
             let res = await updateUser(data);
             if (res?.success) {
@@ -185,20 +185,20 @@ const BasicInfoUpdate = ({ open, setOpen, user: _user }) => {
                     <div className="flex flex-col px-5 overflow-auto space-y-7 pt-12 pb-16">
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'First Name'} desc={'Your name will be visible to other users on this website.'} tip={'Name cannot contain angle brackets < >'} />
-                            <TextField disabled={isDisabled} size="small" required error={info?.name?.error} helperText={info?.name?.error && info?.name?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name.value} onChange={(e) => handleChangeName(e, false)} />
+                            <TextField disabled={isDisabled} size="small" required error={info?.name?.error} helperText={info?.name?.error && info?.name?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name?.value} onChange={(e) => handleChangeName(e, false)} />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'Last Name'} desc={'Your name will be visible to other users on this website.'} tip={'Name cannot contain angle brackets < >'} />
-                            <TextField disabled={isDisabled} size="small" error={info?.name2?.error} helperText={info?.name2?.error && info?.name2?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name2.value} onChange={(e) => handleChangeName(e, true)} />
+                            <TextField disabled={isDisabled} size="small" error={info?.name2?.error} helperText={info?.name2?.error && info?.name2?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.name2?.value} onChange={(e) => handleChangeName(e, true)} />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'Username'} desc={'Your username will be visible to other users on this website.'} tip={'Username cannot contain angle brackets < >'} />
-                            <TextField disabled={isDisabled} size="small" required error={info?.username?.error} helperText={info?.username?.error && info?.username?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.username.value} onChange={(e) => handleChangeHandle(e)} InputProps={{ startAdornment: <InputAdornment position="start"><div className="ml-1 -mr-4 font-semibold text-gray-600 dark:text-gray-400 stymie">@</div></InputAdornment> }} />
+                            <TextField disabled={isDisabled} size="small" required error={info?.username?.error} helperText={info?.username?.error && info?.username?.errorText} counter inputProps={{ maxLength: 50 }} value={info?.username?.value} onChange={(e) => handleChangeHandle(e)} InputProps={{ startAdornment: <InputAdornment position="start"><div className="ml-1 -mr-4 font-semibold text-gray-600 dark:text-gray-400 stymie">@</div></InputAdornment> }} />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'Gender'} desc={'To help us provide you with a better experience, please select your gender.'} tip={'You can make this information private.'} />
-                            <TextField disabled={isDisabled} size="small" select defaultValue={info.sex.value} onChange={(e) => handleChangeInfo(e, 'sex')} >
-                                {sex.map((item) => (
+                            <TextField disabled={isDisabled} size="small" select defaultValue={info?.sex?.value} onChange={(e) => handleChangeInfo(e, 'sex')} >
+                                {sex?.map((item) => (
                                     <MenuItem value={item.value} key={item.key}>
                                         <div className='flex px-2 items-center'>
                                             {item.value}
@@ -210,7 +210,7 @@ const BasicInfoUpdate = ({ open, setOpen, user: _user }) => {
 
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'Birthday'} desc={'Your birthday will be visible to other users on this website.'} tip={'You can make this information private.'} />
-                            <TextField disabled={isDisabled} error={info?.dob?.error} helperText={info?.dob?.error && info?.dob?.errorText} size="small" type="date" value={info.dob.value ? new Date(info.dob.value).toISOString().split('T')[0] : ''} onChange={(e) => handleChangeInfo(e, 'dob')} />
+                            <TextField disabled={isDisabled} error={info?.dob?.error} helperText={info?.dob?.error && info?.dob?.errorText} size="small" type="date" value={info?.dob?.value ? new Date(info.dob.value).toISOString().split('T')[0] : ''} onChange={(e) => handleChangeInfo(e, 'dob')} />
                             {/* <p className="text-xs text-gray-500 dark:text-gray-400">You must be 13 years or older to use this website.</p> */}
                         </div>
 

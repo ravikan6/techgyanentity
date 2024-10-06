@@ -36,17 +36,12 @@ const AuthorBanner = ({ id }) => {
 
 const BannerImage = ({ banner, className, height, width }) => {
     return (
-        <CldImage
+        <Image
             draggable={false}
             src={banner?.url}
             alt={banner?.alt || "Banner"}
             className={className}
-            crop={{
-                type: 'fill', height: height || 188, width: width || 1138, gravity: 'center'
-            }}
             fill
-            sanitize
-            enhance
             sizes="100vw"
             gravity="center"
         />
