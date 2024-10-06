@@ -71,7 +71,7 @@ const CreatorFollowButton = ({ creatorKey, key, isFollowed, buttonProps }) => {
 }
 
 
-export const CreatorWrapper = ({ children, keyId }) => {
+const CreatorWrapper = ({ children, keyId }) => {
     return (
         <Tooltip title={<>We are working on it.</>} arrow enterDelay={1300} leaveDelay={300}
             enterNextDelay={800}

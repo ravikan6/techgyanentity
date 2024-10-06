@@ -589,4 +589,4 @@ const ErrorBox = ({ error, onRetry }) => {
     );
 }
 
-export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImagePostView, ImageSliderView, ErrorBox };
+export { PostViewActions, PostView_TIA, PostListView_TIA, PostListView2, PollView, ImageSliderView, ErrorBox };

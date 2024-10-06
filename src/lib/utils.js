@@ -93,7 +93,6 @@ export {
     encrypt,
     decrypt,
     generateDisplayNameOptions,
-    getAuthorFirst,
     formatDateToString,
     formatNumber
 }

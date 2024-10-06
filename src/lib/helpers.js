@@ -95,8 +95,6 @@ function imageUrl(url, provider = 'local', options = {}) {
 
 export {
     formatLocalDate,
-    hashPassword,
-    verifyPassword,
     getCImageUrl,
     generateUniqueId,
     imgUrl,
