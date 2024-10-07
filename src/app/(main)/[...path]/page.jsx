@@ -7,6 +7,8 @@ import { GET_CREATOR_FOR_OG, VERIFY_GET_AUTHOR } from '@/lib/types/creator';
 import { getPostBykey } from '@/lib/actions/getters/content';
 import { CreatorAboutView } from '@/components/creator';
 import { PostView } from '@/components/post';
+import { getUserClappedStories } from '@/lib/actions/getters/user';
+import { ClappedStoriesPageView } from '@/components/user/lists';
 
 export async function generateMetadata({ params, searchParams }) {
     const route = params.path;
@@ -98,7 +100,8 @@ const DynamicPages = async ({ params, searchParams }) => {
         if ((searchParams?.type === 'bookmarks') && session?.user?.id) {
             // --- Stories saved by User
         } else if ((searchParams?.type === 'clapped') && session?.user?.id) {
-            // --- Stories clapped by User
+            let stories = await getUserClappedStories({ after: null, limit: 10 });
+            return <ClappedStoriesPageView clappedStories={stories} />
         }
     } else {
         const creator = await getCreator(path)

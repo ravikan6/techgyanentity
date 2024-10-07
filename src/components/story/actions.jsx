@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { Menu } from "../styled";
 import { MenuListItem } from "../common/client";
 import { Report } from "@mui/icons-material";
+import { BiSolidCommentDetail } from "react-icons/bi";
 
 
 const ClapView = ({ value, options }) => {
@@ -74,7 +75,7 @@ const CommentReadonlyView = ({ count }) => {
 
     return (
         <div className="flex items-center gap-1.5">
-            {<AiOutlineComment className={`w-3.5 h-3.5`} />}
+            {<BiSolidCommentDetail className={`w-3.5 h-3.5`} />}
             {count == 0 ? null : <span className='!text-xs'>{(count === null || count === undefined) ? '--' : count}</span>}
         </div>
     )

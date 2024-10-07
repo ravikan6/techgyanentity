@@ -1,8 +1,45 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { api } from "@/lib/client";
-import { ADD_STORY_COMMENT, UPDATE_STORY_CLAP, UPDATE_STORY_COMMENT, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS, UPDATE_STORY_SAVED, VOTE_ON_STORY_COMMENT } from "@/lib/types/story";
+import { ADD_STORY_COMMENT, CREATE_STORY, UPDATE_STORY_CLAP, UPDATE_STORY_COMMENT, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS, UPDATE_STORY_SAVED, VOTE_ON_STORY_COMMENT } from "@/lib/types/story";
 import { uploadImage, cloudinaryProvider } from "@/lib/actions/upload";
+import { redirect } from "next/navigation";
+
+/**
+ * Creates a new story for the given author.
+ *
+ * @async
+ * @function createStory
+ * @param {string} authorKey - The key of the author for whom the story is being created.
+ * @returns {Promise<Object>} An object containing the result of the story creation.
+ * @property {Object|null} data - The data returned from the story creation, or null if there was an error.
+ * @property {boolean} success - Indicates whether the story creation was successful.
+ * @property {Array<Object>} errors - An array of error objects, each containing a message property.
+ */
+const createStory = async (authorKey) => {
+    if (!authorKey) return { data: null, success: false, errors: [{ message: 'Author ID is required' }] };
+    let key;
+
+    try {
+        let client = await api();
+        const { data, errors } = await client.mutate({
+            mutation: CREATE_STORY,
+            variables: {
+                authorKey: authorKey,
+            },
+            errorPolicy: 'all',
+        });
+
+        if (data?.createStory?.story) {
+            key = data?.createStory?.story?.key;
+        }
+    } catch (error) {
+        return { data: null, success: false, errors: [{ message: error.message }] };
+    }
+    if (key) {
+        redirect(`/${process.env.STUDIO_URL_PREFIX || 'studio'}/p/${key}/editor`);
+    }
+}
 
 const updateStoryContent = async (input) => {
     let res = { data: null, success: false, errors: [] };
@@ -290,4 +327,4 @@ export { addStoryComment as storyCommentAction };
 
 export { updateStoryClap, updateStoryCommentVote, updateStoryComment, updateStorySaved };
 
-export { updateStoryContent, updateStoryDetails } // Story
+export { updateStoryContent, updateStoryDetails, createStory }; // Story

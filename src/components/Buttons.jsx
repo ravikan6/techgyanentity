@@ -12,7 +12,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { ArticleReportModal } from '@/components/popup';
 import { MdBookmarkAdded, MdNavigateNext, MdOutlineBookmarkAdd, MdOutlineKeyboardArrowLeft, MdOutlineReport } from 'react-icons/md';
 import { MenuList, Zoom, ListItemIcon } from '@mui/material';
-import { AccountCircleOutlined,  DrawOutlined, NotificationsOutlined, MoreVert } from '@mui/icons-material';
+import { AccountCircleOutlined, DrawOutlined, NotificationsOutlined, MoreVert } from '@mui/icons-material';
 import { Button, IconButton, Tooltip, Menu, MenuItem } from '@/components/rui';
 import { DrawerContext } from './mainlayout';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,7 @@ import { FiShare2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import confirm from '@/lib/confirm';
 import { StoryImage } from './story';
+import { createStory } from '@/lib/actions/setters/story';
 
 const btnClass = 'rounded-full z-0 mx-2 justify-center cursor-pointer border border-transparent active:border-gray-400 active:bg-stone-300 hover:bg-zinc-200 bg-zinc-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:active:bg-stone-800 chetlnam h-8 active:border flex items-center transition-all text-sm text-gray-800 dark:text-gray-200 duration-300';
 const btnSx = { typography: 'rbBtns', height: '2rem', FontFace: 'rb-styime', borderRadius: '100rem', fontSize: '0.9rem', fontWeight: 'semibold', textTransform: 'none', };
@@ -480,8 +481,8 @@ const ActionMenu = ({ list = [], disabled }) => {
 };
 
 const CreateBtn = ({ classes, iconColor, sx }) => {
-  const { data } = useContext(StudioContext);
-  if (!data?.data) return null;
+  const { creator } = useContext(StudioContext);
+  if (!creator) return null;
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -494,7 +495,7 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
   const handleClick = async () => {
     try {
       if (loading) return;
-      // Will be updated with the new route
+      let res = await createStory(creator?.key)
     } catch (e) {
       toast.error('Something went wrong while creating post, Please try again.')
     } finally { setLoading(false) }
@@ -516,7 +517,7 @@ const CreateBtn = ({ classes, iconColor, sx }) => {
         }}
         sx={{ '& .MuiPaper-root': { borderRadius: '12px', py: 0, minWidth: '128px' } }} >
         <MenuItem onClick={() => { handleClick(), handleClose() }}>
-          <span className='text-base'>Article</span>
+          <span className='text-base'>Story</span>
         </MenuItem>
         <MenuItem onClick={() => { router.push('/studio/create/post'), handleClose() }}>
           <span className='text-base'>Post</span>

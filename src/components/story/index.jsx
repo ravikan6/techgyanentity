@@ -4,7 +4,7 @@ export {
     SidebarView as StorySidebar,
     _MetaView as StoryCardMeta,
 } from "./client";
-export { default as StoryView, CardView as StoryCardView } from "./view";
+export { default as StoryView, CardView as StoryCardView, ListItemView as StoryListItemView } from "./view";
 
 export {
     ClapView as StoryClapView,

@@ -118,6 +118,54 @@ query GetAuthorStory($key: String!, $author_Key: String!) {
   }
 }`;
 
+/**
+ * GraphQL mutation for creating a story.
+ * 
+ * This mutation takes an author's key as an input and returns the key of the created story.
+ * 
+ * @constant {Object} CREATE_STORY - The GraphQL mutation for creating a story.
+ * @type {import('graphql').DocumentNode}
+ * 
+ * @example
+ * import { useMutation } from '@apollo/client';
+ * 
+ * const [createStory] = useMutation(CREATE_STORY);
+ * 
+ * createStory({ variables: { authorKey: 'author123' } })
+ *   .then(response => {
+ *     console.log(response.data.createStory.story.key);
+ *   })
+ *   .catch(error => {
+ *     console.error(error);
+ *   });
+ * 
+ * @param {String} authorKey - The key of the author creating the story.
+ * @returns {Object} story - The created story object.
+ * @returns {String} story.key - The key of the created story.
+ */
+const CREATE_STORY = gql`
+mutation CreateStory($authorKey: String!) {
+  createStory(authorKey: $authorKey) {
+    story {
+      key
+    }
+  }
+}`;
+
+/**
+ * GraphQL mutation for updating the content of a story.
+ *
+ * @constant {Object} UPDATE_STORY_CONTENT
+ * @type {import('graphql').DocumentNode}
+ * 
+ * @param {String} key - The unique key identifying the story to update.
+ * @param {String} content - The new content for the story.
+ * @param {String} title - The new title for the story.
+ * 
+ * @returns {Object} updateStory - The updated story object.
+ * @returns {String} updateStory.content - The updated content of the story.
+ * @returns {String} updateStory.title - The updated title of the story.
+ */
 const UPDATE_STORY_CONTENT = gql`
 mutation UpdateStoryContent($key: String = "", $content: String = "", $title: String = "") {
   updateStory(data: { title: $title, content: $content }, key: $key) {
@@ -129,6 +177,47 @@ mutation UpdateStoryContent($key: String = "", $content: String = "", $title: St
 }`;
 
 
+/**
+ * GraphQL mutation to update story details.
+ * 
+ * @constant {Object} UPDATE_STORY_DETAILS - The GraphQL mutation for updating story details.
+ * @param {String} $key - The unique key of the story.
+ * @param {String} $category - The category of the story.
+ * @param {String} $description - The description of the story.
+ * @param {PrivacyEnum} $privacy - The privacy setting of the story (default: PUBLIC).
+ * @param {StateEnum} $state - The state of the story (default: DRAFT).
+ * @param {String[]} $tags - The tags associated with the story.
+ * @param {String} $title - The title of the story.
+ * @param {String} $slug - The slug of the story.
+ * @param {Boolean} $doPublish - Flag indicating whether to publish the story (default: false).
+ * @param {ImageInput} $image - The image associated with the story.
+ * 
+ * @returns {Object} The updated story details.
+ * @property {String} title - The title of the story.
+ * @property {Date} updatedAt - The date when the story was last updated.
+ * @property {StateEnum} state - The state of the story.
+ * @property {String} slug - The slug of the story.
+ * @property {Date} scheduledAt - The scheduled date for the story.
+ * @property {Date} publishedAt - The publication date of the story.
+ * @property {PrivacyEnum} privacy - The privacy setting of the story.
+ * @property {String} key - The unique key of the story.
+ * @property {Boolean} isDeleted - Flag indicating whether the story is deleted.
+ * @property {String} id - The unique identifier of the story.
+ * @property {String} description - The description of the story.
+ * @property {Date} deletedAt - The date when the story was deleted.
+ * @property {Date} createdAt - The creation date of the story.
+ * @property {String} content - The content of the story.
+ * @property {Object} image - The image associated with the story.
+ * @property {String} image.id - The unique identifier of the image.
+ * @property {String} image.url - The URL of the image.
+ * @property {String} image.caption - The caption of the image.
+ * @property {Object} category - The category of the story.
+ * @property {String} category.name - The name of the category.
+ * @property {String} category.id - The unique identifier of the category.
+ * @property {Object[]} tags - The tags associated with the story.
+ * @property {String} tags.name - The name of the tag.
+ * @property {String} tags.id - The unique identifier of the tag.
+ */
 const UPDATE_STORY_DETAILS = gql`
 mutation UpdateStoryDetails($key: String = "", $category: String = "", $description: String = "", $privacy: PrivacyEnum = PUBLIC, $state: StateEnum = DRAFT, $tags: [String] = "", $title: String = "", $slug: String = "", $doPublish: Boolean = false, $image: ImageInput) {
   updateStory(
@@ -300,7 +389,7 @@ export { GET_CREATOR_STORY, GET_STORY_CLIENT_INFO }; // QUERY: Story
 export { GET_STORY_COMMENTS }; // QUERY: Story -> Comment
 export { GET_STORY_WITH_CATEGORIES }; // QUERY: Story -> _ Category
 
-export { UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS }; // MUTATE: Story
+export { CREATE_STORY, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS }; // MUTATE: Story
 export { UPDATE_STORY_CLAP }; // MUTATE: Story -> Clap
 export { UPDATE_STORY_SAVED }; // MUTATE: Story -> Save
 export { ADD_STORY_COMMENT, VOTE_ON_STORY_COMMENT, UPDATE_STORY_COMMENT }; // MUTATE: Story -> Comment

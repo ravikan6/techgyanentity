@@ -2,7 +2,7 @@ import React from 'react';
 import { StoryCardMeta, StoryImage, StorySidebar, StoryTopbar } from '.';
 import styles from '@/styles/post.module.css';
 import { ServerVariantPersistent } from '@/components/common/helpers';
-import { Card } from '@mui/material';
+import { Card, ListItem } from '@mui/material';
 import Link from 'next/link';
 import { AuthorAvatar } from '../creator/_client';
 
@@ -103,6 +103,30 @@ const CardView = ({ story }) => {
     );
 }
 
+const ListItemView = ({ story }) => {
+
+    return (
+        <ListItem>
+            <div className="relative group/g_pst transition-opacity duration-300 flex items-start w-full gap-5">
+                <div className='self-start h-28 aspect-video'>
+                    <Link href={`/@${story?.author?.handle}/${story.slug}`}>
+                        <StoryImage className="rounded-md" image={story?.image} />
+                    </Link>
+                </div>
+                <div className="flex flex-col items-start">
+                    <Link href={`/@${story?.author?.handle}/${story.slug}`} className="w-full">
+                        <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{story.title}</h2>
+                        <p className="text-sm text-gray-500 line-clamp-2 text-ellipsis">{story?.description}</p>
+                    </Link>
+                    <div className="flex items-center justify-between gap-2 mt-2">
+                        <StoryCardMeta story={story} />
+                    </div>
+                </div>
+            </div>
+        </ListItem>
+    );
+}
+
 
 const RenderBlock = ({ blocks }) => {
     const renderContent = (content) => {
@@ -145,4 +169,4 @@ const RenderBlock = ({ blocks }) => {
 
 
 export default View;
-export { CardView };
+export { CardView, ListItemView };
