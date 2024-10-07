@@ -40,7 +40,7 @@ query MyQuery {
 
 export default async function Home() {
   const session = await auth();
-  const blogPosts = []
+  let blogPosts = []
   let communityPosts = [];
 
   try {
