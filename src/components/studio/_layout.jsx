@@ -145,7 +145,7 @@ const StudioLayout = ({ children, session }) => {
                     open={open}
                     className={variant === 'permanent' ? '!hidden md:!block' : ''}
                 >
-                    {variant === 'persistent' && <><div className='flex items-center ml-8 min-h-[54px] justify-start'>
+                    {variant === 'persistent' && <><div className='flex items-center bg-lightHead dark:bg-darkHead pl-8 min-h-[54px] justify-start'>
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"

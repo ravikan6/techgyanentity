@@ -1,6 +1,8 @@
 import React from 'react'
 import { auth } from '@/lib/auth';
-import Account from '@/components/account/pages/account';
+import Account, { PersonalInfo } from '@/components/account/pages/account';
+import { query } from '@/lib/client';
+import { GET_USER_FOR_UPDATE } from '@/lib/types/user';
 
 export async function generateMetadata({ params }) {
     const session = await auth();
@@ -61,10 +63,12 @@ const page = async ({ params }) => {
                 </>
             )
         } else if (path === 'personal-information') {
-
+            let dt = await query({
+                query: GET_USER_FOR_UPDATE
+            })
             return (
                 <>
-                    {/* <PersonalInfo session={session} user={user} /> */}
+                    <PersonalInfo user={dt.data?.Me} />
                 </>
             )
         } else if (path === 'data-privacy') {

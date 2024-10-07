@@ -455,7 +455,7 @@ const CommentView = () => {
                             action: 'NEW'
                         })
                     } else {
-                        setComments((prev) => [{ cursor: null, node: res.data, ...prev }])
+                        setComments((prev) => [{ cursor: null, node: res.data }, ...prev])
                     }
                     setForm({
                         text: '',
@@ -515,22 +515,13 @@ const CommentView = () => {
             onSend: onSend,
             re: {
                 query: GET_STORY_COMMENTS,
-                resolver: (data, setReplies) => {
+                resolver: (data) => {
                     if (data && data?.StoryComments?.edges) {
-                        setReplies(
-                            data.StoryComments.edges
-                        )
-                    }
+                        return data.StoryComments.edges
+                    } else return [];
                 },
                 reply: reply,
                 setReply: setReply,
-                reResolver: (data, setReplies) => {
-                    if (data && data?.StoryComments?.edges) {
-                        setReplies(
-                            (prev) => [...prev, ...data.StoryComments.edges]
-                        )
-                    }
-                }
             },
             onVote: onVote,
         }}>

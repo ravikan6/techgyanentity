@@ -181,10 +181,8 @@ const CommentsContainer = () => {
 
 const ReplyContainer = () => {
     const [replies, setReplies] = useState([]);
-    const [isNext, setIsNext] = useState(false)
     const { form, state, content, comment, re } = useContext(CommentContext);
     const { reply } = useContext(CommentMetaContext);
-    const observer = useRef()
 
     const [getReplies, { called, data, loading, error }] = useLazyQuery(re.query);
 
@@ -197,31 +195,27 @@ const ReplyContainer = () => {
                 }
             })
         }
-        if (isNext) {
-            re.reResolver(data, setReplies);
-            setIsNext(false);
-        } else re.resolver(data, setReplies);
+        let reData = re.resolver(data, setReplies);
+        if (reData) {
+            if (reData?.pageInfo?.hasPreviousPage) {
+                setReplies((prev) => [...prev, ...reData])
+            } else {
+                setReplies(reData)
+            }
+        }
     }, [reply, data, called, content?.key])
 
-    useEffect(() => {
-        if (loading || !replies?.pageInfo?.hasNextPage) return;
-        if (observer.current) observer.current.disconnect();
-
-        observer.current = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && replies?.pageInfo?.hasNextPage) {
-                setIsNext(true);
-                getReplies({
-                    variables: {
-                        key: content.key,
-                        parent_Id: reply.parentId,
-                        after: replies?.pageInfo?.endCursor
-                    }
-                });
-            }
-        });
-
-        if (reply.lastItemRef.current) observer.current.observe(reply.lastItemRef.current);
-    }, [loading]);
+    const onNextFetch = () => {
+        if (replies?.pageInfo?.hasNextPage) {
+            getReplies({
+                variables: {
+                    key: content.key,
+                    parent_Id: reply.parentId,
+                    after: replies?.pageInfo?.endCursor
+                }
+            });
+        }
+    }
 
     useEffect(() => {
         if (re?.reply && re?.reply?.action && re?.reply?.data) {
@@ -265,10 +259,12 @@ const ReplyContainer = () => {
                     (loading) ? <CommentSkeletons count={5} /> : replies.length === 0 ?
                         <div className="p-4 h-20 flex justify-center items-center">
                             No Replies found.
+                        </div> : replies.length > 0 && replies?.pageInfo?.hasNextPage ? <div className="p-4 flex justify-center items-center">
+                            <Button onClick={onNextFetch} variant="outlined" color="secondary" size="small">Load More</Button>
                         </div> : null
                 }
             </div>
-            <span ref={reply?.lastItemRef}></span>
+
         </>
     )
 }

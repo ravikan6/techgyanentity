@@ -84,14 +84,14 @@ const CardView = ({ story }) => {
             >
                 <div className="relative group/g_pst transition-opacity duration-300">
                     <Link href={`/@${story?.author?.handle}/${story.slug}`}>
-                        <StoryImage className="rounded-sm" image={story?.image} />
+                        <StoryImage className="rounded-md" image={story?.image} />
                     </Link>
                     <div className="mt-2 flex flex-nowrap items-start justify-between">
                         <div className="grow">
                             <div className="mb-1.5">
                                 <div className="flex items-center gap-3">
                                     <Link href={`/@${story?.author?.handle}`}>
-                                        <AuthorAvatar data={{ url: story?.author?.image?.url }} className={'!w-8 !h-8'} />
+                                        <AuthorAvatar data={{ url: story?.author?.image?.url }} className={'!w-6 !h-6'} />
                                     </Link>
                                     <div>
                                         <Link href={`/@${story?.author?.handle}`}>

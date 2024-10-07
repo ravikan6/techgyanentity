@@ -72,7 +72,7 @@ export default async function Home() {
         {
           blogPosts.length > 0 && (
             <div className="mt-20">
-              <h2 className="text-2xl font-bold">Blog Posts</h2>
+              <h2 className="text-2xl font-bold mb-4">Blog Posts</h2>
               <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
                 {
                   blogPosts.map((story, _) => (

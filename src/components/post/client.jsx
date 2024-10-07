@@ -253,22 +253,13 @@ const CommentView = ({ post }) => {
             onSend: onSend,
             re: {
                 query: GET_POST_COMMENTS,
-                resolver: (data, setReplies) => {
+                resolver: (data) => {
                     if (data && data?.PostComments?.edges) {
-                        setReplies(
-                            data.PostComments.edges
-                        )
-                    }
+                        return data.PostComments.edges;
+                    } else return [];
                 },
                 reply: reply,
                 setReply: setReply,
-                reResolver: (data, setReplies) => {
-                    if (data && data?.PostComments?.edges) {
-                        setReplies(
-                            (prev) => [...prev, ...data.PostComments.edges]
-                        )
-                    }
-                },
             },
             onVote: onVote,
         }}>
