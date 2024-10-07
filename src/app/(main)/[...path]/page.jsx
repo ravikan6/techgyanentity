@@ -101,7 +101,7 @@ const DynamicPages = async ({ params, searchParams }) => {
             // --- Stories saved by User
         } else if ((searchParams?.type === 'clapped') && session?.user?.id) {
             let stories = await getUserClappedStories({ after: null, limit: 10 });
-            return <ClappedStoriesPageView clappedStories={stories} />
+            return <ClappedStoriesPageView clappedStories={stories.data} />
         }
     } else {
         const creator = await getCreator(path)

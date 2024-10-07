@@ -6,7 +6,7 @@ import { CommentOutlined, Delete, Edit, Report, SendOutlined } from "@mui/icons-
 import { useContext, useEffect, useRef, useState } from "react";
 import { CommentContext, CommentMetaContext, StudioContext } from "@/lib/context";
 import { CreatorWrapper } from "../creator/utils";
-import { Button, CircularProgress, IconButton, Tooltip, Menu } from "../rui";
+import { Button, CircularProgress, IconButton, Tooltip } from "../rui";
 import { formatDate } from "@/lib/utils";
 import { FaHandsClapping } from "react-icons/fa6";
 import { PiHandsClappingLight } from "react-icons/pi";
@@ -14,7 +14,7 @@ import { BsReply } from "react-icons/bs";
 import { useLazyQuery } from "@apollo/client";
 import { BackBtn } from "../Buttons";
 import { MenuListItem } from "./client";
-import { TextField } from "@/components/styled";
+import { Menu, TextField } from "@/components/styled";
 import { BiCommentEdit } from "react-icons/bi";
 import { FaReplyd } from "react-icons/fa";
 

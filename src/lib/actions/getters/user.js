@@ -10,7 +10,6 @@ import { GET_USER_CLAPPED_STORIES } from "@/lib/types/user";
  * @param {Object} params - The parameters for the query.
  * @param {string} params.after - The cursor for pagination.
  * @param {number} params.limit - The number of stories to fetch.
- * @returns {Promise<Object>} The result object containing success status, data, and errors.
  */
 const getUserClappedStories = async ({ after, limit }) => {
     let res = { success: false, data: null, errors: [] };
@@ -35,6 +34,7 @@ const getUserClappedStories = async ({ after, limit }) => {
         console.error(error);
         res.errors.push({ message: error.message });
     }
+    return res;
 };
 
 export { getUserClappedStories };
