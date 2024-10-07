@@ -30,6 +30,7 @@ query MyQuery {
           url
         }
         description
+        publishedAt
         commentsCount
         clapsCount
         clappedByMe

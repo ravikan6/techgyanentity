@@ -1,7 +1,8 @@
 export {
     ImageView as StoryImage,
     TopbarView as StoryTopbar,
-    SidebarView as StorySidebar
+    SidebarView as StorySidebar,
+    _MetaView as StoryCardMeta,
 } from "./client";
 export { default as StoryView, CardView as StoryCardView } from "./view";
 
@@ -10,7 +11,8 @@ export {
     BookmarkView as StoryBookmarkView,
     ShareView as StoryShareView,
     MoreMenuView as StoryMoreMenuView,
-    CommentButtonView as StoryCommentButtonView
+    CommentButtonView as StoryCommentButtonView,
+    _MetaMoreMenuView as StoryMetaMoreMenuView,
 } from './actions';
 
 

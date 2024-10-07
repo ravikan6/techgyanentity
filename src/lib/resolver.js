@@ -32,7 +32,7 @@ async function apiGql(query, headers = {}) {
         }
         return res;
     } catch (error) {
-        console.error(`Something went Wrong (RK-HACKER)=> `, error);
+        console.error(`Something went Wrong (RK-HACKER)=> `, error?.message);
         return {
             status: 500,
             data: null,

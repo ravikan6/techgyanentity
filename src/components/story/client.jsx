@@ -8,12 +8,13 @@ import { EmailRounded } from "@mui/icons-material";
 import { CreatorFollowButton, CreatorWrapper } from "../creator/utils";
 import Link from "next/link";
 import { LuUser } from "react-icons/lu";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatDateToString } from "@/lib/utils";
 import { CommentContext, StudioContext } from "@/lib/context";
 import { CommentContainer } from "../common";
 import { GET_STORY_CLIENT_INFO, GET_STORY_COMMENTS } from "@/lib/types/story";
 import { storyCommentAction, updateStoryComment, updateStoryCommentVote } from "@/lib/actions/setters/story";
-import { StoryBookmarkView, StoryClapView, StoryCommentButtonView, StoryMoreMenuView, StoryShareView } from ".";
+import { StoryBookmarkView, StoryClapView, StoryCommentButtonView, StoryMetaMoreMenuView, StoryMoreMenuView, StoryShareView } from ".";
+import { ClapReadonlyView, CommentReadonlyView } from "./actions";
 
 const MetaContext = createContext();
 
@@ -362,6 +363,32 @@ const MetaCommentButtonView = ({ count }) => {
     )
 }
 
+const _MetaView = ({ story }) => {
+    return (
+        <>
+            <div className="flex text-sm flex-row items-center justify-between cheltenham text-black/65 dark:text-white/65 w-full">
+                <div className="flex flex-row items-center justify-start gap-1">
+                    <Link href={`/@${story?.author?.handle}`}>
+                        <h3 className="">{story?.author?.name}</h3>
+                    </Link>
+                    <strong>·</strong>
+                    <Tooltip title={formatDateToString(story?.publishedAt).long}>
+                        <p>{formatDateToString(story?.publishedAt).short}</p>
+                    </Tooltip>
+                </div>
+                <div className="flex flex-row items-center justify-end gap-2.5">
+                    {story?.clapsCount ? <> <ClapReadonlyView claps={{
+                        count: story?.clapsCount,
+                        me: story?.clappedByMe
+                    }} /> </> : null}
+                    {story?.commentsCount ? <> <CommentReadonlyView count={story?.commentsCount} /> </> : null}
+                    <StoryMetaMoreMenuView />
+                </div>
+            </div>
+        </>
+    )
+}
+
 const CommentView = () => {
     const [comments, setComments] = useState([]);
     const [form, setForm] = useState({
@@ -532,4 +559,4 @@ const CommentView = () => {
 }
 
 
-export { ImageView, SidebarView, TopbarView, CommentView };
+export { ImageView, SidebarView, TopbarView, CommentView, _MetaView };

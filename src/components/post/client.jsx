@@ -5,13 +5,17 @@ import { Button, Tooltip } from "../rui";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useLazyQuery } from "@apollo/client";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { CommentContext, StudioContext } from "@/lib/context";
 import { GET_POST_COMMENTS } from "@/lib/types/post";
 import { CommentContainer } from "../common";
-import { ActionMenu } from "../Buttons";
+import { ActionMenu, BackBtn, NextBtn } from "../Buttons";
 import { Delete, HeartBroken } from "@mui/icons-material";
 import { addPostComment, updatePostComment, updatePostCommentVote, updatePostPollVote } from "@/lib/actions/setters/post";
+import Image from 'next/image';
+import { IoResize } from 'react-icons/io5';
+import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import IconButton from '@mui/material/IconButton';
 
 const MetaTypePollView = ({ poll, options }) => {
     const [pollData, setPollData] = useState(poll);
@@ -88,6 +92,112 @@ const MetaTypePollView = ({ poll, options }) => {
         </div>
     )
 }
+
+const MetaTypeImageView = ({ slides, url, bg }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [hasNext, setHasNext] = useState(slides.length > 1);
+    const [hasPrev, setHasPrev] = useState(false);
+    const [original, setOriginal] = useState(true);
+    const [showMeta, setShowMeta] = useState(false);
+
+    const goToNextSlide = useCallback(() => {
+        const nextIndex = (currentIndex + 1) % slides.length;
+        setCurrentIndex(nextIndex);
+        setHasPrev(true);
+        setHasNext(nextIndex < slides.length - 1);
+    }, [currentIndex, slides.length]);
+
+    const goToPrevSlide = useCallback(() => {
+        const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+        setCurrentIndex(prevIndex);
+        setHasPrev(prevIndex > 0);
+        setHasNext(true);
+    }, [currentIndex, slides.length]);
+
+    const radioBtnClick = useCallback((index) => {
+        setCurrentIndex(index);
+        setHasPrev(index > 0);
+        setHasNext(index < slides.length - 1);
+    }, [slides.length]);
+
+    return (
+        <div className={`relative group aspect-[4/5] mx-auto ${bg ? 'bg-light dark:bg-dark' : 'bg-transparent'}`}>
+            <div className="relative w-full h-full overflow-hidden">
+                {/* Images Slider */}
+                <div
+                    className="flex transition-transform h-full duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                >
+                    {slides.map((slide, index) => (
+                        <div key={index} className="flex-shrink-0 relative w-full h-full">
+                            <Image
+                                fill
+                                className={`w-full h-full ${original ? 'object-contain' : 'object-cover'}`}
+                                src={slide?.url}
+                                alt={slide?.alt || 'Slide image'}
+                                draggable={false}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Original Image Button */}
+            <div className={`absolute right-4 ${showMeta ? 'top-4 bottom-auto' : 'bottom-4'} bg-accentLight dark:bg-accentDark ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
+                <IconButton
+                    onClick={() => setOriginal(!original)}
+                    className="rounded-full"
+                >
+                    <IoResize className="w-4 h-4" />
+                </IconButton>
+            </div>
+
+            {slides.length > 1 && (
+                <>
+                    <BackBtn
+                        className={`absolute left-4 top-1/2 transform -translate-y-1/2  rounded-full opacity-80 hover:opacity-100 ${hasPrev ? 'bg-accentLight/90 dark:bg-accentDark/90 shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                        onClick={goToPrevSlide}
+                        disabled={!hasPrev}
+                    >
+                    </BackBtn>
+                    <NextBtn
+                        className={`absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full opacity-80 hover:opacity-100 ${hasNext ? 'bg-accentLight/90 dark:bg-accentDark/90 shadow-md' : 'bg-lightHead/30 dark:bg-darkHead/30'}`}
+                        onClick={goToNextSlide}
+                        disabled={!hasNext}
+                    ></NextBtn>
+                    <div className="absolute bottom-0.5 z-10 w-full flex justify-center space-x-2 items-center">
+                        {slides.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => radioBtnClick(index)}
+                                className={`rounded-full transition-all ${index === currentIndex ? 'bg-accentLight dark:bg-accentDark w-2.5 h-2.5' : 'bg-accentLight/70 dark:bg-accentDark/70 w-2 h-2'}`}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
+
+            {/* Caption */}
+            {slides[currentIndex]?.caption && (
+                <div className="absolute bottom-0 left-0 w-full">
+                    <div className="bg-accentLight/90 dark:bg-accentDark/90 transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
+                        <IconButton sx={{ width: '20px', height: '20px' }} onClick={() => setShowMeta(!showMeta)}>
+                            {showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />}
+                        </IconButton>
+                    </div>
+                    <div
+                        className="w-full transition-all duration-300 text-sm bg-light/75 dark:bg-dark/75 backdrop-blur-2xl px-2 py-1 pb-3 rounded-t-md max-h-32 overflow-y-auto"
+                        style={{
+                            display: showMeta ? 'block' : 'none',
+                        }}
+                    >
+                        <p className="cheltenham-small text-xs">{slides[currentIndex]?.caption}</p>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const MetaMoreMenu = () => {
     const listMenu = [
@@ -268,4 +378,4 @@ const CommentView = ({ post }) => {
     )
 }
 
-export { MetaTypePollView, MetaMoreMenu, CommentView };
+export { MetaTypePollView, MetaMoreMenu, CommentView, MetaTypeImageView };

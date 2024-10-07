@@ -60,6 +60,26 @@ const ClapView = ({ value, options }) => {
 
 };
 
+const ClapReadonlyView = ({ claps = { count: 0, me: false } }) => {
+
+    return (
+        <div className="flex items-center gap-1.5">
+            {claps?.me ? <FaHandsClapping className="w-3.5 h-3.5" /> : <PiHandsClappingLight className={`w-4 h-4`} />}
+            {claps.count == 0 ? null : <span className='!text-xs'>{(claps.count === null || claps.count === undefined) ? '--' : claps.count}</span>}
+        </div>
+    )
+}
+
+const CommentReadonlyView = ({ count }) => {
+
+    return (
+        <div className="flex items-center gap-1.5">
+            {<AiOutlineComment className={`w-3.5 h-3.5`} />}
+            {count == 0 ? null : <span className='!text-xs'>{(count === null || count === undefined) ? '--' : count}</span>}
+        </div>
+    )
+}
+
 const CommentButtonView = ({ count, options }) => {
 
     return (
@@ -167,5 +187,56 @@ const MoreMenuView = ({ }) => {
     );
 }
 
+const _MetaMoreMenuView = ({ }) => {
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-export { ClapView, BookmarkView, ShareView, MoreMenuView, CommentButtonView };
+    const handleOpen = (e) => {
+        setAnchorEl(e.currentTarget);
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+        setAnchorEl(null);
+    }
+
+    return (
+        <>
+            <MoreMenuButton options={{
+                button: {
+                    onClick: handleOpen,
+                    variant: 'text',
+                    sx: {
+                        minWidth: '18px',
+                        minHeight: '18px',
+                        p: 0,
+                    },
+                    Props: {
+                        color: 'inherit'
+                    }
+                },
+                icon: {
+                    className: 'w-3.5 h-3.5'
+                }
+            }} />
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                sx={{ mt: 1 }}
+            >
+                <MenuListItem item={{ name: 'Report', icon: Report }} options={{
+                    onClick: () => {
+                        toast.info('Reported');
+                        handleClose();
+                    }
+                }} />
+            </Menu>
+        </>
+    );
+}
+
+
+export { ClapView, BookmarkView, ShareView, MoreMenuView, CommentButtonView, CommentReadonlyView, ClapReadonlyView, _MetaMoreMenuView };

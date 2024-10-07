@@ -17,7 +17,6 @@ import { MenuListItem } from "./client";
 import { TextField } from "@/components/styled";
 import { BiCommentEdit } from "react-icons/bi";
 import { FaReplyd } from "react-icons/fa";
-import { isNonNullObject } from "@apollo/client/utilities";
 
 
 const WriteField = () => {
@@ -46,6 +45,7 @@ const WriteField = () => {
                     size="small"
                     maxRows={2}
                     fullWidth
+                    autoFocus
                     placeholder="Write a comment..."
                     sx={{
                         '& .MuiInputBase-root': {
@@ -224,13 +224,16 @@ const ReplyContainer = () => {
                 let newReplies = replies.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
                 setReplies(newReplies);
             } else {
-                setReplies((prev) => [{ cursor: null, node: comment, ...prev }])
+                setReplies((prev) => [{ cursor: null, node: comment }, ...prev]);
             }
-            re.setReply({
-                id: null,
-                data: null,
-            })
-        }
+            getReplies({
+                variables: {
+                    key: content.key,
+                    parent_Id: reply.parentId,
+                },
+                fetchPolicy: 'network-only'
+            });
+        };
     }, [re?.reply])
 
     return (
@@ -371,11 +374,11 @@ const MetaView = ({ comment }) => {
             <AnonymousAction >
                 <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' onClick={
                     () => {
-                        reply?.set({ show: true, parentId: comment?.id })
+                        reply?.set({ show: true, parentId: reply?.parentId ? reply?.parentId : comment?.id })
                         form.set(
                             {
                                 text: '',
-                                parentId: comment.id,
+                                parentId: reply?.parentId ? reply?.parentId : comment?.id,
                                 show: true,
                                 action: 'REPLY'
                             }

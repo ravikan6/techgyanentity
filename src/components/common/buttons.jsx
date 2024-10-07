@@ -25,7 +25,7 @@ const _MoreMenu = ({ options }) => {
 
     return (
         <ButtonWrapper options={options?.button} >
-            <MdMoreVert className="w-4 h-4" {...options?.icon?.Props} />
+            <MdMoreVert className={`w-4 h-4 ${options?.icon?.className}`} {...options?.icon?.Props} />
         </ButtonWrapper>
     )
 }

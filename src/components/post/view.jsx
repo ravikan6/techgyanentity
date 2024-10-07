@@ -1,5 +1,5 @@
 import { Avatar, Card } from "@mui/material";
-import { MetaMoreMenu, MetaTypePollView } from "./client";
+import { MetaMoreMenu, MetaTypeImageView, MetaTypePollView } from "./client";
 import { PostCommentView } from ".";
 import { RouterBackBtn } from "../Buttons";
 import Link from "next/link";
@@ -105,7 +105,7 @@ const MetaTypeContentView = ({ post, options }) => {
                 <>
                     {options?.image?.showText ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.text}</p> : null}
                     <div className={`max-w-xl mx-auto ${options?.image?.rounded ? 'rounded-md overflow-hidden ' : ''}`}>
-                        <ImageSliderView slides={post?.typeImage?.images} url={`@${post?.author?.handle}/post/${post?.key}`} bg={false} />
+                        <MetaTypeImageView slides={post?.typeImage?.images} url={`@${post?.author?.handle}/post/${post?.key}`} bg={false} />
                     </div>
                 </>
             );
