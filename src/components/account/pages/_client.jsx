@@ -173,8 +173,7 @@ const BasicInfoUpdate = ({ open, setOpen, user: _user }) => {
             <Dialog open={open} title="Profile Picture" >
                 <div className="flex sm:min-w-[400px] overflow-hidden relative max-w-[400px] min-w-[80vw] h-[90vh] flex-col space-y-4">
                     <div className='absolute flex items-center bg-lightHead z-[999] dark:bg-darkHead top-0 left-0 w-full h-14'>
-                        <LinearProgress className={`!h-0.5 !absolute !top-0 !z-[99] w-full ${loading && '!-mb-0.5'}`} hidden={!loading} color="accent" />
-                        <div className="flex px-5 justify-between w-full h-full items-center">
+                        {loading ? <LinearProgress className={`!h-0.5 !absolute !top-0 !z-[99] w-full ${loading && '!-mb-0.5'}`} hidden={!loading} color="accent" /> : null}                        <div className="flex px-5 justify-between w-full h-full items-center">
                             <h2 className="font-bold text-xl cheltenham">
                                 Update Basic Information
                             </h2>
@@ -197,7 +196,7 @@ const BasicInfoUpdate = ({ open, setOpen, user: _user }) => {
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputHeader label={'Gender'} desc={'To help us provide you with a better experience, please select your gender.'} tip={'You can make this information private.'} />
-                            <TextField disabled={isDisabled} size="small" select defaultValue={info?.sex?.value} onChange={(e) => handleChangeInfo(e, 'sex')} >
+                            <TextField disabled={isDisabled} size="small" select defaultValue={info?.sex?.value?.toLowerCase()} onChange={(e) => handleChangeInfo(e, 'sex')} >
                                 {sex?.map((item) => (
                                     <MenuItem value={item.value} key={item.key}>
                                         <div className='flex px-2 items-center'>

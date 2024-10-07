@@ -2,6 +2,9 @@ import React from 'react';
 import { StoryImage, StorySidebar, StoryTopbar } from '.';
 import styles from '@/styles/post.module.css';
 import { ServerVariantPersistent } from '@/components/common/helpers';
+import { Card } from '@mui/material';
+import Link from 'next/link';
+import { AuthorAvatar } from '../creator/_client';
 
 function jsonToObject(json) {
     try {
@@ -66,6 +69,50 @@ const View = async ({ story }) => {
     } else {
         notFound();
     }
+};
+
+const CardView = ({ story }) => {
+    return (
+        <>
+            <Card
+                elevation={0}
+                sx={{
+                    borderRadius: '0px',
+                    overflow: 'hidden',
+                    backgroundColor: 'transparent',
+                }}
+            >
+                <div className="relative group/g_pst transition-opacity duration-300">
+                    <Link href={`/@${story?.author?.handle}/${story.slug}`}>
+                        <StoryImage className="rounded-sm" image={story?.image} />
+                    </Link>
+                    <div className="mt-2 flex flex-nowrap items-start justify-between">
+                        <div className="grow">
+                            <div className="mb-1.5">
+                                <div className="flex items-center gap-3">
+                                    <Link href={`/@${story?.author?.handle}`}>
+                                        <AuthorAvatar data={{ url: story?.author?.image?.url }} className={'!w-8 !h-8'} />
+                                    </Link>
+                                    <div>
+                                        <Link href={`/@${story?.author?.handle}`}>
+                                            <h3 className="text-base font-bold cheltenham">{story?.author?.name}</h3>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                            <Link href={`/@${story?.author?.handle}/${story.slug}`} className="w-full">
+                                <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{story.title}</h2>
+                            </Link>
+                            {/* <div className="flex text-sm justify-between mt-1 items-center opacity-100">
+                                <PostMetaView data={post} />
+                                <PostViewActions id={post?.id} post={post} />
+                            </div> */}
+                        </div>
+                    </div>
+                </div>
+            </Card>
+        </>
+    );
 }
 
 
@@ -108,6 +155,6 @@ const RenderBlock = ({ blocks }) => {
     return <>{blocks.map(renderBlock)}</>;
 };
 
-export const dynamic = 'force-dynamic';
 
 export default View;
+export { CardView };

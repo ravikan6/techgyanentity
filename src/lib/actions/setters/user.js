@@ -10,7 +10,7 @@ const updateUser = async (input) => {
 
     try {
         let client = await api();
-        const { data } = client.mutate({
+        const { data } = await client.mutate({
             mutation: UPDATE_USER,
             variables: {
                 dob: input?.dob,
@@ -21,11 +21,11 @@ const updateUser = async (input) => {
             }
         })
 
-        if (data?.updateMe?.user) {
+        if (data && data?.updateMe?.user) {
             res.data = data?.updateMe?.user;
             res.success = true;
         }
-        if (data.errors) {
+        if (data?.errors) {
             res.errors = data.errors;
         }
         return res;
@@ -69,7 +69,7 @@ const updateUserImage = async (files, options) => {
 
         let client = await api();
 
-        const { data } = client.mutate({
+        const { data } = await client.mutate({
             mutation: UPDATE_USER_IMAGE,
             variables: {
                 image: {
