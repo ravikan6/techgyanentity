@@ -41,6 +41,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                             httpOnly: true,
                             sameSite: 'None',
                             secure: true,
+                            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
                         });
                         return {
                             ...response.data.login.user,
@@ -159,6 +160,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                 authors: token.authors,
                 sessionId: token.sessionId
             }
+            cookies().set('sessionid', token.sessionId, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+                expires: session.expires,
+            });
             return Promise.resolve(session)
         },
     },

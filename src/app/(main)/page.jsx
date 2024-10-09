@@ -47,9 +47,8 @@ export default async function Home() {
   try {
     let dt = await query({
       query: GET_POSTS,
-      fetchPolicy: 'network-only',
-      errorPolicy: 'all',
     })
+    console.log(dt.data);
     if (dt.data) {
       communityPosts = dt.data.Posts.edges;
     }
@@ -87,6 +86,9 @@ export default async function Home() {
           )
         }
       </div>
+      <span>
+        {JSON.stringify(communityPosts)}
+      </span>
     </>
   );
 }
@@ -98,7 +100,7 @@ const CommunityPosts = ({ posts, session }) => {
       <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
         {
           posts.map((post, _) => (
-            <React.Fragment key={_}>
+            <React.Fragment key={post?.cursor}>
               <PostCardView post={post?.node} />
             </React.Fragment>
           ))

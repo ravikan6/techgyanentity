@@ -10,9 +10,9 @@ const ClappedStoriesPageView = ({ clappedStories }) => {
             <h1>Clapped Stories</h1>
             <div className="max-w-2xl">
                 <List>
-                    {clappedStories?.edges?.map((item, index) => (
+                    {clappedStories?.edges?.map((item, index) =>
                         <StoryListItemView key={index} story={item?.node?.story} />
-                    ))}
+                    )}
                 </List>
             </div>
         </>

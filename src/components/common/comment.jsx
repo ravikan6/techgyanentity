@@ -31,11 +31,11 @@ const WriteField = () => {
     const userData = (creator?.key === content?.authorKey) ? {
         ...creator
     } : {
-        ...session.user
+        ...session?.user
     }
 
     return (
-        <AnonymousAction isAnonymous={!session.user} text={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} action={() => { }} >
+        <AnonymousAction isAnonymous={!session?.user} text={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} action={() => { }} >
             <div className={`flex justify-between gap-3 items-center px-3 py-1 w-full`}>
                 <Avatar src={userData?.image?.url} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={userData?.name} >{userData?.name?.slice(0, 1)}</Avatar>
                 <TextField
@@ -87,7 +87,7 @@ const ActionButton = () => {
     const userData = (creator?.key === content?.authorKey) ? {
         ...creator
     } : {
-        ...session.user
+        ...session?.user
     }
 
     return (

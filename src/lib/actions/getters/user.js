@@ -22,8 +22,8 @@ const getUserClappedStories = async ({ after, limit }) => {
             }
         })
 
-        if (data) {
-            res.data = data?.Me?.storyClaps;
+        if (await data) {
+            res.data = await data?.Me?.storyClaps;
             res.success = true;
         }
 

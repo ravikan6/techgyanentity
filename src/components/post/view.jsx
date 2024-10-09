@@ -39,7 +39,12 @@ const View2 = ({ post, options }) => {
         <>
             <div className="flex flex-col sm:flex-row items-start h-full">
                 <div className="w-full sm:w-1/2 h-full">
-                    <MetaTypeContentView post={post} options={options?.meta?.content} />
+                    <MetaTypeContentView post={post} options={{
+                        image: {
+                            blackBg: true,
+                        },
+                        ...options?.meta?.content,
+                    }} />
                 </div>
                 <div className="w-full relative sm:w-1/2 sm:flex-1 overflow-y-auto h-full sm:max-h-[calc(100vh-80px)] md:max-h-[480px] lg:max-h-[580px]">
                     <div className="sm:absolute top-0 right-0 w-full h-16">
@@ -69,6 +74,7 @@ const CardView = ({ post, options }) => {
                     <MetaTypeContentView post={post} options={{
                         image: {
                             showText: true,
+                            _1v1: true,
                         },
                         ...options?.meta?.content,
                     }} />
@@ -105,7 +111,10 @@ const MetaTypeContentView = ({ post, options }) => {
                 <>
                     {options?.image?.showText ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.text}</p> : null}
                     <div className={`max-w-xl mx-auto ${options?.image?.rounded ? 'rounded-md overflow-hidden ' : ''}`}>
-                        <MetaTypeImageView slides={post?.typeImage?.images} url={`@${post?.author?.handle}/post/${post?.key}`} bg={false} />
+                        <MetaTypeImageView content={post?.typeImage} options={{
+                            ...options?.image,
+                        }} />
+                        {/* }} slides={images} url={`@${post?.author?.handle}/post/${post?.key}`} bg={false} /> */}
                     </div>
                 </>
             );

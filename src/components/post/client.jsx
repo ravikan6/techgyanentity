@@ -93,12 +93,12 @@ const MetaTypePollView = ({ poll, options }) => {
     )
 }
 
-const MetaTypeImageView = ({ slides, url, bg }) => {
+const MetaTypeImageView = ({ content, options }) => {
+    let slides = content?.images || [];
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
     const [original, setOriginal] = useState(true);
-    const [showMeta, setShowMeta] = useState(false);
 
     const goToNextSlide = useCallback(() => {
         const nextIndex = (currentIndex + 1) % slides.length;
@@ -121,7 +121,7 @@ const MetaTypeImageView = ({ slides, url, bg }) => {
     }, [slides.length]);
 
     return (
-        <div className={`relative group aspect-[4/5] mx-auto ${bg ? 'bg-light dark:bg-dark' : 'bg-transparent'}`}>
+        <div className={`relative group ${options?._1v1 ? 'aspect-square' : 'aspect-[4/5]'} mx-auto ${options?.blackBg ? 'bg-black' : 'bg-transparent'}`}>
             <div className="relative w-full h-full overflow-hidden">
                 {/* Images Slider */}
                 <div
@@ -143,7 +143,7 @@ const MetaTypeImageView = ({ slides, url, bg }) => {
             </div>
 
             {/* Original Image Button */}
-            <div className={`absolute right-4 ${showMeta ? 'top-4 bottom-auto' : 'bottom-4'} bg-accentLight dark:bg-accentDark ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
+            <div className={`absolute right-4 bottom-4 bg-accentLight dark:bg-accentDark ${original ? 'opacity-60' : 'opacity-100'} rounded-full transition-all duration-300`}>
                 <IconButton
                     onClick={() => setOriginal(!original)}
                     className="rounded-full"
@@ -165,7 +165,7 @@ const MetaTypeImageView = ({ slides, url, bg }) => {
                         onClick={goToNextSlide}
                         disabled={!hasNext}
                     ></NextBtn>
-                    <div className="absolute bottom-0.5 z-10 w-full flex justify-center space-x-2 items-center">
+                    <div className="absolute bottom-4 z-10 w-full flex justify-center space-x-2 items-center">
                         {slides.map((_, index) => (
                             <button
                                 key={index}
@@ -175,25 +175,6 @@ const MetaTypeImageView = ({ slides, url, bg }) => {
                         ))}
                     </div>
                 </>
-            )}
-
-            {/* Caption */}
-            {slides[currentIndex]?.caption && (
-                <div className="absolute bottom-0 left-0 w-full">
-                    <div className="bg-accentLight/90 dark:bg-accentDark/90 transition-all duration-300 opacity-80 hover:opacity-100 w-5 h-5 absolute left-4 -top-5 rounded-t-md cursor-pointer">
-                        <IconButton sx={{ width: '20px', height: '20px' }} onClick={() => setShowMeta(!showMeta)}>
-                            {showMeta ? <BiChevronDown className="w-4 h-4" /> : <BiChevronUp className="w-4 h-4" />}
-                        </IconButton>
-                    </div>
-                    <div
-                        className="w-full transition-all duration-300 text-sm bg-light/75 dark:bg-dark/75 backdrop-blur-2xl px-2 py-1 pb-3 rounded-t-md max-h-32 overflow-y-auto"
-                        style={{
-                            display: showMeta ? 'block' : 'none',
-                        }}
-                    >
-                        <p className="cheltenham-small text-xs">{slides[currentIndex]?.caption}</p>
-                    </div>
-                </div>
             )}
         </div>
     );

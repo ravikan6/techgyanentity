@@ -139,6 +139,10 @@ query GetPosts {
           }
         }
       }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
     }
   }
 }`;
