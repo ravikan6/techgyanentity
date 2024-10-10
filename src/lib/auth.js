@@ -160,12 +160,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                 authors: token.authors,
                 sessionId: token.sessionId
             }
-            cookies().set('sessionid', token.sessionId, {
-                httpOnly: true,
-                sameSite: 'None',
-                secure: true,
-                expires: session.expires,
-            });
             return Promise.resolve(session)
         },
     },

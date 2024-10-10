@@ -86,9 +86,6 @@ export default async function Home() {
           )
         }
       </div>
-      <span>
-        {JSON.stringify(communityPosts)}
-      </span>
     </>
   );
 }

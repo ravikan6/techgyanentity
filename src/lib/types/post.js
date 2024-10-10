@@ -111,6 +111,7 @@ query GetPosts {
           id
           question
           options {
+            __typename @skip(if: true)
             id
             text
             votes
