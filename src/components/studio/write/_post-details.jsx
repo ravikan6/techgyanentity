@@ -106,7 +106,7 @@ const PostDetailsEditor = () => {
     }
 
     const handleSetCategory = ({ target }) => {
-        let cat = categories.find((c) => c.id === target.id);
+        let cat = categories.find((c) => c.id === target.value);
         setNpst({ ...npst, category: cat });
     }
 

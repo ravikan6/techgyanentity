@@ -33,7 +33,10 @@ query GetAuthorStory($author_Key: String = "", $slug: String!) {
         author {
           name
           key
-          isFollowed
+          followed {
+            byMe
+            notifPref
+          }
           image {
             url
             alt
@@ -63,7 +66,10 @@ query GetStoryClientSide($key: String!) {
         author {
           name
           key
-          isFollowed
+          followed {
+            byMe
+            notifPref
+          }
           image {
             url
             alt
@@ -267,8 +273,8 @@ mutation UpdateStoryDetails($key: String = "", $category: String = "", $descript
 }`;
 
 const GET_STORY_COMMENTS = gql`
-query GetStoryComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $first: Int = 10, $after: String = "") {
-  StoryComments(story_Key: $key, parent_Id: $parent_Id, first: $first, offset: $offset, after: $after) {
+query GetStoryComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $first: Int = 10, $after: String = "", $orderBy: String) {
+  StoryComments(story_Key: $key, parent_Id: $parent_Id, first: $first, offset: $offset, after: $after, orderBy: $orderBy) {
     edges {
       node {
         content

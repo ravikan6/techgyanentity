@@ -91,38 +91,28 @@ mutation UpdateMyAccount($dob: Date = "", $firstName: String = "", $lastName: St
  * @returns {string} returns.pageInfo.startCursor - The start cursor for pagination.
  */
 const GET_USER_CLAPPED_STORIES = gql`
-query MyQuery($first: Int = 10, $after: String = "") {
-  Me {
-    storyClaps(first: $first, after: $after) {
-      edges {
-        node {
-          story {
-            clapsCount
-            commentsCount
-            description
-            key
-            privacy
-            publishedAt
-            savedByMe
-            slug
-            state
-            title
-            author {
-              handle
-              image {
-                url
-              }
-              key
-              name
-            }
+query MyQuery {
+  MySavedStories {
+    edges {
+      node {
+        clapsCount
+        commentsCount
+        description
+        key
+        privacy
+        publishedAt
+        savedByMe
+        slug
+        state
+        title
+        author {
+          handle
+          image {
+            url
           }
+          key
+          name
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
       }
     }
   }

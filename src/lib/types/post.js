@@ -52,8 +52,8 @@ query GetPostByKey($key: String!) {
 }`;
 
 const GET_POST_COMMENTS = gql`
-query GetPostComments($key: String!, $parent_Id: ID = "") {
-  PostComments(post_Key: $key, parent_Id: $parent_Id) {
+query GetPostComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $first: Int = 10, $after: String = "", $orderBy: String) {
+  PostComments(post_Key: $key, parent_Id: $parent_Id, first: $first, offset: $offset, after: $after, orderBy: $orderBy) {
     edges {
       node {
         content

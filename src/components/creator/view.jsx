@@ -65,7 +65,9 @@ const CreatorSingleViewPage = async ({ creator, children }) => {
                             </div>
                         </div>
                         <div className='flex mt-3 md:mt-5 md:mr-4 justify-end'>
-                            <CreatorFollowButton key={creator?.key} isFollowed={creator?.isFollowed} />
+                            <CreatorFollowButton value={creator?.followed} options={{
+                                creator: creator?.key,
+                            }} />
                         </div>
                     </div>
                 </div>

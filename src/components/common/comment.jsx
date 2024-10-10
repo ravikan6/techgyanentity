@@ -192,15 +192,16 @@ const ReplyContainer = () => {
                 variables: {
                     key: content.key,
                     parent_Id: reply.parentId,
+                    orderBy: 'createdAt'
                 }
             })
         }
         let reData = re.resolver(data, setReplies);
         if (reData) {
             if (reData?.pageInfo?.hasPreviousPage) {
-                setReplies((prev) => [...prev, ...reData])
+                setReplies((prev) => [...prev, ...reData?.data])
             } else {
-                setReplies(reData)
+                setReplies(reData?.data)
             }
         }
     }, [reply, data, called, content?.key])

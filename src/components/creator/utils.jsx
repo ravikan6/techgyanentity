@@ -9,8 +9,8 @@ import { BiChevronDown } from "react-icons/bi";
 import { AuthorAvatar } from "./_client";
 import { Skeleton } from "@mui/material";
 
-const CreatorFollowButton = ({ creatorKey, key, isFollowed, buttonProps }) => {
-    const [isFollowing, setIsFollowing] = useState(isFollowed);
+const CreatorFollowButton = ({ value, options }) => {
+    const [followed, setFollowed] = useState({ byMe: value?.byMe, notifPref: value?.notifPref });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -42,8 +42,8 @@ const CreatorFollowButton = ({ creatorKey, key, isFollowed, buttonProps }) => {
     return (
         session?.user ?
             <>
-                <Button disabled={loading || error} onClick={isFollowing ? handleMenuOpen : handleFollowSystem} variant="contained" sx={isFollowing && { backgroundColor: (theme) => theme.palette.divider }} color={isFollowing ? "divider" : "primary"} size="small" endIcon={isFollowing && <BiChevronDown />} {...buttonProps} >
-                    {isFollowing ? 'Following' : 'Follow'}
+                <Button disabled={loading || error} onClick={followed?.byMe ? handleMenuOpen : handleFollowSystem} variant="contained" sx={followed?.byMe && { backgroundColor: (theme) => theme.palette.divider }} color={followed?.byMe ? "divider" : "primary"} size="small" endIcon={followed?.byMe && <BiChevronDown />} {...options?.button?.Props} >
+                    {followed?.byMe ? 'Following' : 'Follow'}
                 </Button>
                 <Menu
                     anchorEl={anchorEl}
@@ -64,7 +64,7 @@ const CreatorFollowButton = ({ creatorKey, key, isFollowed, buttonProps }) => {
                     <ListItemRdX link={{ name: 'Unfollow', icon: HeartBrokenOutlined }} onClick={handleFollowSystem} />
                 </Menu>
             </> :
-            <Button variant="contained" color="primary" size="small" {...buttonProps}>
+            <Button variant="contained" color="primary" size="small" {...options?.button?.Props}>
                 Follow
             </Button>
     )

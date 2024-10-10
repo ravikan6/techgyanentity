@@ -230,7 +230,9 @@ const MetaAuthorView = () => {
                 <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
                     <EmailRounded className="w-4 h-4" />
                 </IconButton>
-                <CreatorFollowButton isFollowed={story?.author?.isFollowed} creatorKey={story?.author?.key} />
+                <CreatorFollowButton value={story?.author?.followed} options={{
+                    creator: story?.author?.key,
+                }} />
             </div>
         </div>
     )
@@ -284,7 +286,9 @@ const MetaDescBoxView = () => {
                 </div>
                 <div className="overflow-x-scroll w-full mt-2">
                     <div className="flex items-center py-3 space-x-4 w-fit flex-row flex-nowrap justify-start">
-                        <CreatorFollowButton isFollowed={false} />
+                        <CreatorFollowButton value={story?.author?.followed} options={{
+                            creator: story?.author?.key,
+                        }} />
                         <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >About</Button>
                         <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<EmailRounded className="w-4 h-4 mr-1" />} size="small" >Contact</Button>
                         {
@@ -544,8 +548,11 @@ const CommentView = () => {
                 query: GET_STORY_COMMENTS,
                 resolver: (data) => {
                     if (data && data?.StoryComments?.edges) {
-                        return data.StoryComments.edges
-                    } else return [];
+                        return {
+                            data: data?.StoryComments?.edges,
+                            pageInfo: data?.StoryComments?.pageInfo
+                        }
+                    } else return null;
                 },
                 reply: reply,
                 setReply: setReply,

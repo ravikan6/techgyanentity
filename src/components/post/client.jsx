@@ -346,8 +346,11 @@ const CommentView = ({ post }) => {
                 query: GET_POST_COMMENTS,
                 resolver: (data) => {
                     if (data && data?.PostComments?.edges) {
-                        return data.PostComments.edges;
-                    } else return [];
+                        return {
+                            data: data?.PostComments?.edges,
+                            pageInfo: data?.PostComments?.pageInfo
+                        }
+                    } else return { data: [], pageInfo: {} };
                 },
                 reply: reply,
                 setReply: setReply,

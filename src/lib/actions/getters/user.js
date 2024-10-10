@@ -23,7 +23,7 @@ const getUserClappedStories = async ({ after, limit }) => {
         })
 
         if (await data) {
-            res.data = await data?.Me?.storyClaps;
+            res.data = await data?.MySavedStories?.edges;
             res.success = true;
         }
 

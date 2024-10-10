@@ -36,7 +36,6 @@ async function verfyAuthorExistence(path) {
         handle: String(handle),
       }
     })
-    console.log(data, '__while checking author existence.');
     if (await data && data.Creators?.edges?.at(0)?.node) {
       return data.Creators?.edges?.at(0)?.node;
     }
@@ -75,7 +74,10 @@ query GetCreatorInfo($key: String!) {
       node {
         key
         name
-        isFollowed
+        followed {
+          byMe
+          notifPref
+        }
         handle
         social {
           name
