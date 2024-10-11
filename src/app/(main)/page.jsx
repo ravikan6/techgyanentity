@@ -26,7 +26,7 @@ query MyQuery {
         privacy
         key
         image {
-          provider
+
           url
         }
         description

@@ -113,6 +113,9 @@ query MyQuery {
           key
           name
         }
+        image {
+          url
+        }
       }
     }
   }

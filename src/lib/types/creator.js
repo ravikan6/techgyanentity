@@ -102,7 +102,35 @@ mutation CreatorBannerAction($action: ImageActionEnum = CREATE, $provider: Strin
   }
 }`;
 
+const FOLLOW_CREATOR = gql`
+mutation FollowCreator($notifications: CreatorNotificationEnum = ALL, $creatorKey: String!) {
+  followCreator(creatorKey: $creatorKey, notifications: $notifications) {
+    creator {
+      followed {
+        notifPref
+        byMe
+      }
+      key
+    }
+  }
+}`;
+
+const UNFOLLOW_CREATOR = gql`
+mutation UnfollowCreator($creatorKey: String!) {
+  unfollowCreator(creatorKey: $creatorKey) {
+    creator {
+      followed {
+        notifPref
+        byMe
+      }
+      key
+    }
+  }
+}`;
+
 export { CREATE_CREATOR_PROFILE }; // MUTATE: Creator -> Create
+export { FOLLOW_CREATOR }; // MUTATE: Creator -> Follow
+export { UNFOLLOW_CREATOR }; // MUTATE: Creator -> Unfollow
 export { UPDATE_CREATOR, UPDATE_CREATOR_IMAGE, UPDATE_CREATOR_BANNER }; // MUTATE: Creator -> Update
 
 export { VERIFY_GET_AUTHOR, GET_CREATOR_FOR_OG }

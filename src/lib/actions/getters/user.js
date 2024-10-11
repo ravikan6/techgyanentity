@@ -1,5 +1,6 @@
 "use server";
 
+import { query } from "@/lib/client";
 import { GET_USER_CLAPPED_STORIES } from "@/lib/types/user";
 
 /**
@@ -16,10 +17,6 @@ const getUserClappedStories = async ({ after, limit }) => {
     try {
         let { data, errors } = await query({
             query: GET_USER_CLAPPED_STORIES,
-            variables: {
-                after: after,
-                limit: limit
-            }
         })
 
         if (await data) {

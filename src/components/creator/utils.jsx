@@ -8,6 +8,7 @@ import { ListItemRdX } from "../Home/_profile-model";
 import { BiChevronDown } from "react-icons/bi";
 import { AuthorAvatar } from "./_client";
 import { Skeleton } from "@mui/material";
+import { followCreator, unfollowCreator } from "@/lib/actions/setters/creator";
 
 const CreatorFollowButton = ({ value, options }) => {
     const [followed, setFollowed] = useState({ byMe: value?.byMe, notifPref: value?.notifPref });
@@ -29,8 +30,23 @@ const CreatorFollowButton = ({ value, options }) => {
         setLoading(true);
         handleMenuClose();
         try {
-            if (session) {
-                // -----
+            if (session && session.user) {
+                if (followed?.byMe) {
+                    let res = await unfollowCreator({ key: options?.creator });
+                    if (res.success) {
+                        setFollowed({ byMe: false, notifPref: null });
+                    } else {
+                        setError(res.errors);
+                    }
+                } else {
+                    // Follow Creator
+                    let res = await followCreator({ key: options?.creator, notifPref: 'ALL' });
+                    if (res.success) {
+                        setFollowed({ byMe: true, notifPref: res.data?.followed?.notifPref });
+                    } else {
+                        setError(res.errors);
+                    }
+                }
             }
         } catch (error) {
             setError(error);

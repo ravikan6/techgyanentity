@@ -1,7 +1,7 @@
 "use server";
 
 import { api } from "@/lib/client";
-import { CREATE_CREATOR_PROFILE, UPDATE_CREATOR, UPDATE_CREATOR_BANNER, UPDATE_CREATOR_IMAGE } from "@/lib/types/creator";
+import { CREATE_CREATOR_PROFILE, FOLLOW_CREATOR, UNFOLLOW_CREATOR, UPDATE_CREATOR, UPDATE_CREATOR_BANNER, UPDATE_CREATOR_IMAGE } from "@/lib/types/creator";
 
 import { auth } from "@/lib/auth";
 import { uploadImage, cloudinaryProvider } from "@/lib/actions/upload";
@@ -201,4 +201,48 @@ const updateCreatorBrand = async (data, files, actions) => {
     }
 };
 
+const followCreator = async ({ key, notifPref }) => {
+    const res = { success: false, data: null, errors: [] };
+    try {
+        let client = await api();
+        const { data } = await client.mutate({
+            mutation: FOLLOW_CREATOR,
+            variables: { creatorKey: key, notifications: notifPref },
+        });
+        if (data?.followCreator?.creator) {
+            res.data = data.followCreator.creator;
+            res.success = true;
+        }
+        if (data.errors) {
+            res.errors = data.errors;
+        }
+    } catch (e) {
+        res.errors.push({ message: `Something went wrong!` });
+    }
+    return res;
+}
+
+const unfollowCreator = async (key) => {
+    const res = { success: false, data: null, errors: [] };
+    try {
+        let client = await api();
+        const { data } = await client.mutate({
+            mutation: UNFOLLOW_CREATOR,
+            variables: { creatorKey: key },
+        });
+        if (data?.unfollowCreator?.creator) {
+            res.data = data.unfollowCreator.creator;
+            res.success = true;
+        }
+        if (data.errors) {
+            res.errors = data.errors;
+        }
+    }
+    catch (e) {
+        res.errors.push({ message: `Something went wrong!` });
+    }
+    return res;
+}
+
 export { createCreatorProfile, updateCreatorProfile, updateCreatorBrand };
+export { followCreator, unfollowCreator };
