@@ -98,41 +98,34 @@ const MetaTypeImageView = ({ content, options }) => {
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
     const [original, setOriginal] = useState(true);
-    const [fadeClass, setFadeClass] = useState('');
 
     const startX = useRef(0);
     const endX = useRef(0);
 
     const goToNextSlide = useCallback(() => {
-        setFadeClass('fade-exit');
         setTimeout(() => {
             const nextIndex = (currentIndex + 1) % slides.length;
             setCurrentIndex(nextIndex);
             setHasPrev(true);
             setHasNext(nextIndex < slides.length - 1);
-            setFadeClass('fade-enter');
-        }, 500);
+        }, 100);
     }, [currentIndex, slides.length]);
 
     const goToPrevSlide = useCallback(() => {
-        setFadeClass('fade-exit');
         setTimeout(() => {
             const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
             setCurrentIndex(prevIndex);
             setHasPrev(prevIndex > 0);
             setHasNext(true);
-            setFadeClass('fade-enter');
-        }, 500);
+        }, 100);
     }, [currentIndex, slides.length]);
 
     const radioBtnClick = useCallback((index) => {
-        setFadeClass('fade-exit');
         setTimeout(() => {
             setCurrentIndex(index);
             setHasPrev(index > 0);
             setHasNext(index < slides.length - 1);
-            setFadeClass('fade-enter');
-        }, 500);
+        }, 200);
     }, [slides.length]);
 
     const handleTouchStart = (e) => {
@@ -151,10 +144,6 @@ const MetaTypeImageView = ({ content, options }) => {
         }
     };
 
-    useEffect(() => {
-        setFadeClass('fade-enter');
-    }, [currentIndex]);
-
     return (
         <div
             className={`relative group ${options?._1v1 ? 'aspect-square' : 'aspect-[4/5]'} mx-auto ${options?.blackBg ? 'bg-black' : 'bg-transparent'}`}
@@ -165,7 +154,7 @@ const MetaTypeImageView = ({ content, options }) => {
             <div className="relative w-full h-full overflow-hidden">
                 {/* Images Slider */}
                 <div
-                    className={`flex transition-transform h-full duration-500 ease-in-out ${fadeClass}`}
+                    className={`flex transition-transform h-full duration-500 ease-in-out`}
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {slides.map((slide, index) => (
@@ -178,7 +167,7 @@ const MetaTypeImageView = ({ content, options }) => {
                                 draggable={false}
                             />
                             {slide?.caption && (
-                                <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white text-center p-2">
+                                <div className="absolute text-sm bottom-0 w-full bg-black bg-opacity-50 text-white text-center p-2">
                                     {slide.caption}
                                 </div>
                             )}
