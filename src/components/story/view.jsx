@@ -4,7 +4,6 @@ import styles from '@/styles/post.module.css';
 import { ServerVariantPersistent } from '@/components/common/helpers';
 import { Card, ListItem } from '@mui/material';
 import Link from 'next/link';
-import { AuthorAvatar } from '../creator/_client';
 
 function jsonToObject(json) {
     try {
@@ -147,18 +146,55 @@ const RenderBlock = ({ blocks }) => {
     const renderBlock = (block) => {
         switch (block.type) {
             case 'heading':
-                if (block.props.level === 1) {
-                    return <h1 key={block.id} className={`${styles.heading} ${styles.h1}`}>{renderContent(block.content)}</h1>;
-                }
-                if (block.props.level === 2) {
-                    return <h2 key={block.id} className={`${styles.heading} ${styles.h2}`}>{renderContent(block.content)}</h2>;
-                }
-                if (block.props.level === 3) {
-                    return <h3 key={block.id} className={`${styles.heading} ${styles.h3}`}>{renderContent(block.content)}</h3>;
-                }
-                break;
+                const HeadingTag = `h${block.props.level}`;
+                return <HeadingTag key={block.id} className={`${styles.heading} ${styles[`h${block.props.level}`]}`}>{renderContent(block.content)}</HeadingTag>;
             case 'paragraph':
                 return <p key={block.id} className={styles.paragraph}>{renderContent(block.content)}</p>;
+            case 'bulletListItem':
+                return <li key={block.id} className={styles.bulletListItem}>{renderContent(block.content)}</li>;
+            case 'numberedListItem':
+                return <li key={block.id} className={styles.numberedListItem}>{renderContent(block.content)}</li>;
+            case 'checkListItem':
+                return (
+                    <li key={block.id} className={styles.checkListItem}>
+                        <input type="checkbox" checked={block.props.checked} readOnly />
+                        {renderContent(block.content)}
+                    </li>
+                );
+            case 'table':
+                return (
+                    <table key={block.id} className={styles.table}>
+                        <tbody>{renderContent(block.content)}</tbody>
+                    </table>
+                );
+            case 'file':
+                return (
+                    <div key={block.id} className={styles.file}>
+                        <a href={block.props.url} download={block.props.name}>{block.props.name}</a>
+                        <p>{block.props.caption}</p>
+                    </div>
+                );
+            case 'image':
+                return (
+                    <div key={block.id} className={styles.image}>
+                        <img src={block.props.url} alt={block.props.name} style={{ width: block.props.previewWidth }} />
+                        <p>{block.props.caption}</p>
+                    </div>
+                );
+            case 'video':
+                return (
+                    <div key={block.id} className={styles.video}>
+                        <video src={block.props.url} controls style={{ width: block.props.previewWidth }} />
+                        <p>{block.props.caption}</p>
+                    </div>
+                );
+            case 'audio':
+                return (
+                    <div key={block.id} className={styles.audio}>
+                        <audio src={block.props.url} controls />
+                        <p>{block.props.caption}</p>
+                    </div>
+                );
             default:
                 return null;
         }

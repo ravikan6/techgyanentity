@@ -84,33 +84,23 @@
   }
 }
 
-/* ******************************************* */
-
-/* .rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {
-  @apply bg-secondary/40 hover:bg-secondary dark:bg-secondaryDark/40 dark:hover:bg-secondaryDark;
-  @apply transition-all duration-500;
+.fade-enter {
+  opacity: 0;
 }
 
-.rb_sss .MuiPaper-root::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  box-shadow: none;
-  min-height: 50px;
-  transition: background-color 0.2s ease-in-out;
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
 }
 
-.rb_sss .MuiPaper-root::-webkit-scrollbar {
-  @apply w-2;
+.fade-exit {
+  opacity: 1;
 }
 
-.rb_sss .MuiPaper-root::-webkit-scrollbar-track {
-  @apply mt-2 mb-2 border-0 bg-transparent;
-} */
-
-
-/************************************************************/
-
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
 
 .nav-up {
   top: -65px !important;
