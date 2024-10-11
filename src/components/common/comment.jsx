@@ -180,7 +180,7 @@ const CommentsContainer = () => {
 }
 
 const ReplyContainer = () => {
-    const [replies, setReplies] = useState([]);
+    const [replies, setReplies] = useState({ data: [], pageInfo: { hasNextPage: false, hasPreviousPage: false } });
     const { form, state, content, comment, re } = useContext(CommentContext);
     const { reply } = useContext(CommentMetaContext);
 
@@ -199,9 +199,9 @@ const ReplyContainer = () => {
         let reData = re.resolver(data, setReplies);
         if (reData) {
             if (reData?.pageInfo?.hasPreviousPage) {
-                setReplies((prev) => [...prev, ...reData?.data])
+                setReplies((prev) => ({ ...prev, data: [...reData?.data, ...prev.data], pageInfo: reData?.pageInfo }))
             } else {
-                setReplies(reData?.data)
+                setReplies(reData)
             }
         }
     }, [reply, data, called, content?.key])
@@ -222,10 +222,10 @@ const ReplyContainer = () => {
         if (re?.reply && re?.reply?.action && re?.reply?.data) {
             let comment = re?.reply?.data;
             if (re.reply.action === 'UPDATE') {
-                let newReplies = replies.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
-                setReplies(newReplies);
+                let newReplies = replies.data.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
+                setReplies((prev) => ({ ...prev, data: newReplies }))
             } else {
-                setReplies((prev) => [{ cursor: null, node: comment }, ...prev]);
+                setReplies((prev) => ({ ...prev, data: [re?.reply?.data, ...prev.data] }))
             }
             getReplies({
                 variables: {
@@ -249,7 +249,7 @@ const ReplyContainer = () => {
                         px: 1
                     }}>
                         {
-                            replies.map((item, index) => {
+                            replies?.data?.map((item, index) => {
                                 return (
                                     <View key={index} item={item} />
                                 )
@@ -260,10 +260,10 @@ const ReplyContainer = () => {
             }
             <div className="px-2">
                 {
-                    (loading) ? <CommentSkeletons count={5} /> : replies.length === 0 ?
+                    (loading) ? <CommentSkeletons count={5} /> : replies?.data?.length === 0 ?
                         <div className="p-4 h-20 flex justify-center items-center">
                             No Replies found.
-                        </div> : replies.length > 0 && replies?.pageInfo?.hasNextPage ? <div className="p-4 flex justify-center items-center">
+                        </div> : replies?.data?.length > 0 && replies?.pageInfo?.hasNextPage ? <div className="p-4 flex justify-center items-center">
                             <Button onClick={onNextFetch} variant="outlined" color="secondary" size="small">Load More</Button>
                         </div> : null
                 }

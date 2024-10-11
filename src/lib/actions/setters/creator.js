@@ -209,8 +209,8 @@ const followCreator = async ({ key, notifPref }) => {
             mutation: FOLLOW_CREATOR,
             variables: { creatorKey: key, notifications: notifPref },
         });
-        if (data?.followCreator?.creator) {
-            res.data = data.followCreator.creator;
+        if (await data?.followCreator?.creator) {
+            res.data = await data.followCreator.creator;
             res.success = true;
         }
         if (data.errors) {
@@ -230,8 +230,8 @@ const unfollowCreator = async (key) => {
             mutation: UNFOLLOW_CREATOR,
             variables: { creatorKey: key },
         });
-        if (data?.unfollowCreator?.creator) {
-            res.data = data.unfollowCreator.creator;
+        if (await data?.unfollowCreator?.creator) {
+            res.data = await data.unfollowCreator.creator;
             res.success = true;
         }
         if (data.errors) {

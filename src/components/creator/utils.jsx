@@ -1,14 +1,21 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { Button, Menu, Tooltip } from "../rui";
+import { Button, Menu, MenuItem, Tooltip } from "../rui";
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { HeartBrokenOutlined } from "@mui/icons-material";
 import { ListItemRdX } from "../Home/_profile-model";
 import { BiChevronDown } from "react-icons/bi";
-import { AuthorAvatar } from "./_client";
-import { Skeleton } from "@mui/material";
+import { AuthorAvatar, AuthorBottomButtons } from "./_client";
+import { ListItem, ListItemIcon, Skeleton } from "@mui/material";
 import { followCreator, unfollowCreator } from "@/lib/actions/setters/creator";
+import { MdNotificationsActive, MdOutlineCheck, MdOutlineNotifications, MdOutlineNotificationsOff } from "react-icons/md";
+import { MenuListItem } from "../common/client";
+import { AiOutlineUserDelete } from "react-icons/ai";
+import { AnonymousAction } from "../common";
+import { useLazyQuery } from "@apollo/client";
+import Image from "next/image";
+import { ErrorBox } from "../post/_struct";
 
 const CreatorFollowButton = ({ value, options }) => {
     const [followed, setFollowed] = useState({ byMe: value?.byMe, notifPref: value?.notifPref });
@@ -26,7 +33,7 @@ const CreatorFollowButton = ({ value, options }) => {
 
     const { data: session } = useSession();
 
-    const handleFollowSystem = async () => {
+    const handleFollowSystem = async (value = 'ALL') => {
         setLoading(true);
         handleMenuClose();
         try {
@@ -39,8 +46,7 @@ const CreatorFollowButton = ({ value, options }) => {
                         setError(res.errors);
                     }
                 } else {
-                    // Follow Creator
-                    let res = await followCreator({ key: options?.creator, notifPref: 'ALL' });
+                    let res = await followCreator({ key: options?.creator, notifPref: value });
                     if (res.success) {
                         setFollowed({ byMe: true, notifPref: res.data?.followed?.notifPref });
                     } else {
@@ -55,18 +61,33 @@ const CreatorFollowButton = ({ value, options }) => {
         }
     }
 
+    const notifList = [
+        { name: 'All Notifications', icon: <MdNotificationsActive />, value: 'ALL' },
+        { name: 'Personalized', icon: <MdOutlineNotifications />, value: 'PERSONALIZED' },
+        { name: 'No Notifications', icon: <MdOutlineNotificationsOff />, value: 'NONE' },
+    ]
+
     return (
         session?.user ?
             <>
-                <Button disabled={loading || error} onClick={followed?.byMe ? handleMenuOpen : handleFollowSystem} variant="contained" sx={followed?.byMe && { backgroundColor: (theme) => theme.palette.divider }} color={followed?.byMe ? "divider" : "primary"} size="small" endIcon={followed?.byMe && <BiChevronDown />} {...options?.button?.Props} >
+                <Button
+                    disabled={loading}
+                    onClick={followed?.byMe ? handleMenuOpen : handleFollowSystem}
+                    variant="contained"
+                    sx={followed?.byMe && { backgroundColor: (theme) => theme.palette.divider }}
+                    color={followed?.byMe ? "divider" : "primary"}
+                    size="small"
+                    startIcon={followed?.byMe && (followed?.notifPref === 'ALL' ? <MdNotificationsActive /> : followed?.notifPref === 'PERSONALIZED' ? <MdOutlineNotifications /> : <MdOutlineNotificationsOff />)}
+                    endIcon={followed?.byMe && <BiChevronDown />}
+                    {...options?.button?.Props} >
                     {followed?.byMe ? 'Following' : 'Follow'}
-                </Button>
+                </Button >
                 <Menu
                     anchorEl={anchorEl}
                     open={!!anchorEl}
                     onClose={handleMenuClose}
                     MenuListProps={{
-                        'aria-labelledby': 'Author Follow Menu',
+                        'aria-labelledby': 'Creator Follow Menu',
                     }}
                     slotProps={{
                         paper: {
@@ -75,21 +96,41 @@ const CreatorFollowButton = ({ value, options }) => {
                             }
                         }
                     }}>
-                    <ListItemRdX link={{ name: 'Notify all', icon: HeartBrokenOutlined }} />
-                    <ListItemRdX link={{ name: 'Don\'t Notify', icon: HeartBrokenOutlined }} />
-                    <ListItemRdX link={{ name: 'Unfollow', icon: HeartBrokenOutlined }} onClick={handleFollowSystem} />
+                    {
+                        notifList.map((item, index) => (
+                            <MenuListItem key={index} onClick={() => {
+                                handleFollowSystem(item.value);
+                            }}>
+                                <ListItemIcon>
+                                    {item.icon}
+                                </ListItemIcon>
+                                {item.name}
+                                {followed?.notifPref === item.value && <ListItemIcon>
+                                    <MdOutlineCheck />
+                                </ListItemIcon>}
+                            </MenuListItem>
+                        ))
+                    }
+                    <MenuItem onClick={handleFollowSystem}>
+                        <ListItemIcon>
+                            <AiOutlineUserDelete />
+                        </ListItemIcon>
+                        Unfollow
+                    </MenuItem>
                 </Menu>
             </> :
-            <Button variant="contained" color="primary" size="small" {...options?.button?.Props}>
-                Follow
-            </Button>
+            <AnonymousAction isAnonymous={true} text={'Please login to follow'} >
+                <Button variant="contained" color="primary" size="small" {...options?.button?.Props}>
+                    Follow
+                </Button>
+            </AnonymousAction>
     )
 }
 
 
 const CreatorWrapper = ({ children, keyId }) => {
     return (
-        <Tooltip title={<>We are working on it.</>} arrow enterDelay={1300} leaveDelay={300}
+        <Tooltip title={<CreatorWrapperView creatorKey={keyId} />} arrow enterDelay={1300} leaveDelay={300}
             enterNextDelay={800}
             PopperProps={{
                 onClick(e) {
@@ -103,52 +144,51 @@ const CreatorWrapper = ({ children, keyId }) => {
     )
 }
 
-/**
- * @deprecated
- */
-const AuthorTipView = ({ shortId }) => {
-    const [data, setData] = useState(null);
+const CreatorWrapperView = ({ creatorKey }) => {
+    const [getCreator, { data, error, loading, called }] = useLazyQuery(GET_CREATOR_IN_TIP)
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // -----
-            }
-            catch {
-                toast.error('Something Went Wrong')
-            }
-        };
-        fetchData();
-    }, [shortId]);
+        if (creatorKey) {
+            getCreator({ variables: { key: creatorKey } })
+        }
+    }, [creatorKey])
+
+    const creator = data?.Creators?.edges[0]?.node;
 
     return (
-        data ? <>
+        called && data ? <>
             <section className="px-4 py-2 w-72 max-w-72 relative">
-                <div className="flex items-center justify-between">
-                    <AuthorAvatar data={data?.image} sx={{ width: '40px', height: '40px' }} />
-                    <div className="ml-3 mr-1">
-                        Follow
+                <div className="flex items-center justify-start gap-4">
+                    <Image src={creator?.image?.url} width={40} height={40} className="rounded-full" />
+                    <div className="flex flex-col">
+                        <h3 className="text-base karnak font-bold text-white dark:text-black">{creator?.name}</h3>
+                        <p className="text-xs mt-0.5 franklin font-medium text-zinc-200 dark:text-zinc-800">{creator?.handle}</p>
                     </div>
                 </div>
-                <div className="mt-1">
-                    <h3 className="text-lg karnak font-bold text-white dark:text-black">{data?.name}</h3>
-                    <p className="text-sm mt-0.5 franklin font-medium text-zinc-200 dark:text-zinc-800">{data?._count?.followers} Followers</p>
+                <div className="mt-1 flex flex-row justify-between items-center">
+                    <div className="flex gap-2 justify-start items-center max-w-[60%] overflow-hidden">
+                        {creator?.social?.map((item, i) => (
+                            <AuthorBottomButtons key={i} url={item?.url} title={item?.name} isExt={true} />
+                        ))}
+                    </div>
+                    <CreatorFollowButton value={creator?.followed} options={{ creator: creator?.key }} />
                 </div>
-                {data?.bio ? <div className="mt-4">
-                    <p className="text-xs font-normal franklin text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{data?.bio}</p>
+                {data?.description ? <div className="mt-4">
+                    <p className="text-xs font-normal franklin text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{creator?.description}</p>
                 </div> : null}
             </section>
         </> :
-            <section className="px-4 py-2 w-72 max-w-72">
+            loading ? <section className="px-4 py-2 w-72 max-w-72">
                 <Skeleton variant="circular" width={40} height={40} />
                 <Skeleton variant="text" width={120} height={20} />
                 <Skeleton variant="text" width={100} height={18} />
                 <Skeleton variant="text" width={'100%'} className="mt-3" height={16} />
                 <Skeleton variant="text" width={'100%'} height={16} />
                 <Skeleton variant="text" width={'40%'} height={16} />
-            </section>
+            </section> : error ? <ErrorBox error={error} onRetry={
+                () => getCreator({ variables: { key: creatorKey } })
+            } /> : null
     )
-
 }
 
 export { CreatorWrapper }

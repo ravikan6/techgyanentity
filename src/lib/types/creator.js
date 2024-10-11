@@ -128,6 +128,33 @@ mutation UnfollowCreator($creatorKey: String!) {
   }
 }`;
 
+const GET_CREATOR_IN_TIP = gql`
+query GetCreatorInTip($key: String!) {
+  Creators(key: $key) {
+    edges {
+      node {
+        key
+        social {
+          name
+          url
+        }
+        image {
+          url
+        }
+        name
+        handle
+        description
+        followed {
+          byMe
+          notifPref
+        }
+      }
+    }
+  }
+}`;
+
+export { GET_CREATOR_IN_TIP }; // QUERY: Creator -> Get
+
 export { CREATE_CREATOR_PROFILE }; // MUTATE: Creator -> Create
 export { FOLLOW_CREATOR }; // MUTATE: Creator -> Follow
 export { UNFOLLOW_CREATOR }; // MUTATE: Creator -> Unfollow
