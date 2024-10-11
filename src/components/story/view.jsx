@@ -82,11 +82,11 @@ const CardView = ({ story }) => {
                     backgroundColor: 'transparent',
                 }}
             >
-                <div className="relative group/g_pst transition-opacity duration-300">
+                <div className="relative group/g_pst transition-opacity h-full duration-300">
                     <Link href={`/@${story?.author?.handle}/${story.slug}`}>
                         <StoryImage className="rounded-md" image={story?.image} />
                     </Link>
-                    <div className="mt-2 flex flex-nowrap items-start justify-between">
+                    <div className="mt-2 flex flex-nowrap h-full items-start justify-between">
                         <div className="grow">
                             <Link href={`/@${story?.author?.handle}/${story.slug}`} className="w-full">
                                 <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{story.title}</h2>

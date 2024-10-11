@@ -36,14 +36,14 @@ const WriteField = () => {
 
     return (
         <AnonymousAction isAnonymous={!session?.user} text={'To participate in the discussion and leave a comment, please ensure that you are logged into your account. Logging in helps us maintain a safe and engaging community environment.'} action={() => { }} >
-            <div className={`flex justify-between gap-3 items-center px-3 py-1 w-full`}>
+            <div className={`flex justify-between gap-3 items-start px-3 py-1 w-full`}>
                 <Avatar src={userData?.image?.url} sx={{ width: 24, height: 24, borderRadius: 1000 }} alt={userData?.name} >{userData?.name?.slice(0, 1)}</Avatar>
                 <TextField
                     required
                     multiline
                     variant="outlined"
                     size="small"
-                    maxRows={2}
+                    maxRows={3}
                     fullWidth
                     autoFocus
                     placeholder="Write a comment..."
@@ -54,26 +54,20 @@ const WriteField = () => {
                         '& .MuiOutlinedInput-root': {
                             borderRadius: '8px !important',
                             py: '3.5px !important',
-                            fontSize: '0.75rem',
-                            lineHeight: '1rem'
+                            fontSize: '0.85rem',
+                            lineHeight: '1.12rem'
                         },
                     }}
                     value={form.data.text}
                     onChange={handleCommentChange}
-                    slotProps={{
-                        input: {
-                            endAdornment: (form.data.text?.trim()?.length > 0) ? <>
-                                {state.sending ?
-                                    <CircularProgress size={20} /> :
-                                    <IconButton size="small" onClick={() => onSend()}>
-                                        {form.data.action === 'CREATE' ? <SendOutlined fontSize="small" /> : null}
-                                        {form.data.action === 'REPLY' ? <FaReplyd fontSize="small" /> : null}
-                                        {form.data.action === 'UPDATE' ? <BiCommentEdit fontSize="small" /> : null}
-                                    </IconButton>}
-                            </> : null,
-                        },
-                    }}
                 ></TextField>
+                <div className="self-end">
+                    {state.sending ?
+                        <CircularProgress size={20} /> :
+                        <IconButton disabled={form.data.text?.trim()?.length < 1} size="small" onClick={() => onSend()}>
+                            <SendOutlined fontSize="small" />
+                        </IconButton>}
+                </div>
             </div>
         </AnonymousAction >
     );
@@ -107,14 +101,14 @@ const ActionButton = () => {
 }
 
 const Container = ({ }) => {
-    const [rView, setrView] = useState({ show: false, parentId: null })
+    const [rView, setrView] = useState({ show: false, parentId: null, data: {} })
     const { form, comment } = useContext(CommentContext);
     const lastItemRef = useRef(null);
 
     return (
         <>
             <CommentMetaContext.Provider value={{
-                reply: { show: rView.show, parentId: rView.parentId, set: setrView, lastItemRef: lastItemRef }
+                reply: { show: rView.show, parentId: rView.parentId, comment: rView?.data, set: setrView, lastItemRef: lastItemRef }
             }}>
                 <div className={`w-full`}>
                     <div className="mb-4">
@@ -135,12 +129,7 @@ const Container = ({ }) => {
                         <Backdrop open={form.data.show} onClick={() => {
                             form.set({ ...form.data, show: false })
                         }} sx={{ zIndex: 1, position: 'absolute' }}></Backdrop>
-                        <div className="sm:absolute fixed bottom-0 left-0 z-50 w-full h-20 py-1 flex flex-col items-start justify-center bg-lightHead dark:bg-darkHead">
-                            {
-                                form.data?.action === 'UPDATE' ? <p className="text-xs ml-2 py-0.5">
-                                    update: <strong>@{form?.data?.meta?.update?.username}</strong>
-                                </p> : null
-                            }
+                        <div className="sm:absolute fixed bottom-0 left-0 z-50 w-full min-h-14 py-1 flex flex-col items-start justify-center bg-lightHead dark:bg-darkHead">
                             <WriteField />
                         </div>
                     </div>
@@ -184,7 +173,7 @@ const ReplyContainer = () => {
     const { form, state, content, comment, re } = useContext(CommentContext);
     const { reply } = useContext(CommentMetaContext);
 
-    const [getReplies, { called, data, loading, error }] = useLazyQuery(re.query);
+    const [getReplies, { called, data, loading, error, previousData }] = useLazyQuery(re.query);
 
     useEffect(() => {
         if (content?.key && reply.parentId && !called) {
@@ -196,15 +185,20 @@ const ReplyContainer = () => {
                 }
             })
         }
-        let reData = re.resolver(data, setReplies);
-        if (reData) {
-            if (reData?.pageInfo?.hasPreviousPage) {
-                setReplies((prev) => ({ ...prev, data: [...reData?.data, ...prev.data], pageInfo: reData?.pageInfo }))
-            } else {
-                setReplies(reData)
+    }, [reply, data, called, content?.key])
+
+    useEffect(() => {
+        if (called && !loading && data) {
+            let reData = re.resolver(data, setReplies);
+            if (reData) {
+                if (previousData) {
+                    setReplies((prev) => ({ ...prev, data: [...prev.data, ...reData?.data], pageInfo: reData?.pageInfo }))
+                } else {
+                    setReplies(reData)
+                }
             }
         }
-    }, [reply, data, called, content?.key])
+    }, [data, loading, called])
 
     const onNextFetch = () => {
         if (replies?.pageInfo?.hasNextPage) {
@@ -226,7 +220,7 @@ const ReplyContainer = () => {
                 let newReplies = replies.data.map((item) => (item.node.id === comment.id) ? { ...item, node: { ...item.node, ...comment } } : item);
                 setReplies((prev) => ({ ...prev, data: newReplies }))
             } else {
-                setReplies((prev) => ({ ...prev, data: [re?.reply?.data, ...prev.data] }))
+                setReplies((prev) => ({ ...prev, data: [...prev.data, { node: re?.reply?.data }] }))
             }
         };
     }, [re?.reply])
@@ -234,24 +228,29 @@ const ReplyContainer = () => {
     return (
         <>
             <div className="h-14 flex items-center bg-lightHead dark:bg-darkHead gap-3 mb-2 rounded px-2">
-                <BackBtn onClick={() => reply?.set({ show: false, parentId: null })} />
+                <BackBtn onClick={() => reply?.set({ show: false, parentId: null, data: {} })} />
                 <h3 className="text-base"> Replies </h3>
             </div>
-            {
-                replies ?
-                    <List sx={{
-                        px: 1
-                    }}>
-                        {
-                            replies?.data?.map((item, index) => {
-                                return (
-                                    <View key={index} item={item} />
-                                )
-                            })
-                        }
-                    </List>
-                    : null
-            }
+            <div className="bg-lightHead/30 dark:bg-darkHead/30 px-2">
+                <View item={{ node: reply?.comment }} />
+            </div>
+            <div className="ml-5">
+                {
+                    replies ?
+                        <List sx={{
+                            px: 1
+                        }}>
+                            {
+                                replies?.data?.map((item, index) => {
+                                    return (
+                                        <View key={index} item={item} />
+                                    )
+                                })
+                            }
+                        </List>
+                        : null
+                }
+            </div>
             <div className="px-2">
                 {
                     (loading) ? <CommentSkeletons count={5} /> : replies?.data?.length === 0 ?
@@ -356,7 +355,7 @@ const MetaView = ({ comment }) => {
             {comment?.replyCount ? <AnonymousAction >
                 <Button
                     sx={[{ px: 2, height: '28px' }]}
-                    onClick={() => { reply?.set({ show: true, parentId: comment?.id }) }}
+                    onClick={() => { reply?.set({ show: true, parentId: comment?.id, data: comment }) }}
                     size='small'
                     variant='outlined'
                     color='secondary'
@@ -369,7 +368,7 @@ const MetaView = ({ comment }) => {
             <AnonymousAction >
                 <Button sx={{ px: 1.5, height: '28px' }} startIcon={<BsReply className="w-4 h-4 -mr-1" />} size='small' variant='outlined' endIcon={<><span className='!text-xs -ml-1'>Reply</span></>} color='secondary' onClick={
                     () => {
-                        reply?.set({ show: true, parentId: reply?.parentId ? reply?.parentId : comment?.id })
+                        reply?.set({ show: true, parentId: reply?.parentId ? reply?.parentId : comment?.id, data: reply?.comment?.id ? reply?.comment : comment })
                         form.set(
                             {
                                 text: '',
@@ -388,8 +387,10 @@ const MetaView = ({ comment }) => {
 const MetaMoreMenuView = ({ comment }) => {
     const [open, setOpen] = useState(false);
     const [actionLoading, setActiionLoading] = useState(false);
-
+    const { data: session } = useSession();
     const { form } = useContext(CommentContext);
+    const { reply } = useContext(CommentMetaContext);
+    const { creator } = useContext(StudioContext);
 
     const onEdit = () => {
         if (form.data?.show) return null;
@@ -399,17 +400,23 @@ const MetaMoreMenuView = ({ comment }) => {
             show: true,
             action: 'UPDATE',
             commentId: comment?.id,
+            parentId: reply?.parentId ? reply?.parentId : null,
             meta: {
                 update: {
                     username: comment?.author ? comment?.author?.handle : comment?.user?.username,
+                    comment: comment
                 }
             }
         })
     }
 
-    const _items = [
+    const _aItems = [
         { name: "Edit", icon: Edit, onClick: onEdit },
         { name: "Delete", icon: Delete },
+    ]
+
+    const _items = [
+        ...(comment?.author ? comment?.author?.key === creator?.key ? _aItems : [] : comment?.user?.key === session?.user?.key ? _aItems : []),
         { name: "Report", icon: Report }
     ]
 

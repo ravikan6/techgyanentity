@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { BiChevronDown } from "react-icons/bi";
 import { AuthorBottomButtons } from "./_client";
-import { ListItem, ListItemIcon, Skeleton, Typography } from "@mui/material";
+import { alpha, ListItem, ListItemIcon, Skeleton, Typography } from "@mui/material";
 import { followCreator, unfollowCreator } from "@/lib/actions/setters/creator";
 import { MdNotificationsActive, MdOutlineCheck, MdOutlineNotifications, MdOutlineNotificationsOff } from "react-icons/md";
 import { AiOutlineUserDelete } from "react-icons/ai";
@@ -26,6 +26,7 @@ const CreatorFollowButton = ({ value, options }) => {
     };
 
     const handleMenuClose = () => {
+        dark:
         setAnchorEl(null);
     };
 
@@ -41,10 +42,12 @@ const CreatorFollowButton = ({ value, options }) => {
         } else {
             setError(res.errors);
         }
+        handleMenuClose();
         setLoading(false);
     }
 
     const handleUnfollow = async () => {
+        handleMenuClose();
         setLoading(true);
         const res = await unfollowCreator(options?.creator);
         if (res.success) {
@@ -96,7 +99,7 @@ const CreatorFollowButton = ({ value, options }) => {
                         notifList.map((item, index) => (
                             <MenuItem key={index} onClick={() => {
                                 handleFollow(item.value);
-                            }} sx={{
+                            }} sx={(followed?.notifPref === item.value) && {
                                 justifyContent: 'space-between'
                             }}>
                                 <ListItemIcon>
@@ -105,9 +108,7 @@ const CreatorFollowButton = ({ value, options }) => {
                                 <Typography variant="inherit">
                                     {item.name}
                                 </Typography>
-                                {followed?.notifPref === item.value && <ListItemIcon>
-                                    <MdOutlineCheck />
-                                </ListItemIcon>}
+                                {followed?.notifPref === item.value && <MdOutlineCheck className="ml-3" />}
                             </MenuItem>
                         ))
                     }
@@ -132,6 +133,21 @@ const CreatorWrapper = ({ children, keyId }) => {
     return (
         <Tooltip title={<CreatorWrapperView creatorKey={keyId} />} arrow enterDelay={1300} leaveDelay={300}
             enterNextDelay={800}
+            sx={{
+                '& .MuiTooltip-tooltip': {
+                    backgroundColor: (theme) => alpha(theme.palette.background.default, 0.7),
+                    padding: 0,
+                    borderRadius: '12px',
+                    border: 'none',
+                    backdropFilter: 'blur(10px)',
+                    '& .MuiPaper-root': {
+                        backgroundColor: 'transparent',
+                        padding: 0,
+                        borderRadius: '12px',
+                        border: 'none',
+                    }
+                }
+            }}
             PopperProps={{
                 onClick(e) {
                     e.stopPropagation();
@@ -157,25 +173,33 @@ const CreatorWrapperView = ({ creatorKey }) => {
 
     return (
         called && data ? <>
-            <section className="px-4 py-2 w-72 max-w-72 relative">
+            <section className="px-4 py-2.5 w-72 max-w-72 relative text-black dark:text-white">
                 <div className="flex items-center justify-start gap-4">
                     <Image src={creator?.image?.url} width={40} height={40} className="rounded-full" />
                     <div className="flex flex-col">
-                        <h3 className="text-base karnak font-bold text-white dark:text-black">{creator?.name}</h3>
-                        <p className="text-xs franklin font-medium text-zinc-200 dark:text-zinc-800">{creator?.handle}</p>
+                        <h3 className="text-base karnak font-bold dark:text-white text-black">{creator?.name}</h3>
+                        <p className="text-xs franklin font-medium dark:text-zinc-200 text-zinc-800">@{creator?.handle}</p>
                     </div>
                 </div>
-                <div className="mt-1 flex flex-col">
+                <div className="mt-2 flex flex-col">
                     <div className="flex gap-2 justify-start items-center overflow-hidden">
                         {creator?.social?.slice(0, 2)?.map((item, i) => (
                             <AuthorBottomButtons key={i} url={item?.url} title={item?.name} isExt={true} />
                         ))}
                     </div>
-                    <CreatorFollowButton value={creator?.followed} options={{ creator: creator?.key }} />
                 </div>
-                {creator?.description ? <div className="mt-4">
-                    <p className="text-xs font-normal franklin text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{creator?.description}</p>
+                {creator?.description ? <div className="mt-3">
+                    <p className="text-xs font-normal franklin dark:text-zinc-300 text-zinc-700 line-clamp-3 text-ellipsis">{creator?.description}</p>
                 </div> : null}
+                <div className="mt-1.5">
+                    <CreatorFollowButton value={creator?.followed} options={{
+                        creator: creator?.key, button: {
+                            Props: {
+                                fullWidth: true,
+                            }
+                        }
+                    }} />
+                </div>
             </section>
         </> :
             loading ? <section className="px-4 py-2 w-72 max-w-72">
