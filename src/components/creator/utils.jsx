@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { BiChevronDown } from "react-icons/bi";
 import { AuthorBottomButtons } from "./_client";
-import { ListItem, ListItemIcon, Skeleton } from "@mui/material";
+import { ListItem, ListItemIcon, Skeleton, Typography } from "@mui/material";
 import { followCreator, unfollowCreator } from "@/lib/actions/setters/creator";
 import { MdNotificationsActive, MdOutlineCheck, MdOutlineNotifications, MdOutlineNotificationsOff } from "react-icons/md";
 import { AiOutlineUserDelete } from "react-icons/ai";
@@ -31,34 +31,30 @@ const CreatorFollowButton = ({ value, options }) => {
 
     const { data: session } = useSession();
 
-    const handleFollowSystem = async (value = 'ALL') => {
+    const handleFollow = async (notifications) => {
         setLoading(true);
-        handleMenuClose();
-        try {
-            if (session && session.user) {
-                if (followed?.byMe) {
-                    let res = await unfollowCreator({ key: options?.creator });
-                    if (res.success) {
-                        setFollowed({ byMe: false, notifPref: null });
-                        toast.success('Unfollowed');
-                    } else {
-                        setError(res.errors);
-                    }
-                } else {
-                    let res = await followCreator({ key: options?.creator, notifPref: value });
-                    if (res.success) {
-                        setFollowed({ byMe: true, notifPref: res.data?.followed?.notifPref });
-                        toast.success('Followed');
-                    } else {
-                        setError(res.errors);
-                    }
-                }
-            }
-        } catch (error) {
-            setError(error);
-        } finally {
-            setLoading(false);
+        const res = await followCreator({ key: options?.creator, notifPref: notifications });
+        if (res?.success) {
+            setFollowed(res.data?.followed);
+            setError(null);
+            toast.success('Followed successfully');
+        } else {
+            setError(res.errors);
         }
+        setLoading(false);
+    }
+
+    const handleUnfollow = async () => {
+        setLoading(true);
+        const res = await unfollowCreator(options?.creator);
+        if (res.success) {
+            setFollowed(res.data?.followed);
+            setError(null);
+            toast.success('Unfollowed successfully');
+        } else {
+            setError(res.errors);
+        }
+        setLoading(false);
     }
 
     const notifList = [
@@ -72,15 +68,15 @@ const CreatorFollowButton = ({ value, options }) => {
             <>
                 <Button
                     disabled={loading}
-                    onClick={followed?.byMe ? handleMenuOpen : handleFollowSystem}
+                    onClick={followed?.byMe ? handleMenuOpen : () => handleFollow('ALL')}
                     variant="contained"
                     sx={followed?.byMe && { backgroundColor: (theme) => theme.palette.divider }}
-                    color={followed?.byMe ? "divider" : "primary"}
+                    color={error ? 'error' : followed?.byMe ? "divider" : "primary"}
                     size="small"
                     startIcon={followed?.byMe && (followed?.notifPref === 'ALL' ? <MdNotificationsActive /> : followed?.notifPref === 'PERSONALIZED' ? <MdOutlineNotifications /> : <MdOutlineNotificationsOff />)}
                     endIcon={followed?.byMe && <BiChevronDown />}
                     {...options?.button?.Props} >
-                    {followed?.byMe ? 'Following' : 'Follow'}
+                    {error ? 'Retry' : followed?.byMe ? 'Following' : 'Follow'}
                 </Button >
                 <Menu
                     anchorEl={anchorEl}
@@ -99,19 +95,23 @@ const CreatorFollowButton = ({ value, options }) => {
                     {
                         notifList.map((item, index) => (
                             <MenuItem key={index} onClick={() => {
-                                handleFollowSystem(item.value);
+                                handleFollow(item.value);
+                            }} sx={{
+                                justifyContent: 'space-between'
                             }}>
                                 <ListItemIcon>
                                     {item?.icon}
                                 </ListItemIcon>
-                                {item?.name}
+                                <Typography variant="inherit">
+                                    {item.name}
+                                </Typography>
                                 {followed?.notifPref === item.value && <ListItemIcon>
                                     <MdOutlineCheck />
                                 </ListItemIcon>}
                             </MenuItem>
                         ))
                     }
-                    <MenuItem onClick={handleFollowSystem}>
+                    <MenuItem onClick={handleUnfollow}>
                         <ListItemIcon>
                             <AiOutlineUserDelete />
                         </ListItemIcon>
@@ -162,18 +162,18 @@ const CreatorWrapperView = ({ creatorKey }) => {
                     <Image src={creator?.image?.url} width={40} height={40} className="rounded-full" />
                     <div className="flex flex-col">
                         <h3 className="text-base karnak font-bold text-white dark:text-black">{creator?.name}</h3>
-                        <p className="text-xs mt-0.5 franklin font-medium text-zinc-200 dark:text-zinc-800">{creator?.handle}</p>
+                        <p className="text-xs franklin font-medium text-zinc-200 dark:text-zinc-800">{creator?.handle}</p>
                     </div>
                 </div>
-                <div className="mt-1 flex flex-row justify-between items-center">
-                    <div className="flex gap-2 justify-start items-center max-w-[60%] overflow-hidden">
-                        {creator?.social?.map((item, i) => (
+                <div className="mt-1 flex flex-col">
+                    <div className="flex gap-2 justify-start items-center overflow-hidden">
+                        {creator?.social?.slice(0, 2)?.map((item, i) => (
                             <AuthorBottomButtons key={i} url={item?.url} title={item?.name} isExt={true} />
                         ))}
                     </div>
                     <CreatorFollowButton value={creator?.followed} options={{ creator: creator?.key }} />
                 </div>
-                {data?.description ? <div className="mt-4">
+                {creator?.description ? <div className="mt-4">
                     <p className="text-xs font-normal franklin text-zinc-300 dark:text-zinc-700 line-clamp-3 text-ellipsis">{creator?.description}</p>
                 </div> : null}
             </section>
