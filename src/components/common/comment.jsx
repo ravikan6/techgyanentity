@@ -212,7 +212,8 @@ const ReplyContainer = () => {
                 variables: {
                     key: content.key,
                     parent_Id: reply.parentId,
-                    after: replies?.pageInfo?.endCursor
+                    orderBy: 'createdAt',
+                    offset: replies?.data?.length,
                 }
             });
         }
@@ -227,13 +228,6 @@ const ReplyContainer = () => {
             } else {
                 setReplies((prev) => ({ ...prev, data: [re?.reply?.data, ...prev.data] }))
             }
-            getReplies({
-                variables: {
-                    key: content.key,
-                    parent_Id: reply.parentId,
-                },
-                fetchPolicy: 'network-only'
-            });
         };
     }, [re?.reply])
 

@@ -3,19 +3,17 @@ import { useSession } from "next-auth/react";
 import { Button, Menu, MenuItem, Tooltip } from "../rui";
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { HeartBrokenOutlined } from "@mui/icons-material";
-import { ListItemRdX } from "../Home/_profile-model";
 import { BiChevronDown } from "react-icons/bi";
-import { AuthorAvatar, AuthorBottomButtons } from "./_client";
+import { AuthorBottomButtons } from "./_client";
 import { ListItem, ListItemIcon, Skeleton } from "@mui/material";
 import { followCreator, unfollowCreator } from "@/lib/actions/setters/creator";
 import { MdNotificationsActive, MdOutlineCheck, MdOutlineNotifications, MdOutlineNotificationsOff } from "react-icons/md";
-import { MenuListItem } from "../common/client";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import { AnonymousAction } from "../common";
 import { useLazyQuery } from "@apollo/client";
 import Image from "next/image";
 import { ErrorBox } from "../post/_struct";
+import { GET_CREATOR_IN_TIP } from "@/lib/types/creator";
 
 const CreatorFollowButton = ({ value, options }) => {
     const [followed, setFollowed] = useState({ byMe: value?.byMe, notifPref: value?.notifPref });
@@ -42,6 +40,7 @@ const CreatorFollowButton = ({ value, options }) => {
                     let res = await unfollowCreator({ key: options?.creator });
                     if (res.success) {
                         setFollowed({ byMe: false, notifPref: null });
+                        toast.success('Unfollowed');
                     } else {
                         setError(res.errors);
                     }
@@ -49,6 +48,7 @@ const CreatorFollowButton = ({ value, options }) => {
                     let res = await followCreator({ key: options?.creator, notifPref: value });
                     if (res.success) {
                         setFollowed({ byMe: true, notifPref: res.data?.followed?.notifPref });
+                        toast.success('Followed');
                     } else {
                         setError(res.errors);
                     }
@@ -98,17 +98,17 @@ const CreatorFollowButton = ({ value, options }) => {
                     }}>
                     {
                         notifList.map((item, index) => (
-                            <MenuListItem key={index} onClick={() => {
+                            <MenuItem key={index} onClick={() => {
                                 handleFollowSystem(item.value);
                             }}>
                                 <ListItemIcon>
-                                    {item.icon}
+                                    {item?.icon}
                                 </ListItemIcon>
-                                {item.name}
+                                {item?.name}
                                 {followed?.notifPref === item.value && <ListItemIcon>
                                     <MdOutlineCheck />
                                 </ListItemIcon>}
-                            </MenuListItem>
+                            </MenuItem>
                         ))
                     }
                     <MenuItem onClick={handleFollowSystem}>

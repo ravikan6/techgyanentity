@@ -40,6 +40,11 @@ const nextConfig = {
                 hostname: 'www.google.com',
                 pathname: '**',
             },
+            {
+                protocol: 'https',
+                hostname: 'placehold.co',
+                pathname: '**',
+            },
         ],
     },
     reactStrictMode: false,

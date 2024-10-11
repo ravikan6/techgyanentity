@@ -113,12 +113,12 @@ const ListItemView = ({ story }) => {
                         <StoryImage className="rounded-md" image={story?.image} />
                     </Link>
                 </div>
-                <div className="flex flex-col items-start">
+                <div className="flex flex-col items-start justify-between">
                     <Link href={`/@${story?.author?.handle}/${story.slug}`} className="w-full">
                         <h2 className="text-xl md:text-base font-bold karnak line-clamp-2 text-ellipsis">{story.title}</h2>
                         <p className="text-sm text-gray-500 line-clamp-2 text-ellipsis">{story?.description}</p>
                     </Link>
-                    <div className="flex items-center justify-between gap-2 mt-2">
+                    <div className="w-full mt-2">
                         <StoryCardMeta story={story} />
                     </div>
                 </div>

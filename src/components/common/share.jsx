@@ -87,7 +87,7 @@ const _ShareCopyLinkView = () => {
                 input: {
                     endAdornment: <Button
                         variant="contained"
-                        className="h-full font-semibold -mr-2"
+                        className="h-full font-semibold -mr-2 dark:!text-black"
                         color="inherit"
                         size="small"
                         onClick={() => copyText(`${window.location.origin}${meta?.url}`)}>
