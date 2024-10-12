@@ -97,7 +97,7 @@ const MetaTypeImageView = ({ content, options }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
-    const [original, setOriginal] = useState(true);
+    const [original, setOriginal] = useState(false);
 
     const startX = useRef(0);
     const endX = useRef(0);
@@ -164,6 +164,8 @@ const MetaTypeImageView = ({ content, options }) => {
                                 className={`w-full h-full ${original ? 'object-contain' : 'object-cover'}`}
                                 src={slide?.url}
                                 alt={slide?.alt || 'Slide image'}
+                                placeholder={slide?.blurUrl ? 'blur' : 'empty'}
+                                blurDataURL={slide?.blurUrl}
                                 draggable={false}
                             />
                             {slide?.caption && (

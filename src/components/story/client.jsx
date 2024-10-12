@@ -25,6 +25,8 @@ const ImageView = ({ image, classes, height, width, className, style }) => {
         alt={image?.alt}
         width={width || 720}
         height={height || 405}
+        placeholder={image?.blurUrl ? 'blur' : 'empty'}
+        blurDataURL={image?.blurUrl}
         sizes="100vw"
         loading='lazy'
         className={`rounded-2xl aspect-video h-auto ${classes} ${className}`}
@@ -323,13 +325,13 @@ const MetaActionView = ({ options }) => {
         <>
             <div className="flex items-center gap-5 overflow-x-auto flex-nowrap">
                 <StoryClapView value={{
-                    count: story?.clapsCount,
-                    meClaped: story?.clappedByMe,
+                    count: story?.count?.claps,
+                    meClaped: story?.me?.isClapped,
                     storyKey: story?.key
                 }} />
-                {options?.commentButton ? <MetaCommentButtonView count={story?.commentsCount} /> : null}
+                {options?.commentButton ? <MetaCommentButtonView count={story?.count?.comments} /> : null}
                 <StoryBookmarkView value={{
-                    is: story?.savedByMe,
+                    is: story?.me?.isSaved,
                     storyKey: story?.key
                 }} />
                 <StoryShareView href={{
@@ -381,11 +383,11 @@ const _MetaView = ({ story }) => {
                     </Tooltip>
                 </div>
                 <div className="flex flex-row items-center justify-end gap-2.5">
-                    {story?.clapsCount ? <> <ClapReadonlyView claps={{
-                        count: story?.clapsCount,
-                        me: story?.clappedByMe
+                    {story?.count?.claps ? <> <ClapReadonlyView claps={{
+                        count: story?.count?.claps,
+                        me: story?.me?.isClapped
                     }} /> </> : null}
-                    {story?.commentsCount ? <> <CommentReadonlyView count={story?.commentsCount} /> </> : null}
+                    {story?.count?.comments ? <> <CommentReadonlyView count={story?.count?.comments} /> </> : null}
                     <StoryMetaMoreMenuView />
                 </div>
             </div>
@@ -512,7 +514,7 @@ const CommentView = () => {
             if (res.success) {
                 return {
                     me: res.data?.myVote,
-                    count: res.data?.votes
+                    count: res.data?.count?.votes
                 };
             }
             return null;
@@ -541,7 +543,7 @@ const CommentView = () => {
             comment: {
                 data: comments,
                 set: setComments,
-                count: story?.commentsCount,
+                count: story?.count?.comments,
             },
             onSend: onSend,
             re: {

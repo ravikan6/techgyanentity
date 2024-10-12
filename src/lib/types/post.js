@@ -32,6 +32,7 @@ query GetPostByKey($key: String!) {
             caption
             url
             alt
+            blurUrl
           }
           caption
         }
@@ -44,6 +45,7 @@ query GetPostByKey($key: String!) {
           image {
             url
             alt
+            blurUrl
           }
         }
       }
@@ -60,11 +62,16 @@ query GetPostComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $fir
         createdAt
         updatedAt
         id
+        count {
+          replies
+          votes
+        }
         myVote
         replyCount
         author {
           image {
             url
+            blurUrl
             alt
           }
           handle
@@ -77,6 +84,7 @@ query GetPostComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $fir
           image {
             alt
             url
+            blurUrl
           }
         }
         votes
@@ -125,6 +133,7 @@ query GetPosts {
             caption
             url
             alt
+            blurUrl
           }
           caption
         }
@@ -137,6 +146,7 @@ query GetPosts {
           image {
             url
             alt
+            blurUrl
           }
         }
       }
@@ -189,12 +199,17 @@ mutation AddComment($postKey: String!, $text: String!, $parentId: String, $autho
       createdAt
       updatedAt
       id
+      count {
+        replies
+        votes
+      }
       myVote
       replyCount
       author {
         image {
           url
           alt
+          blurUrl
         }
         handle
         name
@@ -206,6 +221,7 @@ mutation AddComment($postKey: String!, $text: String!, $parentId: String, $autho
         image {
           alt
           url
+          blurUrl
         }
       }
       votes
@@ -219,6 +235,10 @@ mutation UpdateComment($commentId: String!, $text: String!) {
     comment {
       id
       content
+      count {
+        replies
+        votes
+      }
       replyCount
       updatedAt
       myVote
@@ -232,6 +252,9 @@ mutation PostCommentVote($id: String!) {
   voteOnPostComment(commentId: $id) {
     comment {
       id
+      count {
+        votes
+      }
       myVote
       votes
     }

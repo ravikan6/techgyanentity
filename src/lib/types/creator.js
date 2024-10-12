@@ -35,6 +35,7 @@ query GetCreatorForOg($handle: String!) {
         image {
           url
           alt
+          blurUrl
         }
       }
     }
@@ -80,6 +81,7 @@ mutation CreatorImageAction($action: ImageActionEnum = CREATE, $provider: String
       image {
         id
         url
+        blurUrl
       }
       key
     }
@@ -96,6 +98,7 @@ mutation CreatorBannerAction($action: ImageActionEnum = CREATE, $provider: Strin
       banner {
         id
         url
+        blurUrl
       }
       key
     }
@@ -140,6 +143,11 @@ query GetCreatorInTip($key: String!) {
         }
         image {
           url
+          blurUrl
+        }
+        count {
+          followers
+          stories
         }
         name
         handle

@@ -17,10 +17,15 @@ query GetAuthor($key: String!) {
         image {
             id
             url
+            blurUrl
+        }
+        count {
+          followers
         }
         banner {
             id
             url
+            blurUrl
         }
         contactEmail
         description

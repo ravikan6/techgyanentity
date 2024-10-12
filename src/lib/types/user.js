@@ -14,6 +14,7 @@ query MyQuery {
       id
       provider
       url
+      blurUrl
       alt
     }
   }
@@ -26,6 +27,7 @@ mutation UpdateMyAccount($image: ImageInput!) {
       image {
         id
         url
+        blurUrl
         provider
       }
       key
@@ -102,6 +104,14 @@ query MyQuery {
         privacy
         publishedAt
         savedByMe
+        count {
+          claps
+          comments
+        }
+        me {
+          isClapped
+          isSaved
+        }
         slug
         state
         title
@@ -109,12 +119,14 @@ query MyQuery {
           handle
           image {
             url
+            blurUrl
           }
           key
           name
         }
         image {
           url
+          blurUrl
         }
       }
     }

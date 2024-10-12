@@ -10,7 +10,6 @@ query GetAuthorStory($author_Key: String = "", $slug: String!) {
   Stories(author_Key: $author_Key, slug: $slug, first: 1) {
     edges {
       node {
-        commentsCount
         content
         description
         key
@@ -27,6 +26,7 @@ query GetAuthorStory($author_Key: String = "", $slug: String!) {
           alt
           caption
           url
+          blurUrl
         }
         state
         slug
@@ -40,6 +40,7 @@ query GetAuthorStory($author_Key: String = "", $slug: String!) {
           image {
             url
             alt
+            blurUrl
           }
           handle
         }
@@ -73,8 +74,17 @@ query GetStoryClientSide($key: String!) {
           image {
             url
             alt
+            blurUrl
           }
           handle
+        }
+        count {
+          claps
+          comments
+        }
+        me {
+          isClapped
+          isSaved
         }
         commentsCount
         clapsCount
@@ -102,6 +112,8 @@ query GetAuthorStory($key: String!, $author_Key: String!) {
         slug
         image {
           url
+          blurUrl
+          hasImage
           id
         }
         state
@@ -258,6 +270,7 @@ mutation UpdateStoryDetails($key: String = "", $category: String = "", $descript
       image {
         id
         url
+        hasImage
         caption
       }
       category {
@@ -283,9 +296,14 @@ query GetStoryComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $fi
         id
         myVote
         replyCount
+        count{
+          replies
+          votes
+        }
         author {
           image {
             url
+            blurUrl
             alt
           }
           handle
@@ -297,6 +315,7 @@ query GetStoryComments($key: String!, $parent_Id: ID = "", $offset: Int = 0, $fi
           name
           image {
             alt
+            blurUrl
             url
           }
         }
@@ -321,11 +340,16 @@ mutation AddComment($storyKey: String!, $text: String!, $parentId: String, $auth
       createdAt
       updatedAt
       id
+      count{
+        replies
+        votes
+      }
       myVote
       replyCount
       author {
         image {
           url
+          blurUrl
           alt
         }
         handle
@@ -337,6 +361,7 @@ mutation AddComment($storyKey: String!, $text: String!, $parentId: String, $auth
         name
         image {
           alt
+          blurUrl
           url
         }
       }
@@ -352,6 +377,10 @@ mutation UpdateComment($commentId: String!, $text: String!) {
       id
       content
       updatedAt
+      count{
+        replies
+        votes
+      }
       replyCount
       myVote
       votes
@@ -366,6 +395,9 @@ mutation StoryCommentVote($id: String!) {
       id
       myVote
       votes
+      count{
+        votes
+      }
     }
   }
 }`;
@@ -375,6 +407,12 @@ mutation StoryClap($storyKey: String!) {
   clapOnStory(storyKey: $storyKey) {
     story {
       key
+      count {
+        claps
+      }
+      me {
+        isClapped
+      }
       clapsCount
       clappedByMe
     }
@@ -386,6 +424,9 @@ mutation StorySaved($storyKey: String!) {
   saveStory(storyKey: $storyKey) {
     story {
       key
+      me {
+        isSaved
+      }
       savedByMe
     }
   }
