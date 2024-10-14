@@ -18,3 +18,8 @@ export {
 export {
     ShareView as CommonShareView
 } from './share'
+
+export {
+    Box as SearchBox,
+    PageView as SearchPageView
+} from './search'

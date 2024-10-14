@@ -8,6 +8,7 @@ import { Skeleton } from '@mui/material';
 import { NavMenu, UserProfileModel } from './Home/_profile-model';
 import { auth } from '@/lib/auth';
 import { StudioServiceSelecterMenu } from './studio/_profile';
+import { SearchBox } from './common';
 
 const ManinLogo = async ({ className }) => {
     // const data = await get_SECTION_logo();
@@ -53,7 +54,9 @@ const Header = async () => {
                                 <ManinLogo className='ml-4' />
                             </div>
                             <div className='justify-center hidden md:flex items-center w-3/12'>
-                                <SearchBar />
+                                <div className='md:w-[350px]'>
+                                    <SearchBox />
+                                </div>
                             </div>
                             <div className='flex space-x-3 md:space-x-6 justify-end items-center w-1/2 md:w-3/12'>
                                 {!session?.user ? (

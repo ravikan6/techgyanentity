@@ -89,11 +89,10 @@ export default async function Home() {
             </div>
           )
         }
-        <span className="mt-20"></span>
-        <h1 className="text-2xl font-bold Stymie">Community Posts</h1>
+        <div className="mt-20"></div>
+        <h1 className="text-2xl font-bold stymie">Community Posts</h1>
         <CommunityPosts posts={communityPosts} />
-        <span className="mt-20"></span>
-
+        <div className="mb-10"></div>
       </div>
     </>
   );

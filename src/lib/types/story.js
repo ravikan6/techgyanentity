@@ -95,6 +95,49 @@ query GetStoryClientSide($key: String!) {
   }
 }`;
 
+const GET_STORY_SEARCH_RESULTS = gql`
+query SearchStory($title: String = "") {
+  Stories(title_Icontains: $title, state: PUBLISHED) {
+    edges {
+      cursor
+      node {
+        author {
+          handle
+          image {
+            blurUrl
+            url(width: 56, height: 56)
+          }
+          name
+        }
+        count {
+          claps
+          comments
+        }
+        description
+        image {
+          blurUrl
+          alt
+          url
+        }
+        me {
+          isClapped
+          isSaved
+        }
+        publishedAt
+        slug
+        title
+        key
+      }
+    }
+    pageInfo {
+      startCursor
+      hasPreviousPage
+      hasNextPage
+      endCursor
+    }
+  }
+}`;
+
 const GET_STORY_WITH_CATEGORIES = gql`
 query GetAuthorStory($key: String!, $author_Key: String!) {
   Stories(key: $key, author_Key: $author_Key) {
@@ -435,6 +478,7 @@ mutation StorySaved($storyKey: String!) {
 export { GET_CREATOR_STORY, GET_STORY_CLIENT_INFO }; // QUERY: Story
 export { GET_STORY_COMMENTS }; // QUERY: Story -> Comment
 export { GET_STORY_WITH_CATEGORIES }; // QUERY: Story -> _ Category
+export { GET_STORY_SEARCH_RESULTS }; // QUERY: Story -> Search
 
 export { CREATE_STORY, UPDATE_STORY_CONTENT, UPDATE_STORY_DETAILS }; // MUTATE: Story
 export { UPDATE_STORY_CLAP }; // MUTATE: Story -> Clap

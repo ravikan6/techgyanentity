@@ -68,14 +68,14 @@ const View2 = ({ post, options }) => {
 const MetaImageSquareView = ({ content, options }) => {
 
     return (
-        <div className="relative rounded-md aspect-square w-full">
+        <div className="relative rounded-md aspect-square w-full overflow-hidden">
             <Image
                 src={content?.url}
                 fill
                 alt="Post Image"
             />
             {
-                options?.hasMore ? <IoIosImages className="absolute bottom-2 right-2 text-white dark:text-black bg-black dark:bg-white p-1 rounded-full w-4 h-4" /> : null
+                options?.hasMore ? <IoIosImages className="absolute bottom-2 right-2 text-white dark:text-black bg-black dark:bg-white p-1 rounded-full w-6 h-6" /> : null
             }
         </div>
     )
