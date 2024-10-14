@@ -31,7 +31,7 @@ const WriteField = () => {
     const userData = (creator?.key === content?.authorKey) ? {
         ...creator
     } : {
-        ...session?.user
+        ...session?.user, image: { url: session?.user?.image }
     }
 
     return (
@@ -81,7 +81,7 @@ const ActionButton = () => {
     const userData = (creator?.key === content?.authorKey) ? {
         ...creator
     } : {
-        ...session?.user
+        ...session?.user, image: { url: session?.user?.image }
     }
 
     return (

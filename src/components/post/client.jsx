@@ -97,7 +97,7 @@ const MetaTypeImageView = ({ content, options }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasNext, setHasNext] = useState(slides.length > 1);
     const [hasPrev, setHasPrev] = useState(false);
-    const [original, setOriginal] = useState(false);
+    const [original, setOriginal] = useState(true);
 
     const startX = useRef(0);
     const endX = useRef(0);

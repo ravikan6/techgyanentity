@@ -222,16 +222,16 @@ const MetaAuthorView = () => {
                                 </p>
                             </Link>
                             <p className="text-xs text-gray-500 dark:text-gray-300">
-                                {0} Followers
+                                {story?.author?.count?.followers || 0} Followers
                             </p>
                         </div>
                     </div>
                 </CreatorWrapper>
             </div>
             <div className="flex items-center space-x-4">
-                <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
+                {/* <IconButton className="bg-light dark:bg-dark" size="small" color="accent" >
                     <EmailRounded className="w-4 h-4" />
-                </IconButton>
+                </IconButton> */}
                 <CreatorFollowButton value={story?.author?.followed} options={{
                     creator: story?.author?.key,
                 }} />
@@ -256,12 +256,12 @@ const MetaDescBoxView = () => {
                     <h1 className="text-xl mb-3 font-bold cheltenham">{story?.title}</h1>
                     <div className="flex space-x-1 items-center justify-around font-semibold mb-3 text-sm text-gray-800 dark:text-gray-200">
                         <div className={`flex flex-col items-center justify-center`}>
-                            <span className="mb-0.5 cheltenham">999</span>
+                            <span className="mb-0.5 cheltenham">--</span>
                             <span>views</span>
                         </div>
                         <Tooltip title="average read time" placement="top" arrow>
                             <div className={`flex flex-col items-center justify-center`}>
-                                <span className="mb-0.5 cheltenham">{'2 min'}</span>
+                                <span className="mb-0.5 cheltenham">--</span>
                                 <span>read</span>
                             </div>
                         </Tooltip>
@@ -281,16 +281,13 @@ const MetaDescBoxView = () => {
                                 {story?.author?.name}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-300">
-                                2k followers
+                                {story?.author?.count?.followers || 0} Followers
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className="overflow-x-scroll w-full mt-2">
+                {/* <div className="overflow-x-scroll w-full mt-2">
                     <div className="flex items-center py-3 space-x-4 w-fit flex-row flex-nowrap justify-start">
-                        <CreatorFollowButton value={story?.author?.followed} options={{
-                            creator: story?.author?.key,
-                        }} />
                         <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<LuUser className="w-4 h-4 mr-1" />} size="small" >About</Button>
                         <Button variant="outlined" sx={{ px: 2 }} color="button" startIcon={<EmailRounded className="w-4 h-4 mr-1" />} size="small" >Contact</Button>
                         {
@@ -299,7 +296,7 @@ const MetaDescBoxView = () => {
                             ))
                         }
                     </div>
-                </div>
+                </div> */}
             </div>
         </>
     );

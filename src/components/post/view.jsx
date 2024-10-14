@@ -3,8 +3,8 @@ import { MetaMoreMenu, MetaTypeImageView, MetaTypePollView } from "./client";
 import { PostCommentView } from ".";
 import { RouterBackBtn } from "../Buttons";
 import Link from "next/link";
-import { ImageSliderView } from "./_struct";
-
+import Image from "next/image";
+import { IoIosImages } from "react-icons/io";
 
 const View = ({ post, options }) => {
 
@@ -56,12 +56,28 @@ const View2 = ({ post, options }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="px-2 sm:mt-16 relative sm:h-[calc(100%-68px)] overflow-y-scroll">
+                    <div className="pl-1.5 pr-1 sm:mt-16 relative sm:h-[calc(100%-65px)] overflow-y-scroll">
                         <PostCommentView post={post} />
                     </div>
                 </div>
             </div>
         </>
+    )
+}
+
+const MetaImageSquareView = ({ content, options }) => {
+
+    return (
+        <div className="relative rounded-md aspect-square w-full">
+            <Image
+                src={content?.url}
+                fill
+                alt="Post Image"
+            />
+            {
+                options?.hasMore ? <IoIosImages className="absolute bottom-2 right-2 text-white dark:text-black bg-black dark:bg-white p-1 rounded-full w-4 h-4" /> : null
+            }
+        </div>
     )
 }
 
@@ -72,6 +88,7 @@ const CardView = ({ post, options }) => {
                 <MetaAuthorView author={post?.author} />
                 <div className="my-2 px-2">
                     <MetaTypeContentView post={post} options={{
+                        isCardView: true,
                         image: {
                             showText: true,
                             _1v1: true,
@@ -108,13 +125,12 @@ const MetaTypeContentView = ({ post, options }) => {
     switch (post?.typeOf) {
         case 'IMAGE':
             return (
-                <>
+                options?.isCardView ? <MetaImageSquareView content={post?.typeImage?.images?.at(0)} options={{ hasMore: post?.typeImage?.images?.length > 1 }} /> : <>
                     {options?.image?.showText ? <p className="text-base text-gray-900 dark:text-gray-100 mb-3">{post?.text}</p> : null}
                     <div className={`max-w-xl mx-auto ${options?.image?.rounded ? 'rounded-md overflow-hidden ' : ''}`}>
                         <MetaTypeImageView content={post?.typeImage} options={{
                             ...options?.image,
                         }} />
-                        {/* }} slides={images} url={`@${post?.author?.handle}/post/${post?.key}`} bg={false} /> */}
                     </div>
                 </>
             );

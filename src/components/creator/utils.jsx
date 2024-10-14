@@ -12,7 +12,6 @@ import { AiOutlineUserDelete } from "react-icons/ai";
 import { AnonymousAction } from "../common";
 import { useLazyQuery } from "@apollo/client";
 import Image from "next/image";
-import { ErrorBox } from "../post/_struct";
 import { GET_CREATOR_IN_TIP } from "@/lib/types/creator";
 
 const CreatorFollowButton = ({ value, options }) => {
@@ -214,6 +213,18 @@ const CreatorWrapperView = ({ creatorKey }) => {
             } /> : null
     )
 }
+
+const ErrorBox = ({ error, onRetry }) => {
+    return (
+        <div className="w-full flex justify-center items-center h-48">
+            <div className="flex flex-col items-center justify-center gap-3">
+                <p className="text-gray-500 dark:text-gray-400">{error}</p>
+                <Button onClick={onRetry} variant="outlined" size="small">Retry</Button>
+            </div>
+        </div>
+    );
+}
+
 
 export { CreatorWrapper }
 

@@ -17,6 +17,7 @@ query MyQuery {
           name
           image {
             url
+            blurUrl
             provider
           }
         }
@@ -26,7 +27,7 @@ query MyQuery {
         privacy
         key
         image {
-
+          blurUrl
           url
         }
         description
@@ -34,6 +35,14 @@ query MyQuery {
         commentsCount
         clapsCount
         clappedByMe
+        count {
+          claps
+          comments
+        }
+        me {
+          isClapped
+          isSaved
+        }
       }
     }
   }
@@ -67,24 +76,24 @@ export default async function Home() {
   return (
     <>
       <div className="py-2 max-w-5xl mx-auto">
-        <CommunityPosts posts={communityPosts} />
-        <span className="mt-20"></span>
         {
           blogPosts.length > 0 && (
-            <div className="mt-20">
-              <h2 className="text-2xl font-bold mb-4">Blog Posts</h2>
-              <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
-                {
-                  blogPosts.map((story, _) => (
-                    <React.Fragment key={_}>
-                      <StoryCardView story={story?.node} />
-                    </React.Fragment>
-                  ))
-                }
-              </div>
+            <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 w-full">
+              {
+                blogPosts.map((story, _) => (
+                  <React.Fragment key={_}>
+                    <StoryCardView story={story?.node} />
+                  </React.Fragment>
+                ))
+              }
             </div>
           )
         }
+        <span className="mt-20"></span>
+        <h1 className="text-2xl font-bold Stymie">Community Posts</h1>
+        <CommunityPosts posts={communityPosts} />
+        <span className="mt-20"></span>
+
       </div>
     </>
   );
