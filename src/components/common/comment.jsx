@@ -1,4 +1,4 @@
-"use comment";
+"use client";
 import { useSession } from "next-auth/react";
 import { AnonymousAction, MoreMenuButton } from ".";
 import { Avatar, Backdrop, Grid2, List, ListItem, Skeleton } from "@mui/material";
