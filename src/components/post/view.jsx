@@ -73,6 +73,7 @@ const MetaImageSquareView = ({ content, options }) => {
                 src={content?.url}
                 fill
                 alt="Post Image"
+                className="object-cover"
             />
             {
                 options?.hasMore ? <IoIosImages className="absolute bottom-2 right-2 text-white dark:text-black bg-black dark:bg-white p-1 rounded-full w-6 h-6" /> : null

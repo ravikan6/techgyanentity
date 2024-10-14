@@ -2,7 +2,7 @@ import React from 'react';
 import { StoryCardMeta, StoryImage, StorySidebar, StoryTopbar } from '.';
 import styles from '@/styles/post.module.css';
 import { ServerVariantPersistent } from '@/components/common/helpers';
-import { Card, ListItem } from '@mui/material';
+import { Card, ListItem, Skeleton } from '@mui/material';
 import Link from 'next/link';
 
 function jsonToObject(json) {
@@ -106,7 +106,7 @@ const ListItemView = ({ story }) => {
 
     return (
         <ListItem>
-            <div className="relative group/g_pst transition-opacity duration-300 flex items-start w-full gap-5">
+            <div className="relative group/g_pst transition-opacity duration-300 flex flex-col md:flex-row items-start w-full gap-1 md:gap-5">
                 <div className='self-start h-28 aspect-video'>
                     <Link href={`/@${story?.author?.handle}/${story.slug}`}>
                         <StoryImage className="rounded-md" image={story?.image} />
@@ -123,6 +123,33 @@ const ListItemView = ({ story }) => {
                 </div>
             </div>
         </ListItem>
+    );
+}
+
+const ListSkeletons = ({ count }) => {
+    return (
+        <>
+            {
+                Array.from({ length: count }, (_, i) => (
+                    <ListItem key={i}>
+                        <div className="relative group/g_pst transition-opacity duration-300 flex items-start w-full gap-5">
+                            <div className='self-start h-28 aspect-video'>
+                                <Skeleton variant='rounded' animation="wave" className='!h-full !w-full' />
+                            </div>
+                            <div className="flex flex-col items-start justify-between w-full">
+                                <div className="w-full">
+                                    <Skeleton animation="wave" className="!w-3/4 !h-5 !mb-2" />
+                                    <Skeleton animation="wave" className="!w-1/2 !h-5" />
+                                </div>
+                                <div className="w-full mt-2">
+                                    <Skeleton animation="wave" className="!w-1/2 !h-5" />
+                                </div>
+                            </div>
+                        </div>
+                    </ListItem>
+                ))
+            }
+        </>
     );
 }
 
@@ -205,4 +232,4 @@ const RenderBlock = ({ blocks }) => {
 
 
 export default View;
-export { CardView, ListItemView };
+export { CardView, ListItemView, ListSkeletons };

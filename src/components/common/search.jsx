@@ -7,7 +7,7 @@ import { Search } from "@mui/icons-material";
 import { IconButton, List } from "@mui/material";
 import { GET_STORY_SEARCH_RESULTS } from "@/lib/types/story";
 import { useLazyQuery } from "@apollo/client";
-import { StoryListItemView } from "../story";
+import { StoryListItemSkeletons, StoryListItemView } from "../story";
 
 const Box = () => {
     const [text, setText] = useState('');
@@ -15,14 +15,14 @@ const Box = () => {
 
     const onSearch = () => {
         let np = new URLSearchParams()
-        let query = np.set('q', text)
-        push(`/search?${query.toString()}`);
+        np.set('q', text)
+        push(`/search?${np.toString()}`);
     }
 
     return (
         <>
             <TextField
-                placeholder="Search"
+                placeholder="Search..."
                 type="text"
                 fullWidth
                 value={text}
@@ -32,6 +32,7 @@ const Box = () => {
                 slotProps={{
                     input: {
                         endAdornment: <IconButton
+                            color="primary"
                             onClick={onSearch}
                         ><Search /></IconButton>
                     }
@@ -61,6 +62,9 @@ const PageView = () => {
 
     return (
         <div className="mx-auto max-w-3xl my-4">
+            <h3 className="text-lg stymie-small">
+                Search Results for "{sp.get('q')}"
+            </h3>
             {data ? (
                 <List>
                     {data?.Stories?.edges.map(({ node }) => (
@@ -69,15 +73,13 @@ const PageView = () => {
                         </div>
                     ))}
                 </List>
-            ) : (called && !loading && !error) ? (
+            ) : (!loading && !error) ? (
                 <div>No results found for your search</div>
             ) : (loading) ? (
-                <div>Loading...</div>
+                <StoryListItemSkeletons count={5} />
             ) : (called && error) ? (
                 <div>Error loading search results</div>
-            ) : (
-                <div>Search for stories by title</div>
-            )}
+            ) : null}
         </div>
     )
 
